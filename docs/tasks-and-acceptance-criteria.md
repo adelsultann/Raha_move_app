@@ -197,6 +197,23 @@ Non-terminal `in_progress` sessions are excluded from this rate until they are c
 
 The current Flutter deployment support matrix includes Android API 24+ and iOS 15+; the project must revalidate this choice and all plugin deployment requirements before release. See [Flutter supported deployment platforms](https://docs.flutter.dev/reference/supported-platforms) and [Flutter Android deployment guidance](https://docs.flutter.dev/deployment/android).
 
+##### Telemetry privacy and consent
+
+**Decision owner:** Adel  
+**Decision date:** 2026-08-28  
+**Status:** Approved for MVP implementation. PDPL and data-residency legal review remains mandatory before public launch.
+
+- Product analytics is optional and disabled by default. It starts only after the user explicitly opts in.
+- Crash reporting is a separate optional consent and is also disabled by default. Consent to one service does not enable the other.
+- Profile settings provide separate, localized controls to grant or withdraw analytics and crash-reporting consent. Withdrawing consent stops future collection for that service immediately.
+- Event schemas use stable, language-neutral event names and an implementation-enforced allowlist of approved categorical properties and stable Raha identifiers needed to measure the core journey. The allowlist must exclude user-entered free text and direct identifiers.
+- Analytics, diagnostic logs, and crash reports must not contain names, email addresses, phone numbers, free-text health notes, raw body-state answers, signed or private media URLs, credentials, tokens, raw provider payloads, license records, or complete internal service responses. Crash-report breadcrumbs and diagnostic logging use the same redaction rules.
+- PostHog autocapture and session replay are disabled in every environment.
+- Retain raw product analytics for 90 days and crash-report data for 30 days, then delete or anonymize it according to the vendor procedure. Account deletion must trigger the applicable analytics and crash-report deletion or anonymization workflow in addition to app and backend cleanup.
+- Development and test builds use a debug-only telemetry sink that permits local verification of event names and properties without sending data to production datasets. Development, staging, and production telemetry configurations and credentials remain separated.
+- Native crash reporting has an Android API 24–30 coverage limitation. The selected crash-reporting integration must document the affected crash classes and the release team must assess the limitation before beta and public launch.
+- **Review trigger:** Complete PDPL, data-residency, vendor data-processing, retention, and deletion-workflow review before any public release or whenever telemetry vendors, processing regions, or tracked properties change.
+
 ### RAHA-002 — Approve content and safety policy
 
 **Priority:** P0  
@@ -294,6 +311,8 @@ The current Flutter deployment support matrix includes Android API 24+ and iOS 1
 **Priority:** P1  
 **Owner:** Product + Engineering  
 **Dependencies:** RAHA-010, RAHA-001
+
+**Approved privacy decision:** Use the RAHA-001 telemetry privacy and consent decision dated 2026-08-28. Optional analytics and crash reporting remain disabled until their separate consents are granted.
 
 **Acceptance criteria**
 

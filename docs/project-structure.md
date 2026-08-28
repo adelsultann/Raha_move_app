@@ -28,8 +28,15 @@ The Flutter application will use a feature-first, layered architecture with Rive
 - Object storage and CDN delivery for exercise videos
 - RevenueCat for subscriptions
 - Firebase Cloud Messaging for push notifications
-- PostHog  Analytics for product analytics
-- Firebase Crashlytics or Sentry for crash reporting
+- PostHog for product analytics and primary error/crash reporting, accessed
+  through application-owned interfaces that can be disabled or replaced in
+  tests
+- Privacy-safe application logging with allowlisted structured fields and
+  centralized redaction before logs, breadcrumbs, or crash context leave the
+  device
+- PostHog native C/C++ crash capture on Android requires API 31 or newer; the
+  release review must verify the accepted coverage for supported API 24–30
+  devices before relying on PostHog as the only production crash reporter
 - Flutter `gen_l10n` for Arabic and English localization
 
 Package versions should be selected and pinned when the Flutter project is initialized.
@@ -73,10 +80,12 @@ Raha_move_app/
 │   │
 │   ├── core/
 │   │   ├── analytics/
+│   │   ├── crash_reporting/
 │   │   ├── constants/
 │   │   ├── database/
 │   │   ├── errors/
 │   │   ├── extensions/
+│   │   ├── logging/
 │   │   ├── networking/
 │   │   ├── storage/
 │   │   ├── utilities/
