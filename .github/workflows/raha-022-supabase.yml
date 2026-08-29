@@ -1,0 +1,27 @@
+name: RAHA-022 Supabase gate
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/raha-022-supabase.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/raha-022-supabase.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  local-supabase-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Run disposable local database gates
+        run: bash supabase/tests/run_raha_022_local_gates.sh
