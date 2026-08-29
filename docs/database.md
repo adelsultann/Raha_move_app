@@ -98,7 +98,7 @@ Suggested enums:
 - `content_status`: `draft`, `review`, `published`, `retired`
 - `difficulty_level`: `beginner`, `intermediate`, `advanced`
 - `session_status`: `in_progress`, `completed`, `abandoned`
-- `step_status`: `pending`, `completed`, `skipped`
+- `step_status`: `pending`, `completed`, `partial`, `skipped`
 - `feedback_rating`: `much_better`, `little_better`, `same`, `less_comfortable`
 - `media_type`: `video`, `image`, `animation`, `audio`
 - `access_tier`: `free`, `premium`
@@ -375,6 +375,18 @@ The MVP can execute rules locally from a downloaded configuration. The version s
 
 ## Cloud Schema: Sessions and Progress
 
+### Approved completion-schema authority
+
+The approved RAHA-001 decision record is authoritative for session completion. This supersedes earlier database wording that omitted `partial` steps or represented a session only with `active_seconds` and `completed_step_count`.
+
+- Step states are `pending`, `completed`, `partial`, and `skipped`.
+- A step that begins playback and is then skipped remains `partial`, retains credited active duration, and records `skip_requested = true`.
+- A routine session persists its scheduled and credited durations, all terminal-step counts, and `completion_policy_version` so historical completion decisions remain reproducible.
+- Terminal sessions cannot return to `in_progress`; trusted server logic validates completion before derived rewards are awarded.
+- MVP routine steps are timed only: `target_duration_seconds` is required. Repetition-only steps are deferred pending a versioned repetition-credit policy.
+- An `in_progress` session expires to `abandoned` 24 hours after its latest credited activity. The expiry transition is idempotent.
+- The offline-first MVP uses bounded device-reported active time as an input, not proof of attested playback. Trusted server logic caps and derives completion data from routine-bound steps before any authoritative reward processing.
+
 ### `routine_sessions`
 
 | Column | Type | Notes |
@@ -387,14 +399,18 @@ The MVP can execute rules locally from a downloaded configuration. The version s
 | `status` | `session_status` | Current lifecycle |
 | `started_at` | `timestamptz` | Start instant |
 | `completed_at` | `timestamptz` nullable | Completion instant |
-| `active_seconds` | `integer` | Excludes paused time |
-| `completed_step_count` | `smallint` | Derived locally, verified server-side |
+| `target_duration_seconds` | `integer` | Scheduled routine duration snapshot |
+| `actual_duration_seconds` | `integer` | Credited active duration; excludes paused, backgrounded, loading, and transition time |
 | `total_step_count_snapshot` | `smallint` | Preserves historical context |
+| `steps_completed` | `smallint` | Terminal `completed` step count |
+| `steps_partial` | `smallint` | Terminal `partial` step count |
+| `steps_skipped` | `smallint` | Terminal `skipped` step count |
+| `completion_policy_version` | `text` | Version of the thresholds used to evaluate terminal completion |
 | `source` | `text` | Recommendation, explore, saved, repeat, or bundled |
 | `created_at` | `timestamptz` | Audit field |
 | `updated_at` | `timestamptz` | Conflict-resolution field |
 
-The session keeps the routine ID plus critical snapshots. Routine rows referenced by sessions are retired rather than deleted.
+The session keeps the routine ID plus critical snapshots. Routine rows referenced by sessions are retired rather than deleted. A session is `completed` only when the versioned RAHA-001 completion policy evaluates both credited duration and skipped steps as eligible; otherwise a terminal session is `abandoned`.
 
 ### `session_steps`
 
@@ -404,8 +420,10 @@ The session keeps the routine ID plus critical snapshots. Routine rows reference
 | `routine_step_id` | `uuid` FK | Part of composite PK |
 | `exercise_id_snapshot` | `uuid` | Exercise used at playback time |
 | `position_snapshot` | `smallint` | Historical order |
-| `status` | `step_status` | Pending, completed, or skipped |
-| `active_seconds` | `integer` | Actual active time |
+| `status` | `step_status` | Pending, completed, partial, or skipped |
+| `target_duration_seconds` | `integer` | Scheduled duration; required for every MVP step |
+| `active_duration_seconds` | `integer` | Credited active time, capped at the target duration |
+| `skip_requested` | `boolean` | Records an explicit Skip interaction without discarding credited partial activity |
 | `started_at` | `timestamptz` nullable | Step start |
 | `finished_at` | `timestamptz` nullable | Step finish |
 
@@ -676,12 +694,15 @@ At minimum, add indexes for:
 
 Important checks include:
 
-- Positive durations and repetition counts
+- Positive timed-step and routine durations; repetition-only steps are deferred from MVP
 - Weekly goal between 1 and 7
 - Available minutes limited to supported values for the MVP
 - Completed sessions require `completed_at`
 - `completed_at >= started_at`
-- Non-negative active seconds and step counts
+- Non-negative target/actual session duration, step active duration, and step counts
+- `actual_duration_seconds <= target_duration_seconds`
+- `active_duration_seconds <= target_duration_seconds`
+- Completed sessions require the configured completion threshold and skipped-step allowance; terminal sessions cannot return to `in_progress`
 - Locale restricted to supported values until a locale registry is introduced
 - One translation per entity and locale
 - One provider mapping per provider source ID
@@ -723,9 +744,6 @@ Add nullable column/table
 
 ## Decisions Still to Confirm
 
-- Whether MVP recommendations are computed entirely on-device or through a backend function when online.
-- The exact threshold that qualifies a session as completed.
-- Whether unfinished check-ins are synchronized or kept only on the device.
 - Whether session notes are needed at all; omitting them reduces sensitive free text.
 - Which premium catalog metadata is visible before purchase.
 - The precise streak and recovery-day rules.
@@ -733,4 +751,3 @@ Add nullable column/table
 - Launch-market privacy retention periods and data residency requirements.
 
 These choices change behavior or policy, but they do not require restructuring the core schema described above.
-
