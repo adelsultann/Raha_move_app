@@ -7,7 +7,7 @@ db_container="supabase_db_Raha_move_app"
 postgres_image="supabase/postgres:15.8.1.060"
 psql_local=(docker run --rm -v "$root:/workspace:ro" --network "container:$db_container" "$postgres_image" psql "postgresql://postgres:postgres@127.0.0.1:5432/postgres" -v ON_ERROR_STOP=1)
 
-npx --yes supabase db reset
+supabase db reset
 "${psql_local[@]}" -f /workspace/supabase/tests/raha_022_acl_gate.sql
 "${psql_local[@]}" -f /workspace/supabase/tests/raha_022_authorization.sql
 
