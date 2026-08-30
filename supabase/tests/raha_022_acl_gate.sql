@@ -27,7 +27,8 @@ begin
       ('check_ins','SELECT'),('check_ins','INSERT'),('check_ins','UPDATE'),('check_ins','DELETE'),
       ('check_in_body_areas','SELECT'),('check_in_body_areas','INSERT'),('check_in_body_areas','UPDATE'),('check_in_body_areas','DELETE'),
       ('recommendations','SELECT'),('recommendations','INSERT'),('recommendations','UPDATE'),('recommendations','DELETE'),
-      ('routine_sessions','SELECT'),('routine_sessions','UPDATE'),('routine_sessions','DELETE'),
+       -- RAHA-025: session lifecycle mutations are trusted-RPC-only.
+       ('routine_sessions','SELECT'),
       ('session_steps','SELECT'),('session_steps','INSERT'),('session_steps','UPDATE'),('session_steps','DELETE'),
       ('session_feedback','SELECT'),('session_feedback','INSERT'),('session_feedback','UPDATE'),('session_feedback','DELETE'),
       ('saved_routines','SELECT'),('saved_routines','INSERT'),('saved_routines','UPDATE'),('saved_routines','DELETE'),

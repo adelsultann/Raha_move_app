@@ -586,6 +586,13 @@ final class ContentReleaseRepository {
     // stable entity public id, or media UUID).
     await _applyTombstones(manifest);
 
+    // Populate the stable local-id → server-UUID mapping boundary from this
+    // release. This is the only place routine/exercise/taxonomy remote ids are
+    // learned, so user-data sync can resolve them without guessing. It runs in
+    // the same transaction, so a failed release rolls these back together with
+    // the catalog.
+    await _storeIdMappings(manifest);
+
     // Flip the current-release marker atomically.
     await (_database.update(_database.localContentReleases)
           ..where((r) => r.isCurrent.equals(true)))
@@ -733,6 +740,37 @@ final class ContentReleaseRepository {
     await (_database.update(_database.localRoutineSteps)
           ..where((r) => r.id.isIn(absent)))
         .write(const LocalRoutineStepsCompanion(status: Value('retired')));
+  }
+
+  /// Writes the remote-id mapping boundary for every entity and taxonomy in the
+  /// release: `routine.publicId → routine.id`, `exercise.publicId →
+  /// exercise.id`, and `taxonomy.key → taxonomy.id`. Idempotent upserts so a
+  /// re-applied or corrected release updates the authoritative UUIDs.
+  Future<void> _storeIdMappings(ContentReleaseManifest manifest) async {
+    final rows = <LocalIdMappingsCompanion>[
+      for (final exercise in manifest.exercises)
+        LocalIdMappingsCompanion.insert(
+          kind: RemoteIdMappingKind.exercise,
+          localId: exercise.publicId,
+          remoteId: exercise.id,
+        ),
+      for (final routine in manifest.routines)
+        LocalIdMappingsCompanion.insert(
+          kind: RemoteIdMappingKind.routine,
+          localId: routine.publicId,
+          remoteId: routine.id,
+        ),
+      for (final taxonomy in manifest.taxonomies)
+        LocalIdMappingsCompanion.insert(
+          kind: RemoteIdMappingKind.taxonomy,
+          localId: taxonomy.key,
+          remoteId: taxonomy.id,
+        ),
+    ];
+    if (rows.isEmpty) return;
+    await _database.batch(
+      (b) => b.insertAllOnConflictUpdate(_database.localIdMappings, rows),
+    );
   }
 
   Future<void> _applyTombstones(ContentReleaseManifest manifest) async {

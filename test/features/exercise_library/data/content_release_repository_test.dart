@@ -325,4 +325,72 @@ void main() {
     expect(media.every((m) => m.status == 'pending'), isTrue);
     expect(media.every((m) => m.checksumSha256.isEmpty), isTrue);
   });
+
+  test(
+    'populates remote id mappings atomically with a valid release',
+    () async {
+      await repository.applyRelease(
+        envelopeFor(minimalValidManifest()),
+        appVersion: '1.0.0',
+      );
+
+      final mappings = await database.select(database.localIdMappings).get();
+      // 1 exercise + 1 routine + 5 taxonomies (body_area, goal, position,
+      // equipment, context).
+      expect(mappings, hasLength(7));
+
+      String? remoteFor(String kind, String localId) {
+        for (final m in mappings) {
+          if (m.kind == kind && m.localId == localId) return m.remoteId;
+        }
+        return null;
+      }
+
+      expect(
+        remoteFor(RemoteIdMappingKind.exercise, 'raha_ex_000001'),
+        '01000000-0000-0000-0000-000000000001',
+      );
+      expect(
+        remoteFor(RemoteIdMappingKind.routine, 'raha_rt_000001'),
+        '03000000-0000-0000-0000-000000000001',
+      );
+      expect(
+        remoteFor(RemoteIdMappingKind.taxonomy, 'neck'),
+        '41000000-0000-0000-0000-000000000001',
+      );
+      expect(
+        remoteFor(RemoteIdMappingKind.taxonomy, 'ease_stiffness'),
+        '42000000-0000-0000-0000-000000000001',
+      );
+    },
+  );
+
+  test('mappings roll back together when a release fails to apply', () async {
+    await repository.applyRelease(
+      envelopeFor(minimalValidManifest()),
+      appVersion: '1.0.0',
+    );
+    final snapshot = (await database.select(database.localIdMappings).get())
+        .map((m) => '${m.kind}|${m.localId}|${m.remoteId}')
+        .toSet();
+
+    // A structurally corrupt release fails during validation, so no mapping
+    // write from it may leak into the local cache.
+    final corrupt = minimalValidManifest(releaseId: '2', releaseVersion: 'r2');
+    (corrupt['routine_steps'] as List)
+            .cast<Map<String, dynamic>>()
+            .single['exercise_id'] =
+        '99999999-0000-0000-0000-000000000000';
+
+    await expectThrowsWithCode(
+      () => repository.applyRelease(envelopeFor(corrupt), appVersion: '1.0.0'),
+      'unknown_exercise',
+    );
+
+    final after = (await database.select(database.localIdMappings).get())
+        .map((m) => '${m.kind}|${m.localId}|${m.remoteId}')
+        .toSet();
+    expect(after, snapshot);
+    expect(await repository.currentReleaseId(), '1');
+  });
 }

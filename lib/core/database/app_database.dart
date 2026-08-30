@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:drift/drift.dart';
 
@@ -12,9 +13,58 @@ enum SyncDiagnosticCode {
   networkUnavailable,
   validationRejected,
   retryExhausted,
+  unmappedId,
+  unsupportedOperation,
 }
 
-enum OutboxOperation { upsert, delete }
+/// Lifecycle of a durable outbox row. `pending` rows are eligible for an
+/// automatic push; `rejected` rows are parked for explicit, recoverable retry
+/// and are never deleted automatically.
+enum OutboxStatus { pending, rejected }
+
+/// Remote-identity mapping kinds resolved from the content-release manifest.
+/// `routine`/`exercise` map a stable Raha public id to its server UUID;
+/// `taxonomy` maps a stable taxonomy key (goal/position/…) to its server UUID.
+abstract final class RemoteIdMappingKind {
+  static const routine = 'routine';
+  static const exercise = 'exercise';
+  static const taxonomy = 'taxonomy';
+}
+
+/// The wire operation kinds accepted by `sync_push_user_data`. These are the
+/// authoritative RAHA-025 field lists; no other kind is sent to the backend.
+abstract final class WireOperationKind {
+  static const checkInUpsert = 'check_in_upsert';
+  static const recommendationUpsert = 'recommendation_upsert';
+  static const sessionStart = 'session_start';
+  static const sessionStepUpsert = 'session_step_upsert';
+  static const sessionFinalize = 'session_finalize';
+  static const feedbackUpsert = 'feedback_upsert';
+  static const savedRoutineSet = 'saved_routine_set';
+}
+
+/// A stable UUIDv4 generator used for client-generated operation ids.
+final _secureRandom = Random.secure();
+
+/// Generates a random RFC 4122 version-4 UUID string. Used for durable,
+/// client-generated operation ids that must survive retries.
+String generateUuidV4() {
+  final bytes = List<int>.generate(16, (_) => _secureRandom.nextInt(256));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10xx
+  final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
+      '${hex.substring(12, 16)}-${hex.substring(16, 20)}-'
+      '${hex.substring(20)}';
+}
+
+/// Whether [value] is already a well-formed UUID. Locally client-generated ids
+/// (check-in, recommendation, session) and server-issued `routine_step_id`
+/// values are UUIDs; a value passing this check is sent to the backend as-is
+/// rather than being treated as a taxonomy key or public id to resolve.
+final RegExp _uuidPattern = RegExp(
+  r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+);
 
 /// Common, privacy-safe metadata for locally editable records.
 mixin SyncColumns on Table {
@@ -430,26 +480,63 @@ class LocalProgressProjections extends Table {
 }
 
 @TableIndex(
-  name: 'sync_outbox_owner_next_attempt',
-  columns: {#ownerUserId, #nextAttemptAt},
+  name: 'sync_outbox_owner_due',
+  columns: {#ownerUserId, #status, #nextAttemptAt},
 )
 class SyncOutbox extends Table {
   IntColumn get id => integer().autoIncrement()();
+
+  /// Client-generated stable UUID that identifies the wire operation across
+  /// retries and drives server-side idempotency. Persisted so a retry reuses
+  /// the exact same id rather than minting a new one.
+  TextColumn get operationId => text()();
+
+  /// The RAHA-025 wire operation kind (`session_start`, `check_in_upsert`, …).
+  TextColumn get kind => text()();
+
+  /// The locally editable domain entity this operation belongs to
+  /// (`check_in`, `routine_session`, `saved_routine`, …).
   TextColumn get entityType => text()();
   TextColumn get entityId => text()();
   TextColumn get ownerUserId => text().references(LocalProfiles, #userId)();
-  TextColumn get operation => textEnum<OutboxOperation>()();
 
-  /// Versioned, allowlisted JSON for the trusted sync API; no raw responses.
+  /// Allowlisted, snake_case wire payload for the trusted sync API; no raw
+  /// responses. The `operation_id` and `kind` live in dedicated columns.
   TextColumn get payloadJson => text()();
+
+  /// Dependency sub-ordering within a single entity (a session step's
+  /// `position_snapshot`), so steps flush in positional order.
+  IntColumn get sequence => integer().withDefault(const Constant(0))();
   IntColumn get attemptCount => integer().withDefault(const Constant(0))();
   DateTimeColumn get nextAttemptAt => dateTime()();
+  TextColumn get status =>
+      textEnum<OutboxStatus>().withDefault(const Constant('pending'))();
   DateTimeColumn get createdAt => dateTime()();
 
   @override
-  List<String> get customConstraints => [
-    'UNIQUE(owner_user_id, entity_type, entity_id)',
-  ];
+  List<String> get customConstraints => ['UNIQUE(owner_user_id, operation_id)'];
+}
+
+/// Resolves stable local public ids and taxonomy keys to their authoritative
+/// server UUIDs, populated from the content-release manifest. This is the
+/// explicit mapping boundary: the client never guesses that a taxonomy key is a
+/// backend UUID.
+class LocalIdMappings extends Table {
+  TextColumn get kind => text()();
+  TextColumn get localId => text()();
+  TextColumn get remoteId => text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {kind, localId};
+}
+
+/// Per-user server-issued pull cursor for `sync_pull_user_data`.
+class LocalSyncState extends Table {
+  TextColumn get userId => text().references(LocalProfiles, #userId)();
+  IntColumn get pullCursor => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {userId};
 }
 
 @DriftDatabase(
@@ -479,6 +566,8 @@ class SyncOutbox extends Table {
     LocalSessionFeedback,
     LocalSavedRoutines,
     LocalProgressProjections,
+    LocalIdMappings,
+    LocalSyncState,
     SyncOutbox,
   ],
 )
@@ -486,7 +575,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -495,6 +584,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) await _createV2Tables(m);
       if (from < 3) await _migrateToV3(m);
       if (from < 4) await _migrateToV4(m);
+      if (from < 5) await _migrateToV5(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -619,6 +709,56 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  /// v5: durable stable operation ids + wire kinds on the outbox, plus the
+  /// remote-id mapping and per-user pull cursor tables. Legacy outbox rows keep
+  /// their domain payload but are parked (`rejected`) because their v1 payload
+  /// shape is not a valid RAHA-025 wire operation; they are preserved, never
+  /// deleted, and can be rebuilt on an explicit manual retry.
+  Future<void> _migrateToV5(Migrator m) async {
+    final hasOutbox = await _tableExists('sync_outbox');
+    if (!hasOutbox) {
+      await m.createTable(syncOutbox);
+    } else {
+      final outboxColumns = await _tableColumnNames('sync_outbox');
+      if (!outboxColumns.contains('operation_id')) {
+        await customStatement(
+          'ALTER TABLE sync_outbox RENAME TO sync_outbox_pre_v5',
+        );
+        await m.createTable(syncOutbox);
+        await customStatement(
+          "INSERT INTO sync_outbox (id, operation_id, kind, entity_type, entity_id, "
+          "owner_user_id, payload_json, sequence, attempt_count, next_attempt_at, status, created_at) "
+          "SELECT id, "
+          "printf('00000000-0000-4000-8000-%012d', id), "
+          "CASE entity_type "
+          "WHEN 'check_in' THEN 'check_in_upsert' "
+          "WHEN 'recommendation' THEN 'recommendation_upsert' "
+          "WHEN 'routine_session' THEN 'session_start' "
+          "WHEN 'session_feedback' THEN 'feedback_upsert' "
+          "WHEN 'saved_routine' THEN 'saved_routine_set' "
+          "ELSE 'unsupported_' || entity_type END, "
+          "entity_type, entity_id, owner_user_id, payload_json, 0, "
+          "attempt_count, next_attempt_at, 'rejected', created_at "
+          "FROM sync_outbox_pre_v5",
+        );
+        await customStatement('DROP TABLE sync_outbox_pre_v5');
+      }
+    }
+    if (!await _tableExists('local_id_mappings')) {
+      await m.createTable(localIdMappings);
+    }
+    if (!await _tableExists('local_sync_state')) {
+      await m.createTable(localSyncState);
+    }
+  }
+
+  Future<bool> _tableExists(String name) async {
+    final rows = await customSelect(
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = '$name'",
+    ).get();
+    return rows.isNotEmpty;
+  }
+
   Future<List<String>> _tableColumnNames(String table) async {
     final rows = await customSelect("PRAGMA table_info('$table')").get();
     return rows.map((row) => row.data['name'] as String).toList();
@@ -665,76 +805,347 @@ class LocalContentRepository {
   });
 }
 
-/// Typed, entity-specific payloads are built from durable rows, never callers.
-sealed class SyncPayload {
-  const SyncPayload(this.entityType, this.entityId, this.operation);
+/// An immutable, ready-to-enqueue wire operation: its `kind`, the domain entity
+/// it mutates, and the already-resolved allowlisted snake_case payload.
+final class OutboxEnvelope {
+  const OutboxEnvelope({
+    required this.kind,
+    required this.entityType,
+    required this.entityId,
+    required this.sequence,
+    required this.payload,
+  });
+
+  final String kind;
   final String entityType;
   final String entityId;
-  final OutboxOperation operation;
-  Map<String, Object?> toJson();
+  final int sequence;
+  final Map<String, Object?> payload;
 }
 
-final class CheckInSyncPayload extends SyncPayload {
-  CheckInSyncPayload(this.row, this.bodyAreaKeys)
-    : super('check_in', row.id, OutboxOperation.upsert);
-  final LocalCheckIn row;
-  final List<String> bodyAreaKeys;
+/// Thrown internally when a required local id/key cannot be resolved to a
+/// backend UUID. The local write is retained and the operation is parked for
+/// explicit, recoverable retry — never silently dropped or guessed.
+final class UnmappedRemoteIdException implements Exception {
+  const UnmappedRemoteIdException(this.kind, this.localId);
+
+  final String kind;
+  final String localId;
+
   @override
-  Map<String, Object?> toJson() => {
-    'v': 1,
-    'id': row.id,
-    'bodyState': row.bodyState,
-    'goalKey': row.goalKey,
-    'availableMinutes': row.availableMinutes,
-    'bodyAreaKeys': bodyAreaKeys,
-  };
+  String toString() => 'UnmappedRemoteIdException($kind: $localId)';
 }
 
-final class SavedRoutineSyncPayload extends SyncPayload {
-  SavedRoutineSyncPayload(this.row)
-    : super(
-        'saved_routine',
-        row.routineId,
-        row.deletedAt == null ? OutboxOperation.upsert : OutboxOperation.delete,
-      );
-  final LocalSavedRoutine row;
-  @override
-  Map<String, Object?> toJson() => {
-    'v': 1,
-    'routineId': row.routineId,
-    'deletedAt': row.deletedAt?.toIso8601String(),
-  };
+/// Writes and resolves the remote (server UUID) identity map populated from the
+/// content-release manifest. This is the explicit mapping boundary between
+/// stable local public ids / taxonomy keys and authoritative backend UUIDs.
+final class LocalIdMappingStore {
+  LocalIdMappingStore(this._database);
+
+  final AppDatabase _database;
+
+  Future<void> store({
+    required String kind,
+    required String localId,
+    required String remoteId,
+  }) {
+    return _database
+        .into(_database.localIdMappings)
+        .insertOnConflictUpdate(
+          LocalIdMappingsCompanion.insert(
+            kind: kind,
+            localId: localId,
+            remoteId: remoteId,
+          ),
+        );
+  }
+
+  Future<String?> resolve({
+    required String kind,
+    required String localId,
+  }) async {
+    final row =
+        await (_database.select(_database.localIdMappings)
+              ..where((r) => r.kind.equals(kind) & r.localId.equals(localId)))
+            .getSingleOrNull();
+    return row?.remoteId;
+  }
 }
 
-final class SessionSyncPayload extends SyncPayload {
-  SessionSyncPayload(this.row, this.steps)
-    : super('routine_session', row.id, OutboxOperation.upsert);
-  final LocalRoutineSession row;
-  final List<LocalSessionStep> steps;
-  @override
-  Map<String, Object?> toJson() => {
-    'v': 1,
-    'id': row.id,
-    'routineId': row.routineId,
-    'status': row.status,
-    'actualDurationSeconds': row.actualDurationSeconds,
-    'steps': [
-      for (final step in steps)
-        {
-          'routineStepId': step.routineStepId,
-          'status': step.status,
-          'activeDurationSeconds': step.activeDurationSeconds,
+/// Builds RAHA-025 wire operations from durable local rows. Every payload is
+/// snake_case and strictly allowlisted to the backend field lists; unknown or
+/// local-only fields are never emitted. Required ids that are not already a
+/// UUID are resolved through [LocalIdMappingStore] and, when unresolvable,
+/// raise [UnmappedRemoteIdException] so the caller can park the write.
+final class WireOperationBuilder {
+  WireOperationBuilder(
+    this._database, {
+    required this.activeUserId,
+    required this.appVersion,
+  });
+
+  final AppDatabase _database;
+  final String activeUserId;
+  final String appVersion;
+
+  LocalIdMappingStore get _mappings => LocalIdMappingStore(_database);
+
+  /// Builds all wire operations for one locally editable entity, in dependency
+  /// order. A terminal session yields `session_start` + ordered
+  /// `session_step_upsert`(s) + `session_finalize`.
+  Future<List<OutboxEnvelope>> buildFor(String entityType, String entityId) {
+    return switch (entityType) {
+      'check_in' => _buildCheckIn(entityId),
+      'recommendation' => _buildRecommendation(entityId),
+      'routine_session' => _buildSession(entityId),
+      'session_feedback' => _buildFeedback(entityId),
+      'saved_routine' => _buildSavedRoutine(entityId),
+      _ => throw UnsupportedError('Unsupported sync entity type: $entityType'),
+    };
+  }
+
+  /// Resolves [localId] to a backend UUID. A value that is already a valid UUID
+  /// (client-generated id or server-issued `routine_step_id`) is used directly;
+  /// anything else is treated as a local public id / taxonomy key and resolved
+  /// through the mapping boundary. Returns null only when unmapped.
+  Future<String?> resolveRemoteUuid(String kind, String localId) async {
+    if (localId.isEmpty) return null;
+    if (_uuidPattern.hasMatch(localId)) return localId;
+    return _mappings.resolve(kind: kind, localId: localId);
+  }
+
+  Future<String> _requireRemoteUuid(String kind, String localId) async {
+    final resolved = await resolveRemoteUuid(kind, localId);
+    if (resolved == null) throw UnmappedRemoteIdException(kind, localId);
+    return resolved;
+  }
+
+  Future<List<OutboxEnvelope>> _buildCheckIn(String id) async {
+    final row =
+        await (_database.select(_database.localCheckIns)
+              ..where((r) => r.id.equals(id) & r.userId.equals(activeUserId)))
+            .getSingle();
+    final goalId = await _requireRemoteUuid(
+      RemoteIdMappingKind.taxonomy,
+      row.goalKey,
+    );
+    final positionId = row.positionKey == null
+        ? null
+        : await _requireRemoteUuid(
+            RemoteIdMappingKind.taxonomy,
+            row.positionKey!,
+          );
+
+    // Selected body areas are stored per check-in; each local taxonomy key is
+    // resolved to its authoritative server UUID and emitted as a strict,
+    // deterministic `body_area_ids` array (ordered by key so retries are
+    // byte-identical). An unmapped key parks the write rather than guessing.
+    final bodyAreaRows =
+        await (_database.select(_database.localCheckInBodyAreas)
+              ..where((r) => r.checkInId.equals(id))
+              ..orderBy([(r) => OrderingTerm.asc(r.bodyAreaKey)]))
+            .get();
+    final bodyAreaIds = <String>[
+      for (final area in bodyAreaRows)
+        await _requireRemoteUuid(
+          RemoteIdMappingKind.taxonomy,
+          area.bodyAreaKey,
+        ),
+    ];
+
+    return [
+      OutboxEnvelope(
+        kind: WireOperationKind.checkInUpsert,
+        entityType: 'check_in',
+        entityId: id,
+        sequence: 0,
+        payload: <String, Object?>{
+          'id': row.id,
+          'body_state': row.bodyState,
+          'goal_id': goalId,
+          'available_minutes': row.availableMinutes,
+          'position_id': ?positionId,
+          'started_at': _iso(row.startedAt),
+          if (row.completedAt != null) 'completed_at': _iso(row.completedAt!),
+          'body_area_ids': bodyAreaIds,
         },
-    ],
-  };
-}
+      ),
+    ];
+  }
 
-final class RowSyncPayload extends SyncPayload {
-  RowSyncPayload(String entityType, String entityId, this.fields)
-    : super(entityType, entityId, OutboxOperation.upsert);
-  final Map<String, Object?> fields;
-  @override
-  Map<String, Object?> toJson() => {'v': 1, ...fields};
+  Future<List<OutboxEnvelope>> _buildRecommendation(String id) async {
+    final row =
+        await (_database.select(_database.localRecommendations)
+              ..where((r) => r.id.equals(id) & r.userId.equals(activeUserId)))
+            .getSingle();
+    final routineId = await _requireRemoteUuid(
+      RemoteIdMappingKind.routine,
+      row.routineId,
+    );
+    return [
+      OutboxEnvelope(
+        kind: WireOperationKind.recommendationUpsert,
+        entityType: 'recommendation',
+        entityId: id,
+        sequence: 0,
+        payload: <String, Object?>{
+          'id': row.id,
+          'check_in_id': row.checkInId,
+          'routine_id': routineId,
+          'engine_version': row.engineVersion,
+          // Local rank is 0-based (0 = top candidate); the backend contract is
+          // 1..100, so the wire value is shifted by one.
+          'rank': row.rank + 1,
+          'score': row.score,
+          'reason_codes': _decodeStringList(row.reasonCodesJson),
+          'shown_at': _iso(row.shownAt),
+          if (row.acceptedAt != null) 'accepted_at': _iso(row.acceptedAt!),
+          if (row.rejectedAt != null) 'rejected_at': _iso(row.rejectedAt!),
+          if (row.rejectionReason != null)
+            'rejection_reason': row.rejectionReason,
+        },
+      ),
+    ];
+  }
+
+  Future<List<OutboxEnvelope>> _buildSession(String id) async {
+    final row =
+        await (_database.select(_database.localRoutineSessions)
+              ..where((r) => r.id.equals(id) & r.userId.equals(activeUserId)))
+            .getSingle();
+    final steps = await (_database.select(
+      _database.localSessionSteps,
+    )..where((r) => r.sessionId.equals(id))).get();
+    steps.sort((a, b) => a.positionSnapshot.compareTo(b.positionSnapshot));
+    final routineId = await _requireRemoteUuid(
+      RemoteIdMappingKind.routine,
+      row.routineId,
+    );
+
+    final envelopes = <OutboxEnvelope>[
+      OutboxEnvelope(
+        kind: WireOperationKind.sessionStart,
+        entityType: 'routine_session',
+        entityId: id,
+        sequence: 0,
+        payload: <String, Object?>{
+          'id': row.id,
+          'routine_id': routineId,
+          'routine_version': row.routineVersion,
+          if (row.recommendationId != null)
+            'recommendation_id': row.recommendationId,
+          'source': row.source,
+          'app_version': appVersion,
+        },
+      ),
+    ];
+
+    for (final step in steps) {
+      final exerciseId = await _requireRemoteUuid(
+        RemoteIdMappingKind.exercise,
+        step.exerciseIdSnapshot,
+      );
+      envelopes.add(
+        OutboxEnvelope(
+          kind: WireOperationKind.sessionStepUpsert,
+          entityType: 'routine_session',
+          entityId: id,
+          sequence: step.positionSnapshot,
+          payload: <String, Object?>{
+            'session_id': id,
+            'routine_step_id': step.routineStepId,
+            'exercise_id_snapshot': exerciseId,
+            'position_snapshot': step.positionSnapshot,
+            'status': step.status,
+            'target_duration_seconds': step.targetDurationSeconds,
+            'active_duration_seconds': step.activeDurationSeconds,
+            'skip_requested': step.skipRequested,
+            if (step.startedAt != null) 'started_at': _iso(step.startedAt!),
+            if (step.finishedAt != null) 'finished_at': _iso(step.finishedAt!),
+          },
+        ),
+      );
+    }
+
+    if (row.status != 'in_progress') {
+      envelopes.add(
+        OutboxEnvelope(
+          kind: WireOperationKind.sessionFinalize,
+          entityType: 'routine_session',
+          entityId: id,
+          sequence: steps.length + 1,
+          payload: <String, Object?>{
+            'session_id': id,
+            'completion_policy_version': row.completionPolicyVersion,
+          },
+        ),
+      );
+    }
+
+    return envelopes;
+  }
+
+  Future<List<OutboxEnvelope>> _buildFeedback(String id) async {
+    final row =
+        await (_database.select(_database.localSessionFeedback)..where(
+              (r) => r.sessionId.equals(id) & r.userId.equals(activeUserId),
+            ))
+            .getSingle();
+    final uncomfortable = row.uncomfortableExerciseId == null
+        ? null
+        : await _requireRemoteUuid(
+            RemoteIdMappingKind.exercise,
+            row.uncomfortableExerciseId!,
+          );
+    return [
+      OutboxEnvelope(
+        kind: WireOperationKind.feedbackUpsert,
+        entityType: 'session_feedback',
+        entityId: id,
+        sequence: 0,
+        payload: <String, Object?>{
+          'session_id': id,
+          'rating': row.rating,
+          'uncomfortable_exercise_id': ?uncomfortable,
+          'created_at': _iso(row.createdAt),
+        },
+      ),
+    ];
+  }
+
+  Future<List<OutboxEnvelope>> _buildSavedRoutine(String routineId) async {
+    final row =
+        await (_database.select(_database.localSavedRoutines)..where(
+              (r) =>
+                  r.userId.equals(activeUserId) & r.routineId.equals(routineId),
+            ))
+            .getSingle();
+    final remoteRoutineId = await _requireRemoteUuid(
+      RemoteIdMappingKind.routine,
+      routineId,
+    );
+    return [
+      OutboxEnvelope(
+        kind: WireOperationKind.savedRoutineSet,
+        entityType: 'saved_routine',
+        entityId: routineId,
+        sequence: 0,
+        payload: <String, Object?>{
+          'routine_id': remoteRoutineId,
+          'saved': row.deletedAt == null,
+          'operation_at': _iso(row.localUpdatedAt),
+        },
+      ),
+    ];
+  }
+
+  static String _iso(DateTime value) => value.toUtc().toIso8601String();
+
+  static List<String> _decodeStringList(String source) {
+    final decoded = jsonDecode(source);
+    if (decoded is! List) return const [];
+    return decoded.whereType<String>().toList();
+  }
 }
 
 /// Local-first private writes. One instance is bound to exactly one active user.
@@ -743,10 +1154,23 @@ class LocalUserDataRepository {
     this._database, {
     required this.activeUserId,
     DateTime Function()? clock,
-  }) : _clock = clock ?? _unsupportedClock;
+    String Function()? operationIdGenerator,
+    this.appVersion = '1.0.0',
+  }) : _clock = clock ?? _unsupportedClock,
+       _operationIdGenerator = operationIdGenerator ?? generateUuidV4,
+       _builder = WireOperationBuilder(
+         _database,
+         activeUserId: activeUserId,
+         appVersion: appVersion,
+       );
+
   final AppDatabase _database;
   final String activeUserId;
   final DateTime Function() _clock;
+  final String Function() _operationIdGenerator;
+  final String appVersion;
+  final WireOperationBuilder _builder;
+
   static DateTime _unsupportedClock() => throw StateError('Inject a UTC clock');
 
   Future<void> saveCheckIn({
@@ -783,10 +1207,7 @@ class LocalUserDataRepository {
           ),
       ]),
     );
-    final row = await (_database.select(
-      _database.localCheckIns,
-    )..where((r) => r.id.equals(checkIn.id.value))).getSingle();
-    await _enqueue(CheckInSyncPayload(row, bodyAreaKeys.toList()));
+    await _enqueueBuilt('check_in', checkIn.id.value);
   });
 
   Future<void> saveSavedRoutine({
@@ -816,14 +1237,7 @@ class LocalUserDataRepository {
     await _database
         .into(_database.localSavedRoutines)
         .insertOnConflictUpdate(prepared);
-    final row =
-        await (_database.select(_database.localSavedRoutines)..where(
-              (r) =>
-                  r.userId.equals(activeUserId) &
-                  r.routineId.equals(savedRoutine.routineId.value),
-            ))
-            .getSingle();
-    await _enqueue(SavedRoutineSyncPayload(row));
+    await _enqueueBuilt('saved_routine', savedRoutine.routineId.value);
   });
 
   Future<void> saveSessionWithSteps({
@@ -973,13 +1387,7 @@ class LocalUserDataRepository {
             .toList(),
       ),
     );
-    final row = await (_database.select(
-      _database.localRoutineSessions,
-    )..where((r) => r.id.equals(session.id.value))).getSingle();
-    final rows = await (_database.select(
-      _database.localSessionSteps,
-    )..where((r) => r.sessionId.equals(session.id.value))).get();
-    await _enqueue(SessionSyncPayload(row, rows));
+    await _enqueueBuilt('routine_session', session.id.value);
   });
 
   Future<void> savePreferences({
@@ -996,18 +1404,8 @@ class LocalUserDataRepository {
             lastSyncError: const Value(null),
           ),
         );
-    final row = await (_database.select(
-      _database.localUserPreferences,
-    )..where((r) => r.userId.equals(activeUserId))).getSingle();
-    await _enqueue(
-      RowSyncPayload('user_preferences', row.userId, {
-        'userId': row.userId,
-        'experienceLevel': row.experienceLevel,
-        'soundEnabled': row.soundEnabled,
-        'vibrationEnabled': row.vibrationEnabled,
-        'downloadOnWifiOnly': row.downloadOnWifiOnly,
-      }),
-    );
+    // Preferences have no RAHA-025 wire contract yet; they remain local-first
+    // until their owning task defines the push/pull shape.
   });
 
   Future<void> saveRecommendation({
@@ -1042,18 +1440,7 @@ class LocalUserDataRepository {
             lastSyncError: const Value(null),
           ),
         );
-    final row = await (_database.select(
-      _database.localRecommendations,
-    )..where((r) => r.id.equals(recommendation.id.value))).getSingle();
-    await _enqueue(
-      RowSyncPayload('recommendation', row.id, {
-        'id': row.id,
-        'checkInId': row.checkInId,
-        'routineId': row.routineId,
-        'engineVersion': row.engineVersion,
-        'reasonCodes': row.reasonCodesJson,
-      }),
-    );
+    await _enqueueBuilt('recommendation', recommendation.id.value);
   });
 
   Future<void> saveFeedback({
@@ -1080,16 +1467,7 @@ class LocalUserDataRepository {
             lastSyncError: const Value(null),
           ),
         );
-    final row = await (_database.select(
-      _database.localSessionFeedback,
-    )..where((r) => r.sessionId.equals(feedback.sessionId.value))).getSingle();
-    await _enqueue(
-      RowSyncPayload('session_feedback', row.sessionId, {
-        'sessionId': row.sessionId,
-        'rating': row.rating,
-        'uncomfortableExerciseId': row.uncomfortableExerciseId,
-      }),
-    );
+    await _enqueueBuilt('session_feedback', feedback.sessionId.value);
   });
 
   Future<void> saveReminder({
@@ -1114,18 +1492,8 @@ class LocalUserDataRepository {
             lastSyncError: const Value(null),
           ),
         );
-    final row = await (_database.select(
-      _database.localReminderSchedules,
-    )..where((r) => r.id.equals(reminder.id.value))).getSingle();
-    await _enqueue(
-      RowSyncPayload('reminder_schedule', row.id, {
-        'id': row.id,
-        'localTime': row.localTime,
-        'daysOfWeek': row.daysOfWeekJson,
-        'timezone': row.timezone,
-        'enabled': row.enabled,
-      }),
-    );
+    // Reminders have no RAHA-025 wire contract yet; they remain local-first
+    // until their owning task defines the push/pull shape.
   });
 
   Future<List<SyncOutboxData>> dueOutbox() =>
@@ -1133,6 +1501,7 @@ class LocalUserDataRepository {
             ..where(
               (r) =>
                   r.ownerUserId.equals(activeUserId) &
+                  r.status.equalsValue(OutboxStatus.pending) &
                   r.nextAttemptAt.isSmallerOrEqualValue(_now()),
             )
             ..orderBy([(r) => OrderingTerm.asc(r.nextAttemptAt)]))
@@ -1176,6 +1545,9 @@ class LocalUserDataRepository {
     )..where((r) => r.userId.equals(activeUserId))).go();
     await (_database.delete(
       _database.localProgressProjections,
+    )..where((r) => r.userId.equals(activeUserId))).go();
+    await (_database.delete(
+      _database.localSyncState,
     )..where((r) => r.userId.equals(activeUserId))).go();
     await (_database.delete(
       _database.localProfiles,
@@ -1246,10 +1618,7 @@ class LocalUserDataRepository {
             lastSyncError: const Value(null),
           ),
         );
-        final row = await (_database.select(
-          _database.localRoutineSessions,
-        )..where((r) => r.id.equals(session.id))).getSingle();
-        await _enqueue(SessionSyncPayload(row, steps));
+        await _enqueueBuilt('routine_session', session.id);
       }
     }
   });
@@ -1317,27 +1686,255 @@ class LocalUserDataRepository {
     if (owner != activeUserId) throw StateError('Cross-account write rejected');
   }
 
-  Future<void> _enqueue(SyncPayload payload) async {
+  /// Builds the wire operations for one locally editable entity and replaces
+  /// its pending outbox rows. When a required remote id cannot be resolved the
+  /// write is parked (retained, never deleted) for explicit manual retry.
+  Future<void> _enqueueBuilt(String entityType, String entityId) async {
+    final List<OutboxEnvelope> envelopes;
+    try {
+      envelopes = await _builder.buildFor(entityType, entityId);
+    } on UnmappedRemoteIdException {
+      await _parkUnmapped(entityType, entityId);
+      return;
+    }
+    await _replaceOutbox(envelopes);
+  }
+
+  Future<void> _replaceOutbox(List<OutboxEnvelope> envelopes) async {
+    final now = _now();
+    final keys = envelopes
+        .map((envelope) => (envelope.entityType, envelope.entityId))
+        .toSet();
+    for (final (entityType, entityId) in keys) {
+      await (_database.delete(_database.syncOutbox)..where(
+            (r) =>
+                r.ownerUserId.equals(activeUserId) &
+                r.entityType.equals(entityType) &
+                r.entityId.equals(entityId),
+          ))
+          .go();
+    }
+    await _database.batch(
+      (b) => b.insertAll(_database.syncOutbox, [
+        for (final envelope in envelopes)
+          SyncOutboxCompanion.insert(
+            operationId: _operationIdGenerator(),
+            kind: envelope.kind,
+            entityType: envelope.entityType,
+            entityId: envelope.entityId,
+            ownerUserId: activeUserId,
+            payloadJson: jsonEncode(envelope.payload),
+            sequence: Value(envelope.sequence),
+            nextAttemptAt: now,
+            status: const Value(OutboxStatus.pending),
+            createdAt: now,
+          ),
+      ]),
+    );
+  }
+
+  Future<void> _parkUnmapped(String entityType, String entityId) async {
     final now = _now();
     await (_database.delete(_database.syncOutbox)..where(
           (r) =>
               r.ownerUserId.equals(activeUserId) &
-              r.entityType.equals(payload.entityType) &
-              r.entityId.equals(payload.entityId),
+              r.entityType.equals(entityType) &
+              r.entityId.equals(entityId),
         ))
         .go();
     await _database
         .into(_database.syncOutbox)
         .insert(
           SyncOutboxCompanion.insert(
-            entityType: payload.entityType,
-            entityId: payload.entityId,
+            operationId: _operationIdGenerator(),
+            kind: _defaultKindFor(entityType),
+            entityType: entityType,
+            entityId: entityId,
             ownerUserId: activeUserId,
-            operation: payload.operation,
-            payloadJson: jsonEncode(payload.toJson()),
+            payloadJson: '{}',
+            sequence: const Value(0),
             nextAttemptAt: now,
+            status: const Value(OutboxStatus.rejected),
             createdAt: now,
           ),
         );
+    await _markDomainFailed(
+      entityType,
+      entityId,
+      SyncDiagnosticCode.unmappedId,
+    );
+  }
+
+  static String _defaultKindFor(String entityType) => switch (entityType) {
+    'check_in' => WireOperationKind.checkInUpsert,
+    'recommendation' => WireOperationKind.recommendationUpsert,
+    'routine_session' => WireOperationKind.sessionStart,
+    'session_feedback' => WireOperationKind.feedbackUpsert,
+    'saved_routine' => WireOperationKind.savedRoutineSet,
+    _ => 'unsupported_$entityType',
+  };
+
+  /// Rebuilds a parked operation from its durable domain rows (re-resolving
+  /// remote ids now that the mapping may have arrived) and re-enqueues it as
+  /// `pending`. Keeps its `operation_id` stable. Returns false (and keeps the
+  /// operation parked) when the payload is still impossible.
+  Future<bool> rebuildOutboxOperation(
+    String entityType,
+    String entityId,
+  ) async {
+    return _database.transaction(() async {
+      final parked =
+          await (_database.select(_database.syncOutbox)..where(
+                (r) =>
+                    r.ownerUserId.equals(activeUserId) &
+                    r.status.equalsValue(OutboxStatus.rejected) &
+                    r.entityType.equals(entityType) &
+                    r.entityId.equals(entityId),
+              ))
+              .get();
+      if (parked.isEmpty) return false;
+      final operationIds = parked.map((row) => row.operationId).toList();
+      final List<OutboxEnvelope> envelopes;
+      try {
+        envelopes = await _builder.buildFor(entityType, entityId);
+      } on UnmappedRemoteIdException {
+        return false; // still impossible; remain parked for a later retry.
+      }
+      final now = _now();
+      await (_database.delete(_database.syncOutbox)..where(
+            (r) =>
+                r.ownerUserId.equals(activeUserId) &
+                r.entityType.equals(entityType) &
+                r.entityId.equals(entityId),
+          ))
+          .go();
+      await _database.batch(
+        (b) => b.insertAll(_database.syncOutbox, [
+          for (var i = 0; i < envelopes.length; i++)
+            SyncOutboxCompanion.insert(
+              // Reuse a stable existing id when present so a partial server
+              // application is never double-counted.
+              operationId: i < operationIds.length
+                  ? operationIds[i]
+                  : _operationIdGenerator(),
+              kind: envelopes[i].kind,
+              entityType: envelopes[i].entityType,
+              entityId: envelopes[i].entityId,
+              ownerUserId: activeUserId,
+              payloadJson: jsonEncode(envelopes[i].payload),
+              sequence: Value(envelopes[i].sequence),
+              nextAttemptAt: now,
+              status: const Value(OutboxStatus.pending),
+              createdAt: now,
+            ),
+        ]),
+      );
+      return true;
+    });
+  }
+
+  Future<List<SyncOutboxData>> parkedOutbox() =>
+      (_database.select(_database.syncOutbox)
+            ..where(
+              (r) =>
+                  r.ownerUserId.equals(activeUserId) &
+                  r.status.equalsValue(OutboxStatus.rejected),
+            )
+            ..orderBy([(r) => OrderingTerm.asc(r.createdAt)]))
+          .get();
+
+  Future<int> pullCursor() async {
+    final row = await (_database.select(
+      _database.localSyncState,
+    )..where((r) => r.userId.equals(activeUserId))).getSingleOrNull();
+    return row?.pullCursor ?? 0;
+  }
+
+  Future<void> storePullCursor(int cursor) {
+    return _database
+        .into(_database.localSyncState)
+        .insertOnConflictUpdate(
+          LocalSyncStateCompanion.insert(
+            userId: activeUserId,
+            pullCursor: Value(cursor),
+          ),
+        );
+  }
+
+  /// Reverse-resolves a backend UUID to the stable local public id/key, if one
+  /// is known. Used when reconciling server-authored pull changes.
+  Future<String?> localIdForRemote(String kind, String remoteId) async {
+    final row =
+        await (_database.select(_database.localIdMappings)
+              ..where((r) => r.kind.equals(kind) & r.remoteId.equals(remoteId)))
+            .getSingleOrNull();
+    return row?.localId;
+  }
+
+  Future<void> _markDomainFailed(
+    String entityType,
+    String entityId,
+    SyncDiagnosticCode code,
+  ) async {
+    final error = Value<SyncDiagnosticCode?>(code);
+    switch (entityType) {
+      case 'check_in':
+        await (_database.update(
+          _database.localCheckIns,
+        )..where((r) => r.id.equals(entityId))).write(
+          LocalCheckInsCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
+      case 'recommendation':
+        await (_database.update(
+          _database.localRecommendations,
+        )..where((r) => r.id.equals(entityId))).write(
+          LocalRecommendationsCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
+      case 'routine_session':
+        await (_database.update(
+          _database.localRoutineSessions,
+        )..where((r) => r.id.equals(entityId))).write(
+          LocalRoutineSessionsCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
+        await (_database.update(
+          _database.localSessionSteps,
+        )..where((r) => r.sessionId.equals(entityId))).write(
+          LocalSessionStepsCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
+      case 'session_feedback':
+        await (_database.update(
+          _database.localSessionFeedback,
+        )..where((r) => r.sessionId.equals(entityId))).write(
+          LocalSessionFeedbackCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
+      case 'saved_routine':
+        await (_database.update(_database.localSavedRoutines)..where(
+              (r) =>
+                  r.userId.equals(activeUserId) & r.routineId.equals(entityId),
+            ))
+            .write(
+              LocalSavedRoutinesCompanion(
+                syncState: const Value(SyncState.failed),
+                lastSyncError: error,
+              ),
+            );
+      default:
+        break;
+    }
   }
 }

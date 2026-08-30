@@ -83,13 +83,15 @@ void main() {
       expect(checkIn.syncState, SyncState.pendingCreate);
       expect(areas.single.bodyAreaKey, 'shoulders');
       expect(outbox.entityId, 'check-in-1');
+      expect(outbox.kind, 'check_in_upsert');
+      expect(outbox.operationId, isNotEmpty);
       expect(jsonDecode(outbox.payloadJson), {
-        'v': 1,
         'id': 'check-in-1',
-        'bodyState': 'stiff',
-        'goalKey': 'ease_stiffness',
-        'availableMinutes': 5,
-        'bodyAreaKeys': ['shoulders'],
+        'body_state': 'stiff',
+        'goal_id': '00000000-0000-4000-8000-000000000103',
+        'available_minutes': 5,
+        'started_at': now.toIso8601String(),
+        'body_area_ids': ['00000000-0000-4000-8000-000000000104'],
       });
     },
   );
@@ -221,8 +223,12 @@ void main() {
     );
     final outbox = await repository.dueOutbox();
     expect(outbox, hasLength(1));
-    expect(outbox.single.operation, OutboxOperation.delete);
+    expect(outbox.single.kind, 'saved_routine_set');
     expect(outbox.single.ownerUserId, 'user-1');
+    final payload =
+        jsonDecode(outbox.single.payloadJson) as Map<String, dynamic>;
+    expect(payload['saved'], isFalse);
+    expect(payload['routine_id'], '00000000-0000-4000-8000-000000000101');
   });
 
   test(
@@ -376,16 +382,22 @@ void main() {
     expect(step.activeDurationSeconds, 48);
     expect(step.status, 'partial');
     expect(outbox.payloadJson, contains('v2-session'));
+    // v5 migration parks legacy outbox rows with a stable operation id and a
+    // best-effort kind rather than deleting them.
+    expect(outbox.operationId, matches(RegExp(r'^[0-9a-f-]{36}$')));
+    expect(outbox.kind, 'session_start');
+    expect(outbox.status, OutboxStatus.rejected);
 
     await migrated
         .into(migrated.syncOutbox)
         .insert(
           SyncOutboxCompanion.insert(
+            operationId: '00000000-0000-4000-8000-000000000201',
+            kind: 'session_start',
             entityType: 'routine_session',
             entityId: 'v3-write',
             ownerUserId: 'user-1',
-            operation: OutboxOperation.upsert,
-            payloadJson: '{"v":1}',
+            payloadJson: '{"id":"v3-write"}',
             nextAttemptAt: now,
             createdAt: now,
           ),
@@ -419,10 +431,17 @@ void main() {
           localUpdatedAt: now,
         ),
       );
-      expect(
-        (await repository.dueOutbox()).map((row) => row.entityType),
-        containsAll(['user_preferences', 'reminder_schedule']),
-      );
+      // No RAHA-025 wire contract exists for preferences/reminders yet, so they
+      // persist locally without an outbox operation.
+      final preferences = await (database.select(
+        database.localUserPreferences,
+      )..where((r) => r.userId.equals('user-1'))).getSingle();
+      final reminder = await (database.select(
+        database.localReminderSchedules,
+      )..where((r) => r.id.equals('reminder-1'))).getSingle();
+      expect(preferences.syncState, SyncState.pendingUpdate);
+      expect(reminder.syncState, SyncState.pendingCreate);
+      expect(await repository.dueOutbox(), isEmpty);
       await expectLater(
         repository.saveReminder(
           reminder: LocalReminderSchedulesCompanion.insert(
@@ -688,7 +707,7 @@ void main() {
     final steps = [_sessionStep('partial', 48, now)];
     await repository.saveSessionWithSteps(session: session, steps: steps);
     await repository.saveSessionWithSteps(session: session, steps: steps);
-    expect(await repository.dueOutbox(), hasLength(1));
+    expect(await repository.dueOutbox(), hasLength(3));
     await expectLater(
       repository.saveSessionWithSteps(
         session: session,
@@ -738,7 +757,7 @@ void main() {
       )..where((row) => row.id.equals('expired'))).getSingle();
       expect(expired.status, 'abandoned');
       await repository.expireInactiveSessions();
-      expect(await repository.dueOutbox(), hasLength(1));
+      expect(await repository.dueOutbox(), hasLength(3));
     },
   );
 }
@@ -816,6 +835,27 @@ Future<void> _seedCatalog(AppDatabase database, DateTime now) async {
           localUpdatedAt: now,
         ),
       );
+  final mappingStore = LocalIdMappingStore(database);
+  await mappingStore.store(
+    kind: RemoteIdMappingKind.routine,
+    localId: 'routine-1',
+    remoteId: '00000000-0000-4000-8000-000000000101',
+  );
+  await mappingStore.store(
+    kind: RemoteIdMappingKind.exercise,
+    localId: 'exercise-1',
+    remoteId: '00000000-0000-4000-8000-000000000102',
+  );
+  await mappingStore.store(
+    kind: RemoteIdMappingKind.taxonomy,
+    localId: 'ease_stiffness',
+    remoteId: '00000000-0000-4000-8000-000000000103',
+  );
+  await mappingStore.store(
+    kind: RemoteIdMappingKind.taxonomy,
+    localId: 'shoulders',
+    remoteId: '00000000-0000-4000-8000-000000000104',
+  );
 }
 
 Future<void> _seedSecondUser(AppDatabase database, DateTime now) => database
