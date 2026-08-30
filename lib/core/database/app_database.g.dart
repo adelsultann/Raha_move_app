@@ -6412,6 +6412,33 @@ class $LocalUserPreferencesTable extends LocalUserPreferences
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _reminderInterestMeta = const VerificationMeta(
+    'reminderInterest',
+  );
+  @override
+  late final GeneratedColumn<bool> reminderInterest = GeneratedColumn<bool>(
+    'reminder_interest',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("reminder_interest" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _preferredPositionsJsonMeta =
+      const VerificationMeta('preferredPositionsJson');
+  @override
+  late final GeneratedColumn<String> preferredPositionsJson =
+      GeneratedColumn<String>(
+        'preferred_positions_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
   @override
   List<GeneratedColumn> get $columns => [
     syncState,
@@ -6423,6 +6450,8 @@ class $LocalUserPreferencesTable extends LocalUserPreferences
     soundEnabled,
     vibrationEnabled,
     downloadOnWifiOnly,
+    reminderInterest,
+    preferredPositionsJson,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6502,6 +6531,24 @@ class $LocalUserPreferencesTable extends LocalUserPreferences
         ),
       );
     }
+    if (data.containsKey('reminder_interest')) {
+      context.handle(
+        _reminderInterestMeta,
+        reminderInterest.isAcceptableOrUnknown(
+          data['reminder_interest']!,
+          _reminderInterestMeta,
+        ),
+      );
+    }
+    if (data.containsKey('preferred_positions_json')) {
+      context.handle(
+        _preferredPositionsJsonMeta,
+        preferredPositionsJson.isAcceptableOrUnknown(
+          data['preferred_positions_json']!,
+          _preferredPositionsJsonMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -6552,6 +6599,14 @@ class $LocalUserPreferencesTable extends LocalUserPreferences
         DriftSqlType.bool,
         data['${effectivePrefix}download_on_wifi_only'],
       )!,
+      reminderInterest: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}reminder_interest'],
+      )!,
+      preferredPositionsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}preferred_positions_json'],
+      )!,
     );
   }
 
@@ -6585,6 +6640,17 @@ class LocalUserPreference extends DataClass
   final bool soundEnabled;
   final bool vibrationEnabled;
   final bool downloadOnWifiOnly;
+
+  /// Whether the user asked for gentle reminders at setup. The concrete
+  /// reminder schedule is owned by RAHA-065; this is interest only.
+  final bool reminderInterest;
+
+  /// Stable, language-neutral position keys (`seated`, `standing`, `floor`) the
+  /// user is comfortable with. An empty JSON list means "any position". Stored
+  /// on the preferences row (not `local_preferred_positions`) because the
+  /// position taxonomy may not be seeded at first-run setup; see the RAHA-032
+  /// decision note.
+  final String preferredPositionsJson;
   const LocalUserPreference({
     required this.syncState,
     required this.localUpdatedAt,
@@ -6595,6 +6661,8 @@ class LocalUserPreference extends DataClass
     required this.soundEnabled,
     required this.vibrationEnabled,
     required this.downloadOnWifiOnly,
+    required this.reminderInterest,
+    required this.preferredPositionsJson,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6620,6 +6688,8 @@ class LocalUserPreference extends DataClass
     map['sound_enabled'] = Variable<bool>(soundEnabled);
     map['vibration_enabled'] = Variable<bool>(vibrationEnabled);
     map['download_on_wifi_only'] = Variable<bool>(downloadOnWifiOnly);
+    map['reminder_interest'] = Variable<bool>(reminderInterest);
+    map['preferred_positions_json'] = Variable<String>(preferredPositionsJson);
     return map;
   }
 
@@ -6638,6 +6708,8 @@ class LocalUserPreference extends DataClass
       soundEnabled: Value(soundEnabled),
       vibrationEnabled: Value(vibrationEnabled),
       downloadOnWifiOnly: Value(downloadOnWifiOnly),
+      reminderInterest: Value(reminderInterest),
+      preferredPositionsJson: Value(preferredPositionsJson),
     );
   }
 
@@ -6659,6 +6731,10 @@ class LocalUserPreference extends DataClass
       soundEnabled: serializer.fromJson<bool>(json['soundEnabled']),
       vibrationEnabled: serializer.fromJson<bool>(json['vibrationEnabled']),
       downloadOnWifiOnly: serializer.fromJson<bool>(json['downloadOnWifiOnly']),
+      reminderInterest: serializer.fromJson<bool>(json['reminderInterest']),
+      preferredPositionsJson: serializer.fromJson<String>(
+        json['preferredPositionsJson'],
+      ),
     );
   }
   @override
@@ -6680,6 +6756,10 @@ class LocalUserPreference extends DataClass
       'soundEnabled': serializer.toJson<bool>(soundEnabled),
       'vibrationEnabled': serializer.toJson<bool>(vibrationEnabled),
       'downloadOnWifiOnly': serializer.toJson<bool>(downloadOnWifiOnly),
+      'reminderInterest': serializer.toJson<bool>(reminderInterest),
+      'preferredPositionsJson': serializer.toJson<String>(
+        preferredPositionsJson,
+      ),
     };
   }
 
@@ -6693,6 +6773,8 @@ class LocalUserPreference extends DataClass
     bool? soundEnabled,
     bool? vibrationEnabled,
     bool? downloadOnWifiOnly,
+    bool? reminderInterest,
+    String? preferredPositionsJson,
   }) => LocalUserPreference(
     syncState: syncState ?? this.syncState,
     localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
@@ -6707,6 +6789,9 @@ class LocalUserPreference extends DataClass
     soundEnabled: soundEnabled ?? this.soundEnabled,
     vibrationEnabled: vibrationEnabled ?? this.vibrationEnabled,
     downloadOnWifiOnly: downloadOnWifiOnly ?? this.downloadOnWifiOnly,
+    reminderInterest: reminderInterest ?? this.reminderInterest,
+    preferredPositionsJson:
+        preferredPositionsJson ?? this.preferredPositionsJson,
   );
   LocalUserPreference copyWithCompanion(LocalUserPreferencesCompanion data) {
     return LocalUserPreference(
@@ -6733,6 +6818,12 @@ class LocalUserPreference extends DataClass
       downloadOnWifiOnly: data.downloadOnWifiOnly.present
           ? data.downloadOnWifiOnly.value
           : this.downloadOnWifiOnly,
+      reminderInterest: data.reminderInterest.present
+          ? data.reminderInterest.value
+          : this.reminderInterest,
+      preferredPositionsJson: data.preferredPositionsJson.present
+          ? data.preferredPositionsJson.value
+          : this.preferredPositionsJson,
     );
   }
 
@@ -6747,7 +6838,9 @@ class LocalUserPreference extends DataClass
           ..write('experienceLevel: $experienceLevel, ')
           ..write('soundEnabled: $soundEnabled, ')
           ..write('vibrationEnabled: $vibrationEnabled, ')
-          ..write('downloadOnWifiOnly: $downloadOnWifiOnly')
+          ..write('downloadOnWifiOnly: $downloadOnWifiOnly, ')
+          ..write('reminderInterest: $reminderInterest, ')
+          ..write('preferredPositionsJson: $preferredPositionsJson')
           ..write(')'))
         .toString();
   }
@@ -6763,6 +6856,8 @@ class LocalUserPreference extends DataClass
     soundEnabled,
     vibrationEnabled,
     downloadOnWifiOnly,
+    reminderInterest,
+    preferredPositionsJson,
   );
   @override
   bool operator ==(Object other) =>
@@ -6776,7 +6871,9 @@ class LocalUserPreference extends DataClass
           other.experienceLevel == this.experienceLevel &&
           other.soundEnabled == this.soundEnabled &&
           other.vibrationEnabled == this.vibrationEnabled &&
-          other.downloadOnWifiOnly == this.downloadOnWifiOnly);
+          other.downloadOnWifiOnly == this.downloadOnWifiOnly &&
+          other.reminderInterest == this.reminderInterest &&
+          other.preferredPositionsJson == this.preferredPositionsJson);
 }
 
 class LocalUserPreferencesCompanion
@@ -6790,6 +6887,8 @@ class LocalUserPreferencesCompanion
   final Value<bool> soundEnabled;
   final Value<bool> vibrationEnabled;
   final Value<bool> downloadOnWifiOnly;
+  final Value<bool> reminderInterest;
+  final Value<String> preferredPositionsJson;
   final Value<int> rowid;
   const LocalUserPreferencesCompanion({
     this.syncState = const Value.absent(),
@@ -6801,6 +6900,8 @@ class LocalUserPreferencesCompanion
     this.soundEnabled = const Value.absent(),
     this.vibrationEnabled = const Value.absent(),
     this.downloadOnWifiOnly = const Value.absent(),
+    this.reminderInterest = const Value.absent(),
+    this.preferredPositionsJson = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalUserPreferencesCompanion.insert({
@@ -6813,6 +6914,8 @@ class LocalUserPreferencesCompanion
     this.soundEnabled = const Value.absent(),
     this.vibrationEnabled = const Value.absent(),
     this.downloadOnWifiOnly = const Value.absent(),
+    this.reminderInterest = const Value.absent(),
+    this.preferredPositionsJson = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : localUpdatedAt = Value(localUpdatedAt),
        userId = Value(userId),
@@ -6827,6 +6930,8 @@ class LocalUserPreferencesCompanion
     Expression<bool>? soundEnabled,
     Expression<bool>? vibrationEnabled,
     Expression<bool>? downloadOnWifiOnly,
+    Expression<bool>? reminderInterest,
+    Expression<String>? preferredPositionsJson,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -6840,6 +6945,9 @@ class LocalUserPreferencesCompanion
       if (vibrationEnabled != null) 'vibration_enabled': vibrationEnabled,
       if (downloadOnWifiOnly != null)
         'download_on_wifi_only': downloadOnWifiOnly,
+      if (reminderInterest != null) 'reminder_interest': reminderInterest,
+      if (preferredPositionsJson != null)
+        'preferred_positions_json': preferredPositionsJson,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -6854,6 +6962,8 @@ class LocalUserPreferencesCompanion
     Value<bool>? soundEnabled,
     Value<bool>? vibrationEnabled,
     Value<bool>? downloadOnWifiOnly,
+    Value<bool>? reminderInterest,
+    Value<String>? preferredPositionsJson,
     Value<int>? rowid,
   }) {
     return LocalUserPreferencesCompanion(
@@ -6866,6 +6976,9 @@ class LocalUserPreferencesCompanion
       soundEnabled: soundEnabled ?? this.soundEnabled,
       vibrationEnabled: vibrationEnabled ?? this.vibrationEnabled,
       downloadOnWifiOnly: downloadOnWifiOnly ?? this.downloadOnWifiOnly,
+      reminderInterest: reminderInterest ?? this.reminderInterest,
+      preferredPositionsJson:
+          preferredPositionsJson ?? this.preferredPositionsJson,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -6906,6 +7019,14 @@ class LocalUserPreferencesCompanion
     if (downloadOnWifiOnly.present) {
       map['download_on_wifi_only'] = Variable<bool>(downloadOnWifiOnly.value);
     }
+    if (reminderInterest.present) {
+      map['reminder_interest'] = Variable<bool>(reminderInterest.value);
+    }
+    if (preferredPositionsJson.present) {
+      map['preferred_positions_json'] = Variable<String>(
+        preferredPositionsJson.value,
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -6924,6 +7045,8 @@ class LocalUserPreferencesCompanion
           ..write('soundEnabled: $soundEnabled, ')
           ..write('vibrationEnabled: $vibrationEnabled, ')
           ..write('downloadOnWifiOnly: $downloadOnWifiOnly, ')
+          ..write('reminderInterest: $reminderInterest, ')
+          ..write('preferredPositionsJson: $preferredPositionsJson, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -22997,6 +23120,8 @@ typedef $$LocalUserPreferencesTableCreateCompanionBuilder =
       Value<bool> soundEnabled,
       Value<bool> vibrationEnabled,
       Value<bool> downloadOnWifiOnly,
+      Value<bool> reminderInterest,
+      Value<String> preferredPositionsJson,
       Value<int> rowid,
     });
 typedef $$LocalUserPreferencesTableUpdateCompanionBuilder =
@@ -23010,6 +23135,8 @@ typedef $$LocalUserPreferencesTableUpdateCompanionBuilder =
       Value<bool> soundEnabled,
       Value<bool> vibrationEnabled,
       Value<bool> downloadOnWifiOnly,
+      Value<bool> reminderInterest,
+      Value<String> preferredPositionsJson,
       Value<int> rowid,
     });
 
@@ -23099,6 +23226,16 @@ class $$LocalUserPreferencesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get reminderInterest => $composableBuilder(
+    column: $table.reminderInterest,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get preferredPositionsJson => $composableBuilder(
+    column: $table.preferredPositionsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LocalProfilesTableFilterComposer get userId {
     final $$LocalProfilesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -23169,6 +23306,16 @@ class $$LocalUserPreferencesTableOrderingComposer
 
   ColumnOrderings<bool> get downloadOnWifiOnly => $composableBuilder(
     column: $table.downloadOnWifiOnly,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get reminderInterest => $composableBuilder(
+    column: $table.reminderInterest,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get preferredPositionsJson => $composableBuilder(
+    column: $table.preferredPositionsJson,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23244,6 +23391,16 @@ class $$LocalUserPreferencesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<bool> get reminderInterest => $composableBuilder(
+    column: $table.reminderInterest,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get preferredPositionsJson => $composableBuilder(
+    column: $table.preferredPositionsJson,
+    builder: (column) => column,
+  );
+
   $$LocalProfilesTableAnnotationComposer get userId {
     final $$LocalProfilesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -23313,6 +23470,8 @@ class $$LocalUserPreferencesTableTableManager
                 Value<bool> soundEnabled = const Value.absent(),
                 Value<bool> vibrationEnabled = const Value.absent(),
                 Value<bool> downloadOnWifiOnly = const Value.absent(),
+                Value<bool> reminderInterest = const Value.absent(),
+                Value<String> preferredPositionsJson = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalUserPreferencesCompanion(
                 syncState: syncState,
@@ -23324,6 +23483,8 @@ class $$LocalUserPreferencesTableTableManager
                 soundEnabled: soundEnabled,
                 vibrationEnabled: vibrationEnabled,
                 downloadOnWifiOnly: downloadOnWifiOnly,
+                reminderInterest: reminderInterest,
+                preferredPositionsJson: preferredPositionsJson,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -23337,6 +23498,8 @@ class $$LocalUserPreferencesTableTableManager
                 Value<bool> soundEnabled = const Value.absent(),
                 Value<bool> vibrationEnabled = const Value.absent(),
                 Value<bool> downloadOnWifiOnly = const Value.absent(),
+                Value<bool> reminderInterest = const Value.absent(),
+                Value<String> preferredPositionsJson = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalUserPreferencesCompanion.insert(
                 syncState: syncState,
@@ -23348,6 +23511,8 @@ class $$LocalUserPreferencesTableTableManager
                 soundEnabled: soundEnabled,
                 vibrationEnabled: vibrationEnabled,
                 downloadOnWifiOnly: downloadOnWifiOnly,
+                reminderInterest: reminderInterest,
+                preferredPositionsJson: preferredPositionsJson,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

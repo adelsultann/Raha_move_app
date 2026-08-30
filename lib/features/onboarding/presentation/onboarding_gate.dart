@@ -5,6 +5,7 @@ import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 
 import '../application/locale_controller.dart';
 import '../application/onboarding_controller.dart';
+import '../../preferences/presentation/preferences_screen.dart';
 import 'language_selection_screen.dart';
 import 'onboarding_screen.dart';
 
@@ -69,21 +70,28 @@ class _OnboardingFlow extends ConsumerStatefulWidget {
 }
 
 class _OnboardingFlowState extends ConsumerState<_OnboardingFlow> {
-  bool _languageChosen = false;
+  _OnboardingStage _stage = _OnboardingStage.language;
 
   @override
   Widget build(BuildContext context) {
-    if (!_languageChosen) {
-      return LanguageSelectionScreen(
-        onLanguageSelected: () => setState(() => _languageChosen = true),
-      );
-    }
-    return OnboardingScreen(
-      onFinish: () =>
-          ref.read(onboardingControllerProvider.notifier).complete(),
-    );
+    return switch (_stage) {
+      _OnboardingStage.language => LanguageSelectionScreen(
+        onLanguageSelected: () =>
+            setState(() => _stage = _OnboardingStage.intro),
+      ),
+      _OnboardingStage.intro => OnboardingScreen(
+        onFinish: () => setState(() => _stage = _OnboardingStage.preferences),
+      ),
+      _OnboardingStage.preferences => PreferencesScreen(
+        onBack: () => setState(() => _stage = _OnboardingStage.intro),
+        onComplete: () =>
+            ref.read(onboardingControllerProvider.notifier).complete(),
+      ),
+    };
   }
 }
+
+enum _OnboardingStage { language, intro, preferences }
 
 class _OnboardingLoading extends StatelessWidget {
   const _OnboardingLoading();

@@ -154,4 +154,76 @@ class AppLocalizationsEn extends AppLocalizations {
   String onboardingPageIndicator(int current, int total) {
     return 'Page $current of $total';
   }
+
+  @override
+  String get preferencesBack => 'Back';
+
+  @override
+  String get preferencesTitle => 'A few quick preferences';
+
+  @override
+  String get preferencesSubtitle =>
+      'This helps us choose routines that suit you. You can change these anytime.';
+
+  @override
+  String get preferencesExperienceLabel =>
+      'How familiar are you with movement?';
+
+  @override
+  String get preferencesRequired => 'Required';
+
+  @override
+  String get preferencesExperienceBeginner => 'New to movement';
+
+  @override
+  String get preferencesExperienceIntermediate => 'Some experience';
+
+  @override
+  String get preferencesExperienceAdvanced => 'Very comfortable';
+
+  @override
+  String get preferencesPositionsLabel => 'Which positions work best for you?';
+
+  @override
+  String get preferencesPositionsHint => 'Choose none if any position works.';
+
+  @override
+  String get preferencesPositionSeated => 'Seated';
+
+  @override
+  String get preferencesPositionStanding => 'Standing';
+
+  @override
+  String get preferencesPositionFloor => 'Floor';
+
+  @override
+  String get preferencesWeeklyGoalLabel =>
+      'How many movement days each week feel right?';
+
+  @override
+  String get preferencesDaysPerWeek => 'days per week';
+
+  @override
+  String get preferencesFewerDays => 'Fewer days';
+
+  @override
+  String get preferencesMoreDays => 'More days';
+
+  @override
+  String get preferencesReminderLabel => 'Gentle reminders';
+
+  @override
+  String get preferencesReminderSubtitle =>
+      'A gentle nudge to move on your schedule.';
+
+  @override
+  String get preferencesContinue => 'Continue';
+
+  @override
+  String get preferencesRequiredHint =>
+      'Choose your experience level to continue.';
+
+  @override
+  String get preferencesSaveError =>
+      'We couldn\'t save your preferences. Please try again.';
 }

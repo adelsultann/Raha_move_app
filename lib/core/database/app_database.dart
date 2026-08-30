@@ -327,6 +327,19 @@ class LocalUserPreferences extends Table with SyncColumns {
   BoolColumn get downloadOnWifiOnly =>
       boolean().withDefault(const Constant(true))();
 
+  /// Whether the user asked for gentle reminders at setup. The concrete
+  /// reminder schedule is owned by RAHA-065; this is interest only.
+  BoolColumn get reminderInterest =>
+      boolean().withDefault(const Constant(false))();
+
+  /// Stable, language-neutral position keys (`seated`, `standing`, `floor`) the
+  /// user is comfortable with. An empty JSON list means "any position". Stored
+  /// on the preferences row (not `local_preferred_positions`) because the
+  /// position taxonomy may not be seeded at first-run setup; see the RAHA-032
+  /// decision note.
+  TextColumn get preferredPositionsJson =>
+      text().withDefault(const Constant(''))();
+
   @override
   Set<Column<Object>> get primaryKey => {userId};
 }
@@ -597,7 +610,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -609,6 +622,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 5) await _migrateToV5(m);
       if (from < 6) await _migrateToV6(m);
       if (from < 7) await _migrateToV7(m);
+      if (from < 8) await _migrateToV8(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -805,6 +819,25 @@ class AppDatabase extends _$AppDatabase {
   Future<void> _migrateToV7(Migrator m) async {
     if (!await _tableExists('local_identity')) {
       await m.createTable(localIdentity);
+    }
+  }
+
+  /// v8 adds the reminder-interest flag and the preferred-position key list to
+  /// `local_user_preferences`. Guarded against both a missing table (partial
+  /// legacy fixtures) and a table already carrying the columns (fresh installs
+  /// created by [MigrationStrategy.onCreate]).
+  Future<void> _migrateToV8(Migrator m) async {
+    if (!await _tableExists('local_user_preferences')) return;
+    final columns = await _tableColumnNames('local_user_preferences');
+    if (!columns.contains('reminder_interest')) {
+      await customStatement(
+        'ALTER TABLE local_user_preferences ADD COLUMN reminder_interest INTEGER NOT NULL DEFAULT 0',
+      );
+    }
+    if (!columns.contains('preferred_positions_json')) {
+      await customStatement(
+        "ALTER TABLE local_user_preferences ADD COLUMN preferred_positions_json TEXT NOT NULL DEFAULT ''",
+      );
     }
   }
 

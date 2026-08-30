@@ -55,5 +55,27 @@
       "current": { "type": "int" },
       "total": { "type": "int" }
     }
-  }
+  },
+  "preferencesBack": "Back",
+  "preferencesTitle": "A few quick preferences",
+  "preferencesSubtitle": "This helps us choose routines that suit you. You can change these anytime.",
+  "preferencesExperienceLabel": "How familiar are you with movement?",
+  "preferencesRequired": "Required",
+  "preferencesExperienceBeginner": "New to movement",
+  "preferencesExperienceIntermediate": "Some experience",
+  "preferencesExperienceAdvanced": "Very comfortable",
+  "preferencesPositionsLabel": "Which positions work best for you?",
+  "preferencesPositionsHint": "Choose none if any position works.",
+  "preferencesPositionSeated": "Seated",
+  "preferencesPositionStanding": "Standing",
+  "preferencesPositionFloor": "Floor",
+  "preferencesWeeklyGoalLabel": "How many movement days each week feel right?",
+  "preferencesDaysPerWeek": "days per week",
+  "preferencesFewerDays": "Fewer days",
+  "preferencesMoreDays": "More days",
+  "preferencesReminderLabel": "Gentle reminders",
+  "preferencesReminderSubtitle": "A gentle nudge to move on your schedule.",
+  "preferencesContinue": "Continue",
+  "preferencesRequiredHint": "Choose your experience level to continue.",
+  "preferencesSaveError": "We couldn't save your preferences. Please try again."
 }

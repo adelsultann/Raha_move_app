@@ -119,12 +119,27 @@ void main() {
     await tester.tap(find.byKey(const Key('onboarding_get_started')));
     await tester.pumpAndSettle();
 
+    // Basic preferences are captured between onboarding and the app.
+    expect(find.text('A few quick preferences'), findsOneWidget);
+    await tester.ensureVisible(
+      find.byKey(const Key('preferences_experience_beginner')),
+    );
+    await tester.tap(find.byKey(const Key('preferences_experience_beginner')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('preferences_continue')));
+    await tester.tap(find.byKey(const Key('preferences_continue')));
+    await tester.pumpAndSettle();
+
     // Completes as a guest and reaches the app without registration.
     expect(find.text('APP_READY'), findsOneWidget);
     expect(repository.completedFor, 'guest-1');
     expect(
       analytics.recordedEvents.map((e) => e.name),
       contains(AnalyticsEventName.onboardingCompleted),
+    );
+    expect(
+      analytics.recordedEvents.map((e) => e.name),
+      contains(AnalyticsEventName.preferencesSaved),
     );
   });
 

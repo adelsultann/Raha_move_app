@@ -154,4 +154,74 @@ class AppLocalizationsAr extends AppLocalizations {
   String onboardingPageIndicator(int current, int total) {
     return 'صفحة $current من $total';
   }
+
+  @override
+  String get preferencesBack => 'رجوع';
+
+  @override
+  String get preferencesTitle => 'تفضيلات سريعة';
+
+  @override
+  String get preferencesSubtitle =>
+      'يساعدنا هذا على اختيار روتين يناسبك. يمكنك تغييرها في أي وقت.';
+
+  @override
+  String get preferencesExperienceLabel => 'ما مدى معرفتك بالحركة والتمارين؟';
+
+  @override
+  String get preferencesRequired => 'مطلوب';
+
+  @override
+  String get preferencesExperienceBeginner => 'جديد على الحركة';
+
+  @override
+  String get preferencesExperienceIntermediate => 'لديّ بعض الخبرة';
+
+  @override
+  String get preferencesExperienceAdvanced => 'أرتاح كثيرًا مع الحركة';
+
+  @override
+  String get preferencesPositionsLabel => 'ما الأوضاع التي تناسبك؟';
+
+  @override
+  String get preferencesPositionsHint =>
+      'اتركها فارغة إذا كانت كل الأوضاع مناسبة لك.';
+
+  @override
+  String get preferencesPositionSeated => 'جلوس';
+
+  @override
+  String get preferencesPositionStanding => 'وقوف';
+
+  @override
+  String get preferencesPositionFloor => 'على الأرض';
+
+  @override
+  String get preferencesWeeklyGoalLabel =>
+      'كم عدد أيام الحركة التي تناسبك في الأسبوع؟';
+
+  @override
+  String get preferencesDaysPerWeek => 'أيام في الأسبوع';
+
+  @override
+  String get preferencesFewerDays => 'أيام أقل';
+
+  @override
+  String get preferencesMoreDays => 'أيام أكثر';
+
+  @override
+  String get preferencesReminderLabel => 'تذكيرات لطيفة';
+
+  @override
+  String get preferencesReminderSubtitle => 'تنبيه لطيف للحركة وفق جدولك.';
+
+  @override
+  String get preferencesContinue => 'متابعة';
+
+  @override
+  String get preferencesRequiredHint => 'اختر مستوى خبرتك للمتابعة.';
+
+  @override
+  String get preferencesSaveError =>
+      'تعذّر حفظ تفضيلاتك. يرجى المحاولة مجددًا.';
 }

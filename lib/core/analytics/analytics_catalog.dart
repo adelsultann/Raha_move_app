@@ -15,6 +15,7 @@ abstract final class AnalyticsEventName {
   static const String feedbackSubmitted = 'feedback_submitted';
   static const String savedRoutineChanged = 'saved_routine_changed';
   static const String languageChanged = 'language_changed';
+  static const String preferencesSaved = 'preferences_saved';
 }
 
 /// Approved categorical property keys. Values are limited to booleans, numbers,
@@ -41,6 +42,15 @@ abstract final class AnalyticsPropertyKey {
 
   /// `recommendation`, `explore`, `saved`, `repeat`, or `bundled`.
   static const String source = 'source';
+
+  /// `beginner`, `intermediate`, or `advanced`.
+  static const String experienceLevel = 'experience_level';
+
+  /// Number of movement days the user aims for each week (1..7).
+  static const String weeklyGoalDays = 'weekly_goal_days';
+
+  /// `true` when the user opted into gentle reminders at setup.
+  static const String reminderInterest = 'reminder_interest';
 }
 
 /// The implementation-enforced allowlist for analytics properties. Any key not
@@ -56,5 +66,8 @@ abstract final class AnalyticsPropertyAllowlist {
     AnalyticsPropertyKey.rejectionReason,
     AnalyticsPropertyKey.saved,
     AnalyticsPropertyKey.source,
+    AnalyticsPropertyKey.experienceLevel,
+    AnalyticsPropertyKey.weeklyGoalDays,
+    AnalyticsPropertyKey.reminderInterest,
   };
 }

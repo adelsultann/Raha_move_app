@@ -106,6 +106,28 @@ void main() {
 
     await database.close();
   });
+
+  test('v8 adds preference columns with safe defaults', () async {
+    final database = AppDatabase(_v7PreferencesFixtureExecutor(now));
+
+    final prefs = await (database.select(
+      database.localUserPreferences,
+    )..where((row) => row.userId.equals('user-1'))).getSingle();
+    expect(prefs.experienceLevel, 'beginner');
+    expect(prefs.reminderInterest, isFalse);
+    expect(prefs.preferredPositionsJson, '');
+
+    final columns = await database
+        .customSelect("PRAGMA table_info('local_user_preferences')")
+        .get();
+    final names = columns.map((row) => row.data['name']);
+    expect(
+      names,
+      containsAll(['reminder_interest', 'preferred_positions_json']),
+    );
+
+    await database.close();
+  });
 }
 
 NativeDatabase _v3FixtureExecutor(DateTime now) => NativeDatabase.memory(
@@ -200,5 +222,48 @@ NativeDatabase _v5MediaCacheFixtureExecutor(
       "INSERT INTO local_media_cache_entries VALUES ('media-1', 'legacy/private.mp4', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 100, 'verified', $millis, $millis)",
     );
     raw.execute('PRAGMA user_version = 5');
+  },
+);
+
+NativeDatabase _v7PreferencesFixtureExecutor(
+  DateTime now,
+) => NativeDatabase.memory(
+  setup: (raw) {
+    final millis = now.millisecondsSinceEpoch;
+    raw.execute(
+      'CREATE TABLE local_media_assets ('
+      'id TEXT NOT NULL PRIMARY KEY, exercise_id TEXT NOT NULL, '
+      'media_type TEXT NOT NULL, delivery_reference TEXT NOT NULL, '
+      'mime_type TEXT NOT NULL, checksum_sha256 TEXT NOT NULL, '
+      'status TEXT NOT NULL, is_preferred INTEGER NOT NULL DEFAULT 0, '
+      'width INTEGER NULL, height INTEGER NULL, duration_ms INTEGER NULL, '
+      'updated_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      'CREATE TABLE local_profiles ('
+      'user_id TEXT NOT NULL PRIMARY KEY, preferred_locale TEXT NOT NULL, '
+      'timezone TEXT NOT NULL, weekly_goal_days INTEGER NOT NULL, '
+      'onboarding_completed_at INTEGER NULL, sync_state TEXT NOT NULL, '
+      'local_updated_at INTEGER NOT NULL, server_updated_at INTEGER NULL, '
+      'last_sync_error TEXT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_profiles VALUES ('user-1', 'ar', 'Asia/Riyadh', 3, NULL, 'synced', $millis, NULL, NULL)",
+    );
+    raw.execute(
+      'CREATE TABLE local_user_preferences ('
+      'user_id TEXT NOT NULL PRIMARY KEY REFERENCES local_profiles (user_id), '
+      'experience_level TEXT NOT NULL, '
+      'sound_enabled INTEGER NOT NULL DEFAULT 1, '
+      'vibration_enabled INTEGER NOT NULL DEFAULT 1, '
+      'download_on_wifi_only INTEGER NOT NULL DEFAULT 1, '
+      "sync_state TEXT NOT NULL DEFAULT 'pendingCreate', "
+      'local_updated_at INTEGER NOT NULL, server_updated_at INTEGER NULL, '
+      'last_sync_error TEXT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_user_preferences (user_id, experience_level, sound_enabled, vibration_enabled, download_on_wifi_only, sync_state, local_updated_at, server_updated_at, last_sync_error) VALUES ('user-1', 'beginner', 1, 1, 1, 'synced', $millis, NULL, NULL)",
+    );
+    raw.execute('PRAGMA user_version = 7');
   },
 );

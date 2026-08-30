@@ -9,6 +9,9 @@ import 'package:raha_move/features/authentication/domain/guest_identity_store.da
 import 'package:raha_move/features/onboarding/application/onboarding_providers.dart';
 import 'package:raha_move/features/onboarding/domain/app_language.dart';
 import 'package:raha_move/features/onboarding/domain/onboarding_repository.dart';
+import 'package:raha_move/features/preferences/application/preferences_providers.dart';
+import 'package:raha_move/features/preferences/domain/preferences_repository.dart';
+import 'package:raha_move/features/preferences/domain/user_preferences.dart';
 
 /// In-memory onboarding persistence for tests.
 final class FakeOnboardingRepository implements OnboardingRepository {
@@ -121,6 +124,27 @@ final class FakeGuestIdentityStore implements GuestIdentityStore {
   Future<void> resetForSignOut() async {}
 }
 
+/// In-memory preferences persistence shared across onboarding and preferences
+/// tests.
+final class FakePreferencesRepository implements PreferencesRepository {
+  UserPreferences? stored;
+  String? savedFor;
+
+  /// When non-null, [save] throws this so tests can exercise the failure path.
+  Object? saveError;
+
+  @override
+  Future<UserPreferences?> read(String userId) async => stored;
+
+  @override
+  Future<void> save(String userId, UserPreferences preferences) async {
+    final error = saveError;
+    if (error != null) throw error;
+    stored = preferences;
+    savedFor = userId;
+  }
+}
+
 /// Builds a container wired with offline auth, a stable guest identity, the
 /// given onboarding repository, and an enabled in-memory analytics sink.
 ProviderContainer buildOnboardingContainer({
@@ -133,6 +157,9 @@ ProviderContainer buildOnboardingContainer({
       guestIdentityStoreProvider.overrideWithValue(FakeGuestIdentityStore()),
       onboardingRepositoryProvider.overrideWithValue(
         repository ?? FakeOnboardingRepository(),
+      ),
+      preferencesRepositoryProvider.overrideWithValue(
+        FakePreferencesRepository(),
       ),
       analyticsServiceProvider.overrideWithValue(
         analytics ?? InMemoryAnalyticsService(enabled: true),

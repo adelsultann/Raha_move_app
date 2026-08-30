@@ -55,5 +55,27 @@
       "current": { "type": "int" },
       "total": { "type": "int" }
     }
-  }
+  },
+  "preferencesBack": "رجوع",
+  "preferencesTitle": "تفضيلات سريعة",
+  "preferencesSubtitle": "يساعدنا هذا على اختيار روتين يناسبك. يمكنك تغييرها في أي وقت.",
+  "preferencesExperienceLabel": "ما مدى معرفتك بالحركة والتمارين؟",
+  "preferencesRequired": "مطلوب",
+  "preferencesExperienceBeginner": "جديد على الحركة",
+  "preferencesExperienceIntermediate": "لديّ بعض الخبرة",
+  "preferencesExperienceAdvanced": "أرتاح كثيرًا مع الحركة",
+  "preferencesPositionsLabel": "ما الأوضاع التي تناسبك؟",
+  "preferencesPositionsHint": "اتركها فارغة إذا كانت كل الأوضاع مناسبة لك.",
+  "preferencesPositionSeated": "جلوس",
+  "preferencesPositionStanding": "وقوف",
+  "preferencesPositionFloor": "على الأرض",
+  "preferencesWeeklyGoalLabel": "كم عدد أيام الحركة التي تناسبك في الأسبوع؟",
+  "preferencesDaysPerWeek": "أيام في الأسبوع",
+  "preferencesFewerDays": "أيام أقل",
+  "preferencesMoreDays": "أيام أكثر",
+  "preferencesReminderLabel": "تذكيرات لطيفة",
+  "preferencesReminderSubtitle": "تنبيه لطيف للحركة وفق جدولك.",
+  "preferencesContinue": "متابعة",
+  "preferencesRequiredHint": "اختر مستوى خبرتك للمتابعة.",
+  "preferencesSaveError": "تعذّر حفظ تفضيلاتك. يرجى المحاولة مجددًا."
 }

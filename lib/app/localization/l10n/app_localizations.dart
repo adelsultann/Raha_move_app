@@ -367,6 +367,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Page {current} of {total}'**
   String onboardingPageIndicator(int current, int total);
+
+  /// No description provided for @preferencesBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get preferencesBack;
+
+  /// No description provided for @preferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A few quick preferences'**
+  String get preferencesTitle;
+
+  /// No description provided for @preferencesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This helps us choose routines that suit you. You can change these anytime.'**
+  String get preferencesSubtitle;
+
+  /// No description provided for @preferencesExperienceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How familiar are you with movement?'**
+  String get preferencesExperienceLabel;
+
+  /// No description provided for @preferencesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get preferencesRequired;
+
+  /// No description provided for @preferencesExperienceBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'New to movement'**
+  String get preferencesExperienceBeginner;
+
+  /// No description provided for @preferencesExperienceIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Some experience'**
+  String get preferencesExperienceIntermediate;
+
+  /// No description provided for @preferencesExperienceAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Very comfortable'**
+  String get preferencesExperienceAdvanced;
+
+  /// No description provided for @preferencesPositionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Which positions work best for you?'**
+  String get preferencesPositionsLabel;
+
+  /// No description provided for @preferencesPositionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose none if any position works.'**
+  String get preferencesPositionsHint;
+
+  /// No description provided for @preferencesPositionSeated.
+  ///
+  /// In en, this message translates to:
+  /// **'Seated'**
+  String get preferencesPositionSeated;
+
+  /// No description provided for @preferencesPositionStanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Standing'**
+  String get preferencesPositionStanding;
+
+  /// No description provided for @preferencesPositionFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor'**
+  String get preferencesPositionFloor;
+
+  /// No description provided for @preferencesWeeklyGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How many movement days each week feel right?'**
+  String get preferencesWeeklyGoalLabel;
+
+  /// No description provided for @preferencesDaysPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'days per week'**
+  String get preferencesDaysPerWeek;
+
+  /// No description provided for @preferencesFewerDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Fewer days'**
+  String get preferencesFewerDays;
+
+  /// No description provided for @preferencesMoreDays.
+  ///
+  /// In en, this message translates to:
+  /// **'More days'**
+  String get preferencesMoreDays;
+
+  /// No description provided for @preferencesReminderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle reminders'**
+  String get preferencesReminderLabel;
+
+  /// No description provided for @preferencesReminderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle nudge to move on your schedule.'**
+  String get preferencesReminderSubtitle;
+
+  /// No description provided for @preferencesContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get preferencesContinue;
+
+  /// No description provided for @preferencesRequiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your experience level to continue.'**
+  String get preferencesRequiredHint;
+
+  /// No description provided for @preferencesSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save your preferences. Please try again.'**
+  String get preferencesSaveError;
 }
 
 class _AppLocalizationsDelegate
