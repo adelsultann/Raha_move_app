@@ -1,7 +1,7 @@
 ---
 description: Owns Raha Move's Supabase, Drift, RLS, migrations, synchronization, and secure media delivery
 mode: subagent
-model: openai/gpt-5.6-terra
+model: deepseek/deepseek-v4-pro
 permission: allow
 ---
 

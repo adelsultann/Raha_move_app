@@ -1,7 +1,7 @@
 ---
 description: Verifies Raha Move through automated tests, accessibility checks, bilingual regression, and release acceptance
 mode: subagent
-model: openai/gpt-5.6-terra
+model: deepseek/deepseek-v4-pro
 temperature: 0.1
 permission: allow
 ---

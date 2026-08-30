@@ -1,7 +1,7 @@
 ---
 description: Owns Raha Move delivery and may directly edit any file in the project
 mode: primary
-model: openai/gpt-5.6-terra
+model: deepseek/deepseek-v4-pro
 temperature: 0.2
 permission: allow
 ---
