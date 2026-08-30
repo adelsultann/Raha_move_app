@@ -87,6 +87,25 @@ void main() {
     );
     await database.close();
   });
+
+  test('v6 discards legacy unscoped media cache metadata', () async {
+    final database = AppDatabase(_v5MediaCacheFixtureExecutor(now));
+
+    expect(
+      await database.select(database.localMediaCacheEntries).get(),
+      isEmpty,
+    );
+    final columns = await database
+        .customSelect("PRAGMA table_info('local_media_cache_entries')")
+        .get();
+    final names = columns.map((row) => row.data['name']);
+    expect(
+      names,
+      containsAll(['owner_id', 'media_version', 'required_entitlement']),
+    );
+
+    await database.close();
+  });
 }
 
 NativeDatabase _v3FixtureExecutor(DateTime now) => NativeDatabase.memory(
@@ -141,5 +160,45 @@ NativeDatabase _v3FixtureExecutor(DateTime now) => NativeDatabase.memory(
       "INSERT INTO local_content_releases VALUES ('1', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '1.0.0', $millis, 1)",
     );
     raw.execute('PRAGMA user_version = 3');
+  },
+);
+
+NativeDatabase _v5MediaCacheFixtureExecutor(
+  DateTime now,
+) => NativeDatabase.memory(
+  setup: (raw) {
+    final millis = now.millisecondsSinceEpoch;
+    raw.execute(
+      'CREATE TABLE local_exercises ('
+      'id TEXT NOT NULL PRIMARY KEY, status TEXT NOT NULL, '
+      'access_tier TEXT NOT NULL, difficulty TEXT NOT NULL, '
+      'safety_approved INTEGER NOT NULL, updated_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_exercises VALUES ('exercise-1', 'published', 'free', 'beginner', 1, $millis)",
+    );
+    raw.execute(
+      'CREATE TABLE local_media_assets ('
+      'id TEXT NOT NULL PRIMARY KEY, exercise_id TEXT NOT NULL, '
+      'media_type TEXT NOT NULL, delivery_reference TEXT NOT NULL, '
+      'mime_type TEXT NOT NULL, checksum_sha256 TEXT NOT NULL, '
+      'status TEXT NOT NULL, is_preferred INTEGER NOT NULL DEFAULT 0, '
+      'width INTEGER NULL, height INTEGER NULL, duration_ms INTEGER NULL, '
+      'updated_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_media_assets VALUES ('media-1', 'exercise-1', 'video', '00000000-0000-4000-8000-000000000001', 'video/mp4', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'published', 1, 720, 720, 3000, $millis)",
+    );
+    raw.execute(
+      'CREATE TABLE local_media_cache_entries ('
+      'media_id TEXT NOT NULL PRIMARY KEY, verified_local_path TEXT NOT NULL, '
+      'checksum_sha256 TEXT NOT NULL, byte_size INTEGER NOT NULL, '
+      'cache_state TEXT NOT NULL, last_accessed_at INTEGER NOT NULL, '
+      'verified_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_media_cache_entries VALUES ('media-1', 'legacy/private.mp4', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 100, 'verified', $millis, $millis)",
+    );
+    raw.execute('PRAGMA user_version = 5');
   },
 );

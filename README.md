@@ -18,6 +18,21 @@ flutter run --dart-define=RAHA_ENV=test
 flutter run --dart-define=RAHA_ENV=production
 ```
 
+Remote synchronization and private media delivery are enabled only when both
+public Supabase client values are supplied. Tests and the bundled starter flow
+leave them unset and remain offline:
+
+```powershell
+flutter run `
+  --dart-define=RAHA_ENV=development `
+  --dart-define=SUPABASE_URL=https://your-project.supabase.co `
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=your-public-publishable-key
+```
+
+Never use a Supabase service-role key in the application. The service role is
+available only inside trusted backend functions such as
+`resolve-media-delivery`.
+
 ## Development commands
 
 ```powershell

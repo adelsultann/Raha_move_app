@@ -420,7 +420,17 @@ The current Flutter deployment support matrix includes Android API 24+ and iOS 1
 
 **Priority:** P0  
 **Owner:** Backend + Mobile Engineering  
+**Status:** Done
+
 **Dependencies:** RAHA-002, RAHA-020, RAHA-023
+
+Engineering remediation is implemented and locally verified. The product owner
+approved the Free50 package as a temporary, internal development and test
+fixture. Purchasing the production mobility library and confirming its intended
+delivery rights are deferred to the release gate in RAHA-082 and RAHA-084, so
+they do not block feature development. The fixture must not be published,
+included in a beta or production build, or treated as production content. See
+[the RAHA-026 provider fixture decision](decisions/raha-026-provider-fixture-review.md).
 
 **Acceptance criteria**
 
@@ -785,7 +795,8 @@ The current Flutter deployment support matrix includes Android API 24+ and iOS 1
 **Acceptance criteria**
 
 - RLS and API authorization tests cover anonymous, authenticated owner, other user, catalog editor/service, and premium-access boundaries where applicable.
-- Secrets, tokens, signed URLs, raw provider payloads, license materials, and personal data are absent from logs, analytics, crash breadcrumbs, and source control.
+- Secrets, tokens, signed URLs, license materials, and personal data are absent from logs, analytics, crash breadcrumbs, and source control; raw provider payloads are also absent from logs and release build inputs.
+- Temporary Free50 development fixtures are removed from the release branch and build inputs, or their continued private retention is covered by recorded provider permission, before beta distribution.
 - Local credentials use platform-secure storage and are cleared on logout/account deletion as specified.
 - Account deletion covers Supabase identity, user-owned database data, analytics deletion/anonymization, local Drift data, tokens, and private media metadata.
 - Privacy and retention behavior is reviewed against the applicable Saudi and launch-market requirements before public release.
@@ -817,6 +828,7 @@ The current Flutter deployment support matrix includes Android API 24+ and iOS 1
 
 - Signed Android App Bundle and iOS archive build successfully from protected release configuration.
 - Staging database migrations, content release, media authorization, analytics, and crash reporting pass smoke tests before production rollout.
+- The production mobility media is purchased or otherwise licensed for the planned app, CDN, caching, and offline behavior; evidence is stored privately and only an internal reference is recorded in project data.
 - Store listing, screenshots, privacy disclosures, support contact, version, release notes, and required platform declarations are complete in Arabic and English where required.
 - Crash symbols and source maps are uploaded and a rollback or kill-switch plan exists for broken content releases.
 - Monitoring identifies startup failures, playback failures, recommendation no-result rate, sync failures, and crash-free sessions without exposing sensitive data.

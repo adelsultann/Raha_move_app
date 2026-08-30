@@ -165,16 +165,24 @@ class LocalMediaAssets extends Table {
 
 /// File index only. Media bytes are always managed by the device cache.
 class LocalMediaCacheEntries extends Table {
+  /// Supabase authenticated or anonymous user id that authorized these bytes.
+  /// Cache metadata is never shared across accounts.
+  TextColumn get ownerId => text()();
   TextColumn get mediaId => text().references(LocalMediaAssets, #id)();
   TextColumn get verifiedLocalPath => text()();
+
+  /// Content-release version recorded when this file was verified. An empty
+  /// legacy value is deliberately treated as stale rather than playable.
+  TextColumn get mediaVersion => text()();
   TextColumn get checksumSha256 => text()();
+  TextColumn get requiredEntitlement => text().nullable()();
   IntColumn get byteSize => integer()();
   TextColumn get cacheState => text()();
   DateTimeColumn get lastAccessedAt => dateTime()();
   DateTimeColumn get verifiedAt => dateTime()();
 
   @override
-  Set<Column<Object>> get primaryKey => {mediaId};
+  Set<Column<Object>> get primaryKey => {ownerId, mediaId};
 
   @override
   List<String> get customConstraints => ['CHECK (byte_size >= 0)'];
@@ -575,7 +583,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -585,6 +593,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 3) await _migrateToV3(m);
       if (from < 4) await _migrateToV4(m);
       if (from < 5) await _migrateToV5(m);
+      if (from < 6) await _migrateToV6(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -750,6 +759,28 @@ class AppDatabase extends _$AppDatabase {
     if (!await _tableExists('local_sync_state')) {
       await m.createTable(localSyncState);
     }
+  }
+
+  /// v6 binds every verified file to the account and entitlement that
+  /// authorized it and records its content-release version. Legacy cache rows
+  /// are deliberately discarded because they cannot be assigned safely to an
+  /// owner. Media bytes live in a disposable cache and are cleaned separately.
+  Future<void> _migrateToV6(Migrator m) async {
+    if (!await _tableExists('local_media_cache_entries')) {
+      await m.createTable(localMediaCacheEntries);
+      return;
+    }
+    final cacheColumns = await _tableColumnNames('local_media_cache_entries');
+    if (cacheColumns.contains('owner_id') &&
+        cacheColumns.contains('media_version') &&
+        cacheColumns.contains('required_entitlement')) {
+      return;
+    }
+    await customStatement(
+      'ALTER TABLE local_media_cache_entries RENAME TO local_media_cache_entries_pre_v6',
+    );
+    await m.createTable(localMediaCacheEntries);
+    await customStatement('DROP TABLE local_media_cache_entries_pre_v6');
   }
 
   Future<bool> _tableExists(String name) async {

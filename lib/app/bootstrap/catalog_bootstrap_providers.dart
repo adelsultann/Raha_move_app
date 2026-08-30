@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 import 'package:raha_move/core/database/app_database.dart';
 import 'package:raha_move/features/exercise_library/data/bundled_content_release_source.dart';
 import 'package:raha_move/features/exercise_library/data/content_release_source.dart';
@@ -10,13 +14,22 @@ import 'catalog_bootstrap_service.dart';
 
 part 'catalog_bootstrap_providers.g.dart';
 
-/// The local database used by bootstrap. Defaults to an in-memory executor so
-/// the application compiles and tests run without platform plugins; the
-/// durable, file-backed executor (with `path_provider` and
-/// `sqlite3_flutter_libs`/`sqflite`) is wired by the database/storage owner.
-/// Tests override this provider with an isolated in-memory database.
+/// Durable application database. Tests override this provider with an
+/// isolated in-memory database.
 @Riverpod(keepAlive: true)
-AppDatabase appDatabase(Ref ref) => AppDatabase(NativeDatabase.memory());
+AppDatabase appDatabase(Ref ref) {
+  final database = AppDatabase(
+    LazyDatabase(() async {
+      final support = await getApplicationSupportDirectory();
+      final file = File(
+        '${support.path}${Platform.pathSeparator}raha_move.sqlite',
+      );
+      return NativeDatabase.createInBackground(file);
+    }),
+  );
+  ref.onDispose(database.close);
+  return database;
+}
 
 /// Injectable catalog source. Defaults to an offline no-op so no live SDK or
 /// configuration is required; override with a real source when one exists.

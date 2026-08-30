@@ -2348,6 +2348,17 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $LocalMediaCacheEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _mediaIdMeta = const VerificationMeta(
     'mediaId',
   );
@@ -2374,6 +2385,17 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _mediaVersionMeta = const VerificationMeta(
+    'mediaVersion',
+  );
+  @override
+  late final GeneratedColumn<String> mediaVersion = GeneratedColumn<String>(
+    'media_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _checksumSha256Meta = const VerificationMeta(
     'checksumSha256',
   );
@@ -2385,6 +2407,17 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _requiredEntitlementMeta =
+      const VerificationMeta('requiredEntitlement');
+  @override
+  late final GeneratedColumn<String> requiredEntitlement =
+      GeneratedColumn<String>(
+        'required_entitlement',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _byteSizeMeta = const VerificationMeta(
     'byteSize',
   );
@@ -2432,9 +2465,12 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
   );
   @override
   List<GeneratedColumn> get $columns => [
+    ownerId,
     mediaId,
     verifiedLocalPath,
+    mediaVersion,
     checksumSha256,
+    requiredEntitlement,
     byteSize,
     cacheState,
     lastAccessedAt,
@@ -2452,6 +2488,14 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
     if (data.containsKey('media_id')) {
       context.handle(
         _mediaIdMeta,
@@ -2471,6 +2515,17 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
     } else if (isInserting) {
       context.missing(_verifiedLocalPathMeta);
     }
+    if (data.containsKey('media_version')) {
+      context.handle(
+        _mediaVersionMeta,
+        mediaVersion.isAcceptableOrUnknown(
+          data['media_version']!,
+          _mediaVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_mediaVersionMeta);
+    }
     if (data.containsKey('checksum_sha256')) {
       context.handle(
         _checksumSha256Meta,
@@ -2481,6 +2536,15 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
       );
     } else if (isInserting) {
       context.missing(_checksumSha256Meta);
+    }
+    if (data.containsKey('required_entitlement')) {
+      context.handle(
+        _requiredEntitlementMeta,
+        requiredEntitlement.isAcceptableOrUnknown(
+          data['required_entitlement']!,
+          _requiredEntitlementMeta,
+        ),
+      );
     }
     if (data.containsKey('byte_size')) {
       context.handle(
@@ -2521,11 +2585,15 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {mediaId};
+  Set<GeneratedColumn> get $primaryKey => {ownerId, mediaId};
   @override
   LocalMediaCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return LocalMediaCacheEntry(
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
       mediaId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}media_id'],
@@ -2534,10 +2602,18 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
         DriftSqlType.string,
         data['${effectivePrefix}verified_local_path'],
       )!,
+      mediaVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}media_version'],
+      )!,
       checksumSha256: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}checksum_sha256'],
       )!,
+      requiredEntitlement: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}required_entitlement'],
+      ),
       byteSize: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}byte_size'],
@@ -2565,17 +2641,28 @@ class $LocalMediaCacheEntriesTable extends LocalMediaCacheEntries
 
 class LocalMediaCacheEntry extends DataClass
     implements Insertable<LocalMediaCacheEntry> {
+  /// Supabase authenticated or anonymous user id that authorized these bytes.
+  /// Cache metadata is never shared across accounts.
+  final String ownerId;
   final String mediaId;
   final String verifiedLocalPath;
+
+  /// Content-release version recorded when this file was verified. An empty
+  /// legacy value is deliberately treated as stale rather than playable.
+  final String mediaVersion;
   final String checksumSha256;
+  final String? requiredEntitlement;
   final int byteSize;
   final String cacheState;
   final DateTime lastAccessedAt;
   final DateTime verifiedAt;
   const LocalMediaCacheEntry({
+    required this.ownerId,
     required this.mediaId,
     required this.verifiedLocalPath,
+    required this.mediaVersion,
     required this.checksumSha256,
+    this.requiredEntitlement,
     required this.byteSize,
     required this.cacheState,
     required this.lastAccessedAt,
@@ -2584,9 +2671,14 @@ class LocalMediaCacheEntry extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['owner_id'] = Variable<String>(ownerId);
     map['media_id'] = Variable<String>(mediaId);
     map['verified_local_path'] = Variable<String>(verifiedLocalPath);
+    map['media_version'] = Variable<String>(mediaVersion);
     map['checksum_sha256'] = Variable<String>(checksumSha256);
+    if (!nullToAbsent || requiredEntitlement != null) {
+      map['required_entitlement'] = Variable<String>(requiredEntitlement);
+    }
     map['byte_size'] = Variable<int>(byteSize);
     map['cache_state'] = Variable<String>(cacheState);
     map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt);
@@ -2596,9 +2688,14 @@ class LocalMediaCacheEntry extends DataClass
 
   LocalMediaCacheEntriesCompanion toCompanion(bool nullToAbsent) {
     return LocalMediaCacheEntriesCompanion(
+      ownerId: Value(ownerId),
       mediaId: Value(mediaId),
       verifiedLocalPath: Value(verifiedLocalPath),
+      mediaVersion: Value(mediaVersion),
       checksumSha256: Value(checksumSha256),
+      requiredEntitlement: requiredEntitlement == null && nullToAbsent
+          ? const Value.absent()
+          : Value(requiredEntitlement),
       byteSize: Value(byteSize),
       cacheState: Value(cacheState),
       lastAccessedAt: Value(lastAccessedAt),
@@ -2612,9 +2709,14 @@ class LocalMediaCacheEntry extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LocalMediaCacheEntry(
+      ownerId: serializer.fromJson<String>(json['ownerId']),
       mediaId: serializer.fromJson<String>(json['mediaId']),
       verifiedLocalPath: serializer.fromJson<String>(json['verifiedLocalPath']),
+      mediaVersion: serializer.fromJson<String>(json['mediaVersion']),
       checksumSha256: serializer.fromJson<String>(json['checksumSha256']),
+      requiredEntitlement: serializer.fromJson<String?>(
+        json['requiredEntitlement'],
+      ),
       byteSize: serializer.fromJson<int>(json['byteSize']),
       cacheState: serializer.fromJson<String>(json['cacheState']),
       lastAccessedAt: serializer.fromJson<DateTime>(json['lastAccessedAt']),
@@ -2625,9 +2727,12 @@ class LocalMediaCacheEntry extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'ownerId': serializer.toJson<String>(ownerId),
       'mediaId': serializer.toJson<String>(mediaId),
       'verifiedLocalPath': serializer.toJson<String>(verifiedLocalPath),
+      'mediaVersion': serializer.toJson<String>(mediaVersion),
       'checksumSha256': serializer.toJson<String>(checksumSha256),
+      'requiredEntitlement': serializer.toJson<String?>(requiredEntitlement),
       'byteSize': serializer.toJson<int>(byteSize),
       'cacheState': serializer.toJson<String>(cacheState),
       'lastAccessedAt': serializer.toJson<DateTime>(lastAccessedAt),
@@ -2636,17 +2741,25 @@ class LocalMediaCacheEntry extends DataClass
   }
 
   LocalMediaCacheEntry copyWith({
+    String? ownerId,
     String? mediaId,
     String? verifiedLocalPath,
+    String? mediaVersion,
     String? checksumSha256,
+    Value<String?> requiredEntitlement = const Value.absent(),
     int? byteSize,
     String? cacheState,
     DateTime? lastAccessedAt,
     DateTime? verifiedAt,
   }) => LocalMediaCacheEntry(
+    ownerId: ownerId ?? this.ownerId,
     mediaId: mediaId ?? this.mediaId,
     verifiedLocalPath: verifiedLocalPath ?? this.verifiedLocalPath,
+    mediaVersion: mediaVersion ?? this.mediaVersion,
     checksumSha256: checksumSha256 ?? this.checksumSha256,
+    requiredEntitlement: requiredEntitlement.present
+        ? requiredEntitlement.value
+        : this.requiredEntitlement,
     byteSize: byteSize ?? this.byteSize,
     cacheState: cacheState ?? this.cacheState,
     lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
@@ -2654,13 +2767,20 @@ class LocalMediaCacheEntry extends DataClass
   );
   LocalMediaCacheEntry copyWithCompanion(LocalMediaCacheEntriesCompanion data) {
     return LocalMediaCacheEntry(
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       mediaId: data.mediaId.present ? data.mediaId.value : this.mediaId,
       verifiedLocalPath: data.verifiedLocalPath.present
           ? data.verifiedLocalPath.value
           : this.verifiedLocalPath,
+      mediaVersion: data.mediaVersion.present
+          ? data.mediaVersion.value
+          : this.mediaVersion,
       checksumSha256: data.checksumSha256.present
           ? data.checksumSha256.value
           : this.checksumSha256,
+      requiredEntitlement: data.requiredEntitlement.present
+          ? data.requiredEntitlement.value
+          : this.requiredEntitlement,
       byteSize: data.byteSize.present ? data.byteSize.value : this.byteSize,
       cacheState: data.cacheState.present
           ? data.cacheState.value
@@ -2677,9 +2797,12 @@ class LocalMediaCacheEntry extends DataClass
   @override
   String toString() {
     return (StringBuffer('LocalMediaCacheEntry(')
+          ..write('ownerId: $ownerId, ')
           ..write('mediaId: $mediaId, ')
           ..write('verifiedLocalPath: $verifiedLocalPath, ')
+          ..write('mediaVersion: $mediaVersion, ')
           ..write('checksumSha256: $checksumSha256, ')
+          ..write('requiredEntitlement: $requiredEntitlement, ')
           ..write('byteSize: $byteSize, ')
           ..write('cacheState: $cacheState, ')
           ..write('lastAccessedAt: $lastAccessedAt, ')
@@ -2690,9 +2813,12 @@ class LocalMediaCacheEntry extends DataClass
 
   @override
   int get hashCode => Object.hash(
+    ownerId,
     mediaId,
     verifiedLocalPath,
+    mediaVersion,
     checksumSha256,
+    requiredEntitlement,
     byteSize,
     cacheState,
     lastAccessedAt,
@@ -2702,9 +2828,12 @@ class LocalMediaCacheEntry extends DataClass
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LocalMediaCacheEntry &&
+          other.ownerId == this.ownerId &&
           other.mediaId == this.mediaId &&
           other.verifiedLocalPath == this.verifiedLocalPath &&
+          other.mediaVersion == this.mediaVersion &&
           other.checksumSha256 == this.checksumSha256 &&
+          other.requiredEntitlement == this.requiredEntitlement &&
           other.byteSize == this.byteSize &&
           other.cacheState == this.cacheState &&
           other.lastAccessedAt == this.lastAccessedAt &&
@@ -2713,18 +2842,24 @@ class LocalMediaCacheEntry extends DataClass
 
 class LocalMediaCacheEntriesCompanion
     extends UpdateCompanion<LocalMediaCacheEntry> {
+  final Value<String> ownerId;
   final Value<String> mediaId;
   final Value<String> verifiedLocalPath;
+  final Value<String> mediaVersion;
   final Value<String> checksumSha256;
+  final Value<String?> requiredEntitlement;
   final Value<int> byteSize;
   final Value<String> cacheState;
   final Value<DateTime> lastAccessedAt;
   final Value<DateTime> verifiedAt;
   final Value<int> rowid;
   const LocalMediaCacheEntriesCompanion({
+    this.ownerId = const Value.absent(),
     this.mediaId = const Value.absent(),
     this.verifiedLocalPath = const Value.absent(),
+    this.mediaVersion = const Value.absent(),
     this.checksumSha256 = const Value.absent(),
+    this.requiredEntitlement = const Value.absent(),
     this.byteSize = const Value.absent(),
     this.cacheState = const Value.absent(),
     this.lastAccessedAt = const Value.absent(),
@@ -2732,25 +2867,33 @@ class LocalMediaCacheEntriesCompanion
     this.rowid = const Value.absent(),
   });
   LocalMediaCacheEntriesCompanion.insert({
+    required String ownerId,
     required String mediaId,
     required String verifiedLocalPath,
+    required String mediaVersion,
     required String checksumSha256,
+    this.requiredEntitlement = const Value.absent(),
     required int byteSize,
     required String cacheState,
     required DateTime lastAccessedAt,
     required DateTime verifiedAt,
     this.rowid = const Value.absent(),
-  }) : mediaId = Value(mediaId),
+  }) : ownerId = Value(ownerId),
+       mediaId = Value(mediaId),
        verifiedLocalPath = Value(verifiedLocalPath),
+       mediaVersion = Value(mediaVersion),
        checksumSha256 = Value(checksumSha256),
        byteSize = Value(byteSize),
        cacheState = Value(cacheState),
        lastAccessedAt = Value(lastAccessedAt),
        verifiedAt = Value(verifiedAt);
   static Insertable<LocalMediaCacheEntry> custom({
+    Expression<String>? ownerId,
     Expression<String>? mediaId,
     Expression<String>? verifiedLocalPath,
+    Expression<String>? mediaVersion,
     Expression<String>? checksumSha256,
+    Expression<String>? requiredEntitlement,
     Expression<int>? byteSize,
     Expression<String>? cacheState,
     Expression<DateTime>? lastAccessedAt,
@@ -2758,9 +2901,13 @@ class LocalMediaCacheEntriesCompanion
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (ownerId != null) 'owner_id': ownerId,
       if (mediaId != null) 'media_id': mediaId,
       if (verifiedLocalPath != null) 'verified_local_path': verifiedLocalPath,
+      if (mediaVersion != null) 'media_version': mediaVersion,
       if (checksumSha256 != null) 'checksum_sha256': checksumSha256,
+      if (requiredEntitlement != null)
+        'required_entitlement': requiredEntitlement,
       if (byteSize != null) 'byte_size': byteSize,
       if (cacheState != null) 'cache_state': cacheState,
       if (lastAccessedAt != null) 'last_accessed_at': lastAccessedAt,
@@ -2770,9 +2917,12 @@ class LocalMediaCacheEntriesCompanion
   }
 
   LocalMediaCacheEntriesCompanion copyWith({
+    Value<String>? ownerId,
     Value<String>? mediaId,
     Value<String>? verifiedLocalPath,
+    Value<String>? mediaVersion,
     Value<String>? checksumSha256,
+    Value<String?>? requiredEntitlement,
     Value<int>? byteSize,
     Value<String>? cacheState,
     Value<DateTime>? lastAccessedAt,
@@ -2780,9 +2930,12 @@ class LocalMediaCacheEntriesCompanion
     Value<int>? rowid,
   }) {
     return LocalMediaCacheEntriesCompanion(
+      ownerId: ownerId ?? this.ownerId,
       mediaId: mediaId ?? this.mediaId,
       verifiedLocalPath: verifiedLocalPath ?? this.verifiedLocalPath,
+      mediaVersion: mediaVersion ?? this.mediaVersion,
       checksumSha256: checksumSha256 ?? this.checksumSha256,
+      requiredEntitlement: requiredEntitlement ?? this.requiredEntitlement,
       byteSize: byteSize ?? this.byteSize,
       cacheState: cacheState ?? this.cacheState,
       lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
@@ -2794,14 +2947,23 @@ class LocalMediaCacheEntriesCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
     if (mediaId.present) {
       map['media_id'] = Variable<String>(mediaId.value);
     }
     if (verifiedLocalPath.present) {
       map['verified_local_path'] = Variable<String>(verifiedLocalPath.value);
     }
+    if (mediaVersion.present) {
+      map['media_version'] = Variable<String>(mediaVersion.value);
+    }
     if (checksumSha256.present) {
       map['checksum_sha256'] = Variable<String>(checksumSha256.value);
+    }
+    if (requiredEntitlement.present) {
+      map['required_entitlement'] = Variable<String>(requiredEntitlement.value);
     }
     if (byteSize.present) {
       map['byte_size'] = Variable<int>(byteSize.value);
@@ -2824,9 +2986,12 @@ class LocalMediaCacheEntriesCompanion
   @override
   String toString() {
     return (StringBuffer('LocalMediaCacheEntriesCompanion(')
+          ..write('ownerId: $ownerId, ')
           ..write('mediaId: $mediaId, ')
           ..write('verifiedLocalPath: $verifiedLocalPath, ')
+          ..write('mediaVersion: $mediaVersion, ')
           ..write('checksumSha256: $checksumSha256, ')
+          ..write('requiredEntitlement: $requiredEntitlement, ')
           ..write('byteSize: $byteSize, ')
           ..write('cacheState: $cacheState, ')
           ..write('lastAccessedAt: $lastAccessedAt, ')
@@ -17784,9 +17949,12 @@ typedef $$LocalMediaAssetsTableProcessedTableManager =
     >;
 typedef $$LocalMediaCacheEntriesTableCreateCompanionBuilder =
     LocalMediaCacheEntriesCompanion Function({
+      required String ownerId,
       required String mediaId,
       required String verifiedLocalPath,
+      required String mediaVersion,
       required String checksumSha256,
+      Value<String?> requiredEntitlement,
       required int byteSize,
       required String cacheState,
       required DateTime lastAccessedAt,
@@ -17795,9 +17963,12 @@ typedef $$LocalMediaCacheEntriesTableCreateCompanionBuilder =
     });
 typedef $$LocalMediaCacheEntriesTableUpdateCompanionBuilder =
     LocalMediaCacheEntriesCompanion Function({
+      Value<String> ownerId,
       Value<String> mediaId,
       Value<String> verifiedLocalPath,
+      Value<String> mediaVersion,
       Value<String> checksumSha256,
+      Value<String?> requiredEntitlement,
       Value<int> byteSize,
       Value<String> cacheState,
       Value<DateTime> lastAccessedAt,
@@ -17847,13 +18018,28 @@ class $$LocalMediaCacheEntriesTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get verifiedLocalPath => $composableBuilder(
     column: $table.verifiedLocalPath,
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get mediaVersion => $composableBuilder(
+    column: $table.mediaVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get checksumSha256 => $composableBuilder(
     column: $table.checksumSha256,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get requiredEntitlement => $composableBuilder(
+    column: $table.requiredEntitlement,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -17910,13 +18096,28 @@ class $$LocalMediaCacheEntriesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get verifiedLocalPath => $composableBuilder(
     column: $table.verifiedLocalPath,
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get mediaVersion => $composableBuilder(
+    column: $table.mediaVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get checksumSha256 => $composableBuilder(
     column: $table.checksumSha256,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get requiredEntitlement => $composableBuilder(
+    column: $table.requiredEntitlement,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -17973,13 +18174,26 @@ class $$LocalMediaCacheEntriesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
   GeneratedColumn<String> get verifiedLocalPath => $composableBuilder(
     column: $table.verifiedLocalPath,
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get mediaVersion => $composableBuilder(
+    column: $table.mediaVersion,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get checksumSha256 => $composableBuilder(
     column: $table.checksumSha256,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get requiredEntitlement => $composableBuilder(
+    column: $table.requiredEntitlement,
     builder: (column) => column,
   );
 
@@ -18064,18 +18278,24 @@ class $$LocalMediaCacheEntriesTableTableManager
               ),
           updateCompanionCallback:
               ({
+                Value<String> ownerId = const Value.absent(),
                 Value<String> mediaId = const Value.absent(),
                 Value<String> verifiedLocalPath = const Value.absent(),
+                Value<String> mediaVersion = const Value.absent(),
                 Value<String> checksumSha256 = const Value.absent(),
+                Value<String?> requiredEntitlement = const Value.absent(),
                 Value<int> byteSize = const Value.absent(),
                 Value<String> cacheState = const Value.absent(),
                 Value<DateTime> lastAccessedAt = const Value.absent(),
                 Value<DateTime> verifiedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalMediaCacheEntriesCompanion(
+                ownerId: ownerId,
                 mediaId: mediaId,
                 verifiedLocalPath: verifiedLocalPath,
+                mediaVersion: mediaVersion,
                 checksumSha256: checksumSha256,
+                requiredEntitlement: requiredEntitlement,
                 byteSize: byteSize,
                 cacheState: cacheState,
                 lastAccessedAt: lastAccessedAt,
@@ -18084,18 +18304,24 @@ class $$LocalMediaCacheEntriesTableTableManager
               ),
           createCompanionCallback:
               ({
+                required String ownerId,
                 required String mediaId,
                 required String verifiedLocalPath,
+                required String mediaVersion,
                 required String checksumSha256,
+                Value<String?> requiredEntitlement = const Value.absent(),
                 required int byteSize,
                 required String cacheState,
                 required DateTime lastAccessedAt,
                 required DateTime verifiedAt,
                 Value<int> rowid = const Value.absent(),
               }) => LocalMediaCacheEntriesCompanion.insert(
+                ownerId: ownerId,
                 mediaId: mediaId,
                 verifiedLocalPath: verifiedLocalPath,
+                mediaVersion: mediaVersion,
                 checksumSha256: checksumSha256,
+                requiredEntitlement: requiredEntitlement,
                 byteSize: byteSize,
                 cacheState: cacheState,
                 lastAccessedAt: lastAccessedAt,

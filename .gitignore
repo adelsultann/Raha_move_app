@@ -46,3 +46,12 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Provider source and commercial media are never repository artifacts. Keep
+# only deliberately authored, license-approved starter content under assets/.
+/Free50/**/*.mp4
+/Free50/**/*.gif
+/private_media/
+/provider_source_media/
+**/license_documents/
+**/purchase_records/

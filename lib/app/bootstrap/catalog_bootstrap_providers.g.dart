@@ -8,29 +8,20 @@ part of 'catalog_bootstrap_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The local database used by bootstrap. Defaults to an in-memory executor so
-/// the application compiles and tests run without platform plugins; the
-/// durable, file-backed executor (with `path_provider` and
-/// `sqlite3_flutter_libs`/`sqflite`) is wired by the database/storage owner.
-/// Tests override this provider with an isolated in-memory database.
+/// Durable application database. Tests override this provider with an
+/// isolated in-memory database.
 
 @ProviderFor(appDatabase)
 final appDatabaseProvider = AppDatabaseProvider._();
 
-/// The local database used by bootstrap. Defaults to an in-memory executor so
-/// the application compiles and tests run without platform plugins; the
-/// durable, file-backed executor (with `path_provider` and
-/// `sqlite3_flutter_libs`/`sqflite`) is wired by the database/storage owner.
-/// Tests override this provider with an isolated in-memory database.
+/// Durable application database. Tests override this provider with an
+/// isolated in-memory database.
 
 final class AppDatabaseProvider
     extends $FunctionalProvider<AppDatabase, AppDatabase, AppDatabase>
     with $Provider<AppDatabase> {
-  /// The local database used by bootstrap. Defaults to an in-memory executor so
-  /// the application compiles and tests run without platform plugins; the
-  /// durable, file-backed executor (with `path_provider` and
-  /// `sqlite3_flutter_libs`/`sqflite`) is wired by the database/storage owner.
-  /// Tests override this provider with an isolated in-memory database.
+  /// Durable application database. Tests override this provider with an
+  /// isolated in-memory database.
   AppDatabaseProvider._()
     : super(
         from: null,
@@ -64,7 +55,7 @@ final class AppDatabaseProvider
   }
 }
 
-String _$appDatabaseHash() => r'ae35d057ca72b3345b01e3dbbf17d2f480581e4e';
+String _$appDatabaseHash() => r'2e20363aeadfacbb04086cb16c9c98297865d5c8';
 
 /// Injectable catalog source. Defaults to an offline no-op so no live SDK or
 /// configuration is required; override with a real source when one exists.

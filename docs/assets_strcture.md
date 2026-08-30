@@ -32,7 +32,7 @@ Do not scrape the public website as the production content pipeline. Retain the 
 
 GymVisual's published regular license currently says that purchased high-resolution, non-watermarked media may be used to illustrate mobile applications, subject to its restrictions. It also says that purchased media may not be redistributed, made available for download, transferred to third parties, posted to AI platforms, or used to generate AI content.
 
-Project rules:
+Production asset rules:
 
 1. Use only media purchased by Raha Move and covered by the relevant license.
 2. Never use watermarked previews or public thumbnails as application assets.
@@ -42,6 +42,15 @@ Project rules:
 6. Do not send GymVisual media to AI tools or use it as image-generation input.
 7. Confirm with GymVisual that Raha Move's planned CDN, caching, subscription, and offline-download behavior complies with the license before production launch.
 8. Recheck the license before each new purchase because website terms may change.
+
+Development-fixture exception: the provider's Free50 sample package may be used
+temporarily for internal importer, playback, cache, and application testing. It
+must remain unpublished and excluded from beta and production builds. This
+exception lets development continue; it does not establish redistribution or
+commercial-use rights. Before beta distribution, purchase or otherwise license
+the production mobility library, confirm the planned delivery and offline-cache
+rights, and complete the release decision recorded in
+`decisions/raha-026-provider-fixture-review.md`.
 
 This document records an engineering approach, not legal advice.
 
@@ -454,17 +463,20 @@ Do not add a broad `*.gif` or `*.mp4` ignore rule because Raha-owned or explicit
 
 ## Minimum Prototype Approach
 
-For the first prototype:
+For the first internal prototype:
 
-1. Purchase or license a very small set of relevant stretching/mobility assets.
-2. Preserve original filenames privately.
+1. Use the Free50 sample only for internal importer, playback, metadata, cache,
+   and application-flow testing while the product is under development.
+2. Keep it unpublished and out of beta or production build inputs.
 3. Create `exercises.csv` and `media_assets.csv` manually.
 4. Give every movement a Raha ID.
 5. Add reviewed Arabic and English names.
 6. Generate a small JSON starter manifest.
-7. Bundle only the approved prototype files under `assets/starter_content`.
-8. Test GIF and MP4 performance on one representative Android and iOS device.
-9. Choose the production playback format after measuring download size, memory, battery, pause behavior, and visual quality.
+7. Test GIF and MP4 performance on one representative Android and iOS device.
+8. Choose the production playback format after measuring download size, memory,
+   battery, pause behavior, and visual quality.
+9. Before beta distribution, purchase or license a relevant mobility set,
+   preserve its originals privately, confirm delivery rights, and bundle only
+   an explicitly approved starter subset under `assets/starter_content`.
 
 This approach allows Raha Move to test the experience without making GymVisual filenames or classifications part of the permanent application architecture.
-
