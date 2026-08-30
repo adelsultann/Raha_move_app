@@ -1,6 +1,6 @@
 -- Isolated forward-upgrade proof. The runner creates a disposable database
 -- with only the minimal Auth compatibility objects, then this file applies
--- 00000--00200, stores representative history, and applies 00300--00600.
+-- 00000--00200, stores representative history, and applies later migrations.
 \set ON_ERROR_STOP on
 create schema auth;
 create table auth.users (id uuid primary key);
@@ -19,12 +19,15 @@ insert into public.point_ledger(id,user_id,points,reason_code,source_type,source
 \i /workspace/supabase/migrations/20260829000400_raha_022_function_acl_correction.sql
 \i /workspace/supabase/migrations/20260829000500_raha_022_session_step_policy_acl_fix.sql
 \i /workspace/supabase/migrations/20260829000600_raha_022_session_step_policy_execute.sql
+\i /workspace/supabase/migrations/20260829000700_raha_024_atomic_content_release_contract.sql
+\i /workspace/supabase/migrations/20260829000800_raha_024_release_security_and_complete_snapshots.sql
 
 do $$
 begin
   if (select display_name from public.profiles where user_id='90000000-0000-0000-0000-000000000001') <> 'preserved user' then raise exception 'profile was not preserved'; end if;
   if not exists (select 1 from public.routine_sessions where id='90000000-0000-0000-0000-000000000020' and status='completed' and actual_duration_seconds=60) then raise exception 'completed session history was not preserved'; end if;
   if not exists (select 1 from public.point_ledger where id='90000000-0000-0000-0000-000000000030') then raise exception 'ledger history was not preserved'; end if;
-  if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='routine_sessions' and column_name='last_credited_at' and is_nullable='NO') then raise exception 'forward session column missing'; end if;
+   if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='routine_sessions' and column_name='last_credited_at' and is_nullable='NO') then raise exception 'forward session column missing'; end if;
+   if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='media_assets' and column_name='delivery_reference' and is_nullable='NO') then raise exception 'forward delivery reference missing'; end if;
 end $$;
 \i /workspace/supabase/tests/raha_022_acl_gate.sql

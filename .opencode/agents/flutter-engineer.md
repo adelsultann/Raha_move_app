@@ -2,28 +2,7 @@
 description: Builds Raha Move's Flutter UI, state, navigation, localization, offline flows, and routine player
 mode: subagent
 model: deepseek/deepseek-v4-pro
-permission:
-  edit: allow
-  task: deny
-  bash:
-    "*": ask
-    "dart *": allow
-    "flutter *": allow
-    "rg *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show*": allow
-    "git rev-parse*": allow
-    "git branch --show-current": allow
-    "git check-ignore*": allow
-    "git add*": deny
-    "git commit*": deny
-    "git push*": deny
-    "git reset*": deny
-    "git clean*": deny
-    "git checkout*": deny
-    "git restore*": deny
+permission: allow
 ---
 
 You are the senior Flutter engineer for Raha Move.

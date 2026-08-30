@@ -1,0 +1,213 @@
+{
+  "manifest_checksum": "54d02558c39f8299cdba757bb9101dad339db22e6b2023426813afbba01c6388",
+  "manifest": {
+    "contract_version": "raha-content-release-v1",
+    "release": {
+      "id": "0",
+      "version": "starter-1",
+      "published_at": "2026-08-29T00:00:00Z",
+      "minimum_app_version": "1.0.0"
+    },
+    "exercises": [
+      {
+        "id": "01000000-0000-0000-0000-000000000001",
+        "public_id": "raha_ex_000001",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-08-29T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000002",
+        "public_id": "raha_ex_000002",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-08-29T00:00:00Z"
+      }
+    ],
+    "exercise_translations": [
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Seated neck release",
+        "description": "A gentle seated neck stretch.",
+        "short_cue": "Move within a comfortable range."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "تحرير الرقبة أثناء الجلوس",
+        "description": "تمدد لطيف للرقبة أثناء الجلوس.",
+        "short_cue": "تحرك ضمن مدى مريح."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "locale": "en",
+        "name": "Seated shoulder rolls",
+        "description": "A controlled seated shoulder movement.",
+        "short_cue": "Keep your shoulders relaxed."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "locale": "ar",
+        "name": "دوائر الكتفين أثناء الجلوس",
+        "description": "حركة كتفين متحكم بها أثناء الجلوس.",
+        "short_cue": "أبقِ كتفيك مسترخيين."
+      }
+    ],
+    "media_assets": [
+      {
+        "id": "02000000-0000-0000-0000-000000000001",
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "delivery_reference": "0a000000-0000-0000-0000-000000000001",
+        "status": "pending",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 720,
+        "height": 720,
+        "duration_ms": 30000,
+        "checksum_sha256": null,
+        "is_preferred": true,
+        "updated_at": "2026-08-29T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "delivery_reference": "0a000000-0000-0000-0000-000000000002",
+        "status": "pending",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 720,
+        "height": 720,
+        "duration_ms": 30000,
+        "checksum_sha256": null,
+        "is_preferred": true,
+        "updated_at": "2026-08-29T00:00:00Z"
+      }
+    ],
+    "routines": [
+      {
+        "id": "03000000-0000-0000-0000-000000000001",
+        "public_id": "raha_rt_000001",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "estimated_duration_seconds": 60,
+        "version": 1,
+        "updated_at": "2026-08-29T00:00:00Z"
+      }
+    ],
+    "routine_translations": [
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Seated neck and shoulders reset",
+        "summary": "A short seated mobility routine."
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "استراحة للرقبة والكتفين أثناء الجلوس",
+        "summary": "روتين حركة قصير أثناء الجلوس."
+      }
+    ],
+    "routine_steps": [
+      {
+        "id": "04000000-0000-0000-0000-000000000001",
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "position": 1,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000002",
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "position": 2,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      }
+    ],
+    "body_areas": [
+      { "id": "41000000-0000-0000-0000-000000000001", "key": "neck", "sort_order": 1, "active": true },
+      { "id": "41000000-0000-0000-0000-000000000002", "key": "shoulders", "sort_order": 2, "active": true }
+    ],
+    "body_area_translations": [
+      { "body_area_id": "41000000-0000-0000-0000-000000000001", "locale": "en", "name": "Neck" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000001", "locale": "ar", "name": "الرقبة" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "en", "name": "Shoulders" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "ar", "name": "الكتفان" }
+    ],
+    "goals": [
+      { "id": "42000000-0000-0000-0000-000000000001", "key": "ease_stiffness", "sort_order": 1, "active": true }
+    ],
+    "goal_translations": [
+      { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "en", "name": "Ease stiffness" },
+      { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "ar", "name": "تخفيف التيبس" }
+    ],
+    "movement_positions": [
+      { "id": "43000000-0000-0000-0000-000000000001", "key": "seated", "sort_order": 1, "active": true }
+    ],
+    "movement_position_translations": [
+      { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "en", "name": "Seated" },
+      { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "ar", "name": "جلوس" }
+    ],
+    "equipment": [
+      { "id": "44000000-0000-0000-0000-000000000001", "key": "body_weight", "sort_order": 1, "active": true }
+    ],
+    "equipment_translations": [
+      { "equipment_id": "44000000-0000-0000-0000-000000000001", "locale": "en", "name": "Body weight" },
+      { "equipment_id": "44000000-0000-0000-0000-000000000001", "locale": "ar", "name": "وزن الجسم" }
+    ],
+    "routine_contexts": [
+      { "id": "45000000-0000-0000-0000-000000000001", "key": "everyday_mobility", "sort_order": 1, "active": true }
+    ],
+    "routine_context_translations": [
+      { "context_id": "45000000-0000-0000-0000-000000000001", "locale": "en", "name": "Everyday mobility" },
+      { "context_id": "45000000-0000-0000-0000-000000000001", "locale": "ar", "name": "حركة يومية" }
+    ],
+    "tags": [],
+    "tag_translations": [],
+    "exercise_body_areas": [
+      { "exercise_id": "01000000-0000-0000-0000-000000000001", "body_area_id": "41000000-0000-0000-0000-000000000001", "relevance_weight": 1.0 },
+      { "exercise_id": "01000000-0000-0000-0000-000000000002", "body_area_id": "41000000-0000-0000-0000-000000000002", "relevance_weight": 1.0 }
+    ],
+    "exercise_positions": [
+      { "exercise_id": "01000000-0000-0000-0000-000000000001", "position_id": "43000000-0000-0000-0000-000000000001" },
+      { "exercise_id": "01000000-0000-0000-0000-000000000002", "position_id": "43000000-0000-0000-0000-000000000001" }
+    ],
+    "exercise_equipment": [
+      { "exercise_id": "01000000-0000-0000-0000-000000000001", "equipment_id": "44000000-0000-0000-0000-000000000001" },
+      { "exercise_id": "01000000-0000-0000-0000-000000000002", "equipment_id": "44000000-0000-0000-0000-000000000001" }
+    ],
+    "exercise_goals": [
+      { "exercise_id": "01000000-0000-0000-0000-000000000001", "goal_id": "42000000-0000-0000-0000-000000000001" },
+      { "exercise_id": "01000000-0000-0000-0000-000000000002", "goal_id": "42000000-0000-0000-0000-000000000001" }
+    ],
+    "exercise_tags": [],
+    "routine_body_areas": [
+      { "routine_id": "03000000-0000-0000-0000-000000000001", "body_area_id": "41000000-0000-0000-0000-000000000001", "relevance_weight": 1.0 },
+      { "routine_id": "03000000-0000-0000-0000-000000000001", "body_area_id": "41000000-0000-0000-0000-000000000002", "relevance_weight": 1.0 }
+    ],
+    "routine_goals": [
+      { "routine_id": "03000000-0000-0000-0000-000000000001", "goal_id": "42000000-0000-0000-0000-000000000001", "relevance_weight": 1.0 }
+    ],
+    "routine_positions": [
+      { "routine_id": "03000000-0000-0000-0000-000000000001", "position_id": "43000000-0000-0000-0000-000000000001" }
+    ],
+    "routine_context_memberships": [
+      { "routine_id": "03000000-0000-0000-0000-000000000001", "context_id": "45000000-0000-0000-0000-000000000001" }
+    ],
+    "routine_equipment": [
+      { "routine_id": "03000000-0000-0000-0000-000000000001", "equipment_id": "44000000-0000-0000-0000-000000000001" }
+    ],
+    "tombstones": []
+  }
+}

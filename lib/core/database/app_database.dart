@@ -89,8 +89,12 @@ class LocalMediaAssets extends Table {
   TextColumn get exerciseId => text().references(LocalExercises, #id)();
   TextColumn get mediaType => text()();
 
-  /// A stable delivery object key, never an expiring or signed URL.
-  TextColumn get storageKey => text()();
+  /// A stable, opaque, provider-neutral delivery reference from the RAHA-024
+  /// content-release contract (a server-issued UUID). It is never an expiring
+  /// or signed URL and never a local path; the trusted media service resolves
+  /// it to a downloadable asset. The column was named `storage_key` before
+  /// schema v4.
+  TextColumn get deliveryReference => text()();
   TextColumn get mimeType => text()();
   TextColumn get checksumSha256 => text()();
   TextColumn get status => text()();
@@ -105,7 +109,7 @@ class LocalMediaAssets extends Table {
 
   @override
   List<String> get customConstraints => [
-    "CHECK (storage_key NOT LIKE '%://%' AND storage_key NOT LIKE '/%' AND storage_key NOT LIKE '%?%' AND storage_key NOT LIKE '%#%')",
+    "CHECK (delivery_reference NOT LIKE '%://%' AND delivery_reference NOT LIKE '/%' AND delivery_reference NOT LIKE '%?%' AND delivery_reference NOT LIKE '%#%')",
   ];
 }
 
@@ -176,6 +180,10 @@ class LocalRoutineSteps extends Table {
   IntColumn get restAfterSeconds => integer().withDefault(const Constant(0))();
   BoolColumn get isOptional => boolean().withDefault(const Constant(false))();
 
+  /// `published` or `retired`. Retired steps are preserved for historical
+  /// sessions but excluded from the current routine definition.
+  TextColumn get status => text().withDefault(const Constant('published'))();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -189,6 +197,7 @@ class LocalRoutineSteps extends Table {
     'CHECK (position > 0)',
     'CHECK (duration_seconds > 0)',
     'CHECK (rest_after_seconds >= 0)',
+    "CHECK (status IN ('published', 'retired'))",
   ];
 }
 
@@ -202,9 +211,18 @@ class LocalRoutineTaxonomies extends Table {
 }
 
 class LocalContentReleases extends Table {
+  /// Monotonic release cursor. Server releases use their bigint id as text;
+  /// the bundled starter bootstrap uses `'0'` so any server release is "after" it.
   TextColumn get id => text()();
+
+  /// Human-readable release label supplied by the server (`version`).
+  TextColumn get version => text()();
+
+  /// The manifest contract version that was applied (`contract_version`).
+  TextColumn get contractVersion => text()();
   TextColumn get manifestChecksum => text()();
   TextColumn get minimumAppVersion => text().nullable()();
+  DateTimeColumn get publishedAt => dateTime().nullable()();
   DateTimeColumn get appliedAt => dateTime()();
   BoolColumn get isCurrent => boolean().withDefault(const Constant(false))();
 
@@ -468,7 +486,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -476,6 +494,7 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (m, from, to) async {
       if (from < 2) await _createV2Tables(m);
       if (from < 3) await _migrateToV3(m);
+      if (from < 4) await _migrateToV4(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -534,6 +553,75 @@ class AppDatabase extends _$AppDatabase {
     );
     await m.alterTable(TableMigration(localRoutineSessions));
     await _createV3Indexes();
+  }
+
+  /// Renames the legacy `storage_key` delivery column to `delivery_reference`
+  /// and adds release-contract columns to `local_content_releases`. Both are
+  /// guarded so a v1 install (whose tables are created at the current schema
+  /// by [MigrationStrategy.onCreate] / `_createV2Tables`) is left untouched.
+  Future<void> _migrateToV4(Migrator m) async {
+    final mediaColumns = await _tableColumnNames('local_media_assets');
+    if (mediaColumns.contains('storage_key') &&
+        !mediaColumns.contains('delivery_reference')) {
+      await customStatement(
+        'ALTER TABLE local_media_assets RENAME TO local_media_assets_pre_v4',
+      );
+      await customStatement(
+        'CREATE TABLE local_media_assets ('
+        'id TEXT NOT NULL PRIMARY KEY, '
+        'exercise_id TEXT NOT NULL REFERENCES local_exercises (id), '
+        'media_type TEXT NOT NULL, '
+        'delivery_reference TEXT NOT NULL, '
+        'mime_type TEXT NOT NULL, '
+        'checksum_sha256 TEXT NOT NULL, '
+        'status TEXT NOT NULL, '
+        'is_preferred INTEGER NOT NULL DEFAULT 0, '
+        'width INTEGER NULL, '
+        'height INTEGER NULL, '
+        'duration_ms INTEGER NULL, '
+        'updated_at INTEGER NOT NULL, '
+        "CHECK (delivery_reference NOT LIKE '%://%' AND delivery_reference NOT LIKE '/%' AND delivery_reference NOT LIKE '%?%' AND delivery_reference NOT LIKE '%#%'))",
+      );
+      await customStatement(
+        'INSERT INTO local_media_assets '
+        '(id, exercise_id, media_type, delivery_reference, mime_type, '
+        'checksum_sha256, status, is_preferred, width, height, duration_ms, updated_at) '
+        'SELECT id, exercise_id, media_type, storage_key, mime_type, '
+        'checksum_sha256, status, is_preferred, width, height, duration_ms, updated_at '
+        'FROM local_media_assets_pre_v4',
+      );
+      await customStatement('DROP TABLE local_media_assets_pre_v4');
+    }
+    await _createV3Indexes();
+
+    final releaseColumns = await _tableColumnNames('local_content_releases');
+    if (!releaseColumns.contains('version')) {
+      await customStatement(
+        "ALTER TABLE local_content_releases ADD COLUMN version TEXT NOT NULL DEFAULT ''",
+      );
+    }
+    if (!releaseColumns.contains('contract_version')) {
+      await customStatement(
+        "ALTER TABLE local_content_releases ADD COLUMN contract_version TEXT NOT NULL DEFAULT 'raha-content-release-v1'",
+      );
+    }
+    if (!releaseColumns.contains('published_at')) {
+      await customStatement(
+        'ALTER TABLE local_content_releases ADD COLUMN published_at INTEGER NULL',
+      );
+    }
+
+    final stepColumns = await _tableColumnNames('local_routine_steps');
+    if (!stepColumns.contains('status')) {
+      await customStatement(
+        "ALTER TABLE local_routine_steps ADD COLUMN status TEXT NOT NULL DEFAULT 'published'",
+      );
+    }
+  }
+
+  Future<List<String>> _tableColumnNames(String table) async {
+    final rows = await customSelect("PRAGMA table_info('$table')").get();
+    return rows.map((row) => row.data['name'] as String).toList();
   }
 }
 
@@ -764,9 +852,13 @@ class LocalUserDataRepository {
         session.totalSteps.value <= 0) {
       throw ArgumentError('Session does not match its canonical routine');
     }
-    final canonical = await (_database.select(
-      _database.localRoutineSteps,
-    )..where((r) => r.routineId.equals(session.routineId.value))).get();
+    final canonical =
+        await (_database.select(_database.localRoutineSteps)..where(
+              (r) =>
+                  r.routineId.equals(session.routineId.value) &
+                  r.status.equals('published'),
+            ))
+            .get();
     final canonicalById = {for (final step in canonical) step.id: step};
     if (stepList.length != canonicalById.length ||
         canonicalById.isEmpty ||

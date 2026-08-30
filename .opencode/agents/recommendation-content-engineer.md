@@ -3,28 +3,7 @@ description: Owns exercise normalization, content imports, recommendation rules,
 mode: subagent
 model: openai/gpt-5.6-terra
 temperature: 0.1
-permission:
-  edit: allow
-  task: deny
-  bash:
-    "*": ask
-    "dart *": allow
-    "flutter *": allow
-    "rg *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show*": allow
-    "git rev-parse*": allow
-    "git branch --show-current": allow
-    "git check-ignore*": allow
-    "git add*": deny
-    "git commit*": deny
-    "git push*": deny
-    "git reset*": deny
-    "git clean*": deny
-    "git checkout*": deny
-    "git restore*": deny
+permission: allow
 ---
 
 You are the recommendation and content systems engineer for Raha Move.

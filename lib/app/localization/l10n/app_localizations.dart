@@ -109,6 +109,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your calm movement companion is getting ready.'**
   String get foundationMessage;
+
+  /// No description provided for @catalogBootstrapLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your movement catalog…'**
+  String get catalogBootstrapLoading;
+
+  /// No description provided for @catalogBootstrapError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t prepare your content right now.'**
+  String get catalogBootstrapError;
+
+  /// No description provided for @catalogBootstrapRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get catalogBootstrapRetry;
 }
 
 class _AppLocalizationsDelegate

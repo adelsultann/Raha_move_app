@@ -36,20 +36,32 @@ begin
     ));
   if unexpected is not null then raise exception 'unexpected public relation grant(s): %', unexpected; end if;
 
-  if has_function_privilege('anon','public.get_next_free_content_release(bigint,text)','execute') is false
-     or has_function_privilege('authenticated','public.get_next_free_content_release(bigint,text)','execute') is false
+   if has_function_privilege('anon','public.get_next_content_release(bigint,text)','execute') is false
+      or has_function_privilege('authenticated','public.get_next_content_release(bigint,text)','execute') is false
      or has_function_privilege('authenticated','public.start_routine_session(uuid,uuid,integer,uuid,text,text)','execute') is false
      or has_function_privilege('authenticated','public.complete_routine_session(uuid,text)','execute') is false
      or has_function_privilege('authenticated','public.expire_my_stale_routine_sessions()','execute') is false
      or has_function_privilege('authenticated','public.can_write_own_session_step(uuid,uuid,uuid,smallint,integer)','execute') is false then
     raise exception 'required client RPC execute grant missing';
   end if;
-  if has_function_privilege('anon','public.start_routine_session(uuid,uuid,integer,uuid,text,text)','execute')
+   if has_function_privilege('anon','public.get_next_free_content_release(bigint,text)','execute')
+      or has_function_privilege('authenticated','public.get_next_free_content_release(bigint,text)','execute')
+      or has_function_privilege('public','public.get_next_free_content_release(bigint,text)','execute')
+      or has_function_privilege('anon','public.start_routine_session(uuid,uuid,integer,uuid,text,text)','execute')
      or has_function_privilege('anon','public.complete_routine_session(uuid,text)','execute')
      or has_function_privilege('anon','public.expire_stale_routine_sessions()','execute')
      or has_function_privilege('authenticated','public.expire_stale_routine_sessions()','execute')
-     or has_function_privilege('anon','public.semver_parts(text)','execute')
-     or has_function_privilege('authenticated','public.release_is_available(bigint,text)','execute') then
+      or has_function_privilege('anon','public.semver_parts(text)','execute')
+      or has_function_privilege('authenticated','public.release_is_available(bigint,text)','execute')
+      or has_function_privilege('anon','public.content_release_manifest(bigint)','execute')
+      or has_function_privilege('authenticated','public.content_release_manifest(bigint)','execute')
+      or has_function_privilege('anon','public.content_release_contract_is_valid(bigint)','execute')
+      or has_function_privilege('authenticated','public.content_release_contract_is_valid(bigint)','execute')
+      or has_function_privilege('anon','public.content_release_manifest_release_delta(bigint)','execute')
+      or has_function_privilege('authenticated','public.content_release_manifest_release_delta(bigint)','execute')
+      or has_function_privilege('anon','public.release_filter_by_ids(jsonb,text,text[])','execute')
+      or has_function_privilege('authenticated','public.release_filter_by_ids(jsonb,text,text[])','execute')
+      or has_function_privilege('public','public.get_next_content_release(bigint,text)','execute') then
     raise exception 'forbidden RPC execute grant present';
   end if;
 end $$;

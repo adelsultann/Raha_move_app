@@ -104,7 +104,7 @@ void main() {
               id: 'media-2',
               exerciseId: 'exercise-1',
               mediaType: 'video',
-              storageKey: 'delivery/exercise-1/v2.mp4',
+              deliveryReference: 'delivery/exercise-1/v2.mp4',
               mimeType: 'video/mp4',
               checksumSha256: 'b' * 64,
               status: 'published',
@@ -140,7 +140,7 @@ void main() {
             id: 'media-2',
             exerciseId: 'exercise-1',
             mediaType: 'video',
-            storageKey: 'delivery/exercise-1/v2.mp4',
+            deliveryReference: 'delivery/exercise-1/v2.mp4',
             mimeType: 'video/mp4',
             checksumSha256: 'b' * 64,
             status: 'published',
@@ -797,7 +797,7 @@ Future<void> _seedCatalog(AppDatabase database, DateTime now) async {
           id: 'media-1',
           exerciseId: 'exercise-1',
           mediaType: 'video',
-          storageKey: 'delivery/exercise-1/v1.mp4',
+          deliveryReference: 'delivery/exercise-1/v1.mp4',
           mimeType: 'video/mp4',
           checksumSha256: 'a' * 64,
           status: 'published',
@@ -960,6 +960,21 @@ NativeDatabase _v2FixtureExecutor(DateTime now) => NativeDatabase.memory(
     );
     raw.execute(
       "INSERT INTO local_profiles VALUES ('user-1', 'en', 'Asia/Riyadh', 3, NULL, 'synced', $millis, NULL, NULL)",
+    );
+    raw.execute(
+      'CREATE TABLE local_exercises ('
+      'id TEXT NOT NULL PRIMARY KEY, status TEXT NOT NULL, '
+      'access_tier TEXT NOT NULL, difficulty TEXT NOT NULL, '
+      'safety_approved INTEGER NOT NULL, updated_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_exercises VALUES ('exercise-1', 'published', 'free', 'beginner', 1, $millis)",
+    );
+    raw.execute(
+      'CREATE TABLE local_content_releases ('
+      'id TEXT NOT NULL PRIMARY KEY, manifest_checksum TEXT NOT NULL, '
+      'minimum_app_version TEXT NULL, applied_at INTEGER NOT NULL, '
+      'is_current INTEGER NOT NULL DEFAULT 0)',
     );
     raw.execute(
       'CREATE TABLE local_routines ('

@@ -1651,17 +1651,18 @@ class $LocalMediaAssetsTable extends LocalMediaAssets
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _storageKeyMeta = const VerificationMeta(
-    'storageKey',
+  static const VerificationMeta _deliveryReferenceMeta = const VerificationMeta(
+    'deliveryReference',
   );
   @override
-  late final GeneratedColumn<String> storageKey = GeneratedColumn<String>(
-    'storage_key',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> deliveryReference =
+      GeneratedColumn<String>(
+        'delivery_reference',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
   static const VerificationMeta _mimeTypeMeta = const VerificationMeta(
     'mimeType',
   );
@@ -1753,7 +1754,7 @@ class $LocalMediaAssetsTable extends LocalMediaAssets
     id,
     exerciseId,
     mediaType,
-    storageKey,
+    deliveryReference,
     mimeType,
     checksumSha256,
     status,
@@ -1796,13 +1797,16 @@ class $LocalMediaAssetsTable extends LocalMediaAssets
     } else if (isInserting) {
       context.missing(_mediaTypeMeta);
     }
-    if (data.containsKey('storage_key')) {
+    if (data.containsKey('delivery_reference')) {
       context.handle(
-        _storageKeyMeta,
-        storageKey.isAcceptableOrUnknown(data['storage_key']!, _storageKeyMeta),
+        _deliveryReferenceMeta,
+        deliveryReference.isAcceptableOrUnknown(
+          data['delivery_reference']!,
+          _deliveryReferenceMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_storageKeyMeta);
+      context.missing(_deliveryReferenceMeta);
     }
     if (data.containsKey('mime_type')) {
       context.handle(
@@ -1887,9 +1891,9 @@ class $LocalMediaAssetsTable extends LocalMediaAssets
         DriftSqlType.string,
         data['${effectivePrefix}media_type'],
       )!,
-      storageKey: attachedDatabase.typeMapping.read(
+      deliveryReference: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}storage_key'],
+        data['${effectivePrefix}delivery_reference'],
       )!,
       mimeType: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1937,8 +1941,12 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
   final String exerciseId;
   final String mediaType;
 
-  /// A stable delivery object key, never an expiring or signed URL.
-  final String storageKey;
+  /// A stable, opaque, provider-neutral delivery reference from the RAHA-024
+  /// content-release contract (a server-issued UUID). It is never an expiring
+  /// or signed URL and never a local path; the trusted media service resolves
+  /// it to a downloadable asset. The column was named `storage_key` before
+  /// schema v4.
+  final String deliveryReference;
   final String mimeType;
   final String checksumSha256;
   final String status;
@@ -1951,7 +1959,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
     required this.id,
     required this.exerciseId,
     required this.mediaType,
-    required this.storageKey,
+    required this.deliveryReference,
     required this.mimeType,
     required this.checksumSha256,
     required this.status,
@@ -1967,7 +1975,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
     map['id'] = Variable<String>(id);
     map['exercise_id'] = Variable<String>(exerciseId);
     map['media_type'] = Variable<String>(mediaType);
-    map['storage_key'] = Variable<String>(storageKey);
+    map['delivery_reference'] = Variable<String>(deliveryReference);
     map['mime_type'] = Variable<String>(mimeType);
     map['checksum_sha256'] = Variable<String>(checksumSha256);
     map['status'] = Variable<String>(status);
@@ -1990,7 +1998,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
       id: Value(id),
       exerciseId: Value(exerciseId),
       mediaType: Value(mediaType),
-      storageKey: Value(storageKey),
+      deliveryReference: Value(deliveryReference),
       mimeType: Value(mimeType),
       checksumSha256: Value(checksumSha256),
       status: Value(status),
@@ -2017,7 +2025,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
       id: serializer.fromJson<String>(json['id']),
       exerciseId: serializer.fromJson<String>(json['exerciseId']),
       mediaType: serializer.fromJson<String>(json['mediaType']),
-      storageKey: serializer.fromJson<String>(json['storageKey']),
+      deliveryReference: serializer.fromJson<String>(json['deliveryReference']),
       mimeType: serializer.fromJson<String>(json['mimeType']),
       checksumSha256: serializer.fromJson<String>(json['checksumSha256']),
       status: serializer.fromJson<String>(json['status']),
@@ -2035,7 +2043,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
       'id': serializer.toJson<String>(id),
       'exerciseId': serializer.toJson<String>(exerciseId),
       'mediaType': serializer.toJson<String>(mediaType),
-      'storageKey': serializer.toJson<String>(storageKey),
+      'deliveryReference': serializer.toJson<String>(deliveryReference),
       'mimeType': serializer.toJson<String>(mimeType),
       'checksumSha256': serializer.toJson<String>(checksumSha256),
       'status': serializer.toJson<String>(status),
@@ -2051,7 +2059,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
     String? id,
     String? exerciseId,
     String? mediaType,
-    String? storageKey,
+    String? deliveryReference,
     String? mimeType,
     String? checksumSha256,
     String? status,
@@ -2064,7 +2072,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
     id: id ?? this.id,
     exerciseId: exerciseId ?? this.exerciseId,
     mediaType: mediaType ?? this.mediaType,
-    storageKey: storageKey ?? this.storageKey,
+    deliveryReference: deliveryReference ?? this.deliveryReference,
     mimeType: mimeType ?? this.mimeType,
     checksumSha256: checksumSha256 ?? this.checksumSha256,
     status: status ?? this.status,
@@ -2081,9 +2089,9 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
           ? data.exerciseId.value
           : this.exerciseId,
       mediaType: data.mediaType.present ? data.mediaType.value : this.mediaType,
-      storageKey: data.storageKey.present
-          ? data.storageKey.value
-          : this.storageKey,
+      deliveryReference: data.deliveryReference.present
+          ? data.deliveryReference.value
+          : this.deliveryReference,
       mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
       checksumSha256: data.checksumSha256.present
           ? data.checksumSha256.value
@@ -2107,7 +2115,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
           ..write('id: $id, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('mediaType: $mediaType, ')
-          ..write('storageKey: $storageKey, ')
+          ..write('deliveryReference: $deliveryReference, ')
           ..write('mimeType: $mimeType, ')
           ..write('checksumSha256: $checksumSha256, ')
           ..write('status: $status, ')
@@ -2125,7 +2133,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
     id,
     exerciseId,
     mediaType,
-    storageKey,
+    deliveryReference,
     mimeType,
     checksumSha256,
     status,
@@ -2142,7 +2150,7 @@ class LocalMediaAsset extends DataClass implements Insertable<LocalMediaAsset> {
           other.id == this.id &&
           other.exerciseId == this.exerciseId &&
           other.mediaType == this.mediaType &&
-          other.storageKey == this.storageKey &&
+          other.deliveryReference == this.deliveryReference &&
           other.mimeType == this.mimeType &&
           other.checksumSha256 == this.checksumSha256 &&
           other.status == this.status &&
@@ -2157,7 +2165,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
   final Value<String> id;
   final Value<String> exerciseId;
   final Value<String> mediaType;
-  final Value<String> storageKey;
+  final Value<String> deliveryReference;
   final Value<String> mimeType;
   final Value<String> checksumSha256;
   final Value<String> status;
@@ -2171,7 +2179,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
     this.id = const Value.absent(),
     this.exerciseId = const Value.absent(),
     this.mediaType = const Value.absent(),
-    this.storageKey = const Value.absent(),
+    this.deliveryReference = const Value.absent(),
     this.mimeType = const Value.absent(),
     this.checksumSha256 = const Value.absent(),
     this.status = const Value.absent(),
@@ -2186,7 +2194,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
     required String id,
     required String exerciseId,
     required String mediaType,
-    required String storageKey,
+    required String deliveryReference,
     required String mimeType,
     required String checksumSha256,
     required String status,
@@ -2199,7 +2207,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
   }) : id = Value(id),
        exerciseId = Value(exerciseId),
        mediaType = Value(mediaType),
-       storageKey = Value(storageKey),
+       deliveryReference = Value(deliveryReference),
        mimeType = Value(mimeType),
        checksumSha256 = Value(checksumSha256),
        status = Value(status),
@@ -2208,7 +2216,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
     Expression<String>? id,
     Expression<String>? exerciseId,
     Expression<String>? mediaType,
-    Expression<String>? storageKey,
+    Expression<String>? deliveryReference,
     Expression<String>? mimeType,
     Expression<String>? checksumSha256,
     Expression<String>? status,
@@ -2223,7 +2231,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
       if (id != null) 'id': id,
       if (exerciseId != null) 'exercise_id': exerciseId,
       if (mediaType != null) 'media_type': mediaType,
-      if (storageKey != null) 'storage_key': storageKey,
+      if (deliveryReference != null) 'delivery_reference': deliveryReference,
       if (mimeType != null) 'mime_type': mimeType,
       if (checksumSha256 != null) 'checksum_sha256': checksumSha256,
       if (status != null) 'status': status,
@@ -2240,7 +2248,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
     Value<String>? id,
     Value<String>? exerciseId,
     Value<String>? mediaType,
-    Value<String>? storageKey,
+    Value<String>? deliveryReference,
     Value<String>? mimeType,
     Value<String>? checksumSha256,
     Value<String>? status,
@@ -2255,7 +2263,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
       id: id ?? this.id,
       exerciseId: exerciseId ?? this.exerciseId,
       mediaType: mediaType ?? this.mediaType,
-      storageKey: storageKey ?? this.storageKey,
+      deliveryReference: deliveryReference ?? this.deliveryReference,
       mimeType: mimeType ?? this.mimeType,
       checksumSha256: checksumSha256 ?? this.checksumSha256,
       status: status ?? this.status,
@@ -2280,8 +2288,8 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
     if (mediaType.present) {
       map['media_type'] = Variable<String>(mediaType.value);
     }
-    if (storageKey.present) {
-      map['storage_key'] = Variable<String>(storageKey.value);
+    if (deliveryReference.present) {
+      map['delivery_reference'] = Variable<String>(deliveryReference.value);
     }
     if (mimeType.present) {
       map['mime_type'] = Variable<String>(mimeType.value);
@@ -2319,7 +2327,7 @@ class LocalMediaAssetsCompanion extends UpdateCompanion<LocalMediaAsset> {
           ..write('id: $id, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('mediaType: $mediaType, ')
-          ..write('storageKey: $storageKey, ')
+          ..write('deliveryReference: $deliveryReference, ')
           ..write('mimeType: $mimeType, ')
           ..write('checksumSha256: $checksumSha256, ')
           ..write('status: $status, ')
@@ -4015,6 +4023,16 @@ class $LocalRoutineStepsTable extends LocalRoutineSteps
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('published'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4024,6 +4042,7 @@ class $LocalRoutineStepsTable extends LocalRoutineSteps
     durationSeconds,
     restAfterSeconds,
     isOptional,
+    status,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4092,6 +4111,12 @@ class $LocalRoutineStepsTable extends LocalRoutineSteps
         isOptional.isAcceptableOrUnknown(data['is_optional']!, _isOptionalMeta),
       );
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
     return context;
   }
 
@@ -4133,6 +4158,10 @@ class $LocalRoutineStepsTable extends LocalRoutineSteps
         DriftSqlType.bool,
         data['${effectivePrefix}is_optional'],
       )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
     );
   }
 
@@ -4151,6 +4180,10 @@ class LocalRoutineStep extends DataClass
   final int durationSeconds;
   final int restAfterSeconds;
   final bool isOptional;
+
+  /// `published` or `retired`. Retired steps are preserved for historical
+  /// sessions but excluded from the current routine definition.
+  final String status;
   const LocalRoutineStep({
     required this.id,
     required this.routineId,
@@ -4159,6 +4192,7 @@ class LocalRoutineStep extends DataClass
     required this.durationSeconds,
     required this.restAfterSeconds,
     required this.isOptional,
+    required this.status,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4170,6 +4204,7 @@ class LocalRoutineStep extends DataClass
     map['duration_seconds'] = Variable<int>(durationSeconds);
     map['rest_after_seconds'] = Variable<int>(restAfterSeconds);
     map['is_optional'] = Variable<bool>(isOptional);
+    map['status'] = Variable<String>(status);
     return map;
   }
 
@@ -4182,6 +4217,7 @@ class LocalRoutineStep extends DataClass
       durationSeconds: Value(durationSeconds),
       restAfterSeconds: Value(restAfterSeconds),
       isOptional: Value(isOptional),
+      status: Value(status),
     );
   }
 
@@ -4198,6 +4234,7 @@ class LocalRoutineStep extends DataClass
       durationSeconds: serializer.fromJson<int>(json['durationSeconds']),
       restAfterSeconds: serializer.fromJson<int>(json['restAfterSeconds']),
       isOptional: serializer.fromJson<bool>(json['isOptional']),
+      status: serializer.fromJson<String>(json['status']),
     );
   }
   @override
@@ -4211,6 +4248,7 @@ class LocalRoutineStep extends DataClass
       'durationSeconds': serializer.toJson<int>(durationSeconds),
       'restAfterSeconds': serializer.toJson<int>(restAfterSeconds),
       'isOptional': serializer.toJson<bool>(isOptional),
+      'status': serializer.toJson<String>(status),
     };
   }
 
@@ -4222,6 +4260,7 @@ class LocalRoutineStep extends DataClass
     int? durationSeconds,
     int? restAfterSeconds,
     bool? isOptional,
+    String? status,
   }) => LocalRoutineStep(
     id: id ?? this.id,
     routineId: routineId ?? this.routineId,
@@ -4230,6 +4269,7 @@ class LocalRoutineStep extends DataClass
     durationSeconds: durationSeconds ?? this.durationSeconds,
     restAfterSeconds: restAfterSeconds ?? this.restAfterSeconds,
     isOptional: isOptional ?? this.isOptional,
+    status: status ?? this.status,
   );
   LocalRoutineStep copyWithCompanion(LocalRoutineStepsCompanion data) {
     return LocalRoutineStep(
@@ -4248,6 +4288,7 @@ class LocalRoutineStep extends DataClass
       isOptional: data.isOptional.present
           ? data.isOptional.value
           : this.isOptional,
+      status: data.status.present ? data.status.value : this.status,
     );
   }
 
@@ -4260,7 +4301,8 @@ class LocalRoutineStep extends DataClass
           ..write('position: $position, ')
           ..write('durationSeconds: $durationSeconds, ')
           ..write('restAfterSeconds: $restAfterSeconds, ')
-          ..write('isOptional: $isOptional')
+          ..write('isOptional: $isOptional, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
@@ -4274,6 +4316,7 @@ class LocalRoutineStep extends DataClass
     durationSeconds,
     restAfterSeconds,
     isOptional,
+    status,
   );
   @override
   bool operator ==(Object other) =>
@@ -4285,7 +4328,8 @@ class LocalRoutineStep extends DataClass
           other.position == this.position &&
           other.durationSeconds == this.durationSeconds &&
           other.restAfterSeconds == this.restAfterSeconds &&
-          other.isOptional == this.isOptional);
+          other.isOptional == this.isOptional &&
+          other.status == this.status);
 }
 
 class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
@@ -4296,6 +4340,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
   final Value<int> durationSeconds;
   final Value<int> restAfterSeconds;
   final Value<bool> isOptional;
+  final Value<String> status;
   final Value<int> rowid;
   const LocalRoutineStepsCompanion({
     this.id = const Value.absent(),
@@ -4305,6 +4350,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
     this.durationSeconds = const Value.absent(),
     this.restAfterSeconds = const Value.absent(),
     this.isOptional = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalRoutineStepsCompanion.insert({
@@ -4315,6 +4361,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
     required int durationSeconds,
     this.restAfterSeconds = const Value.absent(),
     this.isOptional = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        routineId = Value(routineId),
@@ -4329,6 +4376,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
     Expression<int>? durationSeconds,
     Expression<int>? restAfterSeconds,
     Expression<bool>? isOptional,
+    Expression<String>? status,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4339,6 +4387,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
       if (durationSeconds != null) 'duration_seconds': durationSeconds,
       if (restAfterSeconds != null) 'rest_after_seconds': restAfterSeconds,
       if (isOptional != null) 'is_optional': isOptional,
+      if (status != null) 'status': status,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4351,6 +4400,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
     Value<int>? durationSeconds,
     Value<int>? restAfterSeconds,
     Value<bool>? isOptional,
+    Value<String>? status,
     Value<int>? rowid,
   }) {
     return LocalRoutineStepsCompanion(
@@ -4361,6 +4411,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
       durationSeconds: durationSeconds ?? this.durationSeconds,
       restAfterSeconds: restAfterSeconds ?? this.restAfterSeconds,
       isOptional: isOptional ?? this.isOptional,
+      status: status ?? this.status,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4389,6 +4440,9 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
     if (isOptional.present) {
       map['is_optional'] = Variable<bool>(isOptional.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4405,6 +4459,7 @@ class LocalRoutineStepsCompanion extends UpdateCompanion<LocalRoutineStep> {
           ..write('durationSeconds: $durationSeconds, ')
           ..write('restAfterSeconds: $restAfterSeconds, ')
           ..write('isOptional: $isOptional, ')
+          ..write('status: $status, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4715,6 +4770,28 @@ class $LocalContentReleasesTable extends LocalContentReleases
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<String> version = GeneratedColumn<String>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contractVersionMeta = const VerificationMeta(
+    'contractVersion',
+  );
+  @override
+  late final GeneratedColumn<String> contractVersion = GeneratedColumn<String>(
+    'contract_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _manifestChecksumMeta = const VerificationMeta(
     'manifestChecksum',
   );
@@ -4738,6 +4815,17 @@ class $LocalContentReleasesTable extends LocalContentReleases
         type: DriftSqlType.string,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _publishedAtMeta = const VerificationMeta(
+    'publishedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> publishedAt = GeneratedColumn<DateTime>(
+    'published_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _appliedAtMeta = const VerificationMeta(
     'appliedAt',
   );
@@ -4767,8 +4855,11 @@ class $LocalContentReleasesTable extends LocalContentReleases
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    version,
+    contractVersion,
     manifestChecksum,
     minimumAppVersion,
+    publishedAt,
     appliedAt,
     isCurrent,
   ];
@@ -4789,6 +4880,25 @@ class $LocalContentReleasesTable extends LocalContentReleases
     } else if (isInserting) {
       context.missing(_idMeta);
     }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('contract_version')) {
+      context.handle(
+        _contractVersionMeta,
+        contractVersion.isAcceptableOrUnknown(
+          data['contract_version']!,
+          _contractVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contractVersionMeta);
+    }
     if (data.containsKey('manifest_checksum')) {
       context.handle(
         _manifestChecksumMeta,
@@ -4806,6 +4916,15 @@ class $LocalContentReleasesTable extends LocalContentReleases
         minimumAppVersion.isAcceptableOrUnknown(
           data['minimum_app_version']!,
           _minimumAppVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('published_at')) {
+      context.handle(
+        _publishedAtMeta,
+        publishedAt.isAcceptableOrUnknown(
+          data['published_at']!,
+          _publishedAtMeta,
         ),
       );
     }
@@ -4836,6 +4955,14 @@ class $LocalContentReleasesTable extends LocalContentReleases
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}version'],
+      )!,
+      contractVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contract_version'],
+      )!,
       manifestChecksum: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}manifest_checksum'],
@@ -4843,6 +4970,10 @@ class $LocalContentReleasesTable extends LocalContentReleases
       minimumAppVersion: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}minimum_app_version'],
+      ),
+      publishedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}published_at'],
       ),
       appliedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -4863,15 +4994,27 @@ class $LocalContentReleasesTable extends LocalContentReleases
 
 class LocalContentRelease extends DataClass
     implements Insertable<LocalContentRelease> {
+  /// Monotonic release cursor. Server releases use their bigint id as text;
+  /// the bundled starter bootstrap uses `'0'` so any server release is "after" it.
   final String id;
+
+  /// Human-readable release label supplied by the server (`version`).
+  final String version;
+
+  /// The manifest contract version that was applied (`contract_version`).
+  final String contractVersion;
   final String manifestChecksum;
   final String? minimumAppVersion;
+  final DateTime? publishedAt;
   final DateTime appliedAt;
   final bool isCurrent;
   const LocalContentRelease({
     required this.id,
+    required this.version,
+    required this.contractVersion,
     required this.manifestChecksum,
     this.minimumAppVersion,
+    this.publishedAt,
     required this.appliedAt,
     required this.isCurrent,
   });
@@ -4879,9 +5022,14 @@ class LocalContentRelease extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['version'] = Variable<String>(version);
+    map['contract_version'] = Variable<String>(contractVersion);
     map['manifest_checksum'] = Variable<String>(manifestChecksum);
     if (!nullToAbsent || minimumAppVersion != null) {
       map['minimum_app_version'] = Variable<String>(minimumAppVersion);
+    }
+    if (!nullToAbsent || publishedAt != null) {
+      map['published_at'] = Variable<DateTime>(publishedAt);
     }
     map['applied_at'] = Variable<DateTime>(appliedAt);
     map['is_current'] = Variable<bool>(isCurrent);
@@ -4891,10 +5039,15 @@ class LocalContentRelease extends DataClass
   LocalContentReleasesCompanion toCompanion(bool nullToAbsent) {
     return LocalContentReleasesCompanion(
       id: Value(id),
+      version: Value(version),
+      contractVersion: Value(contractVersion),
       manifestChecksum: Value(manifestChecksum),
       minimumAppVersion: minimumAppVersion == null && nullToAbsent
           ? const Value.absent()
           : Value(minimumAppVersion),
+      publishedAt: publishedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(publishedAt),
       appliedAt: Value(appliedAt),
       isCurrent: Value(isCurrent),
     );
@@ -4907,10 +5060,13 @@ class LocalContentRelease extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LocalContentRelease(
       id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<String>(json['version']),
+      contractVersion: serializer.fromJson<String>(json['contractVersion']),
       manifestChecksum: serializer.fromJson<String>(json['manifestChecksum']),
       minimumAppVersion: serializer.fromJson<String?>(
         json['minimumAppVersion'],
       ),
+      publishedAt: serializer.fromJson<DateTime?>(json['publishedAt']),
       appliedAt: serializer.fromJson<DateTime>(json['appliedAt']),
       isCurrent: serializer.fromJson<bool>(json['isCurrent']),
     );
@@ -4920,8 +5076,11 @@ class LocalContentRelease extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<String>(version),
+      'contractVersion': serializer.toJson<String>(contractVersion),
       'manifestChecksum': serializer.toJson<String>(manifestChecksum),
       'minimumAppVersion': serializer.toJson<String?>(minimumAppVersion),
+      'publishedAt': serializer.toJson<DateTime?>(publishedAt),
       'appliedAt': serializer.toJson<DateTime>(appliedAt),
       'isCurrent': serializer.toJson<bool>(isCurrent),
     };
@@ -4929,28 +5088,41 @@ class LocalContentRelease extends DataClass
 
   LocalContentRelease copyWith({
     String? id,
+    String? version,
+    String? contractVersion,
     String? manifestChecksum,
     Value<String?> minimumAppVersion = const Value.absent(),
+    Value<DateTime?> publishedAt = const Value.absent(),
     DateTime? appliedAt,
     bool? isCurrent,
   }) => LocalContentRelease(
     id: id ?? this.id,
+    version: version ?? this.version,
+    contractVersion: contractVersion ?? this.contractVersion,
     manifestChecksum: manifestChecksum ?? this.manifestChecksum,
     minimumAppVersion: minimumAppVersion.present
         ? minimumAppVersion.value
         : this.minimumAppVersion,
+    publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
     appliedAt: appliedAt ?? this.appliedAt,
     isCurrent: isCurrent ?? this.isCurrent,
   );
   LocalContentRelease copyWithCompanion(LocalContentReleasesCompanion data) {
     return LocalContentRelease(
       id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      contractVersion: data.contractVersion.present
+          ? data.contractVersion.value
+          : this.contractVersion,
       manifestChecksum: data.manifestChecksum.present
           ? data.manifestChecksum.value
           : this.manifestChecksum,
       minimumAppVersion: data.minimumAppVersion.present
           ? data.minimumAppVersion.value
           : this.minimumAppVersion,
+      publishedAt: data.publishedAt.present
+          ? data.publishedAt.value
+          : this.publishedAt,
       appliedAt: data.appliedAt.present ? data.appliedAt.value : this.appliedAt,
       isCurrent: data.isCurrent.present ? data.isCurrent.value : this.isCurrent,
     );
@@ -4960,8 +5132,11 @@ class LocalContentRelease extends DataClass
   String toString() {
     return (StringBuffer('LocalContentRelease(')
           ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('contractVersion: $contractVersion, ')
           ..write('manifestChecksum: $manifestChecksum, ')
           ..write('minimumAppVersion: $minimumAppVersion, ')
+          ..write('publishedAt: $publishedAt, ')
           ..write('appliedAt: $appliedAt, ')
           ..write('isCurrent: $isCurrent')
           ..write(')'))
@@ -4971,8 +5146,11 @@ class LocalContentRelease extends DataClass
   @override
   int get hashCode => Object.hash(
     id,
+    version,
+    contractVersion,
     manifestChecksum,
     minimumAppVersion,
+    publishedAt,
     appliedAt,
     isCurrent,
   );
@@ -4981,8 +5159,11 @@ class LocalContentRelease extends DataClass
       identical(this, other) ||
       (other is LocalContentRelease &&
           other.id == this.id &&
+          other.version == this.version &&
+          other.contractVersion == this.contractVersion &&
           other.manifestChecksum == this.manifestChecksum &&
           other.minimumAppVersion == this.minimumAppVersion &&
+          other.publishedAt == this.publishedAt &&
           other.appliedAt == this.appliedAt &&
           other.isCurrent == this.isCurrent);
 }
@@ -4990,41 +5171,58 @@ class LocalContentRelease extends DataClass
 class LocalContentReleasesCompanion
     extends UpdateCompanion<LocalContentRelease> {
   final Value<String> id;
+  final Value<String> version;
+  final Value<String> contractVersion;
   final Value<String> manifestChecksum;
   final Value<String?> minimumAppVersion;
+  final Value<DateTime?> publishedAt;
   final Value<DateTime> appliedAt;
   final Value<bool> isCurrent;
   final Value<int> rowid;
   const LocalContentReleasesCompanion({
     this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.contractVersion = const Value.absent(),
     this.manifestChecksum = const Value.absent(),
     this.minimumAppVersion = const Value.absent(),
+    this.publishedAt = const Value.absent(),
     this.appliedAt = const Value.absent(),
     this.isCurrent = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalContentReleasesCompanion.insert({
     required String id,
+    required String version,
+    required String contractVersion,
     required String manifestChecksum,
     this.minimumAppVersion = const Value.absent(),
+    this.publishedAt = const Value.absent(),
     required DateTime appliedAt,
     this.isCurrent = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       version = Value(version),
+       contractVersion = Value(contractVersion),
        manifestChecksum = Value(manifestChecksum),
        appliedAt = Value(appliedAt);
   static Insertable<LocalContentRelease> custom({
     Expression<String>? id,
+    Expression<String>? version,
+    Expression<String>? contractVersion,
     Expression<String>? manifestChecksum,
     Expression<String>? minimumAppVersion,
+    Expression<DateTime>? publishedAt,
     Expression<DateTime>? appliedAt,
     Expression<bool>? isCurrent,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (contractVersion != null) 'contract_version': contractVersion,
       if (manifestChecksum != null) 'manifest_checksum': manifestChecksum,
       if (minimumAppVersion != null) 'minimum_app_version': minimumAppVersion,
+      if (publishedAt != null) 'published_at': publishedAt,
       if (appliedAt != null) 'applied_at': appliedAt,
       if (isCurrent != null) 'is_current': isCurrent,
       if (rowid != null) 'rowid': rowid,
@@ -5033,16 +5231,22 @@ class LocalContentReleasesCompanion
 
   LocalContentReleasesCompanion copyWith({
     Value<String>? id,
+    Value<String>? version,
+    Value<String>? contractVersion,
     Value<String>? manifestChecksum,
     Value<String?>? minimumAppVersion,
+    Value<DateTime?>? publishedAt,
     Value<DateTime>? appliedAt,
     Value<bool>? isCurrent,
     Value<int>? rowid,
   }) {
     return LocalContentReleasesCompanion(
       id: id ?? this.id,
+      version: version ?? this.version,
+      contractVersion: contractVersion ?? this.contractVersion,
       manifestChecksum: manifestChecksum ?? this.manifestChecksum,
       minimumAppVersion: minimumAppVersion ?? this.minimumAppVersion,
+      publishedAt: publishedAt ?? this.publishedAt,
       appliedAt: appliedAt ?? this.appliedAt,
       isCurrent: isCurrent ?? this.isCurrent,
       rowid: rowid ?? this.rowid,
@@ -5055,11 +5259,20 @@ class LocalContentReleasesCompanion
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (version.present) {
+      map['version'] = Variable<String>(version.value);
+    }
+    if (contractVersion.present) {
+      map['contract_version'] = Variable<String>(contractVersion.value);
+    }
     if (manifestChecksum.present) {
       map['manifest_checksum'] = Variable<String>(manifestChecksum.value);
     }
     if (minimumAppVersion.present) {
       map['minimum_app_version'] = Variable<String>(minimumAppVersion.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<DateTime>(publishedAt.value);
     }
     if (appliedAt.present) {
       map['applied_at'] = Variable<DateTime>(appliedAt.value);
@@ -5077,8 +5290,11 @@ class LocalContentReleasesCompanion
   String toString() {
     return (StringBuffer('LocalContentReleasesCompanion(')
           ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('contractVersion: $contractVersion, ')
           ..write('manifestChecksum: $manifestChecksum, ')
           ..write('minimumAppVersion: $minimumAppVersion, ')
+          ..write('publishedAt: $publishedAt, ')
           ..write('appliedAt: $appliedAt, ')
           ..write('isCurrent: $isCurrent, ')
           ..write('rowid: $rowid')
@@ -16355,7 +16571,7 @@ typedef $$LocalMediaAssetsTableCreateCompanionBuilder =
       required String id,
       required String exerciseId,
       required String mediaType,
-      required String storageKey,
+      required String deliveryReference,
       required String mimeType,
       required String checksumSha256,
       required String status,
@@ -16371,7 +16587,7 @@ typedef $$LocalMediaAssetsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> exerciseId,
       Value<String> mediaType,
-      Value<String> storageKey,
+      Value<String> deliveryReference,
       Value<String> mimeType,
       Value<String> checksumSha256,
       Value<String> status,
@@ -16456,8 +16672,8 @@ class $$LocalMediaAssetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get storageKey => $composableBuilder(
-    column: $table.storageKey,
+  ColumnFilters<String> get deliveryReference => $composableBuilder(
+    column: $table.deliveryReference,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16570,8 +16786,8 @@ class $$LocalMediaAssetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get storageKey => $composableBuilder(
-    column: $table.storageKey,
+  ColumnOrderings<String> get deliveryReference => $composableBuilder(
+    column: $table.deliveryReference,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -16654,8 +16870,8 @@ class $$LocalMediaAssetsTableAnnotationComposer
   GeneratedColumn<String> get mediaType =>
       $composableBuilder(column: $table.mediaType, builder: (column) => column);
 
-  GeneratedColumn<String> get storageKey => $composableBuilder(
-    column: $table.storageKey,
+  GeneratedColumn<String> get deliveryReference => $composableBuilder(
+    column: $table.deliveryReference,
     builder: (column) => column,
   );
 
@@ -16775,7 +16991,7 @@ class $$LocalMediaAssetsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> exerciseId = const Value.absent(),
                 Value<String> mediaType = const Value.absent(),
-                Value<String> storageKey = const Value.absent(),
+                Value<String> deliveryReference = const Value.absent(),
                 Value<String> mimeType = const Value.absent(),
                 Value<String> checksumSha256 = const Value.absent(),
                 Value<String> status = const Value.absent(),
@@ -16789,7 +17005,7 @@ class $$LocalMediaAssetsTableTableManager
                 id: id,
                 exerciseId: exerciseId,
                 mediaType: mediaType,
-                storageKey: storageKey,
+                deliveryReference: deliveryReference,
                 mimeType: mimeType,
                 checksumSha256: checksumSha256,
                 status: status,
@@ -16805,7 +17021,7 @@ class $$LocalMediaAssetsTableTableManager
                 required String id,
                 required String exerciseId,
                 required String mediaType,
-                required String storageKey,
+                required String deliveryReference,
                 required String mimeType,
                 required String checksumSha256,
                 required String status,
@@ -16819,7 +17035,7 @@ class $$LocalMediaAssetsTableTableManager
                 id: id,
                 exerciseId: exerciseId,
                 mediaType: mediaType,
-                storageKey: storageKey,
+                deliveryReference: deliveryReference,
                 mimeType: mimeType,
                 checksumSha256: checksumSha256,
                 status: status,
@@ -18896,6 +19112,7 @@ typedef $$LocalRoutineStepsTableCreateCompanionBuilder =
       required int durationSeconds,
       Value<int> restAfterSeconds,
       Value<bool> isOptional,
+      Value<String> status,
       Value<int> rowid,
     });
 typedef $$LocalRoutineStepsTableUpdateCompanionBuilder =
@@ -18907,6 +19124,7 @@ typedef $$LocalRoutineStepsTableUpdateCompanionBuilder =
       Value<int> durationSeconds,
       Value<int> restAfterSeconds,
       Value<bool> isOptional,
+      Value<String> status,
       Value<int> rowid,
     });
 
@@ -19016,6 +19234,11 @@ class $$LocalRoutineStepsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LocalRoutinesTableFilterComposer get routineId {
     final $$LocalRoutinesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -19122,6 +19345,11 @@ class $$LocalRoutineStepsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$LocalRoutinesTableOrderingComposer get routineId {
     final $$LocalRoutinesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -19198,6 +19426,9 @@ class $$LocalRoutineStepsTableAnnotationComposer
     column: $table.isOptional,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 
   $$LocalRoutinesTableAnnotationComposer get routineId {
     final $$LocalRoutinesTableAnnotationComposer composer = $composerBuilder(
@@ -19316,6 +19547,7 @@ class $$LocalRoutineStepsTableTableManager
                 Value<int> durationSeconds = const Value.absent(),
                 Value<int> restAfterSeconds = const Value.absent(),
                 Value<bool> isOptional = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalRoutineStepsCompanion(
                 id: id,
@@ -19325,6 +19557,7 @@ class $$LocalRoutineStepsTableTableManager
                 durationSeconds: durationSeconds,
                 restAfterSeconds: restAfterSeconds,
                 isOptional: isOptional,
+                status: status,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -19336,6 +19569,7 @@ class $$LocalRoutineStepsTableTableManager
                 required int durationSeconds,
                 Value<int> restAfterSeconds = const Value.absent(),
                 Value<bool> isOptional = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalRoutineStepsCompanion.insert(
                 id: id,
@@ -19345,6 +19579,7 @@ class $$LocalRoutineStepsTableTableManager
                 durationSeconds: durationSeconds,
                 restAfterSeconds: restAfterSeconds,
                 isOptional: isOptional,
+                status: status,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -19847,8 +20082,11 @@ typedef $$LocalRoutineTaxonomiesTableProcessedTableManager =
 typedef $$LocalContentReleasesTableCreateCompanionBuilder =
     LocalContentReleasesCompanion Function({
       required String id,
+      required String version,
+      required String contractVersion,
       required String manifestChecksum,
       Value<String?> minimumAppVersion,
+      Value<DateTime?> publishedAt,
       required DateTime appliedAt,
       Value<bool> isCurrent,
       Value<int> rowid,
@@ -19856,8 +20094,11 @@ typedef $$LocalContentReleasesTableCreateCompanionBuilder =
 typedef $$LocalContentReleasesTableUpdateCompanionBuilder =
     LocalContentReleasesCompanion Function({
       Value<String> id,
+      Value<String> version,
+      Value<String> contractVersion,
       Value<String> manifestChecksum,
       Value<String?> minimumAppVersion,
+      Value<DateTime?> publishedAt,
       Value<DateTime> appliedAt,
       Value<bool> isCurrent,
       Value<int> rowid,
@@ -19877,6 +20118,16 @@ class $$LocalContentReleasesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contractVersion => $composableBuilder(
+    column: $table.contractVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get manifestChecksum => $composableBuilder(
     column: $table.manifestChecksum,
     builder: (column) => ColumnFilters(column),
@@ -19884,6 +20135,11 @@ class $$LocalContentReleasesTableFilterComposer
 
   ColumnFilters<String> get minimumAppVersion => $composableBuilder(
     column: $table.minimumAppVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get publishedAt => $composableBuilder(
+    column: $table.publishedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19912,6 +20168,16 @@ class $$LocalContentReleasesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contractVersion => $composableBuilder(
+    column: $table.contractVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get manifestChecksum => $composableBuilder(
     column: $table.manifestChecksum,
     builder: (column) => ColumnOrderings(column),
@@ -19919,6 +20185,11 @@ class $$LocalContentReleasesTableOrderingComposer
 
   ColumnOrderings<String> get minimumAppVersion => $composableBuilder(
     column: $table.minimumAppVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get publishedAt => $composableBuilder(
+    column: $table.publishedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -19945,6 +20216,14 @@ class $$LocalContentReleasesTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get contractVersion => $composableBuilder(
+    column: $table.contractVersion,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get manifestChecksum => $composableBuilder(
     column: $table.manifestChecksum,
     builder: (column) => column,
@@ -19952,6 +20231,11 @@ class $$LocalContentReleasesTableAnnotationComposer
 
   GeneratedColumn<String> get minimumAppVersion => $composableBuilder(
     column: $table.minimumAppVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get publishedAt => $composableBuilder(
+    column: $table.publishedAt,
     builder: (column) => column,
   );
 
@@ -20006,15 +20290,21 @@ class $$LocalContentReleasesTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> version = const Value.absent(),
+                Value<String> contractVersion = const Value.absent(),
                 Value<String> manifestChecksum = const Value.absent(),
                 Value<String?> minimumAppVersion = const Value.absent(),
+                Value<DateTime?> publishedAt = const Value.absent(),
                 Value<DateTime> appliedAt = const Value.absent(),
                 Value<bool> isCurrent = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalContentReleasesCompanion(
                 id: id,
+                version: version,
+                contractVersion: contractVersion,
                 manifestChecksum: manifestChecksum,
                 minimumAppVersion: minimumAppVersion,
+                publishedAt: publishedAt,
                 appliedAt: appliedAt,
                 isCurrent: isCurrent,
                 rowid: rowid,
@@ -20022,15 +20312,21 @@ class $$LocalContentReleasesTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                required String version,
+                required String contractVersion,
                 required String manifestChecksum,
                 Value<String?> minimumAppVersion = const Value.absent(),
+                Value<DateTime?> publishedAt = const Value.absent(),
                 required DateTime appliedAt,
                 Value<bool> isCurrent = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalContentReleasesCompanion.insert(
                 id: id,
+                version: version,
+                contractVersion: contractVersion,
                 manifestChecksum: manifestChecksum,
                 minimumAppVersion: minimumAppVersion,
+                publishedAt: publishedAt,
                 appliedAt: appliedAt,
                 isCurrent: isCurrent,
                 rowid: rowid,

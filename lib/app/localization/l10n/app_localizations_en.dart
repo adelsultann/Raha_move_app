@@ -15,4 +15,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get foundationMessage =>
       'Your calm movement companion is getting ready.';
+
+  @override
+  String get catalogBootstrapLoading => 'Preparing your movement catalog…';
+
+  @override
+  String get catalogBootstrapError =>
+      'We couldn\'t prepare your content right now.';
+
+  @override
+  String get catalogBootstrapRetry => 'Retry';
 }

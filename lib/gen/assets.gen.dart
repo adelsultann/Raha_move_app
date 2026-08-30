@@ -11,7 +11,26 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsStarterContentGen {
+  const $AssetsStarterContentGen();
+
+  /// Directory path: assets/starter_content/manifests
+  $AssetsStarterContentManifestsGen get manifests =>
+      const $AssetsStarterContentManifestsGen();
+}
+
+class $AssetsStarterContentManifestsGen {
+  const $AssetsStarterContentManifestsGen();
+
+  /// File path: assets/starter_content/manifests/starter_catalog.json
+  String get starterCatalog => 'assets/starter_content/manifests/starter_catalog.json';
+
+  /// List of all assets
+  List<String> get values => [starterCatalog];
+}
+
 abstract final class Assets {
+  static const $AssetsStarterContentGen starterContent = $AssetsStarterContentGen();
   static const AssetGenImage logo = AssetGenImage('logo.png');
 
   /// List of all assets

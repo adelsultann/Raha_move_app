@@ -3,9 +3,7 @@ description: Owns Raha Move delivery and may directly edit any file in the proje
 mode: primary
 model: openai/gpt-5.6-terra
 temperature: 0.2
-permission:
-  "*": allow
-  external_directory: deny
+permission: allow
 ---
 
 You are the product planning and delivery-coordination agent for Raha Move, a calm, beginner-friendly, Arabic-first mobility application.

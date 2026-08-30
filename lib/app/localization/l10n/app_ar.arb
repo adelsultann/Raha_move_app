@@ -1,5 +1,8 @@
 {
   "@@locale": "ar",
   "appTitle": "راحة موف",
-  "foundationMessage": "رفيقك الهادئ للحركة يستعد للانطلاق."
+  "foundationMessage": "رفيقك الهادئ للحركة يستعد للانطلاق.",
+  "catalogBootstrapLoading": "نحضّر قائمة الحركات الخاصة بك…",
+  "catalogBootstrapError": "تعذّر تحضير المحتوى الآن.",
+  "catalogBootstrapRetry": "إعادة المحاولة"
 }

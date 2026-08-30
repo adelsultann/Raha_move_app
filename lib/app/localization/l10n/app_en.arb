@@ -1,5 +1,8 @@
 {
   "@@locale": "en",
   "appTitle": "Raha Move",
-  "foundationMessage": "Your calm movement companion is getting ready."
+  "foundationMessage": "Your calm movement companion is getting ready.",
+  "catalogBootstrapLoading": "Preparing your movement catalog…",
+  "catalogBootstrapError": "We couldn't prepare your content right now.",
+  "catalogBootstrapRetry": "Retry"
 }

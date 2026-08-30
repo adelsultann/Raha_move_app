@@ -14,4 +14,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get foundationMessage => 'رفيقك الهادئ للحركة يستعد للانطلاق.';
+
+  @override
+  String get catalogBootstrapLoading => 'نحضّر قائمة الحركات الخاصة بك…';
+
+  @override
+  String get catalogBootstrapError => 'تعذّر تحضير المحتوى الآن.';
+
+  @override
+  String get catalogBootstrapRetry => 'إعادة المحاولة';
 }
