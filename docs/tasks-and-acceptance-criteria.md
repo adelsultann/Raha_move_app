@@ -170,16 +170,6 @@ The completion thresholds (80%, 20%, and 50%) are versioned configuration. Each 
 
 Step records store the terminal state, target duration, active duration, and any explicit skip interaction needed for analytics. The system must define and test the inactivity/expiry rule that moves a resumable `in_progress` session to `abandoned`.
 
-##### Approved MVP session-integrity decisions
-
-**Decision date:** 2026-08-29  
-**Status:** Approved for MVP implementation.
-
-- MVP routine steps are timed only. A step requires `targetDurationSeconds`; repetition-only steps are deferred until product approves a versioned repetition-credit policy.
-- An `in_progress` routine session becomes `abandoned` 24 hours after its latest credited activity if it has not already become terminal. The transition must be idempotent and tested.
-- To preserve the guest-first offline journey, the server accepts bounded device-reported active time as the MVP completion input. Trusted server logic must cap each step at its scheduled target, validate routine/release/access eligibility and step membership, derive terminal aggregates, apply the versioned completion rule, and make completion/reward processing idempotent. This is not a claim of fraud-proof playback attestation.
-- **Review trigger:** Revisit before introducing repetition-based routines, materially valuable rewards, device-attestation requirements, or server-timed playback.
-
 **Analytics rule**
 
 Abandoned sessions are excluded from completion counts but included in funnel completion-rate calculations:
@@ -318,9 +308,11 @@ The current Flutter deployment support matrix includes Android API 24+ and iOS 1
 
 ### RAHA-015 — Add analytics, crash reporting, and privacy-safe logging
 
+
 **Priority:** P1  
 **Owner:** Product + Engineering  
 **Dependencies:** RAHA-010, RAHA-001
+** Status :** Done
 
 **Approved privacy decision:** Use the RAHA-001 telemetry privacy and consent decision dated 2026-08-28. Optional analytics and crash reporting remain disabled until their separate consents are granted.
 
@@ -396,7 +388,6 @@ The current Flutter deployment support matrix includes Android API 24+ and iOS 1
 - Repository tests use isolated in-memory databases and cover relationships, constraints, local-first reads, and replacement of preferred media without changing exercise identity.
 
 ### RAHA-024 — Implement atomic content releases
-
 **Priority:** P0  
 **Owner:** Backend + Mobile Engineering  
 **Dependencies:** RAHA-021, RAHA-022, RAHA-023
