@@ -86,6 +86,19 @@ class EnvironmentEntries extends Table {
   Set<Column<Object>> get primaryKey => {key};
 }
 
+/// Single-row record of the active local identity. Starts as a guest UUID and
+/// is re-keyed to the Supabase auth uid on anonymous link / account upgrade.
+class LocalIdentity extends Table {
+  /// Always 1: enforces the single-row invariant.
+  IntColumn get id => integer()();
+
+  /// The active local user id.
+  TextColumn get userId => text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 class LocalTaxonomies extends Table {
   TextColumn get key => text()();
   TextColumn get kind => text()();
@@ -550,6 +563,7 @@ class LocalSyncState extends Table {
 @DriftDatabase(
   tables: [
     EnvironmentEntries,
+    LocalIdentity,
     LocalTaxonomies,
     LocalTaxonomyTranslations,
     LocalExercises,
@@ -583,7 +597,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -594,6 +608,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 4) await _migrateToV4(m);
       if (from < 5) await _migrateToV5(m);
       if (from < 6) await _migrateToV6(m);
+      if (from < 7) await _migrateToV7(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -781,6 +796,16 @@ class AppDatabase extends _$AppDatabase {
     );
     await m.createTable(localMediaCacheEntries);
     await customStatement('DROP TABLE local_media_cache_entries_pre_v6');
+  }
+
+  /// v7 introduces the single-row local identity table that records the active
+  /// local user id (a guest UUID until it is re-keyed to the Supabase uid).
+  /// Guarded so a fresh install (created by [MigrationStrategy.onCreate]) is
+  /// left untouched.
+  Future<void> _migrateToV7(Migrator m) async {
+    if (!await _tableExists('local_identity')) {
+      await m.createTable(localIdentity);
+    }
   }
 
   Future<bool> _tableExists(String name) async {

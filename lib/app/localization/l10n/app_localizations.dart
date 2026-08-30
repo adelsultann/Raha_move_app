@@ -127,6 +127,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get catalogBootstrapRetry;
+
+  /// No description provided for @authLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your space…'**
+  String get authLoading;
+
+  /// No description provided for @authInitError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t prepare your identity right now.'**
+  String get authInitError;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @continueAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as guest'**
+  String get continueAsGuest;
+
+  /// No description provided for @signInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInTitle;
+
+  /// No description provided for @signUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get signUpTitle;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// No description provided for @signInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInButton;
+
+  /// No description provided for @signUpButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get signUpButton;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Sign in'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @noAccountYet.
+  ///
+  /// In en, this message translates to:
+  /// **'New here? Create an account'**
+  String get noAccountYet;
+
+  /// No description provided for @emailConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get emailConfirmationTitle;
+
+  /// No description provided for @checkYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent you a confirmation email. Please check your inbox to continue.'**
+  String get checkYourEmail;
+
+  /// No description provided for @emailConfirmationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a confirmation link to {email}. Please confirm your email to continue.'**
+  String emailConfirmationBody(String email);
+
+  /// No description provided for @resendConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend confirmation'**
+  String get resendConfirmation;
+
+  /// No description provided for @invalidCredentialsError.
+  ///
+  /// In en, this message translates to:
+  /// **'The email or password is incorrect.'**
+  String get invalidCredentialsError;
+
+  /// No description provided for @emailInUseError.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists.'**
+  String get emailInUseError;
+
+  /// No description provided for @weakPasswordError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a stronger password.'**
+  String get weakPasswordError;
+
+  /// No description provided for @offlineError.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Please check your connection and try again.'**
+  String get offlineError;
+
+  /// No description provided for @unconfirmedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your email before signing in.'**
+  String get unconfirmedError;
+
+  /// No description provided for @authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait…'**
+  String get authenticating;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
+
+  /// No description provided for @authFailedGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authFailedGeneric;
 }
 
 class _AppLocalizationsDelegate

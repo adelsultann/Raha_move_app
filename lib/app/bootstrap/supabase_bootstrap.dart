@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'secure_local_storage.dart';
+
 /// Initializes the public Supabase client only when both non-secret build
 /// values are present. Local tests and the bundled offline experience require
 /// neither value and never contact a backend.
@@ -19,5 +21,13 @@ Future<void> initializeSupabaseIfConfigured() async {
   if (uri == null || (!uri.isScheme('https') && !localHttp)) {
     throw StateError('SUPABASE_URL must use HTTPS outside local development');
   }
-  await Supabase.initialize(url: url, publishableKey: publishableKey);
+  await Supabase.initialize(
+    url: url,
+    publishableKey: publishableKey,
+    authOptions: FlutterAuthClientOptions(
+      // Persist the auth session (including the refresh token) in
+      // platform-secure storage rather than plaintext SharedPreferences.
+      localStorage: SecureLocalStorage(),
+    ),
+  );
 }

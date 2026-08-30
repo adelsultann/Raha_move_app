@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/bootstrap/catalog_bootstrap_gate.dart';
 import 'app/bootstrap/supabase_bootstrap.dart';
+import 'features/authentication/presentation/auth_gate.dart';
 import 'features/media/application/media_cache_auth_observer.dart';
 
 Future<void> main() async {
@@ -12,7 +13,7 @@ Future<void> main() async {
   runApp(
     const ProviderScope(
       child: MediaCacheAuthObserver(
-        child: CatalogBootstrapGate(child: RahaMoveApp()),
+        child: CatalogBootstrapGate(child: AuthGate(child: RahaMoveApp())),
       ),
     ),
   );

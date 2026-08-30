@@ -3,7 +3,8 @@ begin;
 insert into auth.users (id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at) values
  ('02500000-0000-0000-0000-000000000001','authenticated','authenticated','sync-owner@example.test','',now(),'{}','{}',now(),now()),
  ('02500000-0000-0000-0000-000000000002','authenticated','authenticated','sync-other@example.test','',now(),'{}','{}',now(),now());
-insert into public.profiles(user_id) values ('02500000-0000-0000-0000-000000000001'),('02500000-0000-0000-0000-000000000002');
+-- Profiles for these synthetic users are created automatically by the RAHA-030
+-- auth.users insert trigger; no explicit profile insert is needed here.
 insert into public.content_releases(id,version,published_at,manifest_checksum) overriding system value values (25,'sync-test',now()-interval '1 minute',repeat('a',64));
 insert into public.goals(id,key) values ('02500000-0000-0000-0000-000000000010','ease_stiffness');
 insert into public.body_areas(id,key) values

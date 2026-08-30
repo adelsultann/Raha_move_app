@@ -4,5 +4,35 @@
   "foundationMessage": "رفيقك الهادئ للحركة يستعد للانطلاق.",
   "catalogBootstrapLoading": "نحضّر قائمة الحركات الخاصة بك…",
   "catalogBootstrapError": "تعذّر تحضير المحتوى الآن.",
-  "catalogBootstrapRetry": "إعادة المحاولة"
+  "catalogBootstrapRetry": "إعادة المحاولة",
+  "authLoading": "نجهّز مساحتك…",
+  "authInitError": "تعذّر تجهيز هويتك الآن.",
+  "retry": "إعادة المحاولة",
+  "continueAsGuest": "المتابعة كضيف",
+  "signInTitle": "تسجيل الدخول",
+  "signUpTitle": "أنشئ حسابك",
+  "emailLabel": "البريد الإلكتروني",
+  "passwordLabel": "كلمة المرور",
+  "signInButton": "تسجيل الدخول",
+  "signUpButton": "إنشاء حساب",
+  "alreadyHaveAccount": "لديك حساب؟ سجّل الدخول",
+  "noAccountYet": "جديد هنا؟ أنشئ حسابًا",
+  "emailConfirmationTitle": "تحقّق من بريدك",
+  "checkYourEmail": "أرسلنا لك رسالة تأكيد. يرجى التحقق من بريدك للمتابعة.",
+  "emailConfirmationBody": "أرسلنا رابط تأكيد إلى {email}. يرجى تأكيد بريدك الإلكتروني للمتابعة.",
+  "@emailConfirmationBody": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "resendConfirmation": "إعادة إرسال التأكيد",
+  "invalidCredentialsError": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "emailInUseError": "يوجد حساب بهذا البريد الإلكتروني بالفعل.",
+  "weakPasswordError": "يرجى اختيار كلمة مرور أقوى.",
+  "offlineError": "أنت غير متصل. يرجى التحقق من اتصالك والمحاولة مجددًا.",
+  "unconfirmedError": "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.",
+  "authenticating": "يرجى الانتظار…",
+  "cancel": "إلغاء",
+  "signOut": "تسجيل الخروج",
+  "authFailedGeneric": "حدث خطأ ما. يرجى المحاولة مجددًا."
 }

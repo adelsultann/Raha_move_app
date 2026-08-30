@@ -1,5 +1,6 @@
 import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
 import 'package:raha_move/core/database/app_database.dart';
+import 'package:raha_move/features/authentication/application/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/drift_sync_outbox_repository.dart';
@@ -13,9 +14,12 @@ part 'sync_providers.g.dart';
 
 /// The currently authenticated user id, or null when signed out. Owned by the
 /// authentication feature; it is declared here so the sync coordinator has one
-/// app-owned, stable signal for "who may sync now".
+/// app-owned, stable signal for "who may sync now". It derives from the auth
+/// controller's active user id (null only while the controller is initializing)
+/// and stays overridable for tests.
 @Riverpod(keepAlive: true)
-String? activeUserId(Ref ref) => null;
+String? activeUserId(Ref ref) =>
+    ref.watch(authControllerProvider).value?.activeUserId;
 
 /// Injectable RPC gateway for user-data sync. Uses the live Supabase client
 /// when it has been initialized, and otherwise falls back to the offline no-op

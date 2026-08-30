@@ -6,7 +6,8 @@ begin;
 insert into auth.users (id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at) values
   ('00000000-0000-0000-0000-000000000001','authenticated','authenticated','owner@example.test','',now(),'{}','{}',now(),now()),
   ('00000000-0000-0000-0000-000000000002','authenticated','authenticated','other@example.test','',now(),'{}','{}',now(),now());
-insert into public.profiles(user_id) values ('00000000-0000-0000-0000-000000000001'),('00000000-0000-0000-0000-000000000002');
+-- Profiles for these synthetic users are created automatically by the RAHA-030
+-- auth.users insert trigger; no explicit profile insert is needed here.
 insert into public.content_releases(id,version,published_at,minimum_app_version,manifest_checksum) overriding system value values
   (1,'past-free',now()-interval '1 minute','1.0.0',repeat('a',64)),
   (2,'future-free',now()+interval '1 day','1.0.0',repeat('b',64)),

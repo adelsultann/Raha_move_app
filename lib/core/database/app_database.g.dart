@@ -212,6 +212,198 @@ class EnvironmentEntriesCompanion extends UpdateCompanion<EnvironmentEntry> {
   }
 }
 
+class $LocalIdentityTable extends LocalIdentity
+    with TableInfo<$LocalIdentityTable, LocalIdentityData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalIdentityTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, userId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_identity';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalIdentityData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalIdentityData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalIdentityData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalIdentityTable createAlias(String alias) {
+    return $LocalIdentityTable(attachedDatabase, alias);
+  }
+}
+
+class LocalIdentityData extends DataClass
+    implements Insertable<LocalIdentityData> {
+  /// Always 1: enforces the single-row invariant.
+  final int id;
+
+  /// The active local user id.
+  final String userId;
+  const LocalIdentityData({required this.id, required this.userId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['user_id'] = Variable<String>(userId);
+    return map;
+  }
+
+  LocalIdentityCompanion toCompanion(bool nullToAbsent) {
+    return LocalIdentityCompanion(id: Value(id), userId: Value(userId));
+  }
+
+  factory LocalIdentityData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalIdentityData(
+      id: serializer.fromJson<int>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'userId': serializer.toJson<String>(userId),
+    };
+  }
+
+  LocalIdentityData copyWith({int? id, String? userId}) =>
+      LocalIdentityData(id: id ?? this.id, userId: userId ?? this.userId);
+  LocalIdentityData copyWithCompanion(LocalIdentityCompanion data) {
+    return LocalIdentityData(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalIdentityData(')
+          ..write('id: $id, ')
+          ..write('userId: $userId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, userId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalIdentityData &&
+          other.id == this.id &&
+          other.userId == this.userId);
+}
+
+class LocalIdentityCompanion extends UpdateCompanion<LocalIdentityData> {
+  final Value<int> id;
+  final Value<String> userId;
+  const LocalIdentityCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+  });
+  LocalIdentityCompanion.insert({
+    this.id = const Value.absent(),
+    required String userId,
+  }) : userId = Value(userId);
+  static Insertable<LocalIdentityData> custom({
+    Expression<int>? id,
+    Expression<String>? userId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+    });
+  }
+
+  LocalIdentityCompanion copyWith({Value<int>? id, Value<String>? userId}) {
+    return LocalIdentityCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalIdentityCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $LocalTaxonomiesTable extends LocalTaxonomies
     with TableInfo<$LocalTaxonomiesTable, LocalTaxonomy> {
   @override
@@ -14804,6 +14996,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $EnvironmentEntriesTable environmentEntries =
       $EnvironmentEntriesTable(this);
+  late final $LocalIdentityTable localIdentity = $LocalIdentityTable(this);
   late final $LocalTaxonomiesTable localTaxonomies = $LocalTaxonomiesTable(
     this,
   );
@@ -14865,6 +15058,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     environmentEntries,
+    localIdentity,
     localTaxonomies,
     localTaxonomyTranslations,
     localExercises,
@@ -15050,6 +15244,133 @@ typedef $$EnvironmentEntriesTableProcessedTableManager =
         >,
       ),
       EnvironmentEntry,
+      PrefetchHooks Function()
+    >;
+typedef $$LocalIdentityTableCreateCompanionBuilder =
+    LocalIdentityCompanion Function({Value<int> id, required String userId});
+typedef $$LocalIdentityTableUpdateCompanionBuilder =
+    LocalIdentityCompanion Function({Value<int> id, Value<String> userId});
+
+class $$LocalIdentityTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalIdentityTable> {
+  $$LocalIdentityTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalIdentityTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalIdentityTable> {
+  $$LocalIdentityTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalIdentityTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalIdentityTable> {
+  $$LocalIdentityTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+}
+
+class $$LocalIdentityTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalIdentityTable,
+          LocalIdentityData,
+          $$LocalIdentityTableFilterComposer,
+          $$LocalIdentityTableOrderingComposer,
+          $$LocalIdentityTableAnnotationComposer,
+          $$LocalIdentityTableCreateCompanionBuilder,
+          $$LocalIdentityTableUpdateCompanionBuilder,
+          (
+            LocalIdentityData,
+            BaseReferences<
+              _$AppDatabase,
+              $LocalIdentityTable,
+              LocalIdentityData
+            >,
+          ),
+          LocalIdentityData,
+          PrefetchHooks Function()
+        > {
+  $$LocalIdentityTableTableManager(_$AppDatabase db, $LocalIdentityTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalIdentityTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalIdentityTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalIdentityTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> userId = const Value.absent(),
+          }) => LocalIdentityCompanion(id: id, userId: userId),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String userId,
+          }) => LocalIdentityCompanion.insert(id: id, userId: userId),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalIdentityTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalIdentityTable,
+      LocalIdentityData,
+      $$LocalIdentityTableFilterComposer,
+      $$LocalIdentityTableOrderingComposer,
+      $$LocalIdentityTableAnnotationComposer,
+      $$LocalIdentityTableCreateCompanionBuilder,
+      $$LocalIdentityTableUpdateCompanionBuilder,
+      (
+        LocalIdentityData,
+        BaseReferences<_$AppDatabase, $LocalIdentityTable, LocalIdentityData>,
+      ),
+      LocalIdentityData,
       PrefetchHooks Function()
     >;
 typedef $$LocalTaxonomiesTableCreateCompanionBuilder =
@@ -30089,6 +30410,8 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$EnvironmentEntriesTableTableManager get environmentEntries =>
       $$EnvironmentEntriesTableTableManager(_db, _db.environmentEntries);
+  $$LocalIdentityTableTableManager get localIdentity =>
+      $$LocalIdentityTableTableManager(_db, _db.localIdentity);
   $$LocalTaxonomiesTableTableManager get localTaxonomies =>
       $$LocalTaxonomiesTableTableManager(_db, _db.localTaxonomies);
   $$LocalTaxonomyTranslationsTableTableManager get localTaxonomyTranslations =>

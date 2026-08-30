@@ -4,5 +4,35 @@
   "foundationMessage": "Your calm movement companion is getting ready.",
   "catalogBootstrapLoading": "Preparing your movement catalog…",
   "catalogBootstrapError": "We couldn't prepare your content right now.",
-  "catalogBootstrapRetry": "Retry"
+  "catalogBootstrapRetry": "Retry",
+  "authLoading": "Preparing your space…",
+  "authInitError": "We couldn't prepare your identity right now.",
+  "retry": "Retry",
+  "continueAsGuest": "Continue as guest",
+  "signInTitle": "Sign in",
+  "signUpTitle": "Create your account",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "signInButton": "Sign in",
+  "signUpButton": "Create account",
+  "alreadyHaveAccount": "Already have an account? Sign in",
+  "noAccountYet": "New here? Create an account",
+  "emailConfirmationTitle": "Check your email",
+  "checkYourEmail": "We sent you a confirmation email. Please check your inbox to continue.",
+  "emailConfirmationBody": "We sent a confirmation link to {email}. Please confirm your email to continue.",
+  "@emailConfirmationBody": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "resendConfirmation": "Resend confirmation",
+  "invalidCredentialsError": "The email or password is incorrect.",
+  "emailInUseError": "An account with this email already exists.",
+  "weakPasswordError": "Please choose a stronger password.",
+  "offlineError": "You're offline. Please check your connection and try again.",
+  "unconfirmedError": "Please confirm your email before signing in.",
+  "authenticating": "Please wait…",
+  "cancel": "Cancel",
+  "signOut": "Sign out",
+  "authFailedGeneric": "Something went wrong. Please try again."
 }

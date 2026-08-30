@@ -10,21 +10,27 @@ part of 'sync_providers.dart';
 // ignore_for_file: type=lint, type=warning
 /// The currently authenticated user id, or null when signed out. Owned by the
 /// authentication feature; it is declared here so the sync coordinator has one
-/// app-owned, stable signal for "who may sync now".
+/// app-owned, stable signal for "who may sync now". It derives from the auth
+/// controller's active user id (null only while the controller is initializing)
+/// and stays overridable for tests.
 
 @ProviderFor(activeUserId)
 final activeUserIdProvider = ActiveUserIdProvider._();
 
 /// The currently authenticated user id, or null when signed out. Owned by the
 /// authentication feature; it is declared here so the sync coordinator has one
-/// app-owned, stable signal for "who may sync now".
+/// app-owned, stable signal for "who may sync now". It derives from the auth
+/// controller's active user id (null only while the controller is initializing)
+/// and stays overridable for tests.
 
 final class ActiveUserIdProvider
     extends $FunctionalProvider<String?, String?, String?>
     with $Provider<String?> {
   /// The currently authenticated user id, or null when signed out. Owned by the
   /// authentication feature; it is declared here so the sync coordinator has one
-  /// app-owned, stable signal for "who may sync now".
+  /// app-owned, stable signal for "who may sync now". It derives from the auth
+  /// controller's active user id (null only while the controller is initializing)
+  /// and stays overridable for tests.
   ActiveUserIdProvider._()
     : super(
         from: null,
@@ -58,7 +64,7 @@ final class ActiveUserIdProvider
   }
 }
 
-String _$activeUserIdHash() => r'163044d29c0eec8d175bf6cb930b35e4af351e32';
+String _$activeUserIdHash() => r'642d152f7415de1bc02d95407cf98c77a0124461';
 
 /// Injectable RPC gateway for user-data sync. Uses the live Supabase client
 /// when it has been initialized, and otherwise falls back to the offline no-op

@@ -8,14 +8,16 @@ part of 'media_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Authentication owns this value and must override it with the current
-/// anonymous/authenticated Supabase user plus the server entitlement snapshot.
+/// Authentication owns this value. It derives the media owner from the auth
+/// controller: the active Supabase uid when anonymous/authenticated, or null
+/// while guest/offline (no Supabase identity may authorize private cache bytes).
 
 @ProviderFor(mediaAccessScope)
 final mediaAccessScopeProvider = MediaAccessScopeProvider._();
 
-/// Authentication owns this value and must override it with the current
-/// anonymous/authenticated Supabase user plus the server entitlement snapshot.
+/// Authentication owns this value. It derives the media owner from the auth
+/// controller: the active Supabase uid when anonymous/authenticated, or null
+/// while guest/offline (no Supabase identity may authorize private cache bytes).
 
 final class MediaAccessScopeProvider
     extends
@@ -25,8 +27,9 @@ final class MediaAccessScopeProvider
           MediaAccessScope?
         >
     with $Provider<MediaAccessScope?> {
-  /// Authentication owns this value and must override it with the current
-  /// anonymous/authenticated Supabase user plus the server entitlement snapshot.
+  /// Authentication owns this value. It derives the media owner from the auth
+  /// controller: the active Supabase uid when anonymous/authenticated, or null
+  /// while guest/offline (no Supabase identity may authorize private cache bytes).
   MediaAccessScopeProvider._()
     : super(
         from: null,
@@ -61,7 +64,7 @@ final class MediaAccessScopeProvider
   }
 }
 
-String _$mediaAccessScopeHash() => r'717ced5f547bc324d9554138e9449b05d68d1927';
+String _$mediaAccessScopeHash() => r'0a41cd59546268d44ea06bd691750b30f19b706b';
 
 @ProviderFor(mediaCacheIndex)
 final mediaCacheIndexProvider = MediaCacheIndexProvider._();

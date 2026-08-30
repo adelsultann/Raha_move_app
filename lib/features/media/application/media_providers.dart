@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
+import 'package:raha_move/features/authentication/application/auth_controller.dart';
 import 'package:raha_move/features/media/application/media_cache_lifecycle.dart';
 import 'package:raha_move/features/media/application/media_preparation_service.dart';
 import 'package:raha_move/features/media/application/routine_media_playback_coordinator.dart';
@@ -16,16 +17,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'media_providers.g.dart';
 
-/// Authentication owns this value and must override it with the current
-/// anonymous/authenticated Supabase user plus the server entitlement snapshot.
+/// Authentication owns this value. It derives the media owner from the auth
+/// controller: the active Supabase uid when anonymous/authenticated, or null
+/// while guest/offline (no Supabase identity may authorize private cache bytes).
 @Riverpod(keepAlive: true)
 MediaAccessScope? mediaAccessScope(Ref ref) {
-  try {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    return userId == null ? null : MediaAccessScope(ownerId: userId);
-  } catch (_) {
-    return null;
-  }
+  final ownerId = ref.watch(authControllerProvider).value?.mediaOwnerId;
+  return ownerId == null ? null : MediaAccessScope(ownerId: ownerId);
 }
 
 @Riverpod(keepAlive: true)
