@@ -277,6 +277,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get authFailedGeneric;
+
+  /// No description provided for @languageSelectionWelcomeArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'مرحباً بك في راحة موف'**
+  String get languageSelectionWelcomeArabic;
+
+  /// No description provided for @languageSelectionWelcomeEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Raha Move'**
+  String get languageSelectionWelcomeEnglish;
+
+  /// No description provided for @languageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get languageArabic;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @onboardingLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting things ready…'**
+  String get onboardingLoading;
+
+  /// No description provided for @onboardingError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t get things ready right now.'**
+  String get onboardingError;
+
+  /// No description provided for @onboardingPageOneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A routine chosen for you'**
+  String get onboardingPageOneTitle;
+
+  /// No description provided for @onboardingPageOneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us how your body feels, and we\'ll suggest a suitable short routine.'**
+  String get onboardingPageOneBody;
+
+  /// No description provided for @onboardingPageTwoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move on your schedule'**
+  String get onboardingPageTwoTitle;
+
+  /// No description provided for @onboardingPageTwoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how much time you have, from a quick desk break to a longer mobility session.'**
+  String get onboardingPageTwoBody;
+
+  /// No description provided for @onboardingPageThreeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build a comfortable habit'**
+  String get onboardingPageThreeTitle;
+
+  /// No description provided for @onboardingPageThreeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your consistency, notice how you feel, and celebrate every movement.'**
+  String get onboardingPageThreeBody;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingGetStarted;
+
+  /// No description provided for @onboardingPageIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} of {total}'**
+  String onboardingPageIndicator(int current, int total);
 }
 
 class _AppLocalizationsDelegate

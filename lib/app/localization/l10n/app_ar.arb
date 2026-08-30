@@ -34,5 +34,26 @@
   "authenticating": "يرجى الانتظار…",
   "cancel": "إلغاء",
   "signOut": "تسجيل الخروج",
-  "authFailedGeneric": "حدث خطأ ما. يرجى المحاولة مجددًا."
+  "authFailedGeneric": "حدث خطأ ما. يرجى المحاولة مجددًا.",
+  "languageSelectionWelcomeArabic": "مرحباً بك في راحة موف",
+  "languageSelectionWelcomeEnglish": "Welcome to Raha Move",
+  "languageArabic": "العربية",
+  "languageEnglish": "English",
+  "onboardingLoading": "نجهّز الأمور…",
+  "onboardingError": "تعذّر تجهيز الأمور الآن.",
+  "onboardingPageOneTitle": "روتين مختار لك",
+  "onboardingPageOneBody": "أخبرنا كيف يشعر جسمك، وسنقترح لك روتينًا قصيرًا مناسبًا.",
+  "onboardingPageTwoTitle": "تحرّك حسب جدولك",
+  "onboardingPageTwoBody": "اختر الوقت المتاح لديك، من استراحة مكتب سريعة إلى جلسة حركة أطول.",
+  "onboardingPageThreeTitle": "ابنِ عادة مريحة",
+  "onboardingPageThreeBody": "تابع انتظامك، لاحظ كيف تشعر، واحتفِ بكل حركة.",
+  "onboardingNext": "التالي",
+  "onboardingGetStarted": "ابدأ الآن",
+  "onboardingPageIndicator": "صفحة {current} من {total}",
+  "@onboardingPageIndicator": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
 }

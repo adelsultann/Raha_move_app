@@ -104,4 +104,54 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authFailedGeneric => 'حدث خطأ ما. يرجى المحاولة مجددًا.';
+
+  @override
+  String get languageSelectionWelcomeArabic => 'مرحباً بك في راحة موف';
+
+  @override
+  String get languageSelectionWelcomeEnglish => 'Welcome to Raha Move';
+
+  @override
+  String get languageArabic => 'العربية';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get onboardingLoading => 'نجهّز الأمور…';
+
+  @override
+  String get onboardingError => 'تعذّر تجهيز الأمور الآن.';
+
+  @override
+  String get onboardingPageOneTitle => 'روتين مختار لك';
+
+  @override
+  String get onboardingPageOneBody =>
+      'أخبرنا كيف يشعر جسمك، وسنقترح لك روتينًا قصيرًا مناسبًا.';
+
+  @override
+  String get onboardingPageTwoTitle => 'تحرّك حسب جدولك';
+
+  @override
+  String get onboardingPageTwoBody =>
+      'اختر الوقت المتاح لديك، من استراحة مكتب سريعة إلى جلسة حركة أطول.';
+
+  @override
+  String get onboardingPageThreeTitle => 'ابنِ عادة مريحة';
+
+  @override
+  String get onboardingPageThreeBody =>
+      'تابع انتظامك، لاحظ كيف تشعر، واحتفِ بكل حركة.';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingGetStarted => 'ابدأ الآن';
+
+  @override
+  String onboardingPageIndicator(int current, int total) {
+    return 'صفحة $current من $total';
+  }
 }

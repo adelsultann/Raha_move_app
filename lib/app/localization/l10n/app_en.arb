@@ -34,5 +34,26 @@
   "authenticating": "Please wait…",
   "cancel": "Cancel",
   "signOut": "Sign out",
-  "authFailedGeneric": "Something went wrong. Please try again."
+  "authFailedGeneric": "Something went wrong. Please try again.",
+  "languageSelectionWelcomeArabic": "مرحباً بك في راحة موف",
+  "languageSelectionWelcomeEnglish": "Welcome to Raha Move",
+  "languageArabic": "العربية",
+  "languageEnglish": "English",
+  "onboardingLoading": "Getting things ready…",
+  "onboardingError": "We couldn't get things ready right now.",
+  "onboardingPageOneTitle": "A routine chosen for you",
+  "onboardingPageOneBody": "Tell us how your body feels, and we'll suggest a suitable short routine.",
+  "onboardingPageTwoTitle": "Move on your schedule",
+  "onboardingPageTwoBody": "Choose how much time you have, from a quick desk break to a longer mobility session.",
+  "onboardingPageThreeTitle": "Build a comfortable habit",
+  "onboardingPageThreeBody": "Track your consistency, notice how you feel, and celebrate every movement.",
+  "onboardingNext": "Next",
+  "onboardingGetStarted": "Get started",
+  "onboardingPageIndicator": "Page {current} of {total}",
+  "@onboardingPageIndicator": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
 }

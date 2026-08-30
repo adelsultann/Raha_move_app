@@ -104,4 +104,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authFailedGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get languageSelectionWelcomeArabic => 'مرحباً بك في راحة موف';
+
+  @override
+  String get languageSelectionWelcomeEnglish => 'Welcome to Raha Move';
+
+  @override
+  String get languageArabic => 'العربية';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get onboardingLoading => 'Getting things ready…';
+
+  @override
+  String get onboardingError => 'We couldn\'t get things ready right now.';
+
+  @override
+  String get onboardingPageOneTitle => 'A routine chosen for you';
+
+  @override
+  String get onboardingPageOneBody =>
+      'Tell us how your body feels, and we\'ll suggest a suitable short routine.';
+
+  @override
+  String get onboardingPageTwoTitle => 'Move on your schedule';
+
+  @override
+  String get onboardingPageTwoBody =>
+      'Choose how much time you have, from a quick desk break to a longer mobility session.';
+
+  @override
+  String get onboardingPageThreeTitle => 'Build a comfortable habit';
+
+  @override
+  String get onboardingPageThreeBody =>
+      'Track your consistency, notice how you feel, and celebrate every movement.';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingGetStarted => 'Get started';
+
+  @override
+  String onboardingPageIndicator(int current, int total) {
+    return 'Page $current of $total';
+  }
 }
