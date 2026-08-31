@@ -224,4 +224,112 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get preferencesSaveError =>
       'تعذّر حفظ تفضيلاتك. يرجى المحاولة مجددًا.';
+
+  @override
+  String get checkInBack => 'رجوع';
+
+  @override
+  String checkInStepIndicator(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
+  String get checkInContinue => 'متابعة';
+
+  @override
+  String get checkInRequiredHint => 'يرجى اختيار إجابة للمتابعة.';
+
+  @override
+  String get checkInSaveError =>
+      'تعذّر حفظ تسجيلك اليومي. يرجى المحاولة مجددًا.';
+
+  @override
+  String get checkInBodyStateTitle => 'كيف يشعر جسمك اليوم؟';
+
+  @override
+  String get checkInBodyStateComfortable => 'مرتاح';
+
+  @override
+  String get checkInBodyStateStiff => 'متيبّس';
+
+  @override
+  String get checkInBodyStateTired => 'متعب';
+
+  @override
+  String get checkInBodyStateTense => 'مشدود';
+
+  @override
+  String get checkInGoalTitle => 'ما الذي تحتاجه اليوم؟';
+
+  @override
+  String get checkInGoalEaseStiffness => 'تخفيف التيبس';
+
+  @override
+  String get checkInGoalMoveMoreFreely => 'تحرّك بحرية أكبر';
+
+  @override
+  String get checkInGoalFeelEnergized => 'الشعور بالنشاط';
+
+  @override
+  String get checkInGoalRelax => 'الاسترخاء';
+
+  @override
+  String get checkInGoalDeskBreak => 'استراحة من المكتب';
+
+  @override
+  String get checkInBodyAreasTitle => 'ما المناطق التي تحتاج اهتمامًا؟';
+
+  @override
+  String get checkInBodyAreasHint => 'اختر منطقة واحدة أو أكثر.';
+
+  @override
+  String get checkInAreaNeck => 'الرقبة';
+
+  @override
+  String get checkInAreaShoulders => 'الكتفان';
+
+  @override
+  String get checkInAreaUpperBack => 'أعلى الظهر';
+
+  @override
+  String get checkInAreaLowerBack => 'أسفل الظهر';
+
+  @override
+  String get checkInAreaHips => 'الوركان';
+
+  @override
+  String get checkInAreaKnees => 'الركبتان';
+
+  @override
+  String get checkInAreaFullBody => 'الجسم كاملاً';
+
+  @override
+  String get checkInTimeTitle => 'كم الوقت المتاح لديك؟';
+
+  @override
+  String checkInTimeMinutes(int minutes) {
+    return '$minutes دقائق';
+  }
+
+  @override
+  String get checkInPositionTitle => 'ما الذي يناسبك الآن؟';
+
+  @override
+  String get checkInPositionSeated => 'جلوس';
+
+  @override
+  String get checkInPositionStanding => 'وقوف';
+
+  @override
+  String get checkInPositionFloor => 'على الأرض';
+
+  @override
+  String get checkInPositionAny => 'أي وضع';
+
+  @override
+  String get checkInStartTitle => 'ابدأ تسجيل اليوم';
+
+  @override
+  String get checkInStartSubtitle =>
+      'أخبرنا كيف تشعر، وسنختار لك روتينًا قصيرًا مناسبًا.';
 }

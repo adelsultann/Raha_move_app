@@ -51,6 +51,21 @@ abstract final class AnalyticsPropertyKey {
 
   /// `true` when the user opted into gentle reminders at setup.
   static const String reminderInterest = 'reminder_interest';
+
+  /// `comfortable`, `stiff`, `tired`, or `tense`.
+  static const String bodyState = 'body_state';
+
+  /// A stable goal taxonomy key such as `ease_stiffness`.
+  static const String goalKey = 'goal_key';
+
+  /// `3`, `5`, `10`, or `15` minutes.
+  static const String availableMinutes = 'available_minutes';
+
+  /// `seated`, `standing`, `floor`, or `any` (when no position was required).
+  static const String positionKey = 'position_key';
+
+  /// Number of body areas selected in a check-in (1..7).
+  static const String bodyAreaCount = 'body_area_count';
 }
 
 /// The implementation-enforced allowlist for analytics properties. Any key not
@@ -69,5 +84,10 @@ abstract final class AnalyticsPropertyAllowlist {
     AnalyticsPropertyKey.experienceLevel,
     AnalyticsPropertyKey.weeklyGoalDays,
     AnalyticsPropertyKey.reminderInterest,
+    AnalyticsPropertyKey.bodyState,
+    AnalyticsPropertyKey.goalKey,
+    AnalyticsPropertyKey.availableMinutes,
+    AnalyticsPropertyKey.positionKey,
+    AnalyticsPropertyKey.bodyAreaCount,
   };
 }

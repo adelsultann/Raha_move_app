@@ -77,5 +77,50 @@
   "preferencesReminderSubtitle": "تنبيه لطيف للحركة وفق جدولك.",
   "preferencesContinue": "متابعة",
   "preferencesRequiredHint": "اختر مستوى خبرتك للمتابعة.",
-  "preferencesSaveError": "تعذّر حفظ تفضيلاتك. يرجى المحاولة مجددًا."
+  "preferencesSaveError": "تعذّر حفظ تفضيلاتك. يرجى المحاولة مجددًا.",
+  "checkInBack": "رجوع",
+  "checkInStepIndicator": "الخطوة {current} من {total}",
+  "@checkInStepIndicator": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "checkInContinue": "متابعة",
+  "checkInRequiredHint": "يرجى اختيار إجابة للمتابعة.",
+  "checkInSaveError": "تعذّر حفظ تسجيلك اليومي. يرجى المحاولة مجددًا.",
+  "checkInBodyStateTitle": "كيف يشعر جسمك اليوم؟",
+  "checkInBodyStateComfortable": "مرتاح",
+  "checkInBodyStateStiff": "متيبّس",
+  "checkInBodyStateTired": "متعب",
+  "checkInBodyStateTense": "مشدود",
+  "checkInGoalTitle": "ما الذي تحتاجه اليوم؟",
+  "checkInGoalEaseStiffness": "تخفيف التيبس",
+  "checkInGoalMoveMoreFreely": "تحرّك بحرية أكبر",
+  "checkInGoalFeelEnergized": "الشعور بالنشاط",
+  "checkInGoalRelax": "الاسترخاء",
+  "checkInGoalDeskBreak": "استراحة من المكتب",
+  "checkInBodyAreasTitle": "ما المناطق التي تحتاج اهتمامًا؟",
+  "checkInBodyAreasHint": "اختر منطقة واحدة أو أكثر.",
+  "checkInAreaNeck": "الرقبة",
+  "checkInAreaShoulders": "الكتفان",
+  "checkInAreaUpperBack": "أعلى الظهر",
+  "checkInAreaLowerBack": "أسفل الظهر",
+  "checkInAreaHips": "الوركان",
+  "checkInAreaKnees": "الركبتان",
+  "checkInAreaFullBody": "الجسم كاملاً",
+  "checkInTimeTitle": "كم الوقت المتاح لديك؟",
+  "checkInTimeMinutes": "{minutes} دقائق",
+  "@checkInTimeMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "checkInPositionTitle": "ما الذي يناسبك الآن؟",
+  "checkInPositionSeated": "جلوس",
+  "checkInPositionStanding": "وقوف",
+  "checkInPositionFloor": "على الأرض",
+  "checkInPositionAny": "أي وضع",
+  "checkInStartTitle": "ابدأ تسجيل اليوم",
+  "checkInStartSubtitle": "أخبرنا كيف تشعر، وسنختار لك روتينًا قصيرًا مناسبًا."
 }

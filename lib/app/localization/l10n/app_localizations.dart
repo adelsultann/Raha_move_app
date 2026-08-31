@@ -499,6 +499,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t save your preferences. Please try again.'**
   String get preferencesSaveError;
+
+  /// No description provided for @checkInBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get checkInBack;
+
+  /// No description provided for @checkInStepIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String checkInStepIndicator(int current, int total);
+
+  /// No description provided for @checkInContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get checkInContinue;
+
+  /// No description provided for @checkInRequiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose an answer to continue.'**
+  String get checkInRequiredHint;
+
+  /// No description provided for @checkInSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save your check-in. Please try again.'**
+  String get checkInSaveError;
+
+  /// No description provided for @checkInBodyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How does your body feel today?'**
+  String get checkInBodyStateTitle;
+
+  /// No description provided for @checkInBodyStateComfortable.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable'**
+  String get checkInBodyStateComfortable;
+
+  /// No description provided for @checkInBodyStateStiff.
+  ///
+  /// In en, this message translates to:
+  /// **'Stiff'**
+  String get checkInBodyStateStiff;
+
+  /// No description provided for @checkInBodyStateTired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tired'**
+  String get checkInBodyStateTired;
+
+  /// No description provided for @checkInBodyStateTense.
+  ///
+  /// In en, this message translates to:
+  /// **'Tense'**
+  String get checkInBodyStateTense;
+
+  /// No description provided for @checkInGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you need today?'**
+  String get checkInGoalTitle;
+
+  /// No description provided for @checkInGoalEaseStiffness.
+  ///
+  /// In en, this message translates to:
+  /// **'Ease stiffness'**
+  String get checkInGoalEaseStiffness;
+
+  /// No description provided for @checkInGoalMoveMoreFreely.
+  ///
+  /// In en, this message translates to:
+  /// **'Move more freely'**
+  String get checkInGoalMoveMoreFreely;
+
+  /// No description provided for @checkInGoalFeelEnergized.
+  ///
+  /// In en, this message translates to:
+  /// **'Feel energized'**
+  String get checkInGoalFeelEnergized;
+
+  /// No description provided for @checkInGoalRelax.
+  ///
+  /// In en, this message translates to:
+  /// **'Relax'**
+  String get checkInGoalRelax;
+
+  /// No description provided for @checkInGoalDeskBreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a desk break'**
+  String get checkInGoalDeskBreak;
+
+  /// No description provided for @checkInBodyAreasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which areas need attention?'**
+  String get checkInBodyAreasTitle;
+
+  /// No description provided for @checkInBodyAreasHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select one or more areas.'**
+  String get checkInBodyAreasHint;
+
+  /// No description provided for @checkInAreaNeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Neck'**
+  String get checkInAreaNeck;
+
+  /// No description provided for @checkInAreaShoulders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shoulders'**
+  String get checkInAreaShoulders;
+
+  /// No description provided for @checkInAreaUpperBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Upper back'**
+  String get checkInAreaUpperBack;
+
+  /// No description provided for @checkInAreaLowerBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower back'**
+  String get checkInAreaLowerBack;
+
+  /// No description provided for @checkInAreaHips.
+  ///
+  /// In en, this message translates to:
+  /// **'Hips'**
+  String get checkInAreaHips;
+
+  /// No description provided for @checkInAreaKnees.
+  ///
+  /// In en, this message translates to:
+  /// **'Knees'**
+  String get checkInAreaKnees;
+
+  /// No description provided for @checkInAreaFullBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Full body'**
+  String get checkInAreaFullBody;
+
+  /// No description provided for @checkInTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How much time do you have?'**
+  String get checkInTimeTitle;
+
+  /// No description provided for @checkInTimeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} minutes'**
+  String checkInTimeMinutes(int minutes);
+
+  /// No description provided for @checkInPositionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What works for you now?'**
+  String get checkInPositionTitle;
+
+  /// No description provided for @checkInPositionSeated.
+  ///
+  /// In en, this message translates to:
+  /// **'Seated'**
+  String get checkInPositionSeated;
+
+  /// No description provided for @checkInPositionStanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Standing'**
+  String get checkInPositionStanding;
+
+  /// No description provided for @checkInPositionFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor'**
+  String get checkInPositionFloor;
+
+  /// No description provided for @checkInPositionAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any position'**
+  String get checkInPositionAny;
+
+  /// No description provided for @checkInStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start today\'s check-in'**
+  String get checkInStartTitle;
+
+  /// No description provided for @checkInStartSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us how you feel, and we\'ll choose a short routine for you.'**
+  String get checkInStartSubtitle;
 }
 
 class _AppLocalizationsDelegate

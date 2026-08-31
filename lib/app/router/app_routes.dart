@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:raha_move/features/authentication/presentation/email_confirmation_screen.dart';
 import 'package:raha_move/features/authentication/presentation/sign_in_screen.dart';
 import 'package:raha_move/features/authentication/presentation/sign_up_screen.dart';
+import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
 
 import '../localization/l10n/app_localizations.dart';
 
@@ -15,13 +16,60 @@ class FoundationRoute extends GoRouteData with $FoundationRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     final strings = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return Scaffold(
-      body: Center(
-        child: Semantics(
-          header: true,
-          child: Text(strings.foundationMessage, textAlign: TextAlign.center),
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Semantics(
+                  header: true,
+                  child: Text(
+                    strings.foundationMessage,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  strings.checkInStartSubtitle,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  key: const Key('start_check_in'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  onPressed: () => const CheckInRoute().push(context),
+                  child: Text(strings.checkInStartTitle),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
+    );
+  }
+}
+
+@TypedGoRoute<CheckInRoute>(path: '/check-in')
+class CheckInRoute extends GoRouteData with $CheckInRoute {
+  const CheckInRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return CheckInScreen(
+      onExit: () => context.pop(),
+      onComplete: () => context.pop(),
     );
   }
 }

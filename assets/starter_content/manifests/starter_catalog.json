@@ -1,5 +1,5 @@
 {
-  "manifest_checksum": "54d02558c39f8299cdba757bb9101dad339db22e6b2023426813afbba01c6388",
+  "manifest_checksum": "19d5cf577f3fb5cf91a73b6301e4636eac952333f10145ba780722357cf2d697",
   "manifest": {
     "contract_version": "raha-content-release-v1",
     "release": {
@@ -137,27 +137,60 @@
     ],
     "body_areas": [
       { "id": "41000000-0000-0000-0000-000000000001", "key": "neck", "sort_order": 1, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000002", "key": "shoulders", "sort_order": 2, "active": true }
+      { "id": "41000000-0000-0000-0000-000000000002", "key": "shoulders", "sort_order": 2, "active": true },
+      { "id": "41000000-0000-0000-0000-000000000003", "key": "upper_back", "sort_order": 3, "active": true },
+      { "id": "41000000-0000-0000-0000-000000000004", "key": "lower_back", "sort_order": 4, "active": true },
+      { "id": "41000000-0000-0000-0000-000000000005", "key": "hips", "sort_order": 5, "active": true },
+      { "id": "41000000-0000-0000-0000-000000000006", "key": "knees", "sort_order": 6, "active": true },
+      { "id": "41000000-0000-0000-0000-000000000007", "key": "full_body", "sort_order": 7, "active": true }
     ],
     "body_area_translations": [
       { "body_area_id": "41000000-0000-0000-0000-000000000001", "locale": "en", "name": "Neck" },
       { "body_area_id": "41000000-0000-0000-0000-000000000001", "locale": "ar", "name": "الرقبة" },
       { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "en", "name": "Shoulders" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "ar", "name": "الكتفان" }
+      { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "ar", "name": "الكتفان" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000003", "locale": "en", "name": "Upper back" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000003", "locale": "ar", "name": "أعلى الظهر" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000004", "locale": "en", "name": "Lower back" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000004", "locale": "ar", "name": "أسفل الظهر" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000005", "locale": "en", "name": "Hips" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000005", "locale": "ar", "name": "الوركان" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000006", "locale": "en", "name": "Knees" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000006", "locale": "ar", "name": "الركبتان" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000007", "locale": "en", "name": "Full body" },
+      { "body_area_id": "41000000-0000-0000-0000-000000000007", "locale": "ar", "name": "الجسم كاملاً" }
     ],
     "goals": [
-      { "id": "42000000-0000-0000-0000-000000000001", "key": "ease_stiffness", "sort_order": 1, "active": true }
+      { "id": "42000000-0000-0000-0000-000000000001", "key": "ease_stiffness", "sort_order": 1, "active": true },
+      { "id": "42000000-0000-0000-0000-000000000002", "key": "move_more_freely", "sort_order": 2, "active": true },
+      { "id": "42000000-0000-0000-0000-000000000003", "key": "feel_energized", "sort_order": 3, "active": true },
+      { "id": "42000000-0000-0000-0000-000000000004", "key": "relax", "sort_order": 4, "active": true },
+      { "id": "42000000-0000-0000-0000-000000000005", "key": "desk_break", "sort_order": 5, "active": true }
     ],
     "goal_translations": [
       { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "en", "name": "Ease stiffness" },
-      { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "ar", "name": "تخفيف التيبس" }
+      { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "ar", "name": "تخفيف التيبس" },
+      { "goal_id": "42000000-0000-0000-0000-000000000002", "locale": "en", "name": "Move more freely" },
+      { "goal_id": "42000000-0000-0000-0000-000000000002", "locale": "ar", "name": "تحرّك بحرية أكبر" },
+      { "goal_id": "42000000-0000-0000-0000-000000000003", "locale": "en", "name": "Feel energized" },
+      { "goal_id": "42000000-0000-0000-0000-000000000003", "locale": "ar", "name": "الشعور بالنشاط" },
+      { "goal_id": "42000000-0000-0000-0000-000000000004", "locale": "en", "name": "Relax" },
+      { "goal_id": "42000000-0000-0000-0000-000000000004", "locale": "ar", "name": "الاسترخاء" },
+      { "goal_id": "42000000-0000-0000-0000-000000000005", "locale": "en", "name": "Take a desk break" },
+      { "goal_id": "42000000-0000-0000-0000-000000000005", "locale": "ar", "name": "استراحة من المكتب" }
     ],
     "movement_positions": [
-      { "id": "43000000-0000-0000-0000-000000000001", "key": "seated", "sort_order": 1, "active": true }
+      { "id": "43000000-0000-0000-0000-000000000001", "key": "seated", "sort_order": 1, "active": true },
+      { "id": "43000000-0000-0000-0000-000000000002", "key": "standing", "sort_order": 2, "active": true },
+      { "id": "43000000-0000-0000-0000-000000000003", "key": "floor", "sort_order": 3, "active": true }
     ],
     "movement_position_translations": [
       { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "en", "name": "Seated" },
-      { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "ar", "name": "جلوس" }
+      { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "ar", "name": "جلوس" },
+      { "position_id": "43000000-0000-0000-0000-000000000002", "locale": "en", "name": "Standing" },
+      { "position_id": "43000000-0000-0000-0000-000000000002", "locale": "ar", "name": "وقوف" },
+      { "position_id": "43000000-0000-0000-0000-000000000003", "locale": "en", "name": "Floor" },
+      { "position_id": "43000000-0000-0000-0000-000000000003", "locale": "ar", "name": "على الأرض" }
     ],
     "equipment": [
       { "id": "44000000-0000-0000-0000-000000000001", "key": "body_weight", "sort_order": 1, "active": true }

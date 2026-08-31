@@ -77,5 +77,50 @@
   "preferencesReminderSubtitle": "A gentle nudge to move on your schedule.",
   "preferencesContinue": "Continue",
   "preferencesRequiredHint": "Choose your experience level to continue.",
-  "preferencesSaveError": "We couldn't save your preferences. Please try again."
+  "preferencesSaveError": "We couldn't save your preferences. Please try again.",
+  "checkInBack": "Back",
+  "checkInStepIndicator": "Step {current} of {total}",
+  "@checkInStepIndicator": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "checkInContinue": "Continue",
+  "checkInRequiredHint": "Please choose an answer to continue.",
+  "checkInSaveError": "We couldn't save your check-in. Please try again.",
+  "checkInBodyStateTitle": "How does your body feel today?",
+  "checkInBodyStateComfortable": "Comfortable",
+  "checkInBodyStateStiff": "Stiff",
+  "checkInBodyStateTired": "Tired",
+  "checkInBodyStateTense": "Tense",
+  "checkInGoalTitle": "What do you need today?",
+  "checkInGoalEaseStiffness": "Ease stiffness",
+  "checkInGoalMoveMoreFreely": "Move more freely",
+  "checkInGoalFeelEnergized": "Feel energized",
+  "checkInGoalRelax": "Relax",
+  "checkInGoalDeskBreak": "Take a desk break",
+  "checkInBodyAreasTitle": "Which areas need attention?",
+  "checkInBodyAreasHint": "Select one or more areas.",
+  "checkInAreaNeck": "Neck",
+  "checkInAreaShoulders": "Shoulders",
+  "checkInAreaUpperBack": "Upper back",
+  "checkInAreaLowerBack": "Lower back",
+  "checkInAreaHips": "Hips",
+  "checkInAreaKnees": "Knees",
+  "checkInAreaFullBody": "Full body",
+  "checkInTimeTitle": "How much time do you have?",
+  "checkInTimeMinutes": "{minutes} minutes",
+  "@checkInTimeMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "checkInPositionTitle": "What works for you now?",
+  "checkInPositionSeated": "Seated",
+  "checkInPositionStanding": "Standing",
+  "checkInPositionFloor": "Floor",
+  "checkInPositionAny": "Any position",
+  "checkInStartTitle": "Start today's check-in",
+  "checkInStartSubtitle": "Tell us how you feel, and we'll choose a short routine for you."
 }

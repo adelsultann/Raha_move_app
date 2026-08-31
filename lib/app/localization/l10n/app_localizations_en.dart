@@ -226,4 +226,112 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get preferencesSaveError =>
       'We couldn\'t save your preferences. Please try again.';
+
+  @override
+  String get checkInBack => 'Back';
+
+  @override
+  String checkInStepIndicator(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get checkInContinue => 'Continue';
+
+  @override
+  String get checkInRequiredHint => 'Please choose an answer to continue.';
+
+  @override
+  String get checkInSaveError =>
+      'We couldn\'t save your check-in. Please try again.';
+
+  @override
+  String get checkInBodyStateTitle => 'How does your body feel today?';
+
+  @override
+  String get checkInBodyStateComfortable => 'Comfortable';
+
+  @override
+  String get checkInBodyStateStiff => 'Stiff';
+
+  @override
+  String get checkInBodyStateTired => 'Tired';
+
+  @override
+  String get checkInBodyStateTense => 'Tense';
+
+  @override
+  String get checkInGoalTitle => 'What do you need today?';
+
+  @override
+  String get checkInGoalEaseStiffness => 'Ease stiffness';
+
+  @override
+  String get checkInGoalMoveMoreFreely => 'Move more freely';
+
+  @override
+  String get checkInGoalFeelEnergized => 'Feel energized';
+
+  @override
+  String get checkInGoalRelax => 'Relax';
+
+  @override
+  String get checkInGoalDeskBreak => 'Take a desk break';
+
+  @override
+  String get checkInBodyAreasTitle => 'Which areas need attention?';
+
+  @override
+  String get checkInBodyAreasHint => 'Select one or more areas.';
+
+  @override
+  String get checkInAreaNeck => 'Neck';
+
+  @override
+  String get checkInAreaShoulders => 'Shoulders';
+
+  @override
+  String get checkInAreaUpperBack => 'Upper back';
+
+  @override
+  String get checkInAreaLowerBack => 'Lower back';
+
+  @override
+  String get checkInAreaHips => 'Hips';
+
+  @override
+  String get checkInAreaKnees => 'Knees';
+
+  @override
+  String get checkInAreaFullBody => 'Full body';
+
+  @override
+  String get checkInTimeTitle => 'How much time do you have?';
+
+  @override
+  String checkInTimeMinutes(int minutes) {
+    return '$minutes minutes';
+  }
+
+  @override
+  String get checkInPositionTitle => 'What works for you now?';
+
+  @override
+  String get checkInPositionSeated => 'Seated';
+
+  @override
+  String get checkInPositionStanding => 'Standing';
+
+  @override
+  String get checkInPositionFloor => 'Floor';
+
+  @override
+  String get checkInPositionAny => 'Any position';
+
+  @override
+  String get checkInStartTitle => 'Start today\'s check-in';
+
+  @override
+  String get checkInStartSubtitle =>
+      'Tell us how you feel, and we\'ll choose a short routine for you.';
 }
