@@ -404,6 +404,12 @@ class LocalRecommendations extends Table with SyncColumns {
   IntColumn get rank => integer()();
   IntColumn get score => integer()();
   TextColumn get reasonCodesJson => text()();
+
+  /// The deterministic score breakdown (component key → integer contribution)
+  /// that produced [score]. Stored so later rule tuning does not rewrite
+  /// historical explanations and so the record is self-describing per RAHA-041.
+  TextColumn get scoreComponentsJson =>
+      text().withDefault(const Constant('{}'))();
   DateTimeColumn get shownAt => dateTime()();
   DateTimeColumn get acceptedAt => dateTime().nullable()();
   DateTimeColumn get rejectedAt => dateTime().nullable()();
@@ -610,7 +616,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -623,6 +629,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 6) await _migrateToV6(m);
       if (from < 7) await _migrateToV7(m);
       if (from < 8) await _migrateToV8(m);
+      if (from < 9) await _migrateToV9(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -837,6 +844,20 @@ class AppDatabase extends _$AppDatabase {
     if (!columns.contains('preferred_positions_json')) {
       await customStatement(
         "ALTER TABLE local_user_preferences ADD COLUMN preferred_positions_json TEXT NOT NULL DEFAULT ''",
+      );
+    }
+  }
+
+  /// v9 adds the recommendation score-component breakdown to
+  /// `local_recommendations` (RAHA-041). Guarded against a missing table
+  /// (partial legacy fixtures) and a table already carrying the column (fresh
+  /// installs created by [MigrationStrategy.onCreate]).
+  Future<void> _migrateToV9(Migrator m) async {
+    if (!await _tableExists('local_recommendations')) return;
+    final columns = await _tableColumnNames('local_recommendations');
+    if (!columns.contains('score_components_json')) {
+      await customStatement(
+        "ALTER TABLE local_recommendations ADD COLUMN score_components_json TEXT NOT NULL DEFAULT '{}'",
       );
     }
   }

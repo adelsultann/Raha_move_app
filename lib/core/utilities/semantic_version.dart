@@ -1,6 +1,8 @@
 /// Minimal semantic-version parsing and comparison for the RAHA-024 release
-/// compatibility gate. Only `MAJOR.MINOR.PATCH` is accepted; pre-release and
-/// build metadata are not part of the MVP release contract.
+/// compatibility gate and the RAHA-041 recommendation app-version filter.
+///
+/// Only `MAJOR.MINOR.PATCH` is accepted; pre-release and build metadata are not
+/// part of the MVP release contract.
 final class SemanticVersion implements Comparable<SemanticVersion> {
   const SemanticVersion(this.major, this.minor, this.patch);
 

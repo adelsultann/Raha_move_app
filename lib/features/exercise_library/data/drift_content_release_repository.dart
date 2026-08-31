@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:raha_move/core/database/app_database.dart';
 
+import '../../../core/utilities/semantic_version.dart';
 import 'content_release_contract.dart';
 import 'content_release_source.dart';
-import 'semantic_version.dart';
 
 /// Applies complete, compatible catalog snapshots to the local Drift cache.
 ///

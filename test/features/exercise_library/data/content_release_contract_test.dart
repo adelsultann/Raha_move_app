@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/features/exercise_library/data/content_release_contract.dart';
 import 'package:raha_move/features/exercise_library/data/content_release_source.dart';
-import 'package:raha_move/features/exercise_library/data/semantic_version.dart';
+import 'package:raha_move/core/utilities/semantic_version.dart';
 
 import 'release_fixture.dart';
 

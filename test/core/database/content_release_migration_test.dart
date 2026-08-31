@@ -128,6 +128,25 @@ void main() {
 
     await database.close();
   });
+
+  test('v9 adds the recommendation score-component column', () async {
+    final database = AppDatabase(_v8RecommendationFixtureExecutor(now));
+
+    final recommendation = await (database.select(
+      database.localRecommendations,
+    )..where((row) => row.id.equals('rec-1'))).getSingle();
+    expect(recommendation.engineVersion, 'rules_v1');
+    expect(recommendation.score, 150);
+    expect(recommendation.scoreComponentsJson, '{}');
+
+    final columns = await database
+        .customSelect("PRAGMA table_info('local_recommendations')")
+        .get();
+    final names = columns.map((row) => row.data['name']);
+    expect(names, contains('score_components_json'));
+
+    await database.close();
+  });
 }
 
 NativeDatabase _v3FixtureExecutor(DateTime now) => NativeDatabase.memory(
@@ -265,5 +284,47 @@ NativeDatabase _v7PreferencesFixtureExecutor(
       "INSERT INTO local_user_preferences (user_id, experience_level, sound_enabled, vibration_enabled, download_on_wifi_only, sync_state, local_updated_at, server_updated_at, last_sync_error) VALUES ('user-1', 'beginner', 1, 1, 1, 'synced', $millis, NULL, NULL)",
     );
     raw.execute('PRAGMA user_version = 7');
+  },
+);
+
+NativeDatabase _v8RecommendationFixtureExecutor(
+  DateTime now,
+) => NativeDatabase.memory(
+  setup: (raw) {
+    final millis = now.millisecondsSinceEpoch;
+    // `beforeOpen` creates a partial index on local_media_assets, so the
+    // fixture must provide the table even though v9 does not change it.
+    raw.execute(
+      'CREATE TABLE local_media_assets ('
+      'id TEXT NOT NULL PRIMARY KEY, exercise_id TEXT NOT NULL, '
+      'media_type TEXT NOT NULL, delivery_reference TEXT NOT NULL, '
+      'mime_type TEXT NOT NULL, checksum_sha256 TEXT NOT NULL, '
+      'status TEXT NOT NULL, is_preferred INTEGER NOT NULL DEFAULT 0, '
+      'width INTEGER NULL, height INTEGER NULL, duration_ms INTEGER NULL, '
+      'updated_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      'CREATE TABLE local_recommendations ('
+      'id TEXT NOT NULL PRIMARY KEY, '
+      'user_id TEXT NOT NULL, '
+      'check_in_id TEXT NOT NULL, '
+      'routine_id TEXT NOT NULL, '
+      'engine_version TEXT NOT NULL, '
+      'rank INTEGER NOT NULL, '
+      'score INTEGER NOT NULL, '
+      'reason_codes_json TEXT NOT NULL, '
+      'shown_at INTEGER NOT NULL, '
+      'accepted_at INTEGER NULL, '
+      'rejected_at INTEGER NULL, '
+      'rejection_reason TEXT NULL, '
+      "sync_state TEXT NOT NULL DEFAULT 'pendingCreate', "
+      'local_updated_at INTEGER NOT NULL, '
+      'server_updated_at INTEGER NULL, '
+      'last_sync_error TEXT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_recommendations (id, user_id, check_in_id, routine_id, engine_version, rank, score, reason_codes_json, shown_at, sync_state, local_updated_at) VALUES ('rec-1', 'user-1', 'check-in-1', 'raha_rt_000001', 'rules_v1', 0, 150, '[]', $millis, 'synced', $millis)",
+    );
+    raw.execute('PRAGMA user_version = 8');
   },
 );

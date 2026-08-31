@@ -9403,6 +9403,18 @@ class $LocalRecommendationsTable extends LocalRecommendations
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _scoreComponentsJsonMeta =
+      const VerificationMeta('scoreComponentsJson');
+  @override
+  late final GeneratedColumn<String> scoreComponentsJson =
+      GeneratedColumn<String>(
+        'score_components_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{}'),
+      );
   static const VerificationMeta _shownAtMeta = const VerificationMeta(
     'shownAt',
   );
@@ -9461,6 +9473,7 @@ class $LocalRecommendationsTable extends LocalRecommendations
     rank,
     score,
     reasonCodesJson,
+    scoreComponentsJson,
     shownAt,
     acceptedAt,
     rejectedAt,
@@ -9565,6 +9578,15 @@ class $LocalRecommendationsTable extends LocalRecommendations
     } else if (isInserting) {
       context.missing(_reasonCodesJsonMeta);
     }
+    if (data.containsKey('score_components_json')) {
+      context.handle(
+        _scoreComponentsJsonMeta,
+        scoreComponentsJson.isAcceptableOrUnknown(
+          data['score_components_json']!,
+          _scoreComponentsJsonMeta,
+        ),
+      );
+    }
     if (data.containsKey('shown_at')) {
       context.handle(
         _shownAtMeta,
@@ -9656,6 +9678,10 @@ class $LocalRecommendationsTable extends LocalRecommendations
         DriftSqlType.string,
         data['${effectivePrefix}reason_codes_json'],
       )!,
+      scoreComponentsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}score_components_json'],
+      )!,
       shownAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}shown_at'],
@@ -9708,6 +9734,11 @@ class LocalRecommendation extends DataClass
   final int rank;
   final int score;
   final String reasonCodesJson;
+
+  /// The deterministic score breakdown (component key → integer contribution)
+  /// that produced [score]. Stored so later rule tuning does not rewrite
+  /// historical explanations and so the record is self-describing per RAHA-041.
+  final String scoreComponentsJson;
   final DateTime shownAt;
   final DateTime? acceptedAt;
   final DateTime? rejectedAt;
@@ -9725,6 +9756,7 @@ class LocalRecommendation extends DataClass
     required this.rank,
     required this.score,
     required this.reasonCodesJson,
+    required this.scoreComponentsJson,
     required this.shownAt,
     this.acceptedAt,
     this.rejectedAt,
@@ -9757,6 +9789,7 @@ class LocalRecommendation extends DataClass
     map['rank'] = Variable<int>(rank);
     map['score'] = Variable<int>(score);
     map['reason_codes_json'] = Variable<String>(reasonCodesJson);
+    map['score_components_json'] = Variable<String>(scoreComponentsJson);
     map['shown_at'] = Variable<DateTime>(shownAt);
     if (!nullToAbsent || acceptedAt != null) {
       map['accepted_at'] = Variable<DateTime>(acceptedAt);
@@ -9788,6 +9821,7 @@ class LocalRecommendation extends DataClass
       rank: Value(rank),
       score: Value(score),
       reasonCodesJson: Value(reasonCodesJson),
+      scoreComponentsJson: Value(scoreComponentsJson),
       shownAt: Value(shownAt),
       acceptedAt: acceptedAt == null && nullToAbsent
           ? const Value.absent()
@@ -9822,6 +9856,9 @@ class LocalRecommendation extends DataClass
       rank: serializer.fromJson<int>(json['rank']),
       score: serializer.fromJson<int>(json['score']),
       reasonCodesJson: serializer.fromJson<String>(json['reasonCodesJson']),
+      scoreComponentsJson: serializer.fromJson<String>(
+        json['scoreComponentsJson'],
+      ),
       shownAt: serializer.fromJson<DateTime>(json['shownAt']),
       acceptedAt: serializer.fromJson<DateTime?>(json['acceptedAt']),
       rejectedAt: serializer.fromJson<DateTime?>(json['rejectedAt']),
@@ -9850,6 +9887,7 @@ class LocalRecommendation extends DataClass
       'rank': serializer.toJson<int>(rank),
       'score': serializer.toJson<int>(score),
       'reasonCodesJson': serializer.toJson<String>(reasonCodesJson),
+      'scoreComponentsJson': serializer.toJson<String>(scoreComponentsJson),
       'shownAt': serializer.toJson<DateTime>(shownAt),
       'acceptedAt': serializer.toJson<DateTime?>(acceptedAt),
       'rejectedAt': serializer.toJson<DateTime?>(rejectedAt),
@@ -9870,6 +9908,7 @@ class LocalRecommendation extends DataClass
     int? rank,
     int? score,
     String? reasonCodesJson,
+    String? scoreComponentsJson,
     DateTime? shownAt,
     Value<DateTime?> acceptedAt = const Value.absent(),
     Value<DateTime?> rejectedAt = const Value.absent(),
@@ -9891,6 +9930,7 @@ class LocalRecommendation extends DataClass
     rank: rank ?? this.rank,
     score: score ?? this.score,
     reasonCodesJson: reasonCodesJson ?? this.reasonCodesJson,
+    scoreComponentsJson: scoreComponentsJson ?? this.scoreComponentsJson,
     shownAt: shownAt ?? this.shownAt,
     acceptedAt: acceptedAt.present ? acceptedAt.value : this.acceptedAt,
     rejectedAt: rejectedAt.present ? rejectedAt.value : this.rejectedAt,
@@ -9922,6 +9962,9 @@ class LocalRecommendation extends DataClass
       reasonCodesJson: data.reasonCodesJson.present
           ? data.reasonCodesJson.value
           : this.reasonCodesJson,
+      scoreComponentsJson: data.scoreComponentsJson.present
+          ? data.scoreComponentsJson.value
+          : this.scoreComponentsJson,
       shownAt: data.shownAt.present ? data.shownAt.value : this.shownAt,
       acceptedAt: data.acceptedAt.present
           ? data.acceptedAt.value
@@ -9950,6 +9993,7 @@ class LocalRecommendation extends DataClass
           ..write('rank: $rank, ')
           ..write('score: $score, ')
           ..write('reasonCodesJson: $reasonCodesJson, ')
+          ..write('scoreComponentsJson: $scoreComponentsJson, ')
           ..write('shownAt: $shownAt, ')
           ..write('acceptedAt: $acceptedAt, ')
           ..write('rejectedAt: $rejectedAt, ')
@@ -9972,6 +10016,7 @@ class LocalRecommendation extends DataClass
     rank,
     score,
     reasonCodesJson,
+    scoreComponentsJson,
     shownAt,
     acceptedAt,
     rejectedAt,
@@ -9993,6 +10038,7 @@ class LocalRecommendation extends DataClass
           other.rank == this.rank &&
           other.score == this.score &&
           other.reasonCodesJson == this.reasonCodesJson &&
+          other.scoreComponentsJson == this.scoreComponentsJson &&
           other.shownAt == this.shownAt &&
           other.acceptedAt == this.acceptedAt &&
           other.rejectedAt == this.rejectedAt &&
@@ -10013,6 +10059,7 @@ class LocalRecommendationsCompanion
   final Value<int> rank;
   final Value<int> score;
   final Value<String> reasonCodesJson;
+  final Value<String> scoreComponentsJson;
   final Value<DateTime> shownAt;
   final Value<DateTime?> acceptedAt;
   final Value<DateTime?> rejectedAt;
@@ -10031,6 +10078,7 @@ class LocalRecommendationsCompanion
     this.rank = const Value.absent(),
     this.score = const Value.absent(),
     this.reasonCodesJson = const Value.absent(),
+    this.scoreComponentsJson = const Value.absent(),
     this.shownAt = const Value.absent(),
     this.acceptedAt = const Value.absent(),
     this.rejectedAt = const Value.absent(),
@@ -10050,6 +10098,7 @@ class LocalRecommendationsCompanion
     required int rank,
     required int score,
     required String reasonCodesJson,
+    this.scoreComponentsJson = const Value.absent(),
     required DateTime shownAt,
     this.acceptedAt = const Value.absent(),
     this.rejectedAt = const Value.absent(),
@@ -10078,6 +10127,7 @@ class LocalRecommendationsCompanion
     Expression<int>? rank,
     Expression<int>? score,
     Expression<String>? reasonCodesJson,
+    Expression<String>? scoreComponentsJson,
     Expression<DateTime>? shownAt,
     Expression<DateTime>? acceptedAt,
     Expression<DateTime>? rejectedAt,
@@ -10097,6 +10147,8 @@ class LocalRecommendationsCompanion
       if (rank != null) 'rank': rank,
       if (score != null) 'score': score,
       if (reasonCodesJson != null) 'reason_codes_json': reasonCodesJson,
+      if (scoreComponentsJson != null)
+        'score_components_json': scoreComponentsJson,
       if (shownAt != null) 'shown_at': shownAt,
       if (acceptedAt != null) 'accepted_at': acceptedAt,
       if (rejectedAt != null) 'rejected_at': rejectedAt,
@@ -10118,6 +10170,7 @@ class LocalRecommendationsCompanion
     Value<int>? rank,
     Value<int>? score,
     Value<String>? reasonCodesJson,
+    Value<String>? scoreComponentsJson,
     Value<DateTime>? shownAt,
     Value<DateTime?>? acceptedAt,
     Value<DateTime?>? rejectedAt,
@@ -10137,6 +10190,7 @@ class LocalRecommendationsCompanion
       rank: rank ?? this.rank,
       score: score ?? this.score,
       reasonCodesJson: reasonCodesJson ?? this.reasonCodesJson,
+      scoreComponentsJson: scoreComponentsJson ?? this.scoreComponentsJson,
       shownAt: shownAt ?? this.shownAt,
       acceptedAt: acceptedAt ?? this.acceptedAt,
       rejectedAt: rejectedAt ?? this.rejectedAt,
@@ -10190,6 +10244,11 @@ class LocalRecommendationsCompanion
     if (reasonCodesJson.present) {
       map['reason_codes_json'] = Variable<String>(reasonCodesJson.value);
     }
+    if (scoreComponentsJson.present) {
+      map['score_components_json'] = Variable<String>(
+        scoreComponentsJson.value,
+      );
+    }
     if (shownAt.present) {
       map['shown_at'] = Variable<DateTime>(shownAt.value);
     }
@@ -10223,6 +10282,7 @@ class LocalRecommendationsCompanion
           ..write('rank: $rank, ')
           ..write('score: $score, ')
           ..write('reasonCodesJson: $reasonCodesJson, ')
+          ..write('scoreComponentsJson: $scoreComponentsJson, ')
           ..write('shownAt: $shownAt, ')
           ..write('acceptedAt: $acceptedAt, ')
           ..write('rejectedAt: $rejectedAt, ')
@@ -25746,6 +25806,7 @@ typedef $$LocalRecommendationsTableCreateCompanionBuilder =
       required int rank,
       required int score,
       required String reasonCodesJson,
+      Value<String> scoreComponentsJson,
       required DateTime shownAt,
       Value<DateTime?> acceptedAt,
       Value<DateTime?> rejectedAt,
@@ -25766,6 +25827,7 @@ typedef $$LocalRecommendationsTableUpdateCompanionBuilder =
       Value<int> rank,
       Value<int> score,
       Value<String> reasonCodesJson,
+      Value<String> scoreComponentsJson,
       Value<DateTime> shownAt,
       Value<DateTime?> acceptedAt,
       Value<DateTime?> rejectedAt,
@@ -25927,6 +25989,11 @@ class $$LocalRecommendationsTableFilterComposer
 
   ColumnFilters<String> get reasonCodesJson => $composableBuilder(
     column: $table.reasonCodesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get scoreComponentsJson => $composableBuilder(
+    column: $table.scoreComponentsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -26099,6 +26166,11 @@ class $$LocalRecommendationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get scoreComponentsJson => $composableBuilder(
+    column: $table.scoreComponentsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get shownAt => $composableBuilder(
     column: $table.shownAt,
     builder: (column) => ColumnOrderings(column),
@@ -26233,6 +26305,11 @@ class $$LocalRecommendationsTableAnnotationComposer
 
   GeneratedColumn<String> get reasonCodesJson => $composableBuilder(
     column: $table.reasonCodesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get scoreComponentsJson => $composableBuilder(
+    column: $table.scoreComponentsJson,
     builder: (column) => column,
   );
 
@@ -26403,6 +26480,7 @@ class $$LocalRecommendationsTableTableManager
                 Value<int> rank = const Value.absent(),
                 Value<int> score = const Value.absent(),
                 Value<String> reasonCodesJson = const Value.absent(),
+                Value<String> scoreComponentsJson = const Value.absent(),
                 Value<DateTime> shownAt = const Value.absent(),
                 Value<DateTime?> acceptedAt = const Value.absent(),
                 Value<DateTime?> rejectedAt = const Value.absent(),
@@ -26421,6 +26499,7 @@ class $$LocalRecommendationsTableTableManager
                 rank: rank,
                 score: score,
                 reasonCodesJson: reasonCodesJson,
+                scoreComponentsJson: scoreComponentsJson,
                 shownAt: shownAt,
                 acceptedAt: acceptedAt,
                 rejectedAt: rejectedAt,
@@ -26441,6 +26520,7 @@ class $$LocalRecommendationsTableTableManager
                 required int rank,
                 required int score,
                 required String reasonCodesJson,
+                Value<String> scoreComponentsJson = const Value.absent(),
                 required DateTime shownAt,
                 Value<DateTime?> acceptedAt = const Value.absent(),
                 Value<DateTime?> rejectedAt = const Value.absent(),
@@ -26459,6 +26539,7 @@ class $$LocalRecommendationsTableTableManager
                 rank: rank,
                 score: score,
                 reasonCodesJson: reasonCodesJson,
+                scoreComponentsJson: scoreComponentsJson,
                 shownAt: shownAt,
                 acceptedAt: acceptedAt,
                 rejectedAt: rejectedAt,
