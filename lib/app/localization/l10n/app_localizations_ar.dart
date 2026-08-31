@@ -452,4 +452,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recommendationEditCheckIn => 'عدّل تسجيلك اليومي';
+
+  @override
+  String get recommendationTotalTime => 'الوقت الإجمالي';
+
+  @override
+  String get recommendationSafetyReminder =>
+      'تحرّك ضمن نطاق مريح وتوقّف إذا شعرت بألم حاد.';
+
+  @override
+  String get recommendationStartUnavailable =>
+      'تعذّر تجهيز هذا الروتين. تحقّق من اتصالك وحاول مجددًا.';
+
+  @override
+  String get recommendationStartStorage =>
+      'تحتاج مساحة أكبر لتجهيز هذا الروتين. وفّر بعض المساحة وحاول مجددًا.';
+
+  @override
+  String get recommendationStartMissingMedia => 'هذا الروتين غير متاح حاليًا.';
 }

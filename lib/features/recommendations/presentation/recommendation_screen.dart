@@ -7,9 +7,11 @@ import 'package:raha_move/features/exercise_library/domain/content_models.dart';
 import '../application/recommendation_controller.dart';
 import '../application/recommendation_providers.dart';
 import '../application/recommendation_state.dart';
+import '../application/routine_readiness_controller.dart';
 import '../domain/recommendation_engine.dart';
 import '../domain/recommendation_explanation.dart';
 import '../domain/routine_presentation.dart';
+import '../domain/routine_readiness.dart';
 import 'widgets/movement_preview_sheet.dart';
 import 'widgets/recommendation_rejection_sheet.dart';
 
@@ -122,6 +124,10 @@ class _RecommendationContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final readinessState = ref.watch(
+      routineReadinessControllerProvider(selected.routineId),
+    );
+    final isChecking = readinessState.isChecking;
 
     return Column(
       children: [
@@ -156,8 +162,11 @@ class _RecommendationContent extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  onPressed: () =>
-                      showMovementPreviewSheet(context, presentation.movements),
+                  onPressed: () => showMovementPreviewSheet(
+                    context,
+                    presentation: presentation,
+                    onStart: () => _start(context, ref),
+                  ),
                   icon: const Icon(Icons.list_alt),
                   label: Text(strings.recommendationPreviewMovements),
                 ),
@@ -169,6 +178,27 @@ class _RecommendationContent extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           child: Column(
             children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 18,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      strings.recommendationSafetyReminder,
+                      key: const Key('recommendation_safety_reminder'),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
@@ -179,8 +209,16 @@ class _RecommendationContent extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  onPressed: onStart,
-                  child: Text(strings.recommendationStart),
+                  onPressed: isChecking || onStart == null
+                      ? null
+                      : () => _start(context, ref),
+                  child: isChecking
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
+                        )
+                      : Text(strings.recommendationStart),
                 ),
               ),
               const SizedBox(height: 8),
@@ -194,6 +232,48 @@ class _RecommendationContent extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _start(BuildContext context, WidgetRef ref) async {
+    final controller = ref.read(
+      routineReadinessControllerProvider(selected.routineId).notifier,
+    );
+    final readiness = await controller.start();
+    if (!context.mounted) return;
+    if (readiness.isReady) {
+      onStart?.call();
+      return;
+    }
+    _showReadinessFailure(context, readiness);
+  }
+
+  void _showReadinessFailure(BuildContext context, RoutineReadiness readiness) {
+    final strings = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    switch (readiness.status) {
+      case RoutineReadinessStatus.missingMedia:
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(strings.recommendationStartMissingMedia),
+            action: onChooseAnother == null
+                ? null
+                : SnackBarAction(
+                    label: strings.recommendationChooseAnother,
+                    onPressed: onChooseAnother!,
+                  ),
+          ),
+        );
+      case RoutineReadinessStatus.storageNeeded:
+        messenger.showSnackBar(
+          SnackBar(content: Text(strings.recommendationStartStorage)),
+        );
+      case RoutineReadinessStatus.unavailable:
+        messenger.showSnackBar(
+          SnackBar(content: Text(strings.recommendationStartUnavailable)),
+        );
+      case RoutineReadinessStatus.ready:
+        break;
+    }
   }
 }
 

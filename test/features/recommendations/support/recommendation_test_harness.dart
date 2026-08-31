@@ -11,6 +11,7 @@ import 'package:raha_move/features/check_in/domain/check_in_answers.dart';
 import 'package:raha_move/features/exercise_library/data/drift_content_release_repository.dart';
 import 'package:raha_move/features/onboarding/application/onboarding_providers.dart';
 import 'package:raha_move/features/onboarding/domain/app_language.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart' show Override;
 
 import '../../onboarding/support/onboarding_test_harness.dart'
     show FakeAuthRepository, FakeGuestIdentityStore, FakeOnboardingRepository;
@@ -329,6 +330,7 @@ Map<String, dynamic> multiRoutineManifest() {
 ProviderContainer buildRecommendationContainer(
   AppDatabase db, {
   AppLanguage language = AppLanguage.en,
+  List<Override> extraOverrides = const [],
 }) {
   return ProviderContainer(
     overrides: [
@@ -342,6 +344,7 @@ ProviderContainer buildRecommendationContainer(
       analyticsServiceProvider.overrideWithValue(
         InMemoryAnalyticsService(enabled: true),
       ),
+      ...extraOverrides,
     ],
   );
 }

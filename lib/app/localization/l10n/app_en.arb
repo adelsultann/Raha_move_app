@@ -191,5 +191,10 @@
   "recommendationRejectOther": "Show me something else",
   "recommendationNoAlternativeTitle": "No other routine fits right now.",
   "recommendationNoAlternativeBody": "Try adjusting your answers and we'll find something else.",
-  "recommendationEditCheckIn": "Edit your check-in"
+  "recommendationEditCheckIn": "Edit your check-in",
+  "recommendationTotalTime": "Total time",
+  "recommendationSafetyReminder": "Move within a comfortable range and stop if you feel sharp pain.",
+  "recommendationStartUnavailable": "We couldn't get this routine ready. Check your connection and try again.",
+  "recommendationStartStorage": "You need more space to prepare this routine. Clear some space and try again.",
+  "recommendationStartMissingMedia": "This routine isn't available right now."
 }

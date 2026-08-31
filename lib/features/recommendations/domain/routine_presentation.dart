@@ -43,4 +43,11 @@ abstract class RoutinePresentation with _$RoutinePresentation {
   const RoutinePresentation._();
 
   int get movementCount => movements.length;
+
+  /// The summed duration of the ordered movements. This is the player's
+  /// per-step calculation and, for a valid release, equals
+  /// [estimatedDurationSeconds] (the content-release importer enforces that the
+  /// summed step durations match the routine definition).
+  int get totalDurationSeconds =>
+      movements.fold(0, (total, movement) => total + movement.durationSeconds);
 }

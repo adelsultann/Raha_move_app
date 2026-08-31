@@ -907,6 +907,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit your check-in'**
   String get recommendationEditCheckIn;
+
+  /// No description provided for @recommendationTotalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total time'**
+  String get recommendationTotalTime;
+
+  /// No description provided for @recommendationSafetyReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Move within a comfortable range and stop if you feel sharp pain.'**
+  String get recommendationSafetyReminder;
+
+  /// No description provided for @recommendationStartUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t get this routine ready. Check your connection and try again.'**
+  String get recommendationStartUnavailable;
+
+  /// No description provided for @recommendationStartStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'You need more space to prepare this routine. Clear some space and try again.'**
+  String get recommendationStartStorage;
+
+  /// No description provided for @recommendationStartMissingMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'This routine isn\'t available right now.'**
+  String get recommendationStartMissingMedia;
 }
 
 class _AppLocalizationsDelegate

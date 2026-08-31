@@ -5,8 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/features/check_in/domain/body_state.dart';
 import 'package:raha_move/features/check_in/domain/check_in_answers.dart';
+import 'package:raha_move/features/media/domain/media_delivery.dart';
 import 'package:raha_move/features/onboarding/domain/app_language.dart';
+import 'package:raha_move/features/recommendations/application/readiness_providers.dart';
+import 'package:raha_move/features/recommendations/domain/routine_readiness.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart' show Override;
 
 import '../support/recommendation_test_harness.dart';
 
@@ -44,7 +48,10 @@ void main() {
   testWidgets('invokes the start callback', (tester) async {
     final db = await seedRecommendationDatabase();
     addTearDown(db.close);
-    final container = buildRecommendationContainer(db);
+    final container = buildRecommendationContainer(
+      db,
+      extraOverrides: _readyOverrides(),
+    );
     addTearDown(container.dispose);
 
     var started = false;
@@ -60,6 +67,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const Key('recommendation_start')));
+    await tester.pumpAndSettle();
     expect(started, isTrue);
   });
 
@@ -87,7 +95,7 @@ void main() {
     expect(find.text('Show me something else'), findsOneWidget);
   });
 
-  testWidgets('opens a concise movement preview without forcing inspection', (
+  testWidgets('opens a movement preview with total, safety, and start', (
     tester,
   ) async {
     final db = await seedRecommendationDatabase();
@@ -100,11 +108,51 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(
+      find.byKey(const Key('recommendation_preview')),
+    );
     await tester.tap(find.byKey(const Key('recommendation_preview')));
     await tester.pumpAndSettle();
 
     expect(find.text('Movements'), findsOneWidget);
     expect(find.text('Seated neck release'), findsOneWidget);
+    expect(find.byKey(const Key('preview_total_duration')), findsOneWidget);
+    expect(find.text('Total time · 30 sec'), findsOneWidget);
+    expect(find.byKey(const Key('preview_safety_reminder')), findsOneWidget);
+    expect(find.byKey(const Key('preview_start')), findsOneWidget);
+  });
+
+  testWidgets('shows a calm message when the routine media is missing', (
+    tester,
+  ) async {
+    final db = await seedRecommendationDatabase();
+    addTearDown(db.close);
+    final container = buildRecommendationContainer(
+      db,
+      extraOverrides: _missingMediaOverrides(),
+    );
+    addTearDown(container.dispose);
+
+    var started = false;
+    await tester.pumpWidget(
+      _wrap(
+        container,
+        RecommendationScreen(
+          checkInId: 'check-in-1',
+          onStart: () => started = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('recommendation_start')));
+    await tester.pumpAndSettle();
+
+    expect(started, isFalse);
+    expect(
+      find.text("This routine isn't available right now."),
+      findsOneWidget,
+    );
   });
 
   testWidgets('renders in Arabic RTL without overflow', (tester) async {
@@ -267,4 +315,70 @@ Widget _wrap(ProviderContainer container, Widget child, {Locale? locale}) {
       home: child,
     ),
   );
+}
+
+const _checksum =
+    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+MediaDelivery _delivery(String id) => MediaDelivery(
+  mediaId: id,
+  deliveryReference: 'ref-$id',
+  version: 'release-1',
+  checksumSha256: _checksum,
+);
+
+List<Override> _readyOverrides() {
+  final media = _delivery('media-ready');
+  return [
+    routineMediaResolverProvider.overrideWithValue(
+      _FakeResolver(
+        RoutineMediaResolution(media: [media], missingExerciseIds: const []),
+      ),
+    ),
+    routineMediaPreparerProvider.overrideWith(
+      (ref) async => _FakePreparer(
+        RoutineMediaPreparation({
+          'media-ready': const MediaPrepared(
+            mediaId: 'media-ready',
+            localPath: 'cache/media-ready',
+            fromCache: true,
+          ),
+        }),
+      ),
+    ),
+  ];
+}
+
+List<Override> _missingMediaOverrides() {
+  return [
+    routineMediaResolverProvider.overrideWithValue(
+      _FakeResolver(
+        const RoutineMediaResolution(
+          media: [],
+          missingExerciseIds: ['ex-missing'],
+        ),
+      ),
+    ),
+  ];
+}
+
+final class _FakeResolver implements RoutineMediaResolver {
+  _FakeResolver(this.resolution);
+
+  final RoutineMediaResolution resolution;
+
+  @override
+  Future<RoutineMediaResolution> resolve(String routineId) async => resolution;
+}
+
+final class _FakePreparer implements RoutineMediaPreparer {
+  _FakePreparer(this.preparation);
+
+  final RoutineMediaPreparation preparation;
+
+  @override
+  Future<RoutineMediaPreparation> prepareForStart(
+    List<MediaDelivery> media, {
+    required bool explicitUserStart,
+  }) async => preparation;
 }

@@ -31,6 +31,7 @@ void main() {
     ]);
     expect(presentation.difficulty, DifficultyLevel.beginner);
     expect(presentation.estimatedDurationSeconds, 300);
+    expect(presentation.totalDurationSeconds, 300);
     expect(presentation.positions, {'seated'});
     expect(presentation.equipment, {'body_weight'});
   });

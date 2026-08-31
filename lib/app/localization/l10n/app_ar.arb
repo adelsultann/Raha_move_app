@@ -191,5 +191,10 @@
   "recommendationRejectOther": "أرني شيئًا آخر",
   "recommendationNoAlternativeTitle": "لا يوجد روتين آخر مناسب الآن.",
   "recommendationNoAlternativeBody": "جرّب تعديل إجاباتك وسنجد لك خيارًا آخر.",
-  "recommendationEditCheckIn": "عدّل تسجيلك اليومي"
+  "recommendationEditCheckIn": "عدّل تسجيلك اليومي",
+  "recommendationTotalTime": "الوقت الإجمالي",
+  "recommendationSafetyReminder": "تحرّك ضمن نطاق مريح وتوقّف إذا شعرت بألم حاد.",
+  "recommendationStartUnavailable": "تعذّر تجهيز هذا الروتين. تحقّق من اتصالك وحاول مجددًا.",
+  "recommendationStartStorage": "تحتاج مساحة أكبر لتجهيز هذا الروتين. وفّر بعض المساحة وحاول مجددًا.",
+  "recommendationStartMissingMedia": "هذا الروتين غير متاح حاليًا."
 }

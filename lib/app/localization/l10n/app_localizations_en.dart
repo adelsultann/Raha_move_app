@@ -457,4 +457,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recommendationEditCheckIn => 'Edit your check-in';
+
+  @override
+  String get recommendationTotalTime => 'Total time';
+
+  @override
+  String get recommendationSafetyReminder =>
+      'Move within a comfortable range and stop if you feel sharp pain.';
+
+  @override
+  String get recommendationStartUnavailable =>
+      'We couldn\'t get this routine ready. Check your connection and try again.';
+
+  @override
+  String get recommendationStartStorage =>
+      'You need more space to prepare this routine. Clear some space and try again.';
+
+  @override
+  String get recommendationStartMissingMedia =>
+      'This routine isn\'t available right now.';
 }
