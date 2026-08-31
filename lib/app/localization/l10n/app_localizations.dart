@@ -703,6 +703,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tell us how you feel, and we\'ll choose a short routine for you.'**
   String get checkInStartSubtitle;
+
+  /// No description provided for @recommendationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended for you'**
+  String get recommendationTitle;
+
+  /// No description provided for @recommendationBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get recommendationBack;
+
+  /// No description provided for @recommendationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start routine'**
+  String get recommendationStart;
+
+  /// No description provided for @recommendationChooseAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another'**
+  String get recommendationChooseAnother;
+
+  /// No description provided for @recommendationWhyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this routine?'**
+  String get recommendationWhyTitle;
+
+  /// No description provided for @recommendationPreviewMovements.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview movements'**
+  String get recommendationPreviewMovements;
+
+  /// No description provided for @recommendationMovements.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements'**
+  String get recommendationMovements;
+
+  /// No description provided for @recommendationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t prepare your recommendation right now.'**
+  String get recommendationUnavailable;
+
+  /// No description provided for @recommendationEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find a matching routine yet.'**
+  String get recommendationEmptyTitle;
+
+  /// No description provided for @recommendationEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your check-in or trying again.'**
+  String get recommendationEmptyBody;
+
+  /// No description provided for @recommendationRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get recommendationRetry;
+
+  /// No description provided for @recommendationDurationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String recommendationDurationMinutes(int minutes);
+
+  /// No description provided for @recommendationMovementsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} movements'**
+  String recommendationMovementsCount(int count);
+
+  /// No description provided for @recommendationSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} sec'**
+  String recommendationSeconds(int seconds);
+
+  /// No description provided for @recommendationDifficultyBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get recommendationDifficultyBeginner;
+
+  /// No description provided for @recommendationDifficultyIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get recommendationDifficultyIntermediate;
+
+  /// No description provided for @recommendationDifficultyAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get recommendationDifficultyAdvanced;
+
+  /// No description provided for @recommendationNoEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'No equipment'**
+  String get recommendationNoEquipment;
+
+  /// No description provided for @recommendationReasonBodyAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Focuses on {areas}.'**
+  String recommendationReasonBodyAreas(String areas);
+
+  /// No description provided for @recommendationReasonGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches your goal: {goal}.'**
+  String recommendationReasonGoal(String goal);
+
+  /// No description provided for @recommendationReasonTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Fits your {minutes} minutes.'**
+  String recommendationReasonTime(int minutes);
+
+  /// No description provided for @recommendationReasonPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches your position: {position}.'**
+  String recommendationReasonPosition(String position);
+
+  /// No description provided for @recommendationReasonDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Suited to your level.'**
+  String get recommendationReasonDifficulty;
+
+  /// No description provided for @recommendationReasonRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'You completed this routine recently.'**
+  String get recommendationReasonRecent;
+
+  /// No description provided for @recommendationReasonDiscomfort.
+  ///
+  /// In en, this message translates to:
+  /// **'It includes a movement you found less comfortable before.'**
+  String get recommendationReasonDiscomfort;
 }
 
 class _AppLocalizationsDelegate

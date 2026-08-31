@@ -56,7 +56,7 @@ final class CheckInControllerProvider
   }
 }
 
-String _$checkInControllerHash() => r'0898fbc4c584e87df5d1cdf0f878ea80a5944001';
+String _$checkInControllerHash() => r'e139d88c1a2314583895bafe8676b7aad0038a51';
 
 /// Captures and persists the five-step daily check-in.
 ///

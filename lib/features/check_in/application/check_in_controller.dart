@@ -63,6 +63,11 @@ class CheckInController extends _$CheckInController {
     state = state.copyWith(position: position);
   }
 
+  /// The id of the last successfully completed check-in, or null before the
+  /// check-in has been completed. Consumed by the recommendation route so the
+  /// flow advances to a deep-linkable recommendation keyed by this id.
+  String? get completedCheckInId => _completed ? _checkInId : null;
+
   /// Persists the current draft and records a privacy-safe, categorical
   /// completion event. Returns true only when the draft was valid and actually
   /// persisted; the caller must not advance on a `false` result. Calling again

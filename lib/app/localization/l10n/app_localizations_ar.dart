@@ -332,4 +332,95 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get checkInStartSubtitle =>
       'أخبرنا كيف تشعر، وسنختار لك روتينًا قصيرًا مناسبًا.';
+
+  @override
+  String get recommendationTitle => 'مختار لك';
+
+  @override
+  String get recommendationBack => 'رجوع';
+
+  @override
+  String get recommendationStart => 'ابدأ الروتين';
+
+  @override
+  String get recommendationChooseAnother => 'اختر غيره';
+
+  @override
+  String get recommendationWhyTitle => 'لماذا هذا الروتين؟';
+
+  @override
+  String get recommendationPreviewMovements => 'معاينة الحركات';
+
+  @override
+  String get recommendationMovements => 'الحركات';
+
+  @override
+  String get recommendationUnavailable => 'تعذّر تجهيز توصيتك الآن.';
+
+  @override
+  String get recommendationEmptyTitle => 'لم نجد روتينًا مناسبًا بعد.';
+
+  @override
+  String get recommendationEmptyBody =>
+      'جرّب تعديل تسجيلك اليومي أو المحاولة مجددًا.';
+
+  @override
+  String get recommendationRetry => 'حاول مجددًا';
+
+  @override
+  String recommendationDurationMinutes(int minutes) {
+    return '$minutes دقائق';
+  }
+
+  @override
+  String recommendationMovementsCount(int count) {
+    return '$count حركات';
+  }
+
+  @override
+  String recommendationSeconds(int seconds) {
+    return '$seconds ثانية';
+  }
+
+  @override
+  String get recommendationDifficultyBeginner => 'مبتدئ';
+
+  @override
+  String get recommendationDifficultyIntermediate => 'متوسط';
+
+  @override
+  String get recommendationDifficultyAdvanced => 'متقدم';
+
+  @override
+  String get recommendationNoEquipment => 'بدون أدوات';
+
+  @override
+  String recommendationReasonBodyAreas(String areas) {
+    return 'يركّز على $areas.';
+  }
+
+  @override
+  String recommendationReasonGoal(String goal) {
+    return 'يناسب هدفك: $goal.';
+  }
+
+  @override
+  String recommendationReasonTime(int minutes) {
+    return 'يناسب وقتك: $minutes دقائق.';
+  }
+
+  @override
+  String recommendationReasonPosition(String position) {
+    return 'يناسب وضعك: $position.';
+  }
+
+  @override
+  String get recommendationReasonDifficulty => 'مناسب لمستواك.';
+
+  @override
+  String get recommendationReasonRecent => 'أكملت هذا الروتين مؤخرًا.';
+
+  @override
+  String get recommendationReasonDiscomfort =>
+      'يتضمّن حركة وجدتها أقل راحة من قبل.';
 }

@@ -90,6 +90,50 @@ void main() {
     final areas = await database.select(database.localCheckInBodyAreas).get();
     expect(areas.map((a) => a.bodyAreaKey).toSet(), {'hips'});
   });
+
+  test('reads a persisted check-in back as answers', () async {
+    await repository().save(
+      userId: 'user-1',
+      checkInId: 'check-in-read',
+      startedAt: now,
+      answers: answers(),
+    );
+
+    final read = await repository().read('user-1', 'check-in-read');
+    expect(read, isNotNull);
+    expect(read!.bodyState, BodyState.stiff);
+    expect(read.goalKey, 'ease_stiffness');
+    expect(read.bodyAreaKeys, {'neck', 'shoulders'});
+    expect(read.availableMinutes, 5);
+    expect(read.positionKey, 'seated');
+  });
+
+  test('reads a null position for "any position"', () async {
+    await repository().save(
+      userId: 'user-1',
+      checkInId: 'check-in-any',
+      startedAt: now,
+      answers: answers(positionKey: null),
+    );
+
+    final read = await repository().read('user-1', 'check-in-any');
+    expect(read!.positionKey, isNull);
+  });
+
+  test('returns null for a missing check-in', () async {
+    expect(await repository().read('user-1', 'check-in-missing'), isNull);
+  });
+
+  test('does not return another user\'s check-in', () async {
+    await repository().save(
+      userId: 'user-1',
+      checkInId: 'check-in-owned',
+      startedAt: now,
+      answers: answers(),
+    );
+
+    expect(await repository().read('user-2', 'check-in-owned'), isNull);
+  });
 }
 
 Future<void> _seed(AppDatabase database, DateTime now) async {

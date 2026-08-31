@@ -225,3 +225,151 @@ final class RecommendationRepositoryProvider
 
 String _$recommendationRepositoryHash() =>
     r'6216371105a2e49d8a077bb161a6da7f8f7defeb';
+
+/// Localized routine display data read from the Drift content cache.
+
+@ProviderFor(routinePresentationRepository)
+final routinePresentationRepositoryProvider =
+    RoutinePresentationRepositoryProvider._();
+
+/// Localized routine display data read from the Drift content cache.
+
+final class RoutinePresentationRepositoryProvider
+    extends
+        $FunctionalProvider<
+          DriftRoutinePresentationRepository,
+          DriftRoutinePresentationRepository,
+          DriftRoutinePresentationRepository
+        >
+    with $Provider<DriftRoutinePresentationRepository> {
+  /// Localized routine display data read from the Drift content cache.
+  RoutinePresentationRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'routinePresentationRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$routinePresentationRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<DriftRoutinePresentationRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DriftRoutinePresentationRepository create(Ref ref) {
+    return routinePresentationRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DriftRoutinePresentationRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DriftRoutinePresentationRepository>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$routinePresentationRepositoryHash() =>
+    r'4b5075724393c16645cc7b69452dbcb1df6a87cc';
+
+/// The localized presentation of one recommended routine, re-resolved whenever
+/// the active locale changes.
+
+@ProviderFor(routinePresentation)
+final routinePresentationProvider = RoutinePresentationFamily._();
+
+/// The localized presentation of one recommended routine, re-resolved whenever
+/// the active locale changes.
+
+final class RoutinePresentationProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<RoutinePresentation>,
+          RoutinePresentation,
+          FutureOr<RoutinePresentation>
+        >
+    with
+        $FutureModifier<RoutinePresentation>,
+        $FutureProvider<RoutinePresentation> {
+  /// The localized presentation of one recommended routine, re-resolved whenever
+  /// the active locale changes.
+  RoutinePresentationProvider._({
+    required RoutinePresentationFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'routinePresentationProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$routinePresentationHash();
+
+  @override
+  String toString() {
+    return r'routinePresentationProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<RoutinePresentation> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<RoutinePresentation> create(Ref ref) {
+    final argument = this.argument as String;
+    return routinePresentation(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RoutinePresentationProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$routinePresentationHash() =>
+    r'233dde7791ba56b1d90d9142468f50f186d890ce';
+
+/// The localized presentation of one recommended routine, re-resolved whenever
+/// the active locale changes.
+
+final class RoutinePresentationFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<RoutinePresentation>, String> {
+  RoutinePresentationFamily._()
+    : super(
+        retry: null,
+        name: r'routinePresentationProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// The localized presentation of one recommended routine, re-resolved whenever
+  /// the active locale changes.
+
+  RoutinePresentationProvider call(String routineId) =>
+      RoutinePresentationProvider._(argument: routineId, from: this);
+
+  @override
+  String toString() => r'routinePresentationProvider';
+}

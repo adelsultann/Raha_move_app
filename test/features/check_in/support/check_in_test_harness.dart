@@ -23,6 +23,9 @@ final class FakeCheckInRepository implements CheckInRepository {
   /// When non-null, [save] throws this so tests can exercise the failure path.
   Object? saveError;
 
+  /// When set, [read] returns this for any check-in id.
+  CheckInAnswers? readResult;
+
   @override
   Future<void> save({
     required String userId,
@@ -38,6 +41,10 @@ final class FakeCheckInRepository implements CheckInRepository {
     savedStartedAt = startedAt;
     savedAnswers = answers;
   }
+
+  @override
+  Future<CheckInAnswers?> read(String userId, String checkInId) async =>
+      readResult;
 }
 
 /// Builds a container wired with offline auth, a stable guest identity, the

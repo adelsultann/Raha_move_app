@@ -9,6 +9,7 @@ part of 'app_routes.dart';
 List<RouteBase> get $appRoutes => [
   $foundationRoute,
   $checkInRoute,
+  $recommendationRoute,
   $signInRoute,
   $signUpRoute,
   $emailConfirmationRoute,
@@ -52,6 +53,37 @@ mixin $CheckInRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/check-in');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $recommendationRoute => GoRouteData.$route(
+  path: '/recommendation/:checkInId',
+  hasOverriddenOnExit: false,
+  factory: $RecommendationRoute._fromState,
+);
+
+mixin $RecommendationRoute on GoRouteData {
+  static RecommendationRoute _fromState(GoRouterState state) =>
+      RecommendationRoute(checkInId: state.pathParameters['checkInId']!);
+
+  RecommendationRoute get _self => this as RecommendationRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/recommendation/${Uri.encodeComponent(_self.checkInId)}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

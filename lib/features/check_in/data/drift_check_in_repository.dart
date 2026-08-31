@@ -1,6 +1,7 @@
-import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart';
 
 import '../../../core/database/app_database.dart';
+import '../domain/body_state.dart';
 import '../domain/check_in_answers.dart';
 import '../domain/check_in_repository.dart';
 
@@ -42,6 +43,27 @@ final class DriftCheckInRepository implements CheckInRepository {
         localUpdatedAt: now,
       ),
       bodyAreaKeys: answers.bodyAreaKeys,
+    );
+  }
+
+  @override
+  Future<CheckInAnswers?> read(String userId, String checkInId) async {
+    final row =
+        await (_database.select(_database.localCheckIns)
+              ..where((r) => r.id.equals(checkInId) & r.userId.equals(userId)))
+            .getSingleOrNull();
+    if (row == null) return null;
+
+    final areas = await (_database.select(
+      _database.localCheckInBodyAreas,
+    )..where((r) => r.checkInId.equals(checkInId))).get();
+
+    return CheckInAnswers(
+      bodyState: BodyState.fromKey(row.bodyState),
+      goalKey: row.goalKey,
+      bodyAreaKeys: areas.map((a) => a.bodyAreaKey).toSet(),
+      availableMinutes: row.availableMinutes,
+      positionKey: row.positionKey,
     );
   }
 }

@@ -122,5 +122,65 @@
   "checkInPositionFloor": "Floor",
   "checkInPositionAny": "Any position",
   "checkInStartTitle": "Start today's check-in",
-  "checkInStartSubtitle": "Tell us how you feel, and we'll choose a short routine for you."
+  "checkInStartSubtitle": "Tell us how you feel, and we'll choose a short routine for you.",
+  "recommendationTitle": "Recommended for you",
+  "recommendationBack": "Back",
+  "recommendationStart": "Start routine",
+  "recommendationChooseAnother": "Choose another",
+  "recommendationWhyTitle": "Why this routine?",
+  "recommendationPreviewMovements": "Preview movements",
+  "recommendationMovements": "Movements",
+  "recommendationUnavailable": "We couldn't prepare your recommendation right now.",
+  "recommendationEmptyTitle": "We couldn't find a matching routine yet.",
+  "recommendationEmptyBody": "Try adjusting your check-in or trying again.",
+  "recommendationRetry": "Try again",
+  "recommendationDurationMinutes": "{minutes} min",
+  "@recommendationDurationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recommendationMovementsCount": "{count} movements",
+  "@recommendationMovementsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recommendationSeconds": "{seconds} sec",
+  "@recommendationSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "recommendationDifficultyBeginner": "Beginner",
+  "recommendationDifficultyIntermediate": "Intermediate",
+  "recommendationDifficultyAdvanced": "Advanced",
+  "recommendationNoEquipment": "No equipment",
+  "recommendationReasonBodyAreas": "Focuses on {areas}.",
+  "@recommendationReasonBodyAreas": {
+    "placeholders": {
+      "areas": { "type": "String" }
+    }
+  },
+  "recommendationReasonGoal": "Matches your goal: {goal}.",
+  "@recommendationReasonGoal": {
+    "placeholders": {
+      "goal": { "type": "String" }
+    }
+  },
+  "recommendationReasonTime": "Fits your {minutes} minutes.",
+  "@recommendationReasonTime": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recommendationReasonPosition": "Matches your position: {position}.",
+  "@recommendationReasonPosition": {
+    "placeholders": {
+      "position": { "type": "String" }
+    }
+  },
+  "recommendationReasonDifficulty": "Suited to your level.",
+  "recommendationReasonRecent": "You completed this routine recently.",
+  "recommendationReasonDiscomfort": "It includes a movement you found less comfortable before."
 }

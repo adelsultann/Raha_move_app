@@ -334,4 +334,98 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get checkInStartSubtitle =>
       'Tell us how you feel, and we\'ll choose a short routine for you.';
+
+  @override
+  String get recommendationTitle => 'Recommended for you';
+
+  @override
+  String get recommendationBack => 'Back';
+
+  @override
+  String get recommendationStart => 'Start routine';
+
+  @override
+  String get recommendationChooseAnother => 'Choose another';
+
+  @override
+  String get recommendationWhyTitle => 'Why this routine?';
+
+  @override
+  String get recommendationPreviewMovements => 'Preview movements';
+
+  @override
+  String get recommendationMovements => 'Movements';
+
+  @override
+  String get recommendationUnavailable =>
+      'We couldn\'t prepare your recommendation right now.';
+
+  @override
+  String get recommendationEmptyTitle =>
+      'We couldn\'t find a matching routine yet.';
+
+  @override
+  String get recommendationEmptyBody =>
+      'Try adjusting your check-in or trying again.';
+
+  @override
+  String get recommendationRetry => 'Try again';
+
+  @override
+  String recommendationDurationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String recommendationMovementsCount(int count) {
+    return '$count movements';
+  }
+
+  @override
+  String recommendationSeconds(int seconds) {
+    return '$seconds sec';
+  }
+
+  @override
+  String get recommendationDifficultyBeginner => 'Beginner';
+
+  @override
+  String get recommendationDifficultyIntermediate => 'Intermediate';
+
+  @override
+  String get recommendationDifficultyAdvanced => 'Advanced';
+
+  @override
+  String get recommendationNoEquipment => 'No equipment';
+
+  @override
+  String recommendationReasonBodyAreas(String areas) {
+    return 'Focuses on $areas.';
+  }
+
+  @override
+  String recommendationReasonGoal(String goal) {
+    return 'Matches your goal: $goal.';
+  }
+
+  @override
+  String recommendationReasonTime(int minutes) {
+    return 'Fits your $minutes minutes.';
+  }
+
+  @override
+  String recommendationReasonPosition(String position) {
+    return 'Matches your position: $position.';
+  }
+
+  @override
+  String get recommendationReasonDifficulty => 'Suited to your level.';
+
+  @override
+  String get recommendationReasonRecent =>
+      'You completed this routine recently.';
+
+  @override
+  String get recommendationReasonDiscomfort =>
+      'It includes a movement you found less comfortable before.';
 }

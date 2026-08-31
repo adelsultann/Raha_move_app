@@ -15,4 +15,11 @@ abstract interface class CheckInRepository {
     required DateTime startedAt,
     required CheckInAnswers answers,
   });
+
+  /// Reads the persisted answers for [checkInId] owned by [userId], or null when
+  /// the check-in is missing or belongs to another user. Used by the
+  /// recommendation flow to rebuild inputs after a route restore without
+  /// relying on transient in-memory state, and to keep one user's answers from
+  /// surfacing for another (RAHA-030).
+  Future<CheckInAnswers?> read(String userId, String checkInId);
 }

@@ -122,5 +122,65 @@
   "checkInPositionFloor": "على الأرض",
   "checkInPositionAny": "أي وضع",
   "checkInStartTitle": "ابدأ تسجيل اليوم",
-  "checkInStartSubtitle": "أخبرنا كيف تشعر، وسنختار لك روتينًا قصيرًا مناسبًا."
+  "checkInStartSubtitle": "أخبرنا كيف تشعر، وسنختار لك روتينًا قصيرًا مناسبًا.",
+  "recommendationTitle": "مختار لك",
+  "recommendationBack": "رجوع",
+  "recommendationStart": "ابدأ الروتين",
+  "recommendationChooseAnother": "اختر غيره",
+  "recommendationWhyTitle": "لماذا هذا الروتين؟",
+  "recommendationPreviewMovements": "معاينة الحركات",
+  "recommendationMovements": "الحركات",
+  "recommendationUnavailable": "تعذّر تجهيز توصيتك الآن.",
+  "recommendationEmptyTitle": "لم نجد روتينًا مناسبًا بعد.",
+  "recommendationEmptyBody": "جرّب تعديل تسجيلك اليومي أو المحاولة مجددًا.",
+  "recommendationRetry": "حاول مجددًا",
+  "recommendationDurationMinutes": "{minutes} دقائق",
+  "@recommendationDurationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recommendationMovementsCount": "{count} حركات",
+  "@recommendationMovementsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recommendationSeconds": "{seconds} ثانية",
+  "@recommendationSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "recommendationDifficultyBeginner": "مبتدئ",
+  "recommendationDifficultyIntermediate": "متوسط",
+  "recommendationDifficultyAdvanced": "متقدم",
+  "recommendationNoEquipment": "بدون أدوات",
+  "recommendationReasonBodyAreas": "يركّز على {areas}.",
+  "@recommendationReasonBodyAreas": {
+    "placeholders": {
+      "areas": { "type": "String" }
+    }
+  },
+  "recommendationReasonGoal": "يناسب هدفك: {goal}.",
+  "@recommendationReasonGoal": {
+    "placeholders": {
+      "goal": { "type": "String" }
+    }
+  },
+  "recommendationReasonTime": "يناسب وقتك: {minutes} دقائق.",
+  "@recommendationReasonTime": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recommendationReasonPosition": "يناسب وضعك: {position}.",
+  "@recommendationReasonPosition": {
+    "placeholders": {
+      "position": { "type": "String" }
+    }
+  },
+  "recommendationReasonDifficulty": "مناسب لمستواك.",
+  "recommendationReasonRecent": "أكملت هذا الروتين مؤخرًا.",
+  "recommendationReasonDiscomfort": "يتضمّن حركة وجدتها أقل راحة من قبل."
 }

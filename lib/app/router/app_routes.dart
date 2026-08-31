@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:raha_move/features/authentication/presentation/email_confirmation_screen.dart';
 import 'package:raha_move/features/authentication/presentation/sign_in_screen.dart';
 import 'package:raha_move/features/authentication/presentation/sign_up_screen.dart';
+import 'package:raha_move/features/check_in/application/check_in_controller.dart';
 import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
+import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 
 import '../localization/l10n/app_localizations.dart';
 
@@ -67,9 +70,39 @@ class CheckInRoute extends GoRouteData with $CheckInRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return CheckInScreen(
-      onExit: () => context.pop(),
-      onComplete: () => context.pop(),
+    return Consumer(
+      builder: (context, ref, _) => CheckInScreen(
+        onExit: () => context.pop(),
+        onComplete: () => _openRecommendation(context, ref),
+      ),
+    );
+  }
+
+  void _openRecommendation(BuildContext context, WidgetRef ref) {
+    final checkInId = ref
+        .read(checkInControllerProvider.notifier)
+        .completedCheckInId;
+    if (checkInId == null) {
+      context.pop();
+      return;
+    }
+    RecommendationRoute(checkInId: checkInId).pushReplacement(context);
+  }
+}
+
+@TypedGoRoute<RecommendationRoute>(path: '/recommendation/:checkInId')
+class RecommendationRoute extends GoRouteData with $RecommendationRoute {
+  const RecommendationRoute({required this.checkInId});
+
+  final String checkInId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return RecommendationScreen(
+      checkInId: checkInId,
+      // RAHA-050 wires the routine player; RAHA-043 wires alternatives.
+      onStart: () {},
+      onChooseAnother: () {},
     );
   }
 }
