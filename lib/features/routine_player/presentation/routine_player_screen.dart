@@ -1,0 +1,387 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:raha_move/app/localization/l10n/app_localizations.dart';
+
+import '../application/routine_player_controller.dart';
+import '../application/routine_player_providers.dart';
+import '../application/routine_player_state.dart';
+import '../domain/playback_session.dart';
+import 'widgets/player_controls.dart';
+import 'widgets/routine_demonstration.dart';
+
+/// The focused, distraction-free routine player (RAHA-051). No bottom
+/// navigation, ads, streak pressure, or unrelated actions appear here.
+class RoutinePlayerScreen extends ConsumerStatefulWidget {
+  const RoutinePlayerScreen({
+    super.key,
+    required this.routineId,
+    this.recommendationId,
+  });
+
+  final String routineId;
+  final String? recommendationId;
+
+  @override
+  ConsumerState<RoutinePlayerScreen> createState() =>
+      _RoutinePlayerScreenState();
+}
+
+class _RoutinePlayerScreenState extends ConsumerState<RoutinePlayerScreen>
+    with WidgetsBindingObserver {
+  RoutinePlayerArgs get _args => RoutinePlayerArgs(
+    routineId: widget.routineId,
+    recommendationId: widget.recommendationId,
+  );
+
+  RoutinePlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _controller?.finish();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        _controller?.pauseForBackground();
+      case AppLifecycleState.resumed:
+        // Stay paused; the user resumes manually.
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(routinePlayerControllerProvider(_args));
+    _controller = ref.read(routinePlayerControllerProvider(_args).notifier);
+
+    return state.when(
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      failed: () => _FailedState(
+        onRetry: () =>
+            ref.invalidate(routinePlaybackPlanProvider(widget.routineId)),
+      ),
+      ready: (session) => _PlayerContent(
+        session: session,
+        controller: _controller!,
+        onClose: () {
+          _controller?.finish();
+          context.pop();
+        },
+      ),
+    );
+  }
+}
+
+class _PlayerContent extends ConsumerWidget {
+  const _PlayerContent({
+    required this.session,
+    required this.controller,
+    required this.onClose,
+  });
+
+  final RoutinePlaybackSession session;
+  final RoutinePlayerController controller;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = AppLocalizations.of(context);
+    final demonstration = ref.watch(routineDemonstrationProvider);
+    final isPlaying = session.status == PlaybackStatus.playing;
+    final isPaused = session.status == PlaybackStatus.paused;
+
+    if (session.isCompleted) {
+      return _CompletedState(onDone: onClose);
+    }
+
+    final step = session.currentStep;
+    final remaining = step.durationSeconds - step.creditedSeconds;
+    final hasNext = !session.isLastStep;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            _TopBar(
+              current: session.currentStepIndex + 1,
+              total: session.steps.length,
+              onClose: onClose,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: demonstration.build(context, playing: isPlaying),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      step.name,
+                      key: const Key('player_movement_name'),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    step.shortCue?.isNotEmpty == true
+                        ? step.shortCue!
+                        : strings.playerDefaultCue,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      _formatTimer(remaining),
+                      key: const Key('player_timer'),
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
+                  if (hasNext) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      strings.playerUpNext(
+                        session.steps[session.currentStepIndex + 1].name,
+                      ),
+                      key: const Key('player_up_next'),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  if (isPaused) ...[
+                    const SizedBox(height: 8),
+                    Semantics(
+                      key: const Key('player_paused'),
+                      liveRegion: true,
+                      label: strings.playerPaused,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.pause_circle_outline,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            strings.playerPaused,
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  PlayerControls(
+                    isPlaying: isPlaying,
+                    isLastStep: session.isLastStep,
+                    onPrevious: controller.previous,
+                    onTogglePause: controller.togglePause,
+                    onSkip: controller.skip,
+                    onFinish: controller.next,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TopBar extends StatelessWidget {
+  const _TopBar({
+    required this.current,
+    required this.total,
+    required this.onClose,
+  });
+
+  final int current;
+  final int total;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+      child: Row(
+        children: [
+          IconButton(
+            key: const Key('player_close'),
+            tooltip: strings.playerClose,
+            onPressed: onClose,
+            icon: Icon(isRtl ? Icons.arrow_forward : Icons.arrow_back),
+          ),
+          Expanded(
+            child: Text(
+              strings.playerMovementPosition(current, total),
+              key: const Key('player_position'),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompletedState extends StatelessWidget {
+  const _CompletedState({required this.onDone});
+
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 56,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    strings.playerCompletedTitle,
+                    key: const Key('player_completed'),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  strings.playerCompletedBody,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    key: const Key('player_done'),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(56),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: onDone,
+                    child: Text(strings.playerDone),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FailedState extends StatelessWidget {
+  const _FailedState({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Semantics(
+                  header: true,
+                  child: Text(
+                    strings.playerUnavailable,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.titleLarge,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  key: const Key('player_retry'),
+                  onPressed: onRetry,
+                  child: Text(strings.playerRetry),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String _formatTimer(int remainingSeconds) {
+  final minutes = remainingSeconds ~/ 60;
+  final seconds = remainingSeconds % 60;
+  return '$minutes:${seconds.toString().padLeft(2, '0')}';
+}

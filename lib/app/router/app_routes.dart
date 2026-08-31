@@ -7,6 +7,7 @@ import 'package:raha_move/features/authentication/presentation/sign_up_screen.da
 import 'package:raha_move/features/check_in/application/check_in_controller.dart';
 import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
+import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
 
 import '../localization/l10n/app_localizations.dart';
 
@@ -100,10 +101,33 @@ class RecommendationRoute extends GoRouteData with $RecommendationRoute {
   Widget build(BuildContext context, GoRouterState state) {
     return RecommendationScreen(
       checkInId: checkInId,
-      // RAHA-050 runs the pre-start readiness gate before invoking this; RAHA-051
-      // replaces this no-op with navigation to the routine player.
-      onStart: () {},
+      onStart: (routineId, recommendationId) {
+        RoutinePlayerRoute(
+          routineId: routineId,
+          recommendationId: recommendationId,
+        ).push(context);
+      },
       onEditCheckIn: () => context.pop(),
+    );
+  }
+}
+
+@TypedGoRoute<RoutinePlayerRoute>(path: '/routine/:routineId')
+class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
+  const RoutinePlayerRoute({
+    required this.routineId,
+    @TypedQueryParameter(name: 'recommendationId') this.recommendationId,
+  });
+
+  final String routineId;
+
+  final String? recommendationId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return RoutinePlayerScreen(
+      routineId: routineId,
+      recommendationId: recommendationId,
     );
   }
 }

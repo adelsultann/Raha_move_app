@@ -196,5 +196,32 @@
   "recommendationSafetyReminder": "Move within a comfortable range and stop if you feel sharp pain.",
   "recommendationStartUnavailable": "We couldn't get this routine ready. Check your connection and try again.",
   "recommendationStartStorage": "You need more space to prepare this routine. Clear some space and try again.",
-  "recommendationStartMissingMedia": "This routine isn't available right now."
+  "recommendationStartMissingMedia": "This routine isn't available right now.",
+  "playerMovementPosition": "Movement {current} of {total}",
+  "@playerMovementPosition": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "playerUpNext": "Up next: {name}",
+  "@playerUpNext": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "playerPause": "Pause",
+  "playerResume": "Resume",
+  "playerPrevious": "Previous",
+  "playerSkip": "Skip",
+  "playerFinish": "Finish",
+  "playerClose": "End routine",
+  "playerPaused": "Paused",
+  "playerCompletedTitle": "Routine complete",
+  "playerCompletedBody": "Nice work. You moved through the whole routine.",
+  "playerDone": "Done",
+  "playerDefaultCue": "Move slowly and breathe comfortably.",
+  "playerUnavailable": "We couldn't open this routine right now.",
+  "playerRetry": "Try again",
+  "playerDemonstration": "Movement demonstration"
 }

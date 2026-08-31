@@ -196,5 +196,32 @@
   "recommendationSafetyReminder": "تحرّك ضمن نطاق مريح وتوقّف إذا شعرت بألم حاد.",
   "recommendationStartUnavailable": "تعذّر تجهيز هذا الروتين. تحقّق من اتصالك وحاول مجددًا.",
   "recommendationStartStorage": "تحتاج مساحة أكبر لتجهيز هذا الروتين. وفّر بعض المساحة وحاول مجددًا.",
-  "recommendationStartMissingMedia": "هذا الروتين غير متاح حاليًا."
+  "recommendationStartMissingMedia": "هذا الروتين غير متاح حاليًا.",
+  "playerMovementPosition": "الحركة {current} من {total}",
+  "@playerMovementPosition": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "playerUpNext": "التالي: {name}",
+  "@playerUpNext": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "playerPause": "إيقاف مؤقت",
+  "playerResume": "متابعة",
+  "playerPrevious": "السابق",
+  "playerSkip": "تخطّي",
+  "playerFinish": "إنهاء",
+  "playerClose": "إنهاء الروتين",
+  "playerPaused": "متوقف مؤقتًا",
+  "playerCompletedTitle": "اكتمل الروتين",
+  "playerCompletedBody": "أحسنت، أكملت الروتين كاملًا.",
+  "playerDone": "تم",
+  "playerDefaultCue": "تحرّك ببطء وتنفّس بارتياح.",
+  "playerUnavailable": "تعذّر فتح هذا الروتين الآن.",
+  "playerRetry": "حاول مجددًا",
+  "playerDemonstration": "عرض الحركة"
 }

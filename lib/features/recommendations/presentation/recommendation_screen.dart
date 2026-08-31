@@ -32,9 +32,10 @@ class RecommendationScreen extends ConsumerWidget {
 
   final String checkInId;
 
-  /// Invoked by the primary "Start routine" action. Wired to the routine player
-  /// in RAHA-050.
-  final VoidCallback? onStart;
+  /// Invoked by the primary "Start routine" action once readiness passes. It
+  /// receives the selected routine id and the persisted recommendation id so
+  /// the caller can open the routine player (RAHA-051).
+  final void Function(String routineId, String? recommendationId)? onStart;
 
   /// Invoked by "Edit your check-in" when no alternative remains.
   final VoidCallback? onEditCheckIn;
@@ -117,7 +118,7 @@ class _RecommendationContent extends ConsumerWidget {
   final RecommendationState state;
   final ScoredRoutine selected;
   final RoutinePresentation presentation;
-  final VoidCallback? onStart;
+  final void Function(String routineId, String? recommendationId)? onStart;
   final VoidCallback? onChooseAnother;
 
   @override
@@ -241,7 +242,7 @@ class _RecommendationContent extends ConsumerWidget {
     final readiness = await controller.start();
     if (!context.mounted) return;
     if (readiness.isReady) {
-      onStart?.call();
+      onStart?.call(selected.routineId, state.recommendationId);
       return;
     }
     _showReadinessFailure(context, readiness);

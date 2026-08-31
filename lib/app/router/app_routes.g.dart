@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
   $foundationRoute,
   $checkInRoute,
   $recommendationRoute,
+  $routinePlayerRoute,
   $signInRoute,
   $signUpRoute,
   $emailConfirmationRoute,
@@ -83,6 +84,44 @@ mixin $RecommendationRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/recommendation/${Uri.encodeComponent(_self.checkInId)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $routinePlayerRoute => GoRouteData.$route(
+  path: '/routine/:routineId',
+  hasOverriddenOnExit: false,
+  factory: $RoutinePlayerRoute._fromState,
+);
+
+mixin $RoutinePlayerRoute on GoRouteData {
+  static RoutinePlayerRoute _fromState(GoRouterState state) =>
+      RoutinePlayerRoute(
+        routineId: state.pathParameters['routineId']!,
+        recommendationId: state.uri.queryParameters['recommendationId'],
+      );
+
+  RoutinePlayerRoute get _self => this as RoutinePlayerRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/routine/${Uri.encodeComponent(_self.routineId)}',
+    queryParams: {
+      if (_self.recommendationId != null)
+        'recommendationId': _self.recommendationId,
+    },
   );
 
   @override

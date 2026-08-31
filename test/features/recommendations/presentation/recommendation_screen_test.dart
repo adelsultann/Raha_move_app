@@ -60,7 +60,7 @@ void main() {
         container,
         RecommendationScreen(
           checkInId: 'check-in-1',
-          onStart: () => started = true,
+          onStart: (_, _) => started = true,
         ),
       ),
     );
@@ -108,9 +108,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(
-      find.byKey(const Key('recommendation_preview')),
-    );
+    await tester.ensureVisible(find.byKey(const Key('recommendation_preview')));
     await tester.tap(find.byKey(const Key('recommendation_preview')));
     await tester.pumpAndSettle();
 
@@ -139,7 +137,7 @@ void main() {
         container,
         RecommendationScreen(
           checkInId: 'check-in-1',
-          onStart: () => started = true,
+          onStart: (_, _) => started = true,
         ),
       ),
     );

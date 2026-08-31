@@ -937,6 +937,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This routine isn\'t available right now.'**
   String get recommendationStartMissingMedia;
+
+  /// No description provided for @playerMovementPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement {current} of {total}'**
+  String playerMovementPosition(int current, int total);
+
+  /// No description provided for @playerUpNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Up next: {name}'**
+  String playerUpNext(String name);
+
+  /// No description provided for @playerPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get playerPause;
+
+  /// No description provided for @playerResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get playerResume;
+
+  /// No description provided for @playerPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get playerPrevious;
+
+  /// No description provided for @playerSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get playerSkip;
+
+  /// No description provided for @playerFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get playerFinish;
+
+  /// No description provided for @playerClose.
+  ///
+  /// In en, this message translates to:
+  /// **'End routine'**
+  String get playerClose;
+
+  /// No description provided for @playerPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get playerPaused;
+
+  /// No description provided for @playerCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Routine complete'**
+  String get playerCompletedTitle;
+
+  /// No description provided for @playerCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice work. You moved through the whole routine.'**
+  String get playerCompletedBody;
+
+  /// No description provided for @playerDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get playerDone;
+
+  /// No description provided for @playerDefaultCue.
+  ///
+  /// In en, this message translates to:
+  /// **'Move slowly and breathe comfortably.'**
+  String get playerDefaultCue;
+
+  /// No description provided for @playerUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open this routine right now.'**
+  String get playerUnavailable;
+
+  /// No description provided for @playerRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get playerRetry;
+
+  /// No description provided for @playerDemonstration.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement demonstration'**
+  String get playerDemonstration;
 }
 
 class _AppLocalizationsDelegate

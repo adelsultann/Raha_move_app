@@ -476,4 +476,57 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recommendationStartMissingMedia =>
       'This routine isn\'t available right now.';
+
+  @override
+  String playerMovementPosition(int current, int total) {
+    return 'Movement $current of $total';
+  }
+
+  @override
+  String playerUpNext(String name) {
+    return 'Up next: $name';
+  }
+
+  @override
+  String get playerPause => 'Pause';
+
+  @override
+  String get playerResume => 'Resume';
+
+  @override
+  String get playerPrevious => 'Previous';
+
+  @override
+  String get playerSkip => 'Skip';
+
+  @override
+  String get playerFinish => 'Finish';
+
+  @override
+  String get playerClose => 'End routine';
+
+  @override
+  String get playerPaused => 'Paused';
+
+  @override
+  String get playerCompletedTitle => 'Routine complete';
+
+  @override
+  String get playerCompletedBody =>
+      'Nice work. You moved through the whole routine.';
+
+  @override
+  String get playerDone => 'Done';
+
+  @override
+  String get playerDefaultCue => 'Move slowly and breathe comfortably.';
+
+  @override
+  String get playerUnavailable => 'We couldn\'t open this routine right now.';
+
+  @override
+  String get playerRetry => 'Try again';
+
+  @override
+  String get playerDemonstration => 'Movement demonstration';
 }

@@ -470,4 +470,56 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recommendationStartMissingMedia => 'هذا الروتين غير متاح حاليًا.';
+
+  @override
+  String playerMovementPosition(int current, int total) {
+    return 'الحركة $current من $total';
+  }
+
+  @override
+  String playerUpNext(String name) {
+    return 'التالي: $name';
+  }
+
+  @override
+  String get playerPause => 'إيقاف مؤقت';
+
+  @override
+  String get playerResume => 'متابعة';
+
+  @override
+  String get playerPrevious => 'السابق';
+
+  @override
+  String get playerSkip => 'تخطّي';
+
+  @override
+  String get playerFinish => 'إنهاء';
+
+  @override
+  String get playerClose => 'إنهاء الروتين';
+
+  @override
+  String get playerPaused => 'متوقف مؤقتًا';
+
+  @override
+  String get playerCompletedTitle => 'اكتمل الروتين';
+
+  @override
+  String get playerCompletedBody => 'أحسنت، أكملت الروتين كاملًا.';
+
+  @override
+  String get playerDone => 'تم';
+
+  @override
+  String get playerDefaultCue => 'تحرّك ببطء وتنفّس بارتياح.';
+
+  @override
+  String get playerUnavailable => 'تعذّر فتح هذا الروتين الآن.';
+
+  @override
+  String get playerRetry => 'حاول مجددًا';
+
+  @override
+  String get playerDemonstration => 'عرض الحركة';
 }
