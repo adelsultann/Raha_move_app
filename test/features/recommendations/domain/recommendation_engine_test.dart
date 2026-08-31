@@ -9,6 +9,7 @@ import 'package:raha_move/features/recommendations/domain/recommendation_candida
 import 'package:raha_move/features/recommendations/domain/recommendation_config.dart';
 import 'package:raha_move/features/recommendations/domain/recommendation_engine.dart';
 import 'package:raha_move/features/recommendations/domain/recommendation_history.dart';
+import 'package:raha_move/features/recommendations/domain/recommendation_rejection.dart';
 import 'package:raha_move/features/recommendations/domain/rules_recommendation_engine.dart';
 
 void main() {
@@ -70,6 +71,7 @@ void main() {
     RecommendationConfig config = RecommendationConfig.rulesV1,
     DateTime? at,
     bool hasPremiumAccess = false,
+    RecommendationRefinement refinement = RecommendationRefinement.initial,
   }) => RecommendationRequest(
     checkIn: checkIn ?? answers(),
     candidates: candidates,
@@ -79,6 +81,7 @@ void main() {
     now: at ?? now,
     appVersion: '1.0.0',
     hasPremiumAccess: hasPremiumAccess,
+    refinement: refinement,
   );
 
   test('exact match scores every factor and records components + reasons', () {
@@ -407,6 +410,106 @@ void main() {
         'raha_rt_goal',
         'raha_rt_nogoal',
       ]);
+    });
+  });
+
+  group('refinement', () {
+    test('a rejected routine is excluded', () {
+      final result = engine.recommend(
+        request(
+          candidates: [
+            candidate(id: 'raha_rt_000001'),
+            candidate(id: 'raha_rt_000002'),
+          ],
+          refinement: RecommendationRefinement(
+            rejectedRoutineIds: const {'raha_rt_000001'},
+          ),
+        ),
+      );
+      expect(result.recommendations.map((r) => r.routineId).toList(), [
+        'raha_rt_000002',
+      ]);
+    });
+
+    test('all rejected routines produce an empty result', () {
+      final result = engine.recommend(
+        request(
+          candidates: [
+            candidate(id: 'raha_rt_000001'),
+            candidate(id: 'raha_rt_000002'),
+          ],
+          refinement: RecommendationRefinement(
+            rejectedRoutineIds: const {'raha_rt_000001', 'raha_rt_000002'},
+          ),
+        ),
+      );
+      expect(result.isEmpty, isTrue);
+    });
+
+    test('an excluded position filters out the routine', () {
+      final result = engine.recommend(
+        request(
+          checkIn: answers(positionKey: null),
+          candidates: [
+            candidate(id: 'raha_rt_seated', positions: const {'seated'}),
+            candidate(id: 'raha_rt_floor', positions: const {'floor'}),
+          ],
+          refinement: RecommendationRefinement(
+            excludedPositionKeys: const {'seated'},
+          ),
+        ),
+      );
+      expect(result.recommendations.map((r) => r.routineId).toList(), [
+        'raha_rt_floor',
+      ]);
+    });
+
+    test('an excluded body area filters out the routine', () {
+      final result = engine.recommend(
+        request(
+          candidates: [
+            candidate(id: 'raha_rt_neck', bodyAreas: const {'neck'}),
+            candidate(id: 'raha_rt_shoulders', bodyAreas: const {'shoulders'}),
+          ],
+          refinement: RecommendationRefinement(
+            excludedBodyAreaKeys: const {'neck'},
+          ),
+        ),
+      );
+      expect(result.recommendations.map((r) => r.routineId).toList(), [
+        'raha_rt_shoulders',
+      ]);
+    });
+
+    test('a difficulty override shifts the preferred difficulty', () {
+      final beginner = candidate(
+        id: 'raha_rt_beginner',
+        difficulty: DifficultyLevel.beginner,
+        bodyAreas: const {'neck'},
+      );
+      final intermediate = candidate(
+        id: 'raha_rt_intermediate',
+        difficulty: DifficultyLevel.intermediate,
+        bodyAreas: const {'neck'},
+      );
+
+      final baseline = engine.recommend(
+        request(candidates: [beginner, intermediate]),
+      );
+      expect(baseline.recommendations.first.routineId, 'raha_rt_beginner');
+
+      final overridden = engine.recommend(
+        request(
+          candidates: [beginner, intermediate],
+          refinement: RecommendationRefinement(
+            difficultyOverride: DifficultyLevel.intermediate,
+          ),
+        ),
+      );
+      expect(
+        overridden.recommendations.first.routineId,
+        'raha_rt_intermediate',
+      );
     });
   });
 

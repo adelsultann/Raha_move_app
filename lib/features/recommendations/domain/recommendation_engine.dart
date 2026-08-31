@@ -5,6 +5,7 @@ import '../../preferences/domain/user_preferences.dart';
 import 'recommendation_candidate.dart';
 import 'recommendation_config.dart';
 import 'recommendation_history.dart';
+import 'recommendation_rejection.dart';
 
 part 'recommendation_engine.freezed.dart';
 
@@ -55,6 +56,11 @@ abstract class RecommendationRequest with _$RecommendationRequest {
     /// Whether the user currently holds premium access. Free content is always
     /// eligible; premium candidates require this to be true.
     @Default(false) bool hasPremiumAccess,
+
+    /// Accumulated refinements from rejected alternatives (RAHA-043). Empty by
+    /// default; the engine applies exclusions and the difficulty override.
+    @Default(RecommendationRefinement.initial)
+    RecommendationRefinement refinement,
   }) = _RecommendationRequest;
 }
 

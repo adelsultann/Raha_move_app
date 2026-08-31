@@ -41,21 +41,19 @@ void main() {
     );
   });
 
-  testWidgets('invokes start and choose-another callbacks', (tester) async {
+  testWidgets('invokes the start callback', (tester) async {
     final db = await seedRecommendationDatabase();
     addTearDown(db.close);
     final container = buildRecommendationContainer(db);
     addTearDown(container.dispose);
 
     var started = false;
-    var choseAnother = false;
     await tester.pumpWidget(
       _wrap(
         container,
         RecommendationScreen(
           checkInId: 'check-in-1',
           onStart: () => started = true,
-          onChooseAnother: () => choseAnother = true,
         ),
       ),
     );
@@ -63,9 +61,30 @@ void main() {
 
     await tester.tap(find.byKey(const Key('recommendation_start')));
     expect(started, isTrue);
+  });
+
+  testWidgets('choose another opens the rejection reason sheet', (
+    tester,
+  ) async {
+    final db = await seedRecommendationDatabase();
+    addTearDown(db.close);
+    final container = buildRecommendationContainer(db);
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      _wrap(container, RecommendationScreen(checkInId: 'check-in-1')),
+    );
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const Key('recommendation_choose_another')));
-    expect(choseAnother, isTrue);
+    await tester.pumpAndSettle();
+
+    expect(find.text('What would you like instead?'), findsOneWidget);
+    expect(find.text('Too easy'), findsOneWidget);
+    expect(find.text('Too difficult'), findsOneWidget);
+    expect(find.text("I can't do this position"), findsOneWidget);
+    expect(find.text('This area feels uncomfortable'), findsOneWidget);
+    expect(find.text('Show me something else'), findsOneWidget);
   });
 
   testWidgets('opens a concise movement preview without forcing inspection', (
@@ -162,6 +181,38 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Try again'), findsOneWidget);
+  });
+
+  testWidgets('shows the no-alternative state and edits the check-in', (
+    tester,
+  ) async {
+    final db = await seedRecommendationDatabase(); // single routine
+    addTearDown(db.close);
+    final container = buildRecommendationContainer(db);
+    addTearDown(container.dispose);
+
+    var edited = false;
+    await tester.pumpWidget(
+      _wrap(
+        container,
+        RecommendationScreen(
+          checkInId: 'check-in-1',
+          onEditCheckIn: () => edited = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Reject the only candidate.
+    await tester.tap(find.byKey(const Key('recommendation_choose_another')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('recommendation_reject_other')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No other routine fits right now.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('recommendation_edit_check_in')));
+    expect(edited, isTrue);
   });
 
   testWidgets('remains usable at 200% text scale', (tester) async {

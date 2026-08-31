@@ -182,5 +182,14 @@
   },
   "recommendationReasonDifficulty": "مناسب لمستواك.",
   "recommendationReasonRecent": "أكملت هذا الروتين مؤخرًا.",
-  "recommendationReasonDiscomfort": "يتضمّن حركة وجدتها أقل راحة من قبل."
+  "recommendationReasonDiscomfort": "يتضمّن حركة وجدتها أقل راحة من قبل.",
+  "recommendationRejectTitle": "ماذا تفضّل بدلًا منه؟",
+  "recommendationRejectTooEasy": "سهل جدًا",
+  "recommendationRejectTooDifficult": "صعب جدًا",
+  "recommendationRejectPosition": "لا أستطيع هذا الوضع",
+  "recommendationRejectDiscomfort": "هذه المنطقة غير مريحة",
+  "recommendationRejectOther": "أرني شيئًا آخر",
+  "recommendationNoAlternativeTitle": "لا يوجد روتين آخر مناسب الآن.",
+  "recommendationNoAlternativeBody": "جرّب تعديل إجاباتك وسنجد لك خيارًا آخر.",
+  "recommendationEditCheckIn": "عدّل تسجيلك اليومي"
 }

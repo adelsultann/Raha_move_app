@@ -34,7 +34,7 @@ abstract final class AnalyticsPropertyKey {
   /// `much_better`, `little_better`, `same`, or `less_comfortable`.
   static const String feedbackRating = 'feedback_rating';
 
-  /// `too_easy`, `too_hard`, `position`, `discomfort`, or `other`.
+  /// `too_easy`, `too_difficult`, `position`, `discomfort`, or `other`.
   static const String rejectionReason = 'rejection_reason';
 
   /// `true` when the routine was saved, `false` when unsaved.

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RecommendationState {
 
- CheckInAnswers get checkIn; RecommendationResult get result; String? get recommendationId;
+ CheckInAnswers get checkIn; RecommendationResult get result; String? get recommendationId; RecommendationRefinement get refinement;
 /// Create a copy of RecommendationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $RecommendationStateCopyWith<RecommendationState> get copyWith => _$Recommendati
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecommendationState&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&(identical(other.result, result) || other.result == result)&&(identical(other.recommendationId, recommendationId) || other.recommendationId == recommendationId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecommendationState&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&(identical(other.result, result) || other.result == result)&&(identical(other.recommendationId, recommendationId) || other.recommendationId == recommendationId)&&(identical(other.refinement, refinement) || other.refinement == refinement));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkIn,result,recommendationId);
+int get hashCode => Object.hash(runtimeType,checkIn,result,recommendationId,refinement);
 
 @override
 String toString() {
-  return 'RecommendationState(checkIn: $checkIn, result: $result, recommendationId: $recommendationId)';
+  return 'RecommendationState(checkIn: $checkIn, result: $result, recommendationId: $recommendationId, refinement: $refinement)';
 }
 
 
@@ -46,11 +46,11 @@ abstract mixin class $RecommendationStateCopyWith<$Res>  {
   factory $RecommendationStateCopyWith(RecommendationState value, $Res Function(RecommendationState) _then) = _$RecommendationStateCopyWithImpl;
 @useResult
 $Res call({
- CheckInAnswers checkIn, RecommendationResult result, String? recommendationId
+ CheckInAnswers checkIn, RecommendationResult result, String? recommendationId, RecommendationRefinement refinement
 });
 
 
-$CheckInAnswersCopyWith<$Res> get checkIn;$RecommendationResultCopyWith<$Res> get result;
+$CheckInAnswersCopyWith<$Res> get checkIn;$RecommendationResultCopyWith<$Res> get result;$RecommendationRefinementCopyWith<$Res> get refinement;
 
 }
 /// @nodoc
@@ -63,12 +63,13 @@ class _$RecommendationStateCopyWithImpl<$Res>
 
 /// Create a copy of RecommendationState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? checkIn = null,Object? result = null,Object? recommendationId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? checkIn = null,Object? result = null,Object? recommendationId = freezed,Object? refinement = null,}) {
   return _then(RecommendationState(
 checkIn: null == checkIn ? _self.checkIn : checkIn // ignore: cast_nullable_to_non_nullable
 as CheckInAnswers,result: null == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
 as RecommendationResult,recommendationId: freezed == recommendationId ? _self.recommendationId : recommendationId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,refinement: null == refinement ? _self.refinement : refinement // ignore: cast_nullable_to_non_nullable
+as RecommendationRefinement,
   ));
 }
 /// Create a copy of RecommendationState
@@ -88,6 +89,15 @@ $RecommendationResultCopyWith<$Res> get result {
   
   return $RecommendationResultCopyWith<$Res>(_self.result, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of RecommendationState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RecommendationRefinementCopyWith<$Res> get refinement {
+  
+  return $RecommendationRefinementCopyWith<$Res>(_self.refinement, (value) {
+    return _then(_self.copyWith(refinement: value));
   });
 }
 }
@@ -171,10 +181,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  RecommendationResult result,  String? recommendationId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  RecommendationResult result,  String? recommendationId,  RecommendationRefinement refinement)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RecommendationState() when $default != null:
-return $default(_that.checkIn,_that.result,_that.recommendationId);case _:
+return $default(_that.checkIn,_that.result,_that.recommendationId,_that.refinement);case _:
   return orElse();
 
 }
@@ -192,10 +202,10 @@ return $default(_that.checkIn,_that.result,_that.recommendationId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  RecommendationResult result,  String? recommendationId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  RecommendationResult result,  String? recommendationId,  RecommendationRefinement refinement)  $default,) {final _that = this;
 switch (_that) {
 case _RecommendationState():
-return $default(_that.checkIn,_that.result,_that.recommendationId);case _:
+return $default(_that.checkIn,_that.result,_that.recommendationId,_that.refinement);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +222,10 @@ return $default(_that.checkIn,_that.result,_that.recommendationId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInAnswers checkIn,  RecommendationResult result,  String? recommendationId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInAnswers checkIn,  RecommendationResult result,  String? recommendationId,  RecommendationRefinement refinement)?  $default,) {final _that = this;
 switch (_that) {
 case _RecommendationState() when $default != null:
-return $default(_that.checkIn,_that.result,_that.recommendationId);case _:
+return $default(_that.checkIn,_that.result,_that.recommendationId,_that.refinement);case _:
   return null;
 
 }
@@ -227,12 +237,13 @@ return $default(_that.checkIn,_that.result,_that.recommendationId);case _:
 
 
 class _RecommendationState extends RecommendationState {
-  const _RecommendationState({required this.checkIn, required this.result, this.recommendationId}): super._();
+  const _RecommendationState({required this.checkIn, required this.result, this.recommendationId, this.refinement = RecommendationRefinement.initial}): super._();
   
 
 @override final  CheckInAnswers checkIn;
 @override final  RecommendationResult result;
 @override final  String? recommendationId;
+@override@JsonKey() final  RecommendationRefinement refinement;
 
 /// Create a copy of RecommendationState
 /// with the given fields replaced by the non-null parameter values.
@@ -244,16 +255,16 @@ _$RecommendationStateCopyWith<_RecommendationState> get copyWith => __$Recommend
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecommendationState&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&(identical(other.result, result) || other.result == result)&&(identical(other.recommendationId, recommendationId) || other.recommendationId == recommendationId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecommendationState&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&(identical(other.result, result) || other.result == result)&&(identical(other.recommendationId, recommendationId) || other.recommendationId == recommendationId)&&(identical(other.refinement, refinement) || other.refinement == refinement));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkIn,result,recommendationId);
+int get hashCode => Object.hash(runtimeType,checkIn,result,recommendationId,refinement);
 
 @override
 String toString() {
-  return 'RecommendationState(checkIn: $checkIn, result: $result, recommendationId: $recommendationId)';
+  return 'RecommendationState(checkIn: $checkIn, result: $result, recommendationId: $recommendationId, refinement: $refinement)';
 }
 
 
@@ -264,11 +275,11 @@ abstract mixin class _$RecommendationStateCopyWith<$Res> implements $Recommendat
   factory _$RecommendationStateCopyWith(_RecommendationState value, $Res Function(_RecommendationState) _then) = __$RecommendationStateCopyWithImpl;
 @override @useResult
 $Res call({
- CheckInAnswers checkIn, RecommendationResult result, String? recommendationId
+ CheckInAnswers checkIn, RecommendationResult result, String? recommendationId, RecommendationRefinement refinement
 });
 
 
-@override $CheckInAnswersCopyWith<$Res> get checkIn;@override $RecommendationResultCopyWith<$Res> get result;
+@override $CheckInAnswersCopyWith<$Res> get checkIn;@override $RecommendationResultCopyWith<$Res> get result;@override $RecommendationRefinementCopyWith<$Res> get refinement;
 
 }
 /// @nodoc
@@ -281,12 +292,13 @@ class __$RecommendationStateCopyWithImpl<$Res>
 
 /// Create a copy of RecommendationState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? checkIn = null,Object? result = null,Object? recommendationId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? checkIn = null,Object? result = null,Object? recommendationId = freezed,Object? refinement = null,}) {
   return _then(_RecommendationState(
 checkIn: null == checkIn ? _self.checkIn : checkIn // ignore: cast_nullable_to_non_nullable
 as CheckInAnswers,result: null == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
 as RecommendationResult,recommendationId: freezed == recommendationId ? _self.recommendationId : recommendationId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,refinement: null == refinement ? _self.refinement : refinement // ignore: cast_nullable_to_non_nullable
+as RecommendationRefinement,
   ));
 }
 
@@ -307,6 +319,15 @@ $RecommendationResultCopyWith<$Res> get result {
   
   return $RecommendationResultCopyWith<$Res>(_self.result, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of RecommendationState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RecommendationRefinementCopyWith<$Res> get refinement {
+  
+  return $RecommendationRefinementCopyWith<$Res>(_self.refinement, (value) {
+    return _then(_self.copyWith(refinement: value));
   });
 }
 }

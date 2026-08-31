@@ -66,6 +66,27 @@ final class RulesRecommendationEngine implements RoutineRecommendationEngine {
       return true;
     }
 
+    // Refinement: a routine already rejected for this check-in is not returned
+    // again while another compatible candidate exists.
+    if (request.refinement.rejectedRoutineIds.contains(candidate.routineId)) {
+      return true;
+    }
+
+    // Refinement constraint: every supported position was rejected by the user.
+    if (candidate.positions.isNotEmpty &&
+        candidate.positions.every(
+          request.refinement.excludedPositionKeys.contains,
+        )) {
+      return true;
+    }
+
+    // Refinement constraint: any addressed body area was reported uncomfortable.
+    if (candidate.bodyAreas.any(
+      request.refinement.excludedBodyAreaKeys.contains,
+    )) {
+      return true;
+    }
+
     // Access: premium candidates require premium entitlement.
     if (candidate.accessTier == AccessTier.premium &&
         !request.hasPremiumAccess) {
@@ -129,8 +150,10 @@ final class RulesRecommendationEngine implements RoutineRecommendationEngine {
       reasons.add(RecommendationReasonCode.positionPreference);
     }
 
-    if (candidate.difficulty ==
-        _difficultyFor(request.preferences.experienceLevel)) {
+    final targetDifficulty =
+        request.refinement.difficultyOverride ??
+        _difficultyFor(request.preferences.experienceLevel);
+    if (candidate.difficulty == targetDifficulty) {
       components[RecommendationScoreComponent.difficultyMatch] =
           config.difficultyMatchWeight;
       reasons.add(RecommendationReasonCode.difficultyMatch);

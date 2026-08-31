@@ -1553,6 +1553,38 @@ class LocalUserDataRepository {
     await _enqueueBuilt('recommendation', recommendation.id.value);
   });
 
+  /// Marks a previously shown recommendation as rejected (RAHA-043). Updates
+  /// the rejection reason and time, re-enqueues the wire operation so the
+  /// rejection synchronizes, and never touches the routine/check-in fields.
+  Future<void> markRecommendationRejected({
+    required String recommendationId,
+    required String rejectionReason,
+    required DateTime rejectedAt,
+  }) => _database.transaction(() async {
+    final row = await (_database.select(
+      _database.localRecommendations,
+    )..where((r) => r.id.equals(recommendationId))).getSingleOrNull();
+    if (row == null) {
+      throw StateError('Recommendation not found');
+    }
+    if (row.userId != activeUserId) {
+      throw StateError('Cross-account recommendation rejected');
+    }
+    final now = _now();
+    await (_database.update(
+      _database.localRecommendations,
+    )..where((r) => r.id.equals(recommendationId))).write(
+      LocalRecommendationsCompanion(
+        rejectedAt: Value(rejectedAt.toUtc()),
+        rejectionReason: Value(rejectionReason),
+        syncState: const Value(SyncState.pendingUpdate),
+        localUpdatedAt: Value(now),
+        lastSyncError: const Value(null),
+      ),
+    );
+    await _enqueueBuilt('recommendation', recommendationId);
+  });
+
   Future<void> saveFeedback({
     required LocalSessionFeedbackCompanion feedback,
   }) => _database.transaction(() async {

@@ -16,4 +16,14 @@ abstract interface class RecommendationRepository {
     required Map<String, int> scoreComponents,
     required DateTime shownAt,
   });
+
+  /// Marks a previously shown recommendation as rejected, recording the stable
+  /// [reason] key and the rejection time for analysis. Idempotent for the same
+  /// [recommendationId] (the last rejection wins).
+  Future<void> reject({
+    required String userId,
+    required String recommendationId,
+    required String reason,
+    required DateTime rejectedAt,
+  });
 }

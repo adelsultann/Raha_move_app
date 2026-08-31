@@ -54,6 +54,24 @@ final class DriftRecommendationRepository implements RecommendationRepository {
     );
   }
 
+  @override
+  Future<void> reject({
+    required String userId,
+    required String recommendationId,
+    required String reason,
+    required DateTime rejectedAt,
+  }) {
+    return LocalUserDataRepository(
+      _database,
+      activeUserId: userId,
+      clock: _clock,
+    ).markRecommendationRejected(
+      recommendationId: recommendationId,
+      rejectionReason: reason,
+      rejectedAt: rejectedAt,
+    );
+  }
+
   static String _encodeScoreComponents(Map<String, int> components) {
     final entries = components.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));

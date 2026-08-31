@@ -11,19 +11,21 @@ import '../domain/recommendation_engine.dart';
 import '../domain/recommendation_explanation.dart';
 import '../domain/routine_presentation.dart';
 import 'widgets/movement_preview_sheet.dart';
+import 'widgets/recommendation_rejection_sheet.dart';
 
-/// Presents one explainable recommendation after a completed check-in.
+/// Presents one explainable recommendation after a completed check-in, with the
+/// alternative/rejection loop (RAHA-043).
 ///
 /// It shows the localized routine name, duration, movement count, difficulty,
-/// position, and equipment, a "why this routine?" explanation generated from the
-/// stored reason keys and the user's actual answers, a concise movement preview,
-/// and a single primary start action plus a "Choose another" rejection action.
+/// position, and equipment, a "why this routine?" explanation, a concise
+/// movement preview, and a primary start action. "Choose another" opens the
+/// rejection reasons and re-recommends with the accumulated refinement.
 class RecommendationScreen extends ConsumerWidget {
   const RecommendationScreen({
     super.key,
     required this.checkInId,
     this.onStart,
-    this.onChooseAnother,
+    this.onEditCheckIn,
   });
 
   final String checkInId;
@@ -32,8 +34,8 @@ class RecommendationScreen extends ConsumerWidget {
   /// in RAHA-050.
   final VoidCallback? onStart;
 
-  /// Invoked by "Choose another". Wired to the alternative flow in RAHA-043.
-  final VoidCallback? onChooseAnother;
+  /// Invoked by "Edit your check-in" when no alternative remains.
+  final VoidCallback? onEditCheckIn;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,6 +54,9 @@ class RecommendationScreen extends ConsumerWidget {
           data: (state) {
             final selected = state.selected;
             if (selected == null) {
+              if (state.hasNoAlternative) {
+                return _NoAlternativeState(onEditCheckIn: onEditCheckIn);
+              }
               return _RetryState(
                 title: strings.recommendationEmptyTitle,
                 message: strings.recommendationEmptyBody,
@@ -75,13 +80,26 @@ class RecommendationScreen extends ConsumerWidget {
                 selected: selected,
                 presentation: presentation,
                 onStart: onStart,
-                onChooseAnother: onChooseAnother,
+                onChooseAnother: () =>
+                    _showRejectionPicker(context, ref, checkInId),
               ),
             );
           },
         ),
       ),
     );
+  }
+
+  Future<void> _showRejectionPicker(
+    BuildContext context,
+    WidgetRef ref,
+    String checkInId,
+  ) {
+    return showRejectionReasonSheet(context, (reason) {
+      ref
+          .read(recommendationControllerProvider(checkInId).notifier)
+          .reject(reason);
+    });
   }
 }
 
@@ -324,6 +342,71 @@ class _WhySection extends StatelessWidget {
   String _joinLabels(AppLocalizations strings, Iterable<String> labels) {
     final isArabic = strings.localeName.startsWith('ar');
     return labels.join(isArabic ? '، ' : ', ');
+  }
+}
+
+class _NoAlternativeState extends StatelessWidget {
+  const _NoAlternativeState({required this.onEditCheckIn});
+
+  final VoidCallback? onEditCheckIn;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+          child: Row(
+            children: [
+              IconButton(
+                key: const Key('recommendation_back'),
+                tooltip: strings.recommendationBack,
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: Icon(isRtl ? Icons.arrow_forward : Icons.arrow_back),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      strings.recommendationNoAlternativeTitle,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    strings.recommendationNoAlternativeBody,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton(
+                    key: const Key('recommendation_edit_check_in'),
+                    onPressed: onEditCheckIn,
+                    child: Text(strings.recommendationEditCheckIn),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

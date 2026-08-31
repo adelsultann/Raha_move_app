@@ -8,25 +8,31 @@ part of 'recommendation_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Orchestrates one recommendation flow for a completed check-in: it reads the
-/// check-in back from local storage, loads candidates/history/preferences, runs
-/// the on-device engine, and persists the top candidate as a recommendation
-/// record. It is a pure orchestration layer — determinism lives in the engine.
+/// Orchestrates one recommendation flow for a completed check-in, including the
+/// alternative/rejection loop: it reads the check-in back from local storage,
+/// loads candidates/history/preferences, runs the on-device engine, and
+/// persists the top candidate. Rejecting a recommendation marks it rejected,
+/// accumulates a refinement, and re-runs deterministically until no alternative
+/// remains (the rejected set grows, so the loop cannot run indefinitely).
 
 @ProviderFor(RecommendationController)
 final recommendationControllerProvider = RecommendationControllerFamily._();
 
-/// Orchestrates one recommendation flow for a completed check-in: it reads the
-/// check-in back from local storage, loads candidates/history/preferences, runs
-/// the on-device engine, and persists the top candidate as a recommendation
-/// record. It is a pure orchestration layer — determinism lives in the engine.
+/// Orchestrates one recommendation flow for a completed check-in, including the
+/// alternative/rejection loop: it reads the check-in back from local storage,
+/// loads candidates/history/preferences, runs the on-device engine, and
+/// persists the top candidate. Rejecting a recommendation marks it rejected,
+/// accumulates a refinement, and re-runs deterministically until no alternative
+/// remains (the rejected set grows, so the loop cannot run indefinitely).
 final class RecommendationControllerProvider
     extends
         $AsyncNotifierProvider<RecommendationController, RecommendationState> {
-  /// Orchestrates one recommendation flow for a completed check-in: it reads the
-  /// check-in back from local storage, loads candidates/history/preferences, runs
-  /// the on-device engine, and persists the top candidate as a recommendation
-  /// record. It is a pure orchestration layer — determinism lives in the engine.
+  /// Orchestrates one recommendation flow for a completed check-in, including the
+  /// alternative/rejection loop: it reads the check-in back from local storage,
+  /// loads candidates/history/preferences, runs the on-device engine, and
+  /// persists the top candidate. Rejecting a recommendation marks it rejected,
+  /// accumulates a refinement, and re-runs deterministically until no alternative
+  /// remains (the rejected set grows, so the loop cannot run indefinitely).
   RecommendationControllerProvider._({
     required RecommendationControllerFamily super.from,
     required String super.argument,
@@ -65,12 +71,14 @@ final class RecommendationControllerProvider
 }
 
 String _$recommendationControllerHash() =>
-    r'917f63dda7eb5578f1ba58b6e74a202ec7502389';
+    r'cfa0ab11c5aee28ee179c75c6d4b41709f0ec14e';
 
-/// Orchestrates one recommendation flow for a completed check-in: it reads the
-/// check-in back from local storage, loads candidates/history/preferences, runs
-/// the on-device engine, and persists the top candidate as a recommendation
-/// record. It is a pure orchestration layer — determinism lives in the engine.
+/// Orchestrates one recommendation flow for a completed check-in, including the
+/// alternative/rejection loop: it reads the check-in back from local storage,
+/// loads candidates/history/preferences, runs the on-device engine, and
+/// persists the top candidate. Rejecting a recommendation marks it rejected,
+/// accumulates a refinement, and re-runs deterministically until no alternative
+/// remains (the rejected set grows, so the loop cannot run indefinitely).
 
 final class RecommendationControllerFamily extends $Family
     with
@@ -90,10 +98,12 @@ final class RecommendationControllerFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// Orchestrates one recommendation flow for a completed check-in: it reads the
-  /// check-in back from local storage, loads candidates/history/preferences, runs
-  /// the on-device engine, and persists the top candidate as a recommendation
-  /// record. It is a pure orchestration layer — determinism lives in the engine.
+  /// Orchestrates one recommendation flow for a completed check-in, including the
+  /// alternative/rejection loop: it reads the check-in back from local storage,
+  /// loads candidates/history/preferences, runs the on-device engine, and
+  /// persists the top candidate. Rejecting a recommendation marks it rejected,
+  /// accumulates a refinement, and re-runs deterministically until no alternative
+  /// remains (the rejected set grows, so the loop cannot run indefinitely).
 
   RecommendationControllerProvider call(String checkInId) =>
       RecommendationControllerProvider._(argument: checkInId, from: this);
@@ -102,10 +112,12 @@ final class RecommendationControllerFamily extends $Family
   String toString() => r'recommendationControllerProvider';
 }
 
-/// Orchestrates one recommendation flow for a completed check-in: it reads the
-/// check-in back from local storage, loads candidates/history/preferences, runs
-/// the on-device engine, and persists the top candidate as a recommendation
-/// record. It is a pure orchestration layer — determinism lives in the engine.
+/// Orchestrates one recommendation flow for a completed check-in, including the
+/// alternative/rejection loop: it reads the check-in back from local storage,
+/// loads candidates/history/preferences, runs the on-device engine, and
+/// persists the top candidate. Rejecting a recommendation marks it rejected,
+/// accumulates a refinement, and re-runs deterministically until no alternative
+/// remains (the rejected set grows, so the loop cannot run indefinitely).
 
 abstract class _$RecommendationController
     extends $AsyncNotifier<RecommendationState> {

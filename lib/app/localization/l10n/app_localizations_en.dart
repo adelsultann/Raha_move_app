@@ -428,4 +428,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recommendationReasonDiscomfort =>
       'It includes a movement you found less comfortable before.';
+
+  @override
+  String get recommendationRejectTitle => 'What would you like instead?';
+
+  @override
+  String get recommendationRejectTooEasy => 'Too easy';
+
+  @override
+  String get recommendationRejectTooDifficult => 'Too difficult';
+
+  @override
+  String get recommendationRejectPosition => 'I can\'t do this position';
+
+  @override
+  String get recommendationRejectDiscomfort => 'This area feels uncomfortable';
+
+  @override
+  String get recommendationRejectOther => 'Show me something else';
+
+  @override
+  String get recommendationNoAlternativeTitle =>
+      'No other routine fits right now.';
+
+  @override
+  String get recommendationNoAlternativeBody =>
+      'Try adjusting your answers and we\'ll find something else.';
+
+  @override
+  String get recommendationEditCheckIn => 'Edit your check-in';
 }

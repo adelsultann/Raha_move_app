@@ -88,6 +88,68 @@ void main() {
     expect(rows, hasLength(1));
     expect(rows.single.score, 175);
   });
+
+  test('reject records the reason and rejection time', () async {
+    final repository = DriftRecommendationRepository(
+      database,
+      clock: () => now,
+    );
+    await repository.save(
+      userId: 'user-1',
+      recommendationId: 'rec-1',
+      checkInId: 'check-in-1',
+      routineId: 'raha_rt_000001',
+      engineVersion: 'rules_v1',
+      rank: 0,
+      score: 150,
+      reasonCodes: const ['goal_match'],
+      scoreComponents: const {'goal_match': 25},
+      shownAt: now,
+    );
+
+    final rejectedAt = now.add(const Duration(minutes: 1));
+    await repository.reject(
+      userId: 'user-1',
+      recommendationId: 'rec-1',
+      reason: 'too_easy',
+      rejectedAt: rejectedAt,
+    );
+
+    final row = await (database.select(
+      database.localRecommendations,
+    )..where((r) => r.id.equals('rec-1'))).getSingle();
+    expect(row.rejectionReason, 'too_easy');
+    expect(row.rejectedAt!.toUtc(), rejectedAt.toUtc());
+  });
+
+  test('rejecting another user\'s recommendation is rejected', () async {
+    final repository = DriftRecommendationRepository(
+      database,
+      clock: () => now,
+    );
+    await repository.save(
+      userId: 'user-1',
+      recommendationId: 'rec-1',
+      checkInId: 'check-in-1',
+      routineId: 'raha_rt_000001',
+      engineVersion: 'rules_v1',
+      rank: 0,
+      score: 150,
+      reasonCodes: const ['goal_match'],
+      scoreComponents: const {'goal_match': 25},
+      shownAt: now,
+    );
+
+    await expectLater(
+      repository.reject(
+        userId: 'user-2',
+        recommendationId: 'rec-1',
+        reason: 'other',
+        rejectedAt: now,
+      ),
+      throwsA(isA<StateError>()),
+    );
+  });
 }
 
 Future<void> _seed(AppDatabase db, DateTime now) async {

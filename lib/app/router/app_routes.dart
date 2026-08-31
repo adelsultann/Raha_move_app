@@ -100,9 +100,9 @@ class RecommendationRoute extends GoRouteData with $RecommendationRoute {
   Widget build(BuildContext context, GoRouterState state) {
     return RecommendationScreen(
       checkInId: checkInId,
-      // RAHA-050 wires the routine player; RAHA-043 wires alternatives.
+      // RAHA-050 wires the routine player.
       onStart: () {},
-      onChooseAnother: () {},
+      onEditCheckIn: () => context.pop(),
     );
   }
 }

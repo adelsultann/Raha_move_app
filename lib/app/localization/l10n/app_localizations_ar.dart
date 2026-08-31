@@ -423,4 +423,33 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get recommendationReasonDiscomfort =>
       'يتضمّن حركة وجدتها أقل راحة من قبل.';
+
+  @override
+  String get recommendationRejectTitle => 'ماذا تفضّل بدلًا منه؟';
+
+  @override
+  String get recommendationRejectTooEasy => 'سهل جدًا';
+
+  @override
+  String get recommendationRejectTooDifficult => 'صعب جدًا';
+
+  @override
+  String get recommendationRejectPosition => 'لا أستطيع هذا الوضع';
+
+  @override
+  String get recommendationRejectDiscomfort => 'هذه المنطقة غير مريحة';
+
+  @override
+  String get recommendationRejectOther => 'أرني شيئًا آخر';
+
+  @override
+  String get recommendationNoAlternativeTitle =>
+      'لا يوجد روتين آخر مناسب الآن.';
+
+  @override
+  String get recommendationNoAlternativeBody =>
+      'جرّب تعديل إجاباتك وسنجد لك خيارًا آخر.';
+
+  @override
+  String get recommendationEditCheckIn => 'عدّل تسجيلك اليومي';
 }

@@ -20,7 +20,9 @@ mixin _$RecommendationRequest {
  DateTime get now;/// The running application version (`MAJOR.MINOR.PATCH`).
  String get appVersion;/// Whether the user currently holds premium access. Free content is always
 /// eligible; premium candidates require this to be true.
- bool get hasPremiumAccess;
+ bool get hasPremiumAccess;/// Accumulated refinements from rejected alternatives (RAHA-043). Empty by
+/// default; the engine applies exclusions and the difficulty override.
+ RecommendationRefinement get refinement;
 /// Create a copy of RecommendationRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -31,16 +33,16 @@ $RecommendationRequestCopyWith<RecommendationRequest> get copyWith => _$Recommen
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecommendationRequest&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&const DeepCollectionEquality().equals(other.candidates, candidates)&&(identical(other.preferences, preferences) || other.preferences == preferences)&&(identical(other.history, history) || other.history == history)&&(identical(other.config, config) || other.config == config)&&(identical(other.now, now) || other.now == now)&&(identical(other.appVersion, appVersion) || other.appVersion == appVersion)&&(identical(other.hasPremiumAccess, hasPremiumAccess) || other.hasPremiumAccess == hasPremiumAccess));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecommendationRequest&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&const DeepCollectionEquality().equals(other.candidates, candidates)&&(identical(other.preferences, preferences) || other.preferences == preferences)&&(identical(other.history, history) || other.history == history)&&(identical(other.config, config) || other.config == config)&&(identical(other.now, now) || other.now == now)&&(identical(other.appVersion, appVersion) || other.appVersion == appVersion)&&(identical(other.hasPremiumAccess, hasPremiumAccess) || other.hasPremiumAccess == hasPremiumAccess)&&(identical(other.refinement, refinement) || other.refinement == refinement));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkIn,const DeepCollectionEquality().hash(candidates),preferences,history,config,now,appVersion,hasPremiumAccess);
+int get hashCode => Object.hash(runtimeType,checkIn,const DeepCollectionEquality().hash(candidates),preferences,history,config,now,appVersion,hasPremiumAccess,refinement);
 
 @override
 String toString() {
-  return 'RecommendationRequest(checkIn: $checkIn, candidates: $candidates, preferences: $preferences, history: $history, config: $config, now: $now, appVersion: $appVersion, hasPremiumAccess: $hasPremiumAccess)';
+  return 'RecommendationRequest(checkIn: $checkIn, candidates: $candidates, preferences: $preferences, history: $history, config: $config, now: $now, appVersion: $appVersion, hasPremiumAccess: $hasPremiumAccess, refinement: $refinement)';
 }
 
 
@@ -51,11 +53,11 @@ abstract mixin class $RecommendationRequestCopyWith<$Res>  {
   factory $RecommendationRequestCopyWith(RecommendationRequest value, $Res Function(RecommendationRequest) _then) = _$RecommendationRequestCopyWithImpl;
 @useResult
 $Res call({
- CheckInAnswers checkIn, List<RecommendationCandidate> candidates, UserPreferences preferences, RecommendationHistory history, RecommendationConfig config, DateTime now, String appVersion, bool hasPremiumAccess
+ CheckInAnswers checkIn, List<RecommendationCandidate> candidates, UserPreferences preferences, RecommendationHistory history, RecommendationConfig config, DateTime now, String appVersion, bool hasPremiumAccess, RecommendationRefinement refinement
 });
 
 
-$CheckInAnswersCopyWith<$Res> get checkIn;$UserPreferencesCopyWith<$Res> get preferences;$RecommendationHistoryCopyWith<$Res> get history;$RecommendationConfigCopyWith<$Res> get config;
+$CheckInAnswersCopyWith<$Res> get checkIn;$UserPreferencesCopyWith<$Res> get preferences;$RecommendationHistoryCopyWith<$Res> get history;$RecommendationConfigCopyWith<$Res> get config;$RecommendationRefinementCopyWith<$Res> get refinement;
 
 }
 /// @nodoc
@@ -68,7 +70,7 @@ class _$RecommendationRequestCopyWithImpl<$Res>
 
 /// Create a copy of RecommendationRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? checkIn = null,Object? candidates = null,Object? preferences = null,Object? history = null,Object? config = null,Object? now = null,Object? appVersion = null,Object? hasPremiumAccess = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? checkIn = null,Object? candidates = null,Object? preferences = null,Object? history = null,Object? config = null,Object? now = null,Object? appVersion = null,Object? hasPremiumAccess = null,Object? refinement = null,}) {
   return _then(RecommendationRequest(
 checkIn: null == checkIn ? _self.checkIn : checkIn // ignore: cast_nullable_to_non_nullable
 as CheckInAnswers,candidates: null == candidates ? _self.candidates : candidates // ignore: cast_nullable_to_non_nullable
@@ -78,7 +80,8 @@ as RecommendationHistory,config: null == config ? _self.config : config // ignor
 as RecommendationConfig,now: null == now ? _self.now : now // ignore: cast_nullable_to_non_nullable
 as DateTime,appVersion: null == appVersion ? _self.appVersion : appVersion // ignore: cast_nullable_to_non_nullable
 as String,hasPremiumAccess: null == hasPremiumAccess ? _self.hasPremiumAccess : hasPremiumAccess // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,refinement: null == refinement ? _self.refinement : refinement // ignore: cast_nullable_to_non_nullable
+as RecommendationRefinement,
   ));
 }
 /// Create a copy of RecommendationRequest
@@ -116,6 +119,15 @@ $RecommendationConfigCopyWith<$Res> get config {
   
   return $RecommendationConfigCopyWith<$Res>(_self.config, (value) {
     return _then(_self.copyWith(config: value));
+  });
+}/// Create a copy of RecommendationRequest
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RecommendationRefinementCopyWith<$Res> get refinement {
+  
+  return $RecommendationRefinementCopyWith<$Res>(_self.refinement, (value) {
+    return _then(_self.copyWith(refinement: value));
   });
 }
 }
@@ -199,10 +211,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  List<RecommendationCandidate> candidates,  UserPreferences preferences,  RecommendationHistory history,  RecommendationConfig config,  DateTime now,  String appVersion,  bool hasPremiumAccess)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  List<RecommendationCandidate> candidates,  UserPreferences preferences,  RecommendationHistory history,  RecommendationConfig config,  DateTime now,  String appVersion,  bool hasPremiumAccess,  RecommendationRefinement refinement)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RecommendationRequest() when $default != null:
-return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_that.config,_that.now,_that.appVersion,_that.hasPremiumAccess);case _:
+return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_that.config,_that.now,_that.appVersion,_that.hasPremiumAccess,_that.refinement);case _:
   return orElse();
 
 }
@@ -220,10 +232,10 @@ return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  List<RecommendationCandidate> candidates,  UserPreferences preferences,  RecommendationHistory history,  RecommendationConfig config,  DateTime now,  String appVersion,  bool hasPremiumAccess)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInAnswers checkIn,  List<RecommendationCandidate> candidates,  UserPreferences preferences,  RecommendationHistory history,  RecommendationConfig config,  DateTime now,  String appVersion,  bool hasPremiumAccess,  RecommendationRefinement refinement)  $default,) {final _that = this;
 switch (_that) {
 case _RecommendationRequest():
-return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_that.config,_that.now,_that.appVersion,_that.hasPremiumAccess);case _:
+return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_that.config,_that.now,_that.appVersion,_that.hasPremiumAccess,_that.refinement);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -240,10 +252,10 @@ return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInAnswers checkIn,  List<RecommendationCandidate> candidates,  UserPreferences preferences,  RecommendationHistory history,  RecommendationConfig config,  DateTime now,  String appVersion,  bool hasPremiumAccess)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInAnswers checkIn,  List<RecommendationCandidate> candidates,  UserPreferences preferences,  RecommendationHistory history,  RecommendationConfig config,  DateTime now,  String appVersion,  bool hasPremiumAccess,  RecommendationRefinement refinement)?  $default,) {final _that = this;
 switch (_that) {
 case _RecommendationRequest() when $default != null:
-return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_that.config,_that.now,_that.appVersion,_that.hasPremiumAccess);case _:
+return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_that.config,_that.now,_that.appVersion,_that.hasPremiumAccess,_that.refinement);case _:
   return null;
 
 }
@@ -255,7 +267,7 @@ return $default(_that.checkIn,_that.candidates,_that.preferences,_that.history,_
 
 
 class _RecommendationRequest implements RecommendationRequest {
-  const _RecommendationRequest({required this.checkIn, required  List<RecommendationCandidate> candidates, required this.preferences, required this.history, required this.config, required this.now, required this.appVersion, this.hasPremiumAccess = false}): _candidates = candidates;
+  const _RecommendationRequest({required this.checkIn, required  List<RecommendationCandidate> candidates, required this.preferences, required this.history, required this.config, required this.now, required this.appVersion, this.hasPremiumAccess = false, this.refinement = RecommendationRefinement.initial}): _candidates = candidates;
   
 
 @override final  CheckInAnswers checkIn;
@@ -277,6 +289,9 @@ class _RecommendationRequest implements RecommendationRequest {
 /// Whether the user currently holds premium access. Free content is always
 /// eligible; premium candidates require this to be true.
 @override@JsonKey() final  bool hasPremiumAccess;
+/// Accumulated refinements from rejected alternatives (RAHA-043). Empty by
+/// default; the engine applies exclusions and the difficulty override.
+@override@JsonKey() final  RecommendationRefinement refinement;
 
 /// Create a copy of RecommendationRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -288,16 +303,16 @@ _$RecommendationRequestCopyWith<_RecommendationRequest> get copyWith => __$Recom
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecommendationRequest&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&const DeepCollectionEquality().equals(other._candidates, _candidates)&&(identical(other.preferences, preferences) || other.preferences == preferences)&&(identical(other.history, history) || other.history == history)&&(identical(other.config, config) || other.config == config)&&(identical(other.now, now) || other.now == now)&&(identical(other.appVersion, appVersion) || other.appVersion == appVersion)&&(identical(other.hasPremiumAccess, hasPremiumAccess) || other.hasPremiumAccess == hasPremiumAccess));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecommendationRequest&&(identical(other.checkIn, checkIn) || other.checkIn == checkIn)&&const DeepCollectionEquality().equals(other._candidates, _candidates)&&(identical(other.preferences, preferences) || other.preferences == preferences)&&(identical(other.history, history) || other.history == history)&&(identical(other.config, config) || other.config == config)&&(identical(other.now, now) || other.now == now)&&(identical(other.appVersion, appVersion) || other.appVersion == appVersion)&&(identical(other.hasPremiumAccess, hasPremiumAccess) || other.hasPremiumAccess == hasPremiumAccess)&&(identical(other.refinement, refinement) || other.refinement == refinement));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkIn,const DeepCollectionEquality().hash(_candidates),preferences,history,config,now,appVersion,hasPremiumAccess);
+int get hashCode => Object.hash(runtimeType,checkIn,const DeepCollectionEquality().hash(_candidates),preferences,history,config,now,appVersion,hasPremiumAccess,refinement);
 
 @override
 String toString() {
-  return 'RecommendationRequest(checkIn: $checkIn, candidates: $candidates, preferences: $preferences, history: $history, config: $config, now: $now, appVersion: $appVersion, hasPremiumAccess: $hasPremiumAccess)';
+  return 'RecommendationRequest(checkIn: $checkIn, candidates: $candidates, preferences: $preferences, history: $history, config: $config, now: $now, appVersion: $appVersion, hasPremiumAccess: $hasPremiumAccess, refinement: $refinement)';
 }
 
 
@@ -308,11 +323,11 @@ abstract mixin class _$RecommendationRequestCopyWith<$Res> implements $Recommend
   factory _$RecommendationRequestCopyWith(_RecommendationRequest value, $Res Function(_RecommendationRequest) _then) = __$RecommendationRequestCopyWithImpl;
 @override @useResult
 $Res call({
- CheckInAnswers checkIn, List<RecommendationCandidate> candidates, UserPreferences preferences, RecommendationHistory history, RecommendationConfig config, DateTime now, String appVersion, bool hasPremiumAccess
+ CheckInAnswers checkIn, List<RecommendationCandidate> candidates, UserPreferences preferences, RecommendationHistory history, RecommendationConfig config, DateTime now, String appVersion, bool hasPremiumAccess, RecommendationRefinement refinement
 });
 
 
-@override $CheckInAnswersCopyWith<$Res> get checkIn;@override $UserPreferencesCopyWith<$Res> get preferences;@override $RecommendationHistoryCopyWith<$Res> get history;@override $RecommendationConfigCopyWith<$Res> get config;
+@override $CheckInAnswersCopyWith<$Res> get checkIn;@override $UserPreferencesCopyWith<$Res> get preferences;@override $RecommendationHistoryCopyWith<$Res> get history;@override $RecommendationConfigCopyWith<$Res> get config;@override $RecommendationRefinementCopyWith<$Res> get refinement;
 
 }
 /// @nodoc
@@ -325,7 +340,7 @@ class __$RecommendationRequestCopyWithImpl<$Res>
 
 /// Create a copy of RecommendationRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? checkIn = null,Object? candidates = null,Object? preferences = null,Object? history = null,Object? config = null,Object? now = null,Object? appVersion = null,Object? hasPremiumAccess = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? checkIn = null,Object? candidates = null,Object? preferences = null,Object? history = null,Object? config = null,Object? now = null,Object? appVersion = null,Object? hasPremiumAccess = null,Object? refinement = null,}) {
   return _then(_RecommendationRequest(
 checkIn: null == checkIn ? _self.checkIn : checkIn // ignore: cast_nullable_to_non_nullable
 as CheckInAnswers,candidates: null == candidates ? _self._candidates : candidates // ignore: cast_nullable_to_non_nullable
@@ -335,7 +350,8 @@ as RecommendationHistory,config: null == config ? _self.config : config // ignor
 as RecommendationConfig,now: null == now ? _self.now : now // ignore: cast_nullable_to_non_nullable
 as DateTime,appVersion: null == appVersion ? _self.appVersion : appVersion // ignore: cast_nullable_to_non_nullable
 as String,hasPremiumAccess: null == hasPremiumAccess ? _self.hasPremiumAccess : hasPremiumAccess // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,refinement: null == refinement ? _self.refinement : refinement // ignore: cast_nullable_to_non_nullable
+as RecommendationRefinement,
   ));
 }
 
@@ -374,6 +390,15 @@ $RecommendationConfigCopyWith<$Res> get config {
   
   return $RecommendationConfigCopyWith<$Res>(_self.config, (value) {
     return _then(_self.copyWith(config: value));
+  });
+}/// Create a copy of RecommendationRequest
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RecommendationRefinementCopyWith<$Res> get refinement {
+  
+  return $RecommendationRefinementCopyWith<$Res>(_self.refinement, (value) {
+    return _then(_self.copyWith(refinement: value));
   });
 }
 }

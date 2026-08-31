@@ -182,5 +182,14 @@
   },
   "recommendationReasonDifficulty": "Suited to your level.",
   "recommendationReasonRecent": "You completed this routine recently.",
-  "recommendationReasonDiscomfort": "It includes a movement you found less comfortable before."
+  "recommendationReasonDiscomfort": "It includes a movement you found less comfortable before.",
+  "recommendationRejectTitle": "What would you like instead?",
+  "recommendationRejectTooEasy": "Too easy",
+  "recommendationRejectTooDifficult": "Too difficult",
+  "recommendationRejectPosition": "I can't do this position",
+  "recommendationRejectDiscomfort": "This area feels uncomfortable",
+  "recommendationRejectOther": "Show me something else",
+  "recommendationNoAlternativeTitle": "No other routine fits right now.",
+  "recommendationNoAlternativeBody": "Try adjusting your answers and we'll find something else.",
+  "recommendationEditCheckIn": "Edit your check-in"
 }

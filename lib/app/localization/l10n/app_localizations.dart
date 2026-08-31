@@ -853,6 +853,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It includes a movement you found less comfortable before.'**
   String get recommendationReasonDiscomfort;
+
+  /// No description provided for @recommendationRejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like instead?'**
+  String get recommendationRejectTitle;
+
+  /// No description provided for @recommendationRejectTooEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Too easy'**
+  String get recommendationRejectTooEasy;
+
+  /// No description provided for @recommendationRejectTooDifficult.
+  ///
+  /// In en, this message translates to:
+  /// **'Too difficult'**
+  String get recommendationRejectTooDifficult;
+
+  /// No description provided for @recommendationRejectPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'I can\'t do this position'**
+  String get recommendationRejectPosition;
+
+  /// No description provided for @recommendationRejectDiscomfort.
+  ///
+  /// In en, this message translates to:
+  /// **'This area feels uncomfortable'**
+  String get recommendationRejectDiscomfort;
+
+  /// No description provided for @recommendationRejectOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me something else'**
+  String get recommendationRejectOther;
+
+  /// No description provided for @recommendationNoAlternativeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No other routine fits right now.'**
+  String get recommendationNoAlternativeTitle;
+
+  /// No description provided for @recommendationNoAlternativeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your answers and we\'ll find something else.'**
+  String get recommendationNoAlternativeBody;
+
+  /// No description provided for @recommendationEditCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit your check-in'**
+  String get recommendationEditCheckIn;
 }
 
 class _AppLocalizationsDelegate
