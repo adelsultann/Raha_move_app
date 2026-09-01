@@ -46,7 +46,7 @@ final class OnboardingControllerProvider
 }
 
 String _$onboardingControllerHash() =>
-    r'08c1f867d1ef3075569f320041441a7c94828a5e';
+    r'e3cc4321a9dd6199b4d6ff3eb576e64f150386a2';
 
 /// Whether the active user has completed onboarding. When false, the app shows
 /// language selection and the onboarding pages; when true, it goes straight to

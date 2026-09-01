@@ -1,7 +1,7 @@
 ---
 description: Owns exercise normalization, content imports, recommendation rules, explanations, and safety metadata
 mode: subagent
-model: deepseek/deepseek-v4-pro
+model: openai/gpt-5.6-terra
 temperature: 0.1
 permission: allow
 ---

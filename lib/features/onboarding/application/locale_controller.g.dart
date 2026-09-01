@@ -45,7 +45,7 @@ final class LocaleControllerProvider
   LocaleController create() => LocaleController();
 }
 
-String _$localeControllerHash() => r'eba9dd4a27d352b367dfb4a469268c1e727e739d';
+String _$localeControllerHash() => r'7eeec85f5ed25eed516e03f5f7e5397a0bc045b6';
 
 /// The app-wide active [Locale], restored from the local profile at startup.
 ///

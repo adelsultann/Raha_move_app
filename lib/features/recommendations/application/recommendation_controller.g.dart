@@ -71,7 +71,7 @@ final class RecommendationControllerProvider
 }
 
 String _$recommendationControllerHash() =>
-    r'cfa0ab11c5aee28ee179c75c6d4b41709f0ec14e';
+    r'599d756bce3f6b0737bff060fd341eb0d9dc5389';
 
 /// Orchestrates one recommendation flow for a completed check-in, including the
 /// alternative/rejection loop: it reads the check-in back from local storage,

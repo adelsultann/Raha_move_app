@@ -57,7 +57,7 @@ final class PreferencesControllerProvider
 }
 
 String _$preferencesControllerHash() =>
-    r'73275a01ac47aaf739148800af91571ac829fe0c';
+    r'ff0524aeb4cfafcf2e40c1962ed8811f3200b1a2';
 
 /// Captures and persists the user's basic preferences during setup.
 ///
