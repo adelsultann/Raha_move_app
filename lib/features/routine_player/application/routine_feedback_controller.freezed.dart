@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'foundation_status.dart';
+part of 'routine_feedback_controller.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,83 +13,80 @@ part of 'foundation_status.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$FoundationStatus {
-  bool get isReady;
-  String get environment;
+mixin _$RoutineFeedbackArgs {
+  String get sessionId;
+  String get routineId;
 
-  /// Create a copy of FoundationStatus
+  /// Create a copy of RoutineFeedbackArgs
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $FoundationStatusCopyWith<FoundationStatus> get copyWith =>
-      _$FoundationStatusCopyWithImpl<FoundationStatus>(
-        this as FoundationStatus,
+  $RoutineFeedbackArgsCopyWith<RoutineFeedbackArgs> get copyWith =>
+      _$RoutineFeedbackArgsCopyWithImpl<RoutineFeedbackArgs>(
+        this as RoutineFeedbackArgs,
         _$identity,
       );
-
-  /// Serializes this FoundationStatus to a JSON map.
-  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is FoundationStatus &&
-            (identical(other.isReady, isReady) || other.isReady == isReady) &&
-            (identical(other.environment, environment) ||
-                other.environment == environment));
+            other is RoutineFeedbackArgs &&
+            (identical(other.sessionId, sessionId) ||
+                other.sessionId == sessionId) &&
+            (identical(other.routineId, routineId) ||
+                other.routineId == routineId));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, isReady, environment);
+  int get hashCode => Object.hash(runtimeType, sessionId, routineId);
 
   @override
   String toString() {
-    return 'FoundationStatus(isReady: $isReady, environment: $environment)';
+    return 'RoutineFeedbackArgs(sessionId: $sessionId, routineId: $routineId)';
   }
 }
 
 /// @nodoc
-abstract mixin class $FoundationStatusCopyWith<$Res> {
-  factory $FoundationStatusCopyWith(
-    FoundationStatus value,
-    $Res Function(FoundationStatus) _then,
-  ) = _$FoundationStatusCopyWithImpl;
+abstract mixin class $RoutineFeedbackArgsCopyWith<$Res> {
+  factory $RoutineFeedbackArgsCopyWith(
+    RoutineFeedbackArgs value,
+    $Res Function(RoutineFeedbackArgs) _then,
+  ) = _$RoutineFeedbackArgsCopyWithImpl;
   @useResult
-  $Res call({bool isReady, String environment});
+  $Res call({String sessionId, String routineId});
 }
 
 /// @nodoc
-class _$FoundationStatusCopyWithImpl<$Res>
-    implements $FoundationStatusCopyWith<$Res> {
-  _$FoundationStatusCopyWithImpl(this._self, this._then);
+class _$RoutineFeedbackArgsCopyWithImpl<$Res>
+    implements $RoutineFeedbackArgsCopyWith<$Res> {
+  _$RoutineFeedbackArgsCopyWithImpl(this._self, this._then);
 
-  final FoundationStatus _self;
-  final $Res Function(FoundationStatus) _then;
+  final RoutineFeedbackArgs _self;
+  final $Res Function(RoutineFeedbackArgs) _then;
 
-  /// Create a copy of FoundationStatus
+  /// Create a copy of RoutineFeedbackArgs
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? isReady = null, Object? environment = null}) {
+  $Res call({Object? sessionId = null, Object? routineId = null}) {
     return _then(
-      FoundationStatus(
-        isReady: null == isReady
-            ? _self.isReady
-            : isReady // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        environment: null == environment
-            ? _self.environment
-            : environment // ignore: cast_nullable_to_non_nullable
+      RoutineFeedbackArgs(
+        sessionId: null == sessionId
+            ? _self.sessionId
+            : sessionId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        routineId: null == routineId
+            ? _self.routineId
+            : routineId // ignore: cast_nullable_to_non_nullable
                   as String,
       ),
     );
   }
 }
 
-/// Adds pattern-matching-related methods to [FoundationStatus].
-extension FoundationStatusPatterns on FoundationStatus {
+/// Adds pattern-matching-related methods to [RoutineFeedbackArgs].
+extension RoutineFeedbackArgsPatterns on RoutineFeedbackArgs {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -104,12 +101,12 @@ extension FoundationStatusPatterns on FoundationStatus {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_FoundationStatus value)? $default, {
+    TResult Function(_RoutineFeedbackArgs value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _FoundationStatus() when $default != null:
+      case _RoutineFeedbackArgs() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -131,11 +128,11 @@ extension FoundationStatusPatterns on FoundationStatus {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_FoundationStatus value) $default,
+    TResult Function(_RoutineFeedbackArgs value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _FoundationStatus():
+      case _RoutineFeedbackArgs():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -156,11 +153,11 @@ extension FoundationStatusPatterns on FoundationStatus {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_FoundationStatus value)? $default,
+    TResult? Function(_RoutineFeedbackArgs value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _FoundationStatus() when $default != null:
+      case _RoutineFeedbackArgs() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -181,13 +178,13 @@ extension FoundationStatusPatterns on FoundationStatus {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(bool isReady, String environment)? $default, {
+    TResult Function(String sessionId, String routineId)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _FoundationStatus() when $default != null:
-        return $default(_that.isReady, _that.environment);
+      case _RoutineFeedbackArgs() when $default != null:
+        return $default(_that.sessionId, _that.routineId);
       case _:
         return orElse();
     }
@@ -208,12 +205,12 @@ extension FoundationStatusPatterns on FoundationStatus {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(bool isReady, String environment) $default,
+    TResult Function(String sessionId, String routineId) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _FoundationStatus():
-        return $default(_that.isReady, _that.environment);
+      case _RoutineFeedbackArgs():
+        return $default(_that.sessionId, _that.routineId);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -233,12 +230,12 @@ extension FoundationStatusPatterns on FoundationStatus {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(bool isReady, String environment)? $default,
+    TResult? Function(String sessionId, String routineId)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _FoundationStatus() when $default != null:
-        return $default(_that.isReady, _that.environment);
+      case _RoutineFeedbackArgs() when $default != null:
+        return $default(_that.sessionId, _that.routineId);
       case _:
         return null;
     }
@@ -246,84 +243,83 @@ extension FoundationStatusPatterns on FoundationStatus {
 }
 
 /// @nodoc
-@JsonSerializable()
-class _FoundationStatus implements FoundationStatus {
-  const _FoundationStatus({required this.isReady, required this.environment});
-  factory _FoundationStatus.fromJson(Map<String, dynamic> json) =>
-      _$FoundationStatusFromJson(json);
+
+class _RoutineFeedbackArgs implements RoutineFeedbackArgs {
+  const _RoutineFeedbackArgs({
+    required this.sessionId,
+    required this.routineId,
+  });
 
   @override
-  final bool isReady;
+  final String sessionId;
   @override
-  final String environment;
+  final String routineId;
 
-  /// Create a copy of FoundationStatus
+  /// Create a copy of RoutineFeedbackArgs
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$FoundationStatusCopyWith<_FoundationStatus> get copyWith =>
-      __$FoundationStatusCopyWithImpl<_FoundationStatus>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$FoundationStatusToJson(this);
-  }
+  _$RoutineFeedbackArgsCopyWith<_RoutineFeedbackArgs> get copyWith =>
+      __$RoutineFeedbackArgsCopyWithImpl<_RoutineFeedbackArgs>(
+        this,
+        _$identity,
+      );
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _FoundationStatus &&
-            (identical(other.isReady, isReady) || other.isReady == isReady) &&
-            (identical(other.environment, environment) ||
-                other.environment == environment));
+            other is _RoutineFeedbackArgs &&
+            (identical(other.sessionId, sessionId) ||
+                other.sessionId == sessionId) &&
+            (identical(other.routineId, routineId) ||
+                other.routineId == routineId));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, isReady, environment);
+  int get hashCode => Object.hash(runtimeType, sessionId, routineId);
 
   @override
   String toString() {
-    return 'FoundationStatus(isReady: $isReady, environment: $environment)';
+    return 'RoutineFeedbackArgs(sessionId: $sessionId, routineId: $routineId)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$FoundationStatusCopyWith<$Res>
-    implements $FoundationStatusCopyWith<$Res> {
-  factory _$FoundationStatusCopyWith(
-    _FoundationStatus value,
-    $Res Function(_FoundationStatus) _then,
-  ) = __$FoundationStatusCopyWithImpl;
+abstract mixin class _$RoutineFeedbackArgsCopyWith<$Res>
+    implements $RoutineFeedbackArgsCopyWith<$Res> {
+  factory _$RoutineFeedbackArgsCopyWith(
+    _RoutineFeedbackArgs value,
+    $Res Function(_RoutineFeedbackArgs) _then,
+  ) = __$RoutineFeedbackArgsCopyWithImpl;
   @override
   @useResult
-  $Res call({bool isReady, String environment});
+  $Res call({String sessionId, String routineId});
 }
 
 /// @nodoc
-class __$FoundationStatusCopyWithImpl<$Res>
-    implements _$FoundationStatusCopyWith<$Res> {
-  __$FoundationStatusCopyWithImpl(this._self, this._then);
+class __$RoutineFeedbackArgsCopyWithImpl<$Res>
+    implements _$RoutineFeedbackArgsCopyWith<$Res> {
+  __$RoutineFeedbackArgsCopyWithImpl(this._self, this._then);
 
-  final _FoundationStatus _self;
-  final $Res Function(_FoundationStatus) _then;
+  final _RoutineFeedbackArgs _self;
+  final $Res Function(_RoutineFeedbackArgs) _then;
 
-  /// Create a copy of FoundationStatus
+  /// Create a copy of RoutineFeedbackArgs
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $Res call({Object? isReady = null, Object? environment = null}) {
+  $Res call({Object? sessionId = null, Object? routineId = null}) {
     return _then(
-      _FoundationStatus(
-        isReady: null == isReady
-            ? _self.isReady
-            : isReady // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        environment: null == environment
-            ? _self.environment
-            : environment // ignore: cast_nullable_to_non_nullable
+      _RoutineFeedbackArgs(
+        sessionId: null == sessionId
+            ? _self.sessionId
+            : sessionId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        routineId: null == routineId
+            ? _self.routineId
+            : routineId // ignore: cast_nullable_to_non_nullable
                   as String,
       ),
     );

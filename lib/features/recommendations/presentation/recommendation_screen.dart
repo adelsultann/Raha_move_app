@@ -417,6 +417,8 @@ class _WhySection extends StatelessWidget {
       ExplanationReason.recentCompletion => strings.recommendationReasonRecent,
       ExplanationReason.previousDiscomfort =>
         strings.recommendationReasonDiscomfort,
+      ExplanationReason.lessComfortableRoutine =>
+        strings.recommendationReasonRoutineLessComfortable,
     };
   }
 

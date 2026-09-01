@@ -319,6 +319,60 @@ void main() {
     );
   });
 
+  test(
+    'a less-comfortable routine is deprioritized by the aggregate signal',
+    () {
+      final history = RecommendationHistory(
+        lessComfortableRoutineIds: const {'raha_rt_000001'},
+      );
+      final result = engine.recommend(
+        request(candidates: [candidate()], history: history),
+      );
+
+      final top = result.recommendations.single;
+      expect(top.score, 130); // 150 - 20
+      expect(
+        top.scoreComponents[RecommendationScoreComponent.discomfortPenalty],
+        -20,
+      );
+      expect(
+        top.reasonCodes,
+        contains(RecommendationReasonCode.lessComfortableRoutine),
+      );
+    },
+  );
+
+  test(
+    'a less-comfortable routine deterministically loses to an equal peer',
+    () {
+      final history = RecommendationHistory(
+        lessComfortableRoutineIds: const {'raha_rt_000001'},
+      );
+      final result = engine.recommend(
+        request(
+          candidates: [
+            candidate(id: 'raha_rt_000001'),
+            candidate(id: 'raha_rt_000002'),
+          ],
+          history: history,
+        ),
+      );
+
+      expect(result.recommendations.map((r) => r.routineId).toList(), [
+        'raha_rt_000002',
+        'raha_rt_000001',
+      ]);
+      expect(
+        result.recommendations[1].reasonCodes,
+        contains(RecommendationReasonCode.lessComfortableRoutine),
+      );
+      expect(
+        result.recommendations[0].reasonCodes,
+        isNot(contains(RecommendationReasonCode.lessComfortableRoutine)),
+      );
+    },
+  );
+
   group('deterministic tie-breaking', () {
     test('same score prefers the fuller routine duration', () {
       final noTimeWeight = RecommendationConfig.rulesV1.copyWith(

@@ -174,13 +174,20 @@ final class RulesRecommendationEngine implements RoutineRecommendationEngine {
       reasons.add(RecommendationReasonCode.recentCompletion);
     }
 
-    final hasDiscomfort = candidate.exerciseIds.any(
+    final hasExerciseDiscomfort = candidate.exerciseIds.any(
       request.history.uncomfortableExerciseIds.contains,
     );
-    if (hasDiscomfort) {
+    final hasRoutineDiscomfort = request.history.lessComfortableRoutineIds
+        .contains(candidate.routineId);
+    if (hasExerciseDiscomfort || hasRoutineDiscomfort) {
       components[RecommendationScoreComponent.discomfortPenalty] =
           -config.discomfortPenaltyWeight;
-      reasons.add(RecommendationReasonCode.previousDiscomfort);
+      if (hasExerciseDiscomfort) {
+        reasons.add(RecommendationReasonCode.previousDiscomfort);
+      }
+      if (hasRoutineDiscomfort) {
+        reasons.add(RecommendationReasonCode.lessComfortableRoutine);
+      }
     }
 
     final score = components.values.fold(0, (sum, value) => sum + value);

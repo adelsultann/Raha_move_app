@@ -854,6 +854,12 @@ abstract class AppLocalizations {
   /// **'It includes a movement you found less comfortable before.'**
   String get recommendationReasonDiscomfort;
 
+  /// No description provided for @recommendationReasonRoutineLessComfortable.
+  ///
+  /// In en, this message translates to:
+  /// **'You found this routine less comfortable before.'**
+  String get recommendationReasonRoutineLessComfortable;
+
   /// No description provided for @recommendationRejectTitle.
   ///
   /// In en, this message translates to:
@@ -1105,6 +1111,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Movement demonstration'**
   String get playerDemonstration;
+
+  /// No description provided for @feedbackQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How does your body feel now?'**
+  String get feedbackQuestion;
+
+  /// No description provided for @feedbackActiveMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{You moved for 1 minute} other{You moved for {minutes} minutes}}'**
+  String feedbackActiveMinutes(int minutes);
+
+  /// No description provided for @feedbackMuchBetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Much better'**
+  String get feedbackMuchBetter;
+
+  /// No description provided for @feedbackLittleBetter.
+  ///
+  /// In en, this message translates to:
+  /// **'A little better'**
+  String get feedbackLittleBetter;
+
+  /// No description provided for @feedbackSame.
+  ///
+  /// In en, this message translates to:
+  /// **'About the same'**
+  String get feedbackSame;
+
+  /// No description provided for @feedbackLessComfortable.
+  ///
+  /// In en, this message translates to:
+  /// **'Less comfortable'**
+  String get feedbackLessComfortable;
+
+  /// No description provided for @feedbackSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get feedbackSkip;
+
+  /// No description provided for @feedbackThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for sharing.'**
+  String get feedbackThanks;
+
+  /// No description provided for @feedbackLessComfortableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for sharing that. Please stop for today and choose a comfortable option next time.'**
+  String get feedbackLessComfortableMessage;
+
+  /// No description provided for @feedbackSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save your feedback. Please try again.'**
+  String get feedbackSaveError;
+
+  /// No description provided for @feedbackRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get feedbackRetry;
+
+  /// No description provided for @feedbackDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get feedbackDone;
 }
 
 class _AppLocalizationsDelegate

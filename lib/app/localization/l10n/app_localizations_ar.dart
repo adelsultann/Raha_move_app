@@ -425,6 +425,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'يتضمّن حركة وجدتها أقل راحة من قبل.';
 
   @override
+  String get recommendationReasonRoutineLessComfortable =>
+      'وجدت هذا الروتين أقل راحة من قبل.';
+
+  @override
   String get recommendationRejectTitle => 'ماذا تفضّل بدلًا منه؟';
 
   @override
@@ -560,4 +564,53 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get playerDemonstration => 'عرض الحركة';
+
+  @override
+  String get feedbackQuestion => 'كيف يشعر جسمك الآن؟';
+
+  @override
+  String feedbackActiveMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'تحرّكت لمدة $minutes دقيقة',
+      many: 'تحرّكت لمدة $minutes دقيقة',
+      few: 'تحرّكت لمدة $minutes دقائق',
+      two: 'تحرّكت لمدة دقيقتين',
+      one: 'تحرّكت لمدة دقيقة واحدة',
+      zero: 'لم تتحرّك بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get feedbackMuchBetter => 'أفضل بكثير';
+
+  @override
+  String get feedbackLittleBetter => 'أفضل قليلًا';
+
+  @override
+  String get feedbackSame => 'نفس الشيء تقريبًا';
+
+  @override
+  String get feedbackLessComfortable => 'أقل راحة';
+
+  @override
+  String get feedbackSkip => 'تخطّي الآن';
+
+  @override
+  String get feedbackThanks => 'شكرًا لمشاركتنا.';
+
+  @override
+  String get feedbackLessComfortableMessage =>
+      'شكرًا لإخبارنا. توقّف لليوم واختر خيارًا مريحًا في المرة القادمة.';
+
+  @override
+  String get feedbackSaveError => 'تعذّر حفظ تقييمك. يرجى المحاولة مجددًا.';
+
+  @override
+  String get feedbackRetry => 'حاول مجددًا';
+
+  @override
+  String get feedbackDone => 'تم';
 }

@@ -413,6 +413,62 @@ final class RoutineSessionRepositoryProvider
 String _$routineSessionRepositoryHash() =>
     r'f6ae594595ac318f77b101a3b17a3f276cbc2d4a';
 
+/// App-owned local post-routine feedback persistence (RAHA-053). Tests override
+/// this with a fake to isolate orchestration from the Drift database.
+
+@ProviderFor(routineFeedbackRepository)
+final routineFeedbackRepositoryProvider = RoutineFeedbackRepositoryProvider._();
+
+/// App-owned local post-routine feedback persistence (RAHA-053). Tests override
+/// this with a fake to isolate orchestration from the Drift database.
+
+final class RoutineFeedbackRepositoryProvider
+    extends
+        $FunctionalProvider<
+          RoutineFeedbackRepository,
+          RoutineFeedbackRepository,
+          RoutineFeedbackRepository
+        >
+    with $Provider<RoutineFeedbackRepository> {
+  /// App-owned local post-routine feedback persistence (RAHA-053). Tests override
+  /// this with a fake to isolate orchestration from the Drift database.
+  RoutineFeedbackRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'routineFeedbackRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$routineFeedbackRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<RoutineFeedbackRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RoutineFeedbackRepository create(Ref ref) {
+    return routineFeedbackRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RoutineFeedbackRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RoutineFeedbackRepository>(value),
+    );
+  }
+}
+
+String _$routineFeedbackRepositoryHash() =>
+    r'd724ac6255e434658d5bef9fd56b54cb1e9179fe';
+
 /// The most recently active in-progress session for the current user. Watched
 /// by the player's start gate so an ordinary new start detects a conflicting
 /// session and offers resume or abandon. Stale (>24h) sessions are expired

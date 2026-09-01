@@ -68,6 +68,11 @@ abstract class RoutinePlaybackSession with _$RoutinePlaybackSession {
   int get totalCreditedSeconds =>
       steps.fold(0, (total, step) => total + step.creditedSeconds);
 
+  /// Verified active minutes for the completion summary (RAHA-053): the
+  /// credited active duration floored to whole minutes. Until RAHA-070 this is
+  /// the only completion figure shown — no points, streaks, or rewards.
+  int get verifiedActiveMinutes => totalCreditedSeconds ~/ 60;
+
   /// Scheduled target duration across all steps (used by the completion rule).
   int get totalDurationSeconds =>
       steps.fold(0, (total, step) => total + step.durationSeconds);

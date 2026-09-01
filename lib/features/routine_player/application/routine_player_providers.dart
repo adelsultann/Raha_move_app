@@ -5,6 +5,7 @@ import 'package:raha_move/features/authentication/application/auth_controller.da
 import 'package:raha_move/features/onboarding/application/locale_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../data/drift_routine_feedback_repository.dart';
 import '../data/drift_routine_playback_loader.dart';
 import '../data/drift_routine_session_repository.dart';
 import '../data/screen_wake_lock_impl.dart';
@@ -12,6 +13,7 @@ import '../data/transition_feedback_impl.dart';
 import '../domain/playback_plan.dart';
 import '../domain/playback_support.dart';
 import '../domain/playback_ticker.dart';
+import '../domain/routine_feedback_repository.dart';
 import '../domain/routine_playback_loader.dart';
 import '../domain/routine_session_repository.dart';
 
@@ -66,6 +68,16 @@ DateTime Function() routinePlayerClock(Ref ref) => DateTime.now;
 @riverpod
 RoutineSessionRepository routineSessionRepository(Ref ref) {
   return DriftRoutineSessionRepository(
+    ref.watch(appDatabaseProvider),
+    clock: ref.watch(routinePlayerClockProvider),
+  );
+}
+
+/// App-owned local post-routine feedback persistence (RAHA-053). Tests override
+/// this with a fake to isolate orchestration from the Drift database.
+@riverpod
+RoutineFeedbackRepository routineFeedbackRepository(Ref ref) {
+  return DriftRoutineFeedbackRepository(
     ref.watch(appDatabaseProvider),
     clock: ref.watch(routinePlayerClockProvider),
   );

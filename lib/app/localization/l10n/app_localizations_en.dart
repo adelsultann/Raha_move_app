@@ -430,6 +430,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'It includes a movement you found less comfortable before.';
 
   @override
+  String get recommendationReasonRoutineLessComfortable =>
+      'You found this routine less comfortable before.';
+
+  @override
   String get recommendationRejectTitle => 'What would you like instead?';
 
   @override
@@ -568,4 +572,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerDemonstration => 'Movement demonstration';
+
+  @override
+  String get feedbackQuestion => 'How does your body feel now?';
+
+  @override
+  String feedbackActiveMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'You moved for $minutes minutes',
+      one: 'You moved for 1 minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get feedbackMuchBetter => 'Much better';
+
+  @override
+  String get feedbackLittleBetter => 'A little better';
+
+  @override
+  String get feedbackSame => 'About the same';
+
+  @override
+  String get feedbackLessComfortable => 'Less comfortable';
+
+  @override
+  String get feedbackSkip => 'Skip for now';
+
+  @override
+  String get feedbackThanks => 'Thanks for sharing.';
+
+  @override
+  String get feedbackLessComfortableMessage =>
+      'Thanks for sharing that. Please stop for today and choose a comfortable option next time.';
+
+  @override
+  String get feedbackSaveError =>
+      'We couldn\'t save your feedback. Please try again.';
+
+  @override
+  String get feedbackRetry => 'Try again';
+
+  @override
+  String get feedbackDone => 'Done';
 }

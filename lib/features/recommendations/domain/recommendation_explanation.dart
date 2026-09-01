@@ -15,6 +15,7 @@ enum ExplanationReason {
   difficultyMatch,
   recentCompletion,
   previousDiscomfort,
+  lessComfortableRoutine,
 }
 
 /// Maps a recommendation's reason keys (plus the check-in's required position)
@@ -50,6 +51,9 @@ List<ExplanationReason> buildExplanationReasons({
   }
   if (reasonCodes.contains(RecommendationReasonCode.previousDiscomfort)) {
     reasons.add(ExplanationReason.previousDiscomfort);
+  }
+  if (reasonCodes.contains(RecommendationReasonCode.lessComfortableRoutine)) {
+    reasons.add(ExplanationReason.lessComfortableRoutine);
   }
   return reasons;
 }

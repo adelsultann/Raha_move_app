@@ -16,14 +16,20 @@ abstract class RecentRoutineAttempt with _$RecentRoutineAttempt {
 ///
 /// This is a purpose-built summary, not the canonical session/feedback models
 /// (owned by RAHA-052/RAHA-053). It carries only what the engine needs: which
-/// routines were recently completed and which exercises the user previously
-/// reported as less comfortable.
+/// routines were recently completed, which exercises the user previously
+/// reported as less comfortable, and — from the RAHA-053 categorical response —
+/// which routines produced a `less_comfortable` response.
 @freezed
 abstract class RecommendationHistory with _$RecommendationHistory {
   const factory RecommendationHistory({
     @Default(<RecentRoutineAttempt>[])
     List<RecentRoutineAttempt> recentAttempts,
     @Default(<String>{}) Set<String> uncomfortableExerciseIds,
+
+    /// Routines whose session received a categorical `less_comfortable`
+    /// response. This is the aggregate, exercise-agnostic prior-feedback signal
+    /// consumed by the engine's discomfort penalty.
+    @Default(<String>{}) Set<String> lessComfortableRoutineIds,
   }) = _RecommendationHistory;
 
   const RecommendationHistory._();

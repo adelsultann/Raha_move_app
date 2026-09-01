@@ -183,6 +183,7 @@
   "recommendationReasonDifficulty": "مناسب لمستواك.",
   "recommendationReasonRecent": "أكملت هذا الروتين مؤخرًا.",
   "recommendationReasonDiscomfort": "يتضمّن حركة وجدتها أقل راحة من قبل.",
+  "recommendationReasonRoutineLessComfortable": "وجدت هذا الروتين أقل راحة من قبل.",
   "recommendationRejectTitle": "ماذا تفضّل بدلًا منه؟",
   "recommendationRejectTooEasy": "سهل جدًا",
   "recommendationRejectTooDifficult": "صعب جدًا",
@@ -235,5 +236,22 @@
   "playerEndedBody": "يمكنك المحاولة مجددًا متى ما كنت مستعدًا.",
   "playerSaveErrorTitle": "تعذّر حفظ التقدّم",
   "playerSaveErrorBody": "تعذّر حفظ تقدّمك. حاول مجددًا للاحتفاظ به.",
-  "playerDemonstration": "عرض الحركة"
+  "playerDemonstration": "عرض الحركة",
+  "feedbackQuestion": "كيف يشعر جسمك الآن؟",
+  "feedbackActiveMinutes": "{minutes, plural, zero{لم تتحرّك بعد} one{تحرّكت لمدة دقيقة واحدة} two{تحرّكت لمدة دقيقتين} few{تحرّكت لمدة {minutes} دقائق} many{تحرّكت لمدة {minutes} دقيقة} other{تحرّكت لمدة {minutes} دقيقة}}",
+  "@feedbackActiveMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "feedbackMuchBetter": "أفضل بكثير",
+  "feedbackLittleBetter": "أفضل قليلًا",
+  "feedbackSame": "نفس الشيء تقريبًا",
+  "feedbackLessComfortable": "أقل راحة",
+  "feedbackSkip": "تخطّي الآن",
+  "feedbackThanks": "شكرًا لمشاركتنا.",
+  "feedbackLessComfortableMessage": "شكرًا لإخبارنا. توقّف لليوم واختر خيارًا مريحًا في المرة القادمة.",
+  "feedbackSaveError": "تعذّر حفظ تقييمك. يرجى المحاولة مجددًا.",
+  "feedbackRetry": "حاول مجددًا",
+  "feedbackDone": "تم"
 }

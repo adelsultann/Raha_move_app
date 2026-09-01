@@ -14,6 +14,8 @@ import 'package:raha_move/features/routine_player/domain/playback_plan.dart';
 import 'package:raha_move/features/routine_player/domain/playback_session.dart';
 import 'package:raha_move/features/routine_player/domain/playback_support.dart';
 import 'package:raha_move/features/routine_player/domain/playback_ticker.dart';
+import 'package:raha_move/features/routine_player/domain/routine_feedback.dart';
+import 'package:raha_move/features/routine_player/domain/routine_feedback_repository.dart';
 import 'package:raha_move/features/routine_player/domain/routine_playback_loader.dart';
 import 'package:raha_move/features/routine_player/domain/routine_session_repository.dart';
 
@@ -53,6 +55,37 @@ RoutinePlaybackPlan twoStepPlan({String locale = 'en'}) {
         name: isArabic ? 'دوائر الكتف' : 'Shoulder circles',
         shortCue: null,
         durationSeconds: 5,
+        media: _delivery('media-2'),
+      ),
+    ],
+  );
+}
+
+/// A two-step, one-minute-total plan so completion summaries render a non-zero
+/// verified-active-minute figure in widget tests. Two steps keep the last-step
+/// "Finish" control out of the initial frame, which avoids an unrelated
+/// RAHA-051 player-control overflow at 200% text scale.
+RoutinePlaybackPlan minutePlan({String locale = 'en'}) {
+  final isArabic = locale == 'ar';
+  return RoutinePlaybackPlan(
+    routineId: 'rt-1',
+    routineVersion: 1,
+    routineName: isArabic ? 'روتين تجريبي' : 'Test Routine',
+    steps: [
+      RoutineStepPlan(
+        stepId: 'step-1',
+        exerciseId: 'ex-1',
+        name: isArabic ? 'تحرير الرقبة' : 'Neck release',
+        shortCue: null,
+        durationSeconds: 30,
+        media: _delivery('media-1'),
+      ),
+      RoutineStepPlan(
+        stepId: 'step-2',
+        exerciseId: 'ex-2',
+        name: isArabic ? 'دوائر الكتف' : 'Shoulder circles',
+        shortCue: null,
+        durationSeconds: 30,
         media: _delivery('media-2'),
       ),
     ],
@@ -254,6 +287,46 @@ final class FakeRoutineSessionRepository implements RoutineSessionRepository {
   }
 }
 
+/// In-memory [RoutineFeedbackRepository] that records writes so controller
+/// tests can assert persistence and failure/retry without Drift. `save` mirrors
+/// the real non-overwrite contract and returns false once a session has a
+/// response.
+final class FakeRoutineFeedbackRepository implements RoutineFeedbackRepository {
+  final List<({String userId, String sessionId, FeedbackRating rating})> saves =
+      [];
+
+  /// When true, [save] throws, simulating a local write failure.
+  bool failSave = false;
+
+  /// A pre-existing stored rating to return from [find] for any session,
+  /// simulating a response already persisted on a previous run.
+  FeedbackRating? findResult;
+
+  @override
+  Future<bool> save({
+    required String userId,
+    required String sessionId,
+    required FeedbackRating rating,
+  }) async {
+    if (failSave) throw StateError('feedback save failed');
+    if (saves.any((s) => s.sessionId == sessionId)) return false;
+    saves.add((userId: userId, sessionId: sessionId, rating: rating));
+    return true;
+  }
+
+  @override
+  Future<FeedbackRating?> find({
+    required String userId,
+    required String sessionId,
+  }) async {
+    if (findResult != null) return findResult;
+    for (final saved in saves) {
+      if (saved.sessionId == sessionId) return saved.rating;
+    }
+    return null;
+  }
+}
+
 /// Builds a container wired with the fakes the player controller needs: an
 /// Builds a container wired with the fakes the player controller needs: offline
 /// auth, a locale-aware loader, deterministic ticker/wake-lock/feedback fakes,
@@ -267,6 +340,7 @@ ProviderContainer buildRoutinePlayerContainer({
   FakeTransitionFeedback? feedback,
   InMemoryAnalyticsService? analytics,
   FakeRoutineSessionRepository? repository,
+  FakeRoutineFeedbackRepository? feedbackRepository,
   AppLanguage language = AppLanguage.en,
   DateTime Function()? clock,
 }) {
@@ -296,6 +370,9 @@ ProviderContainer buildRoutinePlayerContainer({
       routineMediaPlaybackCoordinatorProvider.overrideWith((ref) async => null),
       routineSessionRepositoryProvider.overrideWithValue(
         repository ?? FakeRoutineSessionRepository(),
+      ),
+      routineFeedbackRepositoryProvider.overrideWithValue(
+        feedbackRepository ?? FakeRoutineFeedbackRepository(),
       ),
       routinePlayerClockProvider.overrideWithValue(
         clock ?? () => DateTime.utc(2026, 8, 29, 12),

@@ -27,6 +27,46 @@ void main() {
       ),
     ]);
     expect(history.uncomfortableExerciseIds, {'raha_ex_000001'});
+    expect(history.lessComfortableRoutineIds, {'raha_rt_000001'});
+  });
+
+  test('aggregate signal ignores non-less-comfortable feedback', () async {
+    await database
+        .into(database.localRoutineSessions)
+        .insert(
+          LocalRoutineSessionsCompanion.insert(
+            id: 'session-2',
+            userId: 'user-1',
+            routineId: 'raha_rt_000001',
+            routineVersion: 1,
+            status: 'completed',
+            startedAt: now.subtract(const Duration(minutes: 2)),
+            completedAt: Value(now),
+            targetDurationSeconds: 300,
+            actualDurationSeconds: 240,
+            totalSteps: 2,
+            completionPolicyVersion: 'completion_v1',
+            source: 'recommendation',
+            localUpdatedAt: now,
+          ),
+        );
+    await database
+        .into(database.localSessionFeedback)
+        .insert(
+          LocalSessionFeedbackCompanion.insert(
+            sessionId: 'session-2',
+            userId: 'user-1',
+            rating: 'much_better',
+            createdAt: now,
+            localUpdatedAt: now,
+          ),
+        );
+
+    final history = await DriftRecommendationHistory(database)
+        .loadFor('user-1');
+
+    // Only the categorical `less_comfortable` response feeds the routine set.
+    expect(history.lessComfortableRoutineIds, {'raha_rt_000001'});
   });
 
   test('ignores other users and non-less_comfortable feedback', () async {
@@ -67,6 +107,7 @@ void main() {
 
     expect(history.recentAttempts, hasLength(1));
     expect(history.uncomfortableExerciseIds, {'raha_ex_000001'});
+    expect(history.lessComfortableRoutineIds, {'raha_rt_000001'});
   });
 }
 

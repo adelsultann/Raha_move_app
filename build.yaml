@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          # Freezed 4.x defaults to `format: false`, which emits
+          # `// dart format off` and leaves trailing whitespace in the generated
+          # `.freezed.dart` files (failing `git diff --check`). Opting back into
+          # formatted output keeps generated files clean and CI-friendly.
+          format: true

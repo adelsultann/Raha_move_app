@@ -26,6 +26,10 @@ final class DriftRecommendationHistory {
           ),
     ];
 
+    final routineBySession = {
+      for (final session in sessions) session.id: session.routineId,
+    };
+
     final feedback =
         await (_database.select(_database.localSessionFeedback)..where(
               (r) =>
@@ -38,9 +42,18 @@ final class DriftRecommendationHistory {
         if (row.uncomfortableExerciseId != null) row.uncomfortableExerciseId!,
     };
 
+    // Aggregate categorical less-comfortable signal: the routine behind each
+    // less-comfortable response, resolved through the owning session.
+    final lessComfortableRoutineIds = <String>{
+      for (final row in feedback)
+        if (routineBySession[row.sessionId] != null)
+          routineBySession[row.sessionId]!,
+    };
+
     return RecommendationHistory(
       recentAttempts: List.unmodifiable(recentAttempts),
       uncomfortableExerciseIds: uncomfortableExerciseIds,
+      lessComfortableRoutineIds: lessComfortableRoutineIds,
     );
   }
 }

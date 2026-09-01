@@ -183,6 +183,7 @@
   "recommendationReasonDifficulty": "Suited to your level.",
   "recommendationReasonRecent": "You completed this routine recently.",
   "recommendationReasonDiscomfort": "It includes a movement you found less comfortable before.",
+  "recommendationReasonRoutineLessComfortable": "You found this routine less comfortable before.",
   "recommendationRejectTitle": "What would you like instead?",
   "recommendationRejectTooEasy": "Too easy",
   "recommendationRejectTooDifficult": "Too difficult",
@@ -235,5 +236,22 @@
   "playerEndedBody": "You can try again whenever you're ready.",
   "playerSaveErrorTitle": "Couldn't save progress",
   "playerSaveErrorBody": "Your progress couldn't be saved. Try again to keep it.",
-  "playerDemonstration": "Movement demonstration"
+  "playerDemonstration": "Movement demonstration",
+  "feedbackQuestion": "How does your body feel now?",
+  "feedbackActiveMinutes": "{minutes, plural, =1{You moved for 1 minute} other{You moved for {minutes} minutes}}",
+  "@feedbackActiveMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "feedbackMuchBetter": "Much better",
+  "feedbackLittleBetter": "A little better",
+  "feedbackSame": "About the same",
+  "feedbackLessComfortable": "Less comfortable",
+  "feedbackSkip": "Skip for now",
+  "feedbackThanks": "Thanks for sharing.",
+  "feedbackLessComfortableMessage": "Thanks for sharing that. Please stop for today and choose a comfortable option next time.",
+  "feedbackSaveError": "We couldn't save your feedback. Please try again.",
+  "feedbackRetry": "Try again",
+  "feedbackDone": "Done"
 }

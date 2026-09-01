@@ -20,6 +20,11 @@ abstract final class RecommendationReasonCode {
   static const String difficultyMatch = 'difficulty_match';
   static const String recentCompletion = 'recent_completion';
   static const String previousDiscomfort = 'previous_discomfort';
+
+  /// The routine previously received a categorical `less_comfortable` response
+  /// (RAHA-053), so it is deprioritized. Exercise-agnostic; see
+  /// [previousDiscomfort] for the exercise-specific follow-up signal.
+  static const String lessComfortableRoutine = 'less_comfortable_routine';
 }
 
 /// Stable keys for the numeric score breakdown recorded with a recommendation.

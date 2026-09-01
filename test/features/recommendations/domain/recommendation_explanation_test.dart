@@ -37,6 +37,20 @@ void main() {
     expect(reasons, isEmpty);
   });
 
+  test('maps the routine less-comfortable reason after discomfort', () {
+    final reasons = buildExplanationReasons(
+      reasonCodes: const [
+        RecommendationReasonCode.lessComfortableRoutine,
+        RecommendationReasonCode.previousDiscomfort,
+      ],
+      positionKey: null,
+    );
+    expect(reasons, const [
+      ExplanationReason.previousDiscomfort,
+      ExplanationReason.lessComfortableRoutine,
+    ]);
+  });
+
   test('a preferred-position score alone does not add a position line', () {
     final reasons = buildExplanationReasons(
       reasonCodes: const [RecommendationReasonCode.positionPreference],
