@@ -10525,6 +10525,38 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _currentStepPositionMeta =
+      const VerificationMeta('currentStepPosition');
+  @override
+  late final GeneratedColumn<int> currentStepPosition = GeneratedColumn<int>(
+    'current_step_position',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currentStepActiveSecondsMeta =
+      const VerificationMeta('currentStepActiveSeconds');
+  @override
+  late final GeneratedColumn<int> currentStepActiveSeconds =
+      GeneratedColumn<int>(
+        'current_step_active_seconds',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _currentStepUpdatedAtMeta =
+      const VerificationMeta('currentStepUpdatedAt');
+  @override
+  late final GeneratedColumn<DateTime> currentStepUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'current_step_updated_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     syncState,
@@ -10547,6 +10579,9 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
     stepsSkipped,
     completionPolicyVersion,
     source,
+    currentStepPosition,
+    currentStepActiveSeconds,
+    currentStepUpdatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -10722,6 +10757,33 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
     } else if (isInserting) {
       context.missing(_sourceMeta);
     }
+    if (data.containsKey('current_step_position')) {
+      context.handle(
+        _currentStepPositionMeta,
+        currentStepPosition.isAcceptableOrUnknown(
+          data['current_step_position']!,
+          _currentStepPositionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('current_step_active_seconds')) {
+      context.handle(
+        _currentStepActiveSecondsMeta,
+        currentStepActiveSeconds.isAcceptableOrUnknown(
+          data['current_step_active_seconds']!,
+          _currentStepActiveSecondsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('current_step_updated_at')) {
+      context.handle(
+        _currentStepUpdatedAtMeta,
+        currentStepUpdatedAt.isAcceptableOrUnknown(
+          data['current_step_updated_at']!,
+          _currentStepUpdatedAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -10816,6 +10878,18 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      currentStepPosition: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_step_position'],
+      ),
+      currentStepActiveSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_step_active_seconds'],
+      ),
+      currentStepUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}current_step_updated_at'],
+      ),
     );
   }
 
@@ -10860,6 +10934,22 @@ class LocalRoutineSession extends DataClass
   final int stepsSkipped;
   final String completionPolicyVersion;
   final String source;
+
+  /// Durable, local-only playback cursor. The 1-based position of the step the
+  /// player is currently showing, or null when the session is terminal or has
+  /// no active step. Never synchronized: it is excluded from wire payloads.
+  final int? currentStepPosition;
+
+  /// Active elapsed seconds credited to [currentStepPosition] so far. Capped at
+  /// that step's target duration; null when there is no active step. Local-only
+  /// and never counted toward `actual_duration_seconds` until the step is
+  /// terminalized, so it never inflates completion progress.
+  final int? currentStepActiveSeconds;
+
+  /// Instant the playback cursor was last advanced, i.e. the latest credited
+  /// activity on the active step. Drives the 24-hour inactivity expiry and is
+  /// null when there is no active step.
+  final DateTime? currentStepUpdatedAt;
   const LocalRoutineSession({
     required this.syncState,
     required this.localUpdatedAt,
@@ -10881,6 +10971,9 @@ class LocalRoutineSession extends DataClass
     required this.stepsSkipped,
     required this.completionPolicyVersion,
     required this.source,
+    this.currentStepPosition,
+    this.currentStepActiveSeconds,
+    this.currentStepUpdatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -10923,6 +11016,17 @@ class LocalRoutineSession extends DataClass
       completionPolicyVersion,
     );
     map['source'] = Variable<String>(source);
+    if (!nullToAbsent || currentStepPosition != null) {
+      map['current_step_position'] = Variable<int>(currentStepPosition);
+    }
+    if (!nullToAbsent || currentStepActiveSeconds != null) {
+      map['current_step_active_seconds'] = Variable<int>(
+        currentStepActiveSeconds,
+      );
+    }
+    if (!nullToAbsent || currentStepUpdatedAt != null) {
+      map['current_step_updated_at'] = Variable<DateTime>(currentStepUpdatedAt);
+    }
     return map;
   }
 
@@ -10956,6 +11060,15 @@ class LocalRoutineSession extends DataClass
       stepsSkipped: Value(stepsSkipped),
       completionPolicyVersion: Value(completionPolicyVersion),
       source: Value(source),
+      currentStepPosition: currentStepPosition == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentStepPosition),
+      currentStepActiveSeconds: currentStepActiveSeconds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentStepActiveSeconds),
+      currentStepUpdatedAt: currentStepUpdatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentStepUpdatedAt),
     );
   }
 
@@ -10994,6 +11107,15 @@ class LocalRoutineSession extends DataClass
         json['completionPolicyVersion'],
       ),
       source: serializer.fromJson<String>(json['source']),
+      currentStepPosition: serializer.fromJson<int?>(
+        json['currentStepPosition'],
+      ),
+      currentStepActiveSeconds: serializer.fromJson<int?>(
+        json['currentStepActiveSeconds'],
+      ),
+      currentStepUpdatedAt: serializer.fromJson<DateTime?>(
+        json['currentStepUpdatedAt'],
+      ),
     );
   }
   @override
@@ -11028,6 +11150,13 @@ class LocalRoutineSession extends DataClass
         completionPolicyVersion,
       ),
       'source': serializer.toJson<String>(source),
+      'currentStepPosition': serializer.toJson<int?>(currentStepPosition),
+      'currentStepActiveSeconds': serializer.toJson<int?>(
+        currentStepActiveSeconds,
+      ),
+      'currentStepUpdatedAt': serializer.toJson<DateTime?>(
+        currentStepUpdatedAt,
+      ),
     };
   }
 
@@ -11052,6 +11181,9 @@ class LocalRoutineSession extends DataClass
     int? stepsSkipped,
     String? completionPolicyVersion,
     String? source,
+    Value<int?> currentStepPosition = const Value.absent(),
+    Value<int?> currentStepActiveSeconds = const Value.absent(),
+    Value<DateTime?> currentStepUpdatedAt = const Value.absent(),
   }) => LocalRoutineSession(
     syncState: syncState ?? this.syncState,
     localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
@@ -11080,6 +11212,15 @@ class LocalRoutineSession extends DataClass
     completionPolicyVersion:
         completionPolicyVersion ?? this.completionPolicyVersion,
     source: source ?? this.source,
+    currentStepPosition: currentStepPosition.present
+        ? currentStepPosition.value
+        : this.currentStepPosition,
+    currentStepActiveSeconds: currentStepActiveSeconds.present
+        ? currentStepActiveSeconds.value
+        : this.currentStepActiveSeconds,
+    currentStepUpdatedAt: currentStepUpdatedAt.present
+        ? currentStepUpdatedAt.value
+        : this.currentStepUpdatedAt,
   );
   LocalRoutineSession copyWithCompanion(LocalRoutineSessionsCompanion data) {
     return LocalRoutineSession(
@@ -11129,6 +11270,15 @@ class LocalRoutineSession extends DataClass
           ? data.completionPolicyVersion.value
           : this.completionPolicyVersion,
       source: data.source.present ? data.source.value : this.source,
+      currentStepPosition: data.currentStepPosition.present
+          ? data.currentStepPosition.value
+          : this.currentStepPosition,
+      currentStepActiveSeconds: data.currentStepActiveSeconds.present
+          ? data.currentStepActiveSeconds.value
+          : this.currentStepActiveSeconds,
+      currentStepUpdatedAt: data.currentStepUpdatedAt.present
+          ? data.currentStepUpdatedAt.value
+          : this.currentStepUpdatedAt,
     );
   }
 
@@ -11154,13 +11304,16 @@ class LocalRoutineSession extends DataClass
           ..write('stepsPartial: $stepsPartial, ')
           ..write('stepsSkipped: $stepsSkipped, ')
           ..write('completionPolicyVersion: $completionPolicyVersion, ')
-          ..write('source: $source')
+          ..write('source: $source, ')
+          ..write('currentStepPosition: $currentStepPosition, ')
+          ..write('currentStepActiveSeconds: $currentStepActiveSeconds, ')
+          ..write('currentStepUpdatedAt: $currentStepUpdatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     syncState,
     localUpdatedAt,
     serverUpdatedAt,
@@ -11181,7 +11334,10 @@ class LocalRoutineSession extends DataClass
     stepsSkipped,
     completionPolicyVersion,
     source,
-  );
+    currentStepPosition,
+    currentStepActiveSeconds,
+    currentStepUpdatedAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -11205,7 +11361,10 @@ class LocalRoutineSession extends DataClass
           other.stepsPartial == this.stepsPartial &&
           other.stepsSkipped == this.stepsSkipped &&
           other.completionPolicyVersion == this.completionPolicyVersion &&
-          other.source == this.source);
+          other.source == this.source &&
+          other.currentStepPosition == this.currentStepPosition &&
+          other.currentStepActiveSeconds == this.currentStepActiveSeconds &&
+          other.currentStepUpdatedAt == this.currentStepUpdatedAt);
 }
 
 class LocalRoutineSessionsCompanion
@@ -11230,6 +11389,9 @@ class LocalRoutineSessionsCompanion
   final Value<int> stepsSkipped;
   final Value<String> completionPolicyVersion;
   final Value<String> source;
+  final Value<int?> currentStepPosition;
+  final Value<int?> currentStepActiveSeconds;
+  final Value<DateTime?> currentStepUpdatedAt;
   final Value<int> rowid;
   const LocalRoutineSessionsCompanion({
     this.syncState = const Value.absent(),
@@ -11252,6 +11414,9 @@ class LocalRoutineSessionsCompanion
     this.stepsSkipped = const Value.absent(),
     this.completionPolicyVersion = const Value.absent(),
     this.source = const Value.absent(),
+    this.currentStepPosition = const Value.absent(),
+    this.currentStepActiveSeconds = const Value.absent(),
+    this.currentStepUpdatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalRoutineSessionsCompanion.insert({
@@ -11275,6 +11440,9 @@ class LocalRoutineSessionsCompanion
     this.stepsSkipped = const Value.absent(),
     required String completionPolicyVersion,
     required String source,
+    this.currentStepPosition = const Value.absent(),
+    this.currentStepActiveSeconds = const Value.absent(),
+    this.currentStepUpdatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : localUpdatedAt = Value(localUpdatedAt),
        id = Value(id),
@@ -11309,6 +11477,9 @@ class LocalRoutineSessionsCompanion
     Expression<int>? stepsSkipped,
     Expression<String>? completionPolicyVersion,
     Expression<String>? source,
+    Expression<int>? currentStepPosition,
+    Expression<int>? currentStepActiveSeconds,
+    Expression<DateTime>? currentStepUpdatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -11335,6 +11506,12 @@ class LocalRoutineSessionsCompanion
       if (completionPolicyVersion != null)
         'completion_policy_version': completionPolicyVersion,
       if (source != null) 'source': source,
+      if (currentStepPosition != null)
+        'current_step_position': currentStepPosition,
+      if (currentStepActiveSeconds != null)
+        'current_step_active_seconds': currentStepActiveSeconds,
+      if (currentStepUpdatedAt != null)
+        'current_step_updated_at': currentStepUpdatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -11360,6 +11537,9 @@ class LocalRoutineSessionsCompanion
     Value<int>? stepsSkipped,
     Value<String>? completionPolicyVersion,
     Value<String>? source,
+    Value<int?>? currentStepPosition,
+    Value<int?>? currentStepActiveSeconds,
+    Value<DateTime?>? currentStepUpdatedAt,
     Value<int>? rowid,
   }) {
     return LocalRoutineSessionsCompanion(
@@ -11386,6 +11566,10 @@ class LocalRoutineSessionsCompanion
       completionPolicyVersion:
           completionPolicyVersion ?? this.completionPolicyVersion,
       source: source ?? this.source,
+      currentStepPosition: currentStepPosition ?? this.currentStepPosition,
+      currentStepActiveSeconds:
+          currentStepActiveSeconds ?? this.currentStepActiveSeconds,
+      currentStepUpdatedAt: currentStepUpdatedAt ?? this.currentStepUpdatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -11465,6 +11649,19 @@ class LocalRoutineSessionsCompanion
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
+    if (currentStepPosition.present) {
+      map['current_step_position'] = Variable<int>(currentStepPosition.value);
+    }
+    if (currentStepActiveSeconds.present) {
+      map['current_step_active_seconds'] = Variable<int>(
+        currentStepActiveSeconds.value,
+      );
+    }
+    if (currentStepUpdatedAt.present) {
+      map['current_step_updated_at'] = Variable<DateTime>(
+        currentStepUpdatedAt.value,
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -11494,6 +11691,9 @@ class LocalRoutineSessionsCompanion
           ..write('stepsSkipped: $stepsSkipped, ')
           ..write('completionPolicyVersion: $completionPolicyVersion, ')
           ..write('source: $source, ')
+          ..write('currentStepPosition: $currentStepPosition, ')
+          ..write('currentStepActiveSeconds: $currentStepActiveSeconds, ')
+          ..write('currentStepUpdatedAt: $currentStepUpdatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -26696,6 +26896,9 @@ typedef $$LocalRoutineSessionsTableCreateCompanionBuilder =
       Value<int> stepsSkipped,
       required String completionPolicyVersion,
       required String source,
+      Value<int?> currentStepPosition,
+      Value<int?> currentStepActiveSeconds,
+      Value<DateTime?> currentStepUpdatedAt,
       Value<int> rowid,
     });
 typedef $$LocalRoutineSessionsTableUpdateCompanionBuilder =
@@ -26720,6 +26923,9 @@ typedef $$LocalRoutineSessionsTableUpdateCompanionBuilder =
       Value<int> stepsSkipped,
       Value<String> completionPolicyVersion,
       Value<String> source,
+      Value<int?> currentStepPosition,
+      Value<int?> currentStepActiveSeconds,
+      Value<DateTime?> currentStepUpdatedAt,
       Value<int> rowid,
     });
 
@@ -26939,6 +27145,21 @@ class $$LocalRoutineSessionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get currentStepPosition => $composableBuilder(
+    column: $table.currentStepPosition,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get currentStepActiveSeconds => $composableBuilder(
+    column: $table.currentStepActiveSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get currentStepUpdatedAt => $composableBuilder(
+    column: $table.currentStepUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LocalProfilesTableFilterComposer get userId {
     final $$LocalProfilesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -27153,6 +27374,21 @@ class $$LocalRoutineSessionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get currentStepPosition => $composableBuilder(
+    column: $table.currentStepPosition,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get currentStepActiveSeconds => $composableBuilder(
+    column: $table.currentStepActiveSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get currentStepUpdatedAt => $composableBuilder(
+    column: $table.currentStepUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$LocalProfilesTableOrderingComposer get userId {
     final $$LocalProfilesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -27308,6 +27544,21 @@ class $$LocalRoutineSessionsTableAnnotationComposer
 
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<int> get currentStepPosition => $composableBuilder(
+    column: $table.currentStepPosition,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get currentStepActiveSeconds => $composableBuilder(
+    column: $table.currentStepActiveSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get currentStepUpdatedAt => $composableBuilder(
+    column: $table.currentStepUpdatedAt,
+    builder: (column) => column,
+  );
 
   $$LocalProfilesTableAnnotationComposer get userId {
     final $$LocalProfilesTableAnnotationComposer composer = $composerBuilder(
@@ -27494,6 +27745,9 @@ class $$LocalRoutineSessionsTableTableManager
                 Value<int> stepsSkipped = const Value.absent(),
                 Value<String> completionPolicyVersion = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<int?> currentStepPosition = const Value.absent(),
+                Value<int?> currentStepActiveSeconds = const Value.absent(),
+                Value<DateTime?> currentStepUpdatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalRoutineSessionsCompanion(
                 syncState: syncState,
@@ -27516,6 +27770,9 @@ class $$LocalRoutineSessionsTableTableManager
                 stepsSkipped: stepsSkipped,
                 completionPolicyVersion: completionPolicyVersion,
                 source: source,
+                currentStepPosition: currentStepPosition,
+                currentStepActiveSeconds: currentStepActiveSeconds,
+                currentStepUpdatedAt: currentStepUpdatedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -27540,6 +27797,9 @@ class $$LocalRoutineSessionsTableTableManager
                 Value<int> stepsSkipped = const Value.absent(),
                 required String completionPolicyVersion,
                 required String source,
+                Value<int?> currentStepPosition = const Value.absent(),
+                Value<int?> currentStepActiveSeconds = const Value.absent(),
+                Value<DateTime?> currentStepUpdatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalRoutineSessionsCompanion.insert(
                 syncState: syncState,
@@ -27562,6 +27822,9 @@ class $$LocalRoutineSessionsTableTableManager
                 stepsSkipped: stepsSkipped,
                 completionPolicyVersion: completionPolicyVersion,
                 source: source,
+                currentStepPosition: currentStepPosition,
+                currentStepActiveSeconds: currentStepActiveSeconds,
+                currentStepUpdatedAt: currentStepUpdatedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

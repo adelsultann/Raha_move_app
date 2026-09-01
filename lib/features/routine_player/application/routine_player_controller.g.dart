@@ -11,9 +11,11 @@ part of 'routine_player_controller.dart';
 /// The deterministic state machine for one focused routine playback session.
 ///
 /// It owns the in-memory [RoutinePlaybackSession] and mutates it on each tick
-/// and user action. Durable persistence, restore, and completion-policy
-/// evaluation are out of scope (RAHA-052); this controller only keeps the
-/// session model correct in memory.
+/// and user action. Durable persistence is delegated to
+/// [RoutineSessionRepository]: starts and step transitions are committed
+/// atomically with their outbox operation, while per-tick cursor advances are
+/// local-only. Restore re-enters the player paused and never re-emits
+/// `routine_started`.
 
 @ProviderFor(RoutinePlayerController)
 final routinePlayerControllerProvider = RoutinePlayerControllerFamily._();
@@ -21,17 +23,21 @@ final routinePlayerControllerProvider = RoutinePlayerControllerFamily._();
 /// The deterministic state machine for one focused routine playback session.
 ///
 /// It owns the in-memory [RoutinePlaybackSession] and mutates it on each tick
-/// and user action. Durable persistence, restore, and completion-policy
-/// evaluation are out of scope (RAHA-052); this controller only keeps the
-/// session model correct in memory.
+/// and user action. Durable persistence is delegated to
+/// [RoutineSessionRepository]: starts and step transitions are committed
+/// atomically with their outbox operation, while per-tick cursor advances are
+/// local-only. Restore re-enters the player paused and never re-emits
+/// `routine_started`.
 final class RoutinePlayerControllerProvider
     extends $NotifierProvider<RoutinePlayerController, RoutinePlayerState> {
   /// The deterministic state machine for one focused routine playback session.
   ///
   /// It owns the in-memory [RoutinePlaybackSession] and mutates it on each tick
-  /// and user action. Durable persistence, restore, and completion-policy
-  /// evaluation are out of scope (RAHA-052); this controller only keeps the
-  /// session model correct in memory.
+  /// and user action. Durable persistence is delegated to
+  /// [RoutineSessionRepository]: starts and step transitions are committed
+  /// atomically with their outbox operation, while per-tick cursor advances are
+  /// local-only. Restore re-enters the player paused and never re-emits
+  /// `routine_started`.
   RoutinePlayerControllerProvider._({
     required RoutinePlayerControllerFamily super.from,
     required RoutinePlayerArgs super.argument,
@@ -78,14 +84,16 @@ final class RoutinePlayerControllerProvider
 }
 
 String _$routinePlayerControllerHash() =>
-    r'a9f66ed62e4d9d2ce92916ae1b6ec6e77cde571d';
+    r'38cf9ae9f7c4e6bef444b3a8466e8d0a40a56d54';
 
 /// The deterministic state machine for one focused routine playback session.
 ///
 /// It owns the in-memory [RoutinePlaybackSession] and mutates it on each tick
-/// and user action. Durable persistence, restore, and completion-policy
-/// evaluation are out of scope (RAHA-052); this controller only keeps the
-/// session model correct in memory.
+/// and user action. Durable persistence is delegated to
+/// [RoutineSessionRepository]: starts and step transitions are committed
+/// atomically with their outbox operation, while per-tick cursor advances are
+/// local-only. Restore re-enters the player paused and never re-emits
+/// `routine_started`.
 
 final class RoutinePlayerControllerFamily extends $Family
     with
@@ -108,9 +116,11 @@ final class RoutinePlayerControllerFamily extends $Family
   /// The deterministic state machine for one focused routine playback session.
   ///
   /// It owns the in-memory [RoutinePlaybackSession] and mutates it on each tick
-  /// and user action. Durable persistence, restore, and completion-policy
-  /// evaluation are out of scope (RAHA-052); this controller only keeps the
-  /// session model correct in memory.
+  /// and user action. Durable persistence is delegated to
+  /// [RoutineSessionRepository]: starts and step transitions are committed
+  /// atomically with their outbox operation, while per-tick cursor advances are
+  /// local-only. Restore re-enters the player paused and never re-emits
+  /// `routine_started`.
 
   RoutinePlayerControllerProvider call(RoutinePlayerArgs args) =>
       RoutinePlayerControllerProvider._(argument: args, from: this);
@@ -122,9 +132,11 @@ final class RoutinePlayerControllerFamily extends $Family
 /// The deterministic state machine for one focused routine playback session.
 ///
 /// It owns the in-memory [RoutinePlaybackSession] and mutates it on each tick
-/// and user action. Durable persistence, restore, and completion-policy
-/// evaluation are out of scope (RAHA-052); this controller only keeps the
-/// session model correct in memory.
+/// and user action. Durable persistence is delegated to
+/// [RoutineSessionRepository]: starts and step transitions are committed
+/// atomically with their outbox operation, while per-tick cursor advances are
+/// local-only. Restore re-enters the player paused and never re-emits
+/// `routine_started`.
 
 abstract class _$RoutinePlayerController extends $Notifier<RoutinePlayerState> {
   late final _$args = ref.$arg as RoutinePlayerArgs;

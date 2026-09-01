@@ -760,6 +760,556 @@ void main() {
       expect(await repository.dueOutbox(), hasLength(3));
     },
   );
+
+  test(
+    'creates, updates, and restores the playback cursor without terminalizing',
+    () async {
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: () => now,
+      );
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'cursor-session'),
+        steps: [_sessionStep('pending', 0, now, sessionId: 'cursor-session')],
+        currentStepPosition: 1,
+        currentStepActiveSeconds: 0,
+      );
+
+      await repository.savePlaybackCursor(
+        sessionId: 'cursor-session',
+        currentStepPosition: 1,
+        activeSeconds: 30,
+      );
+
+      // A fresh repository simulates an app restart: the cursor restores the
+      // active step and its elapsed seconds without a live player instance.
+      final restarted = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: () => now,
+      );
+      final resumable = await restarted.resumableSession();
+      expect(resumable, isNotNull);
+      expect(resumable!.id, 'cursor-session');
+      expect(resumable.status, 'in_progress');
+      expect(resumable.currentStepPosition, 1);
+      expect(resumable.currentStepActiveSeconds, 30);
+
+      final step = await (database.select(
+        database.localSessionSteps,
+      )..where((row) => row.sessionId.equals('cursor-session'))).getSingle();
+      expect(step.status, 'pending'); // active step is not terminalized
+      expect(step.activeDurationSeconds, 0);
+
+      // Cursor ticks are local-only: the in-progress session keeps exactly its
+      // start + one pending step operation; no extra sync rows are enqueued.
+      expect(await repository.dueOutbox(), hasLength(2));
+    },
+  );
+
+  test(
+    'abandons a non-qualifying terminal session and clears its cursor',
+    () async {
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: () => now,
+      );
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'abandon-cursor'),
+        steps: [_sessionStep('pending', 0, now, sessionId: 'abandon-cursor')],
+        currentStepPosition: 1,
+        currentStepActiveSeconds: 30,
+      );
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'abandon-cursor'),
+        steps: [_sessionStep('partial', 30, now, sessionId: 'abandon-cursor')],
+      );
+      final row = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('abandon-cursor'))).getSingle();
+      expect(row.status, 'abandoned');
+      expect(row.currentStepPosition, isNull);
+      expect(row.currentStepActiveSeconds, isNull);
+      expect(row.currentStepUpdatedAt, isNull);
+    },
+  );
+
+  test(
+    'completes a qualifying session, clears cursor, stays idempotent',
+    () async {
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: () => now,
+      );
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'complete-cursor'),
+        steps: [_sessionStep('pending', 0, now, sessionId: 'complete-cursor')],
+        currentStepPosition: 1,
+        currentStepActiveSeconds: 59,
+      );
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'complete-cursor'),
+        steps: [
+          _sessionStep('completed', 60, now, sessionId: 'complete-cursor'),
+        ],
+      );
+      final row = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('complete-cursor'))).getSingle();
+      expect(row.status, 'completed');
+      expect(row.currentStepPosition, isNull);
+
+      // Idempotent retry of the exact terminal state does not duplicate or regress.
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'complete-cursor'),
+        steps: [
+          _sessionStep('completed', 60, now, sessionId: 'complete-cursor'),
+        ],
+      );
+      expect(
+        (await (database.select(
+          database.localRoutineSessions,
+        )..where((r) => r.id.equals('complete-cursor'))).getSingle()).status,
+        'completed',
+      );
+      expect(
+        await repository.dueOutbox(),
+        hasLength(3),
+      ); // start + step + finalize
+    },
+  );
+
+  test(
+    'explicit abandon overrides the completion threshold and never awards',
+    () async {
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: () => now,
+      );
+      // A full-credit step would otherwise complete; explicit abandon forces
+      // `abandoned` so completion is never derived or awarded.
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'explicit-abandon-full'),
+        steps: [
+          _sessionStep(
+            'completed',
+            60,
+            now,
+            sessionId: 'explicit-abandon-full',
+          ),
+        ],
+        explicitlyAbandoned: true,
+      );
+      final row = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('explicit-abandon-full'))).getSingle();
+      expect(row.status, 'abandoned');
+      expect(row.completedAt, isNotNull); // terminal, but abandoned
+      expect(row.currentStepPosition, isNull);
+
+      // The terminal session still finalizes, but only as an abandoned one.
+      final outbox = await repository.dueOutbox();
+      final finalize = outbox.where((o) => o.kind == 'session_finalize');
+      expect(finalize, hasLength(1));
+      expect(jsonDecode(finalize.single.payloadJson), {
+        'session_id': 'explicit-abandon-full',
+        'completion_policy_version': 'mvp_v1',
+      });
+    },
+  );
+
+  test(
+    'explicit abandon forces terminal with a pending step and stays idempotent',
+    () async {
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: () => now,
+      );
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'abandon-mid'),
+        steps: [_sessionStep('pending', 0, now, sessionId: 'abandon-mid')],
+        explicitlyAbandoned: true,
+      );
+      final row = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('abandon-mid'))).getSingle();
+      expect(row.status, 'abandoned');
+      expect(row.currentStepPosition, isNull);
+
+      // Abandonment does not retroactively terminalize the pending step.
+      final step = await (database.select(
+        database.localSessionSteps,
+      )..where((r) => r.sessionId.equals('abandon-mid'))).getSingle();
+      expect(step.status, 'pending');
+
+      // Idempotent retry of the same explicit abandon is a no-op.
+      await repository.saveSessionWithSteps(
+        session: _session(now, id: 'abandon-mid'),
+        steps: [_sessionStep('pending', 0, now, sessionId: 'abandon-mid')],
+        explicitlyAbandoned: true,
+      );
+      expect(
+        await repository.dueOutbox(),
+        hasLength(3),
+      ); // start + step + finalize, single set
+    },
+  );
+
+  test('an abandoned session cannot complete and a completed session cannot be re-abandoned', () async {
+    final repository = LocalUserDataRepository(
+      database,
+      activeUserId: 'user-1',
+      clock: () => now,
+    );
+    await repository.saveSessionWithSteps(
+      session: _session(now, id: 'abandon-then-complete'),
+      steps: [
+        _sessionStep('completed', 60, now, sessionId: 'abandon-then-complete'),
+      ],
+      explicitlyAbandoned: true,
+    );
+    await expectLater(
+      repository.saveSessionWithSteps(
+        session: _session(now, id: 'abandon-then-complete'),
+        steps: [
+          _sessionStep(
+            'completed',
+            60,
+            now,
+            sessionId: 'abandon-then-complete',
+          ),
+        ],
+      ),
+      throwsStateError,
+    );
+
+    await repository.saveSessionWithSteps(
+      session: _session(now, id: 'complete-then-abandon'),
+      steps: [
+        _sessionStep('completed', 60, now, sessionId: 'complete-then-abandon'),
+      ],
+    );
+    await expectLater(
+      repository.saveSessionWithSteps(
+        session: _session(now, id: 'complete-then-abandon'),
+        steps: [
+          _sessionStep(
+            'completed',
+            60,
+            now,
+            sessionId: 'complete-then-abandon',
+          ),
+        ],
+        explicitlyAbandoned: true,
+      ),
+      throwsStateError,
+    );
+  });
+
+  test(
+    'session expiry respects the playback cursor activity timestamp',
+    () async {
+      final clock = _MutableClock(now);
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: clock.call,
+      );
+
+      await database
+          .into(database.localRoutineSessions)
+          .insert(
+            _session(
+              now.subtract(const Duration(hours: 2)),
+              id: 'cursor-alive',
+            ).copyWith(
+              currentStepPosition: const Value(1),
+              currentStepActiveSeconds: const Value(30),
+              currentStepUpdatedAt: Value(
+                now.subtract(const Duration(minutes: 5)),
+              ),
+            ),
+          );
+      await database
+          .into(database.localSessionSteps)
+          .insert(
+            _sessionStep(
+              'pending',
+              0,
+              now.subtract(const Duration(hours: 2)),
+              sessionId: 'cursor-alive',
+            ),
+          );
+
+      await database
+          .into(database.localRoutineSessions)
+          .insert(
+            _session(
+              now.subtract(const Duration(hours: 30)),
+              id: 'cursor-stale',
+            ).copyWith(
+              currentStepPosition: const Value(1),
+              currentStepActiveSeconds: const Value(30),
+              currentStepUpdatedAt: Value(
+                now.subtract(const Duration(hours: 25)),
+              ),
+            ),
+          );
+      await database
+          .into(database.localSessionSteps)
+          .insert(
+            _sessionStep(
+              'pending',
+              0,
+              now.subtract(const Duration(hours: 30)),
+              sessionId: 'cursor-stale',
+            ),
+          );
+
+      await repository.expireInactiveSessions();
+
+      final alive = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('cursor-alive'))).getSingle();
+      expect(alive.status, 'in_progress');
+
+      final stale = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('cursor-stale'))).getSingle();
+      expect(stale.status, 'abandoned');
+      expect(stale.currentStepPosition, isNull);
+      expect(stale.currentStepActiveSeconds, isNull);
+      expect(stale.currentStepUpdatedAt, isNull);
+    },
+  );
+
+  test(
+    'expiring before resumption abandons a stale session and clears its cursor',
+    () async {
+      final clock = _MutableClock(now);
+      final repository = LocalUserDataRepository(
+        database,
+        activeUserId: 'user-1',
+        clock: clock.call,
+      );
+
+      // A stale in-progress session still carrying a live playback cursor.
+      await database
+          .into(database.localRoutineSessions)
+          .insert(
+            _session(
+              now.subtract(const Duration(hours: 30)),
+              id: 'stale-resume',
+            ).copyWith(
+              currentStepPosition: const Value(1),
+              currentStepActiveSeconds: const Value(30),
+              currentStepUpdatedAt: Value(
+                now.subtract(const Duration(hours: 25)),
+              ),
+            ),
+          );
+      await database
+          .into(database.localSessionSteps)
+          .insert(
+            _sessionStep(
+              'pending',
+              0,
+              now.subtract(const Duration(hours: 30)),
+              sessionId: 'stale-resume',
+            ),
+          );
+
+      // RAHA-052: run 24h expiration before resumption.
+      await repository.expireInactiveSessions();
+
+      final row = await (database.select(
+        database.localRoutineSessions,
+      )..where((r) => r.id.equals('stale-resume'))).getSingle();
+      expect(row.status, 'abandoned');
+      expect(row.currentStepPosition, isNull);
+      expect(row.currentStepActiveSeconds, isNull);
+      expect(row.currentStepUpdatedAt, isNull);
+
+      // No resumable session remains for the player to restore.
+      expect(await repository.resumableSession(), isNull);
+    },
+  );
+
+  test('expireLocalData preserves unfinished check-in retention', () async {
+    final repository = LocalUserDataRepository(
+      database,
+      activeUserId: 'user-1',
+      clock: () => now,
+    );
+    await database
+        .into(database.localCheckIns)
+        .insert(
+          LocalCheckInsCompanion.insert(
+            id: 'stale-check-in',
+            userId: 'user-1',
+            bodyState: 'stiff',
+            goalKey: 'ease_stiffness',
+            availableMinutes: 5,
+            startedAt: now.subtract(const Duration(hours: 30)),
+            localUpdatedAt: now,
+          ),
+        );
+    await database
+        .into(database.localCheckIns)
+        .insert(
+          LocalCheckInsCompanion.insert(
+            id: 'fresh-check-in',
+            userId: 'user-1',
+            bodyState: 'tired',
+            goalKey: 'ease_stiffness',
+            availableMinutes: 5,
+            startedAt: now,
+            localUpdatedAt: now,
+          ),
+        );
+
+    await repository.expireLocalData();
+
+    expect(
+      await (database.select(
+        database.localCheckIns,
+      )..where((r) => r.id.equals('stale-check-in'))).getSingleOrNull(),
+      isNull,
+    );
+    expect(
+      await (database.select(
+        database.localCheckIns,
+      )..where((r) => r.id.equals('fresh-check-in'))).getSingleOrNull(),
+      isNotNull,
+    );
+  });
+
+  test('rejects invalid playback cursor writes', () async {
+    final repository = LocalUserDataRepository(
+      database,
+      activeUserId: 'user-1',
+      clock: () => now,
+    );
+    await repository.saveSessionWithSteps(
+      session: _session(now, id: 'cursor-validate'),
+      steps: [_sessionStep('pending', 0, now, sessionId: 'cursor-validate')],
+      currentStepPosition: 1,
+      currentStepActiveSeconds: 0,
+    );
+
+    await expectLater(
+      repository.saveSessionWithSteps(
+        session: _session(now, id: 'cursor-validate-2'),
+        steps: [
+          _sessionStep('pending', 0, now, sessionId: 'cursor-validate-2'),
+        ],
+        currentStepPosition: 1,
+      ),
+      throwsArgumentError,
+    );
+    await expectLater(
+      repository.savePlaybackCursor(
+        sessionId: 'cursor-validate',
+        currentStepPosition: 1,
+        activeSeconds: 61,
+      ),
+      throwsArgumentError,
+    );
+    await expectLater(
+      repository.savePlaybackCursor(
+        sessionId: 'cursor-validate',
+        currentStepPosition: 1,
+        activeSeconds: -1,
+      ),
+      throwsArgumentError,
+    );
+    await expectLater(
+      repository.savePlaybackCursor(
+        sessionId: 'cursor-validate',
+        currentStepPosition: 2,
+        activeSeconds: 0,
+      ),
+      throwsArgumentError,
+    );
+  });
+
+  test('rejects a playback cursor pointing at a terminalized step', () async {
+    await _seedFiveStepRoutine(database, now);
+    final repository = LocalUserDataRepository(
+      database,
+      activeUserId: 'user-1',
+      clock: () => now,
+    );
+    await expectLater(
+      repository.saveSessionWithSteps(
+        session: _session(
+          now,
+          id: 'cursor-terminalized',
+          routineId: 'routine-5',
+          target: 100,
+          totalSteps: 5,
+        ),
+        steps: [
+          _sessionStep(
+            'completed',
+            20,
+            now,
+            id: 'routine-5-step-1',
+            sessionId: 'cursor-terminalized',
+            position: 1,
+            target: 20,
+          ),
+          for (var i = 2; i <= 5; i++)
+            _sessionStep(
+              'pending',
+              0,
+              now,
+              id: 'routine-5-step-$i',
+              sessionId: 'cursor-terminalized',
+              position: i,
+              target: 20,
+            ),
+        ],
+        currentStepPosition:
+            1, // points at completed step 1, but step 2 pending
+        currentStepActiveSeconds: 0,
+      ),
+      throwsArgumentError,
+    );
+  });
+
+  test('migrates v9 sessions to v10 with a null playback cursor', () async {
+    final migrated = AppDatabase(_v9SessionFixtureExecutor(now));
+
+    final session = await (migrated.select(
+      migrated.localRoutineSessions,
+    )..where((row) => row.id.equals('v9-session'))).getSingle();
+    expect(session.status, 'in_progress');
+    expect(session.actualDurationSeconds, 0);
+    expect(session.currentStepPosition, isNull);
+    expect(session.currentStepActiveSeconds, isNull);
+    expect(session.currentStepUpdatedAt, isNull);
+
+    final columns = await migrated
+        .customSelect("PRAGMA table_info('local_routine_sessions')")
+        .get();
+    final names = columns.map((row) => row.data['name']);
+    expect(
+      names,
+      containsAll([
+        'current_step_position',
+        'current_step_active_seconds',
+        'current_step_updated_at',
+      ]),
+    );
+
+    await migrated.close();
+  });
 }
 
 Future<void> _seedCatalog(AppDatabase database, DateTime now) async {
@@ -1082,6 +1632,39 @@ NativeDatabase _v2FixtureExecutor(DateTime now) => NativeDatabase.memory(
       "INSERT INTO sync_outbox (entity_type, entity_id, owner_user_id, operation, payload_json, next_attempt_at, created_at) VALUES ('routine_session', 'v2-session', 'user-1', 'upsert', '{\"v\":1,\"id\":\"v2-session\"}', $millis, $millis)",
     );
     raw.execute('PRAGMA user_version = 2');
+  },
+);
+
+NativeDatabase _v9SessionFixtureExecutor(DateTime now) => NativeDatabase.memory(
+  setup: (raw) {
+    final millis = now.millisecondsSinceEpoch;
+    // `beforeOpen` creates a partial index on local_media_assets, so the
+    // fixture must provide the table even though v10 does not change it.
+    raw.execute(
+      'CREATE TABLE local_media_assets ('
+      'id TEXT NOT NULL PRIMARY KEY, exercise_id TEXT NOT NULL, '
+      'media_type TEXT NOT NULL, delivery_reference TEXT NOT NULL, '
+      'mime_type TEXT NOT NULL, checksum_sha256 TEXT NOT NULL, '
+      'status TEXT NOT NULL, is_preferred INTEGER NOT NULL DEFAULT 0, '
+      'width INTEGER NULL, height INTEGER NULL, duration_ms INTEGER NULL, '
+      'updated_at INTEGER NOT NULL)',
+    );
+    raw.execute(
+      'CREATE TABLE local_routine_sessions ('
+      'id TEXT NOT NULL PRIMARY KEY, user_id TEXT NOT NULL, routine_id TEXT NOT NULL, '
+      'routine_version INTEGER NOT NULL, recommendation_id TEXT NULL, status TEXT NOT NULL, '
+      'started_at INTEGER NOT NULL, completed_at INTEGER NULL, '
+      'target_duration_seconds INTEGER NOT NULL, actual_duration_seconds INTEGER NOT NULL, '
+      'total_steps INTEGER NOT NULL, steps_completed INTEGER NOT NULL DEFAULT 0, '
+      'steps_partial INTEGER NOT NULL DEFAULT 0, steps_skipped INTEGER NOT NULL DEFAULT 0, '
+      'completion_policy_version TEXT NOT NULL, source TEXT NOT NULL, '
+      'sync_state TEXT NOT NULL, local_updated_at INTEGER NOT NULL, '
+      'server_updated_at INTEGER NULL, last_sync_error TEXT NULL)',
+    );
+    raw.execute(
+      "INSERT INTO local_routine_sessions VALUES ('v9-session', 'user-1', 'routine-1', 1, NULL, 'in_progress', $millis, NULL, 60, 0, 1, 0, 0, 0, 'mvp_v1', 'recommendation', 'pendingCreate', $millis, NULL, NULL)",
+    );
+    raw.execute('PRAGMA user_version = 9');
   },
 );
 

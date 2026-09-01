@@ -492,7 +492,8 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
       final status = payload['status'];
       if (status != 'completed' && status != 'abandoned') return;
       // The server's terminal decision is authoritative and never regresses to
-      // `in_progress`.
+      // `in_progress`. It also ends playback everywhere, so the local-only
+      // playback cursor must not outlive finalization.
       await (_database.update(
         _database.localRoutineSessions,
       )..where((r) => r.id.equals(id))).write(
@@ -503,6 +504,9 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
                 ? change.occurredAt.toUtc()
                 : (existing.completedAt ?? change.occurredAt.toUtc()),
           ),
+          currentStepPosition: const Value(null),
+          currentStepActiveSeconds: const Value(null),
+          currentStepUpdatedAt: const Value(null),
           syncState: const Value(SyncState.synced),
           serverUpdatedAt: Value<DateTime?>(change.occurredAt.toUtc()),
           lastSyncError: const Value<SyncDiagnosticCode?>(null),

@@ -389,6 +389,38 @@ void main() {
     },
   );
 
+  test('pull session finalize clears the local-only playback cursor', () async {
+    // An in-progress session carrying a live playback cursor.
+    await db
+        .into(db.localRoutineSessions)
+        .insert(
+          session('session-x', now).copyWith(
+            currentStepPosition: const Value(1),
+            currentStepActiveSeconds: const Value(30),
+            currentStepUpdatedAt: Value(now),
+          ),
+        );
+
+    await outbox.applyPullChanges([
+      SyncPullChange(
+        cursor: 2,
+        entityType: 'session',
+        entityId: 'session-x',
+        operation: 'finalize',
+        payloadJson: jsonEncode({'id': 'session-x', 'status': 'abandoned'}),
+        occurredAt: now,
+      ),
+    ]);
+
+    final row = await (db.select(
+      db.localRoutineSessions,
+    )..where((r) => r.id.equals('session-x'))).getSingle();
+    expect(row.status, 'abandoned');
+    expect(row.currentStepPosition, isNull);
+    expect(row.currentStepActiveSeconds, isNull);
+    expect(row.currentStepUpdatedAt, isNull);
+  });
+
   test(
     'pull reconciles a session step and maps its exercise snapshot',
     () async {

@@ -223,5 +223,17 @@
   "playerDefaultCue": "Move slowly and breathe comfortably.",
   "playerUnavailable": "We couldn't open this routine right now.",
   "playerRetry": "Try again",
+  "playerExitTitle": "End routine?",
+  "playerExitBody": "Your progress so far won't count as a completed routine.",
+  "playerExitKeepGoing": "Keep going",
+  "playerExitAbandon": "End routine",
+  "playerConflictTitle": "Unfinished routine",
+  "playerConflictBody": "You have a routine in progress. Resume it, or end it to start this new one.",
+  "playerConflictResume": "Resume routine",
+  "playerConflictAbandon": "End and start new",
+  "playerEndedTitle": "Routine ended",
+  "playerEndedBody": "You can try again whenever you're ready.",
+  "playerSaveErrorTitle": "Couldn't save progress",
+  "playerSaveErrorBody": "Your progress couldn't be saved. Try again to keep it.",
   "playerDemonstration": "Movement demonstration"
 }

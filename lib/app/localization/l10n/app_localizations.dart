@@ -1028,6 +1028,78 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get playerRetry;
 
+  /// No description provided for @playerExitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End routine?'**
+  String get playerExitTitle;
+
+  /// No description provided for @playerExitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress so far won\'t count as a completed routine.'**
+  String get playerExitBody;
+
+  /// No description provided for @playerExitKeepGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going'**
+  String get playerExitKeepGoing;
+
+  /// No description provided for @playerExitAbandon.
+  ///
+  /// In en, this message translates to:
+  /// **'End routine'**
+  String get playerExitAbandon;
+
+  /// No description provided for @playerConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfinished routine'**
+  String get playerConflictTitle;
+
+  /// No description provided for @playerConflictBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a routine in progress. Resume it, or end it to start this new one.'**
+  String get playerConflictBody;
+
+  /// No description provided for @playerConflictResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume routine'**
+  String get playerConflictResume;
+
+  /// No description provided for @playerConflictAbandon.
+  ///
+  /// In en, this message translates to:
+  /// **'End and start new'**
+  String get playerConflictAbandon;
+
+  /// No description provided for @playerEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Routine ended'**
+  String get playerEndedTitle;
+
+  /// No description provided for @playerEndedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can try again whenever you\'re ready.'**
+  String get playerEndedBody;
+
+  /// No description provided for @playerSaveErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save progress'**
+  String get playerSaveErrorTitle;
+
+  /// No description provided for @playerSaveErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress couldn\'t be saved. Try again to keep it.'**
+  String get playerSaveErrorBody;
+
   /// No description provided for @playerDemonstration.
   ///
   /// In en, this message translates to:

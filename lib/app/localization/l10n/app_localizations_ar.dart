@@ -521,5 +521,43 @@ class AppLocalizationsAr extends AppLocalizations {
   String get playerRetry => 'حاول مجددًا';
 
   @override
+  String get playerExitTitle => 'إنهاء الروتين؟';
+
+  @override
+  String get playerExitBody => 'لن يُحتسب تقدمك حتى الآن كروتين مكتمل.';
+
+  @override
+  String get playerExitKeepGoing => 'متابعة';
+
+  @override
+  String get playerExitAbandon => 'إنهاء الروتين';
+
+  @override
+  String get playerConflictTitle => 'روتين غير مكتمل';
+
+  @override
+  String get playerConflictBody =>
+      'لديك روتين قيد التقدم. تابعه، أو أنهِه لبدء هذا الروتين الجديد.';
+
+  @override
+  String get playerConflictResume => 'متابعة الروتين';
+
+  @override
+  String get playerConflictAbandon => 'إنهاء وبدء جديد';
+
+  @override
+  String get playerEndedTitle => 'انتهى الروتين';
+
+  @override
+  String get playerEndedBody => 'يمكنك المحاولة مجددًا متى ما كنت مستعدًا.';
+
+  @override
+  String get playerSaveErrorTitle => 'تعذّر حفظ التقدّم';
+
+  @override
+  String get playerSaveErrorBody =>
+      'تعذّر حفظ تقدّمك. حاول مجددًا للاحتفاظ به.';
+
+  @override
   String get playerDemonstration => 'عرض الحركة';
 }

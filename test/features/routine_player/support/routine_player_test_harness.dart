@@ -15,6 +15,7 @@ import 'package:raha_move/features/routine_player/domain/playback_session.dart';
 import 'package:raha_move/features/routine_player/domain/playback_support.dart';
 import 'package:raha_move/features/routine_player/domain/playback_ticker.dart';
 import 'package:raha_move/features/routine_player/domain/routine_playback_loader.dart';
+import 'package:raha_move/features/routine_player/domain/routine_session_repository.dart';
 
 import '../../onboarding/support/onboarding_test_harness.dart'
     show FakeAuthRepository, FakeGuestIdentityStore, FakeOnboardingRepository;
@@ -118,6 +119,141 @@ final class FakeTransitionFeedback implements TransitionFeedback {
   }
 }
 
+/// A captured [RoutineSessionRepository.save] call, for asserting persistence.
+final class SessionSaveCall {
+  const SessionSaveCall({
+    required this.userId,
+    required this.sessionId,
+    required this.routineId,
+    required this.routineVersion,
+    this.recommendationId,
+    required this.startedAt,
+    required this.steps,
+    this.currentStepPosition,
+    this.currentStepActiveSeconds,
+    required this.explicitlyAbandoned,
+  });
+
+  final String userId;
+  final String sessionId;
+  final String routineId;
+  final int routineVersion;
+  final String? recommendationId;
+  final DateTime startedAt;
+  final List<RoutineStepSnapshot> steps;
+  final int? currentStepPosition;
+  final int? currentStepActiveSeconds;
+  final bool explicitlyAbandoned;
+}
+
+/// A captured [RoutineSessionRepository.saveCursor] call.
+final class CursorSaveCall {
+  const CursorSaveCall({
+    required this.sessionId,
+    required this.position,
+    required this.seconds,
+  });
+
+  final String sessionId;
+  final int position;
+  final int seconds;
+}
+
+/// In-memory [RoutineSessionRepository] that records writes and returns
+/// configured snapshots for resume/restore. Keeps controller tests free of
+/// Drift.
+final class FakeRoutineSessionRepository implements RoutineSessionRepository {
+  final List<SessionSaveCall> saves = [];
+  final List<CursorSaveCall> cursors = [];
+  RoutineSessionSnapshot? resumableResult;
+  RoutineSessionSnapshot? findByIdResult;
+  String? lastUserId;
+
+  /// Records method invocation order so tests can assert expiration precedes
+  /// any resumable/restore lookup.
+  final List<String> callLog = [];
+
+  /// When true, [save] throws, simulating an authoritative write failure.
+  bool failSave = false;
+
+  /// When true, [saveCursor] throws, simulating a local-only cursor failure.
+  bool failCursor = false;
+
+  int expireCalls = 0;
+
+  @override
+  Future<void> save({
+    required String userId,
+    required String sessionId,
+    required String routineId,
+    required int routineVersion,
+    String? recommendationId,
+    required DateTime startedAt,
+    required List<RoutineStepSnapshot> steps,
+    int? currentStepPosition,
+    int? currentStepActiveSeconds,
+    bool explicitlyAbandoned = false,
+  }) async {
+    callLog.add('save');
+    lastUserId = userId;
+    if (failSave) throw StateError('save failed');
+    saves.add(
+      SessionSaveCall(
+        userId: userId,
+        sessionId: sessionId,
+        routineId: routineId,
+        routineVersion: routineVersion,
+        recommendationId: recommendationId,
+        startedAt: startedAt,
+        steps: steps,
+        currentStepPosition: currentStepPosition,
+        currentStepActiveSeconds: currentStepActiveSeconds,
+        explicitlyAbandoned: explicitlyAbandoned,
+      ),
+    );
+  }
+
+  @override
+  Future<void> saveCursor({
+    required String userId,
+    required String sessionId,
+    required int currentStepPosition,
+    required int activeSeconds,
+  }) async {
+    callLog.add('saveCursor');
+    lastUserId = userId;
+    if (failCursor) throw StateError('cursor failed');
+    cursors.add(
+      CursorSaveCall(
+        sessionId: sessionId,
+        position: currentStepPosition,
+        seconds: activeSeconds,
+      ),
+    );
+  }
+
+  @override
+  Future<RoutineSessionSnapshot?> resumable({required String userId}) async {
+    callLog.add('resumable');
+    return resumableResult;
+  }
+
+  @override
+  Future<RoutineSessionSnapshot?> findById({
+    required String userId,
+    required String sessionId,
+  }) async {
+    callLog.add('findById');
+    return findByIdResult;
+  }
+
+  @override
+  Future<void> expireInactiveSessions({required String userId}) async {
+    callLog.add('expire');
+    expireCalls++;
+  }
+}
+
 /// Builds a container wired with the fakes the player controller needs: an
 /// Builds a container wired with the fakes the player controller needs: offline
 /// auth, a locale-aware loader, deterministic ticker/wake-lock/feedback fakes,
@@ -130,7 +266,9 @@ ProviderContainer buildRoutinePlayerContainer({
   FakeScreenWakeLock? wakeLock,
   FakeTransitionFeedback? feedback,
   InMemoryAnalyticsService? analytics,
+  FakeRoutineSessionRepository? repository,
   AppLanguage language = AppLanguage.en,
+  DateTime Function()? clock,
 }) {
   return ProviderContainer(
     overrides: [
@@ -156,6 +294,12 @@ ProviderContainer buildRoutinePlayerContainer({
         analytics ?? InMemoryAnalyticsService(enabled: true),
       ),
       routineMediaPlaybackCoordinatorProvider.overrideWith((ref) async => null),
+      routineSessionRepositoryProvider.overrideWithValue(
+        repository ?? FakeRoutineSessionRepository(),
+      ),
+      routinePlayerClockProvider.overrideWithValue(
+        clock ?? () => DateTime.utc(2026, 8, 29, 12),
+      ),
     ],
   );
 }

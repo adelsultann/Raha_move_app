@@ -117,17 +117,23 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
   const RoutinePlayerRoute({
     required this.routineId,
     @TypedQueryParameter(name: 'recommendationId') this.recommendationId,
+    @TypedQueryParameter(name: 'sessionId') this.sessionId,
   });
 
   final String routineId;
 
   final String? recommendationId;
 
+  /// Stable identifier used to restore a previously started session. A null
+  /// [sessionId] starts a new session.
+  final String? sessionId;
+
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return RoutinePlayerScreen(
       routineId: routineId,
       recommendationId: recommendationId,
+      sessionId: sessionId,
     );
   }
 }

@@ -111,6 +111,7 @@ mixin $RoutinePlayerRoute on GoRouteData {
       RoutinePlayerRoute(
         routineId: state.pathParameters['routineId']!,
         recommendationId: state.uri.queryParameters['recommendationId'],
+        sessionId: state.uri.queryParameters['sessionId'],
       );
 
   RoutinePlayerRoute get _self => this as RoutinePlayerRoute;
@@ -121,6 +122,7 @@ mixin $RoutinePlayerRoute on GoRouteData {
     queryParams: {
       if (_self.recommendationId != null)
         'recommendationId': _self.recommendationId,
+      if (_self.sessionId != null) 'sessionId': _self.sessionId,
     },
   );
 

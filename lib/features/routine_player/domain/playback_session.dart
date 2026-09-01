@@ -2,9 +2,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'playback_session.freezed.dart';
 
-/// Coarse lifecycle of an in-memory playback session (RAHA-051). Durable
-/// persistence, restore, and completion-policy evaluation belong to RAHA-052.
-enum PlaybackStatus { playing, paused, completed }
+/// Coarse lifecycle of an in-memory playback session. `completed` is reached
+/// only when the RAHA-001 completion policy qualifies; `abandoned` is the
+/// non-qualifying terminal state (including an explicit abandonment).
+enum PlaybackStatus { playing, paused, completed, abandoned }
 
 /// Terminal/per-step state mirroring the RAHA-001 step-state rules.
 enum StepPlaybackState { pending, completed, partial, skipped }
@@ -67,9 +68,21 @@ abstract class RoutinePlaybackSession with _$RoutinePlaybackSession {
   int get totalCreditedSeconds =>
       steps.fold(0, (total, step) => total + step.creditedSeconds);
 
+  /// Scheduled target duration across all steps (used by the completion rule).
+  int get totalDurationSeconds =>
+      steps.fold(0, (total, step) => total + step.durationSeconds);
+
+  /// The number of steps terminalized as `skipped` (zero credited).
+  int get stepsSkipped =>
+      steps.where((step) => step.state == StepPlaybackState.skipped).length;
+
   RoutineStepPlayback get currentStep => steps[currentStepIndex];
 
   bool get isLastStep => currentStepIndex == steps.length - 1;
 
   bool get isCompleted => status == PlaybackStatus.completed;
+
+  bool get isAbandoned => status == PlaybackStatus.abandoned;
+
+  bool get isTerminal => isCompleted || isAbandoned;
 }

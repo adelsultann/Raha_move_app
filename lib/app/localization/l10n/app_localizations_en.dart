@@ -528,5 +528,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerRetry => 'Try again';
 
   @override
+  String get playerExitTitle => 'End routine?';
+
+  @override
+  String get playerExitBody =>
+      'Your progress so far won\'t count as a completed routine.';
+
+  @override
+  String get playerExitKeepGoing => 'Keep going';
+
+  @override
+  String get playerExitAbandon => 'End routine';
+
+  @override
+  String get playerConflictTitle => 'Unfinished routine';
+
+  @override
+  String get playerConflictBody =>
+      'You have a routine in progress. Resume it, or end it to start this new one.';
+
+  @override
+  String get playerConflictResume => 'Resume routine';
+
+  @override
+  String get playerConflictAbandon => 'End and start new';
+
+  @override
+  String get playerEndedTitle => 'Routine ended';
+
+  @override
+  String get playerEndedBody => 'You can try again whenever you\'re ready.';
+
+  @override
+  String get playerSaveErrorTitle => 'Couldn\'t save progress';
+
+  @override
+  String get playerSaveErrorBody =>
+      'Your progress couldn\'t be saved. Try again to keep it.';
+
+  @override
   String get playerDemonstration => 'Movement demonstration';
 }

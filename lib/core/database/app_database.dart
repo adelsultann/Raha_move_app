@@ -441,6 +441,22 @@ class LocalRoutineSessions extends Table with SyncColumns {
   TextColumn get completionPolicyVersion => text()();
   TextColumn get source => text()();
 
+  /// Durable, local-only playback cursor. The 1-based position of the step the
+  /// player is currently showing, or null when the session is terminal or has
+  /// no active step. Never synchronized: it is excluded from wire payloads.
+  IntColumn get currentStepPosition => integer().nullable()();
+
+  /// Active elapsed seconds credited to [currentStepPosition] so far. Capped at
+  /// that step's target duration; null when there is no active step. Local-only
+  /// and never counted toward `actual_duration_seconds` until the step is
+  /// terminalized, so it never inflates completion progress.
+  IntColumn get currentStepActiveSeconds => integer().nullable()();
+
+  /// Instant the playback cursor was last advanced, i.e. the latest credited
+  /// activity on the active step. Drives the 24-hour inactivity expiry and is
+  /// null when there is no active step.
+  DateTimeColumn get currentStepUpdatedAt => dateTime().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -453,6 +469,8 @@ class LocalRoutineSessions extends Table with SyncColumns {
     "CHECK ((status = 'in_progress' AND completed_at IS NULL) OR "
         "(status != 'in_progress' AND completed_at IS NOT NULL AND completed_at >= started_at))",
     'CHECK (steps_completed >= 0 AND steps_partial >= 0 AND steps_skipped >= 0)',
+    'CHECK (current_step_position IS NULL OR current_step_position > 0)',
+    'CHECK (current_step_active_seconds IS NULL OR current_step_active_seconds >= 0)',
   ];
 }
 
@@ -616,7 +634,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -630,6 +648,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 7) await _migrateToV7(m);
       if (from < 8) await _migrateToV8(m);
       if (from < 9) await _migrateToV9(m);
+      if (from < 10) await _migrateToV10(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -686,6 +705,11 @@ class AppDatabase extends _$AppDatabase {
       'total_steps = (SELECT COUNT(*) FROM local_routine_steps WHERE local_routine_steps.routine_id = local_routine_sessions.routine_id) '
       'WHERE total_steps <= 0',
     );
+    // The table reconciliation below rebuilds `local_routine_sessions` against
+    // the current table definition. Legacy v2 tables lack the nullable
+    // playback-cursor columns introduced in v10, so add them first or the
+    // rebuild's copy would reference columns that do not exist yet.
+    await _addPlaybackCursorColumns();
     await m.alterTable(TableMigration(localRoutineSessions));
     await _createV3Indexes();
   }
@@ -858,6 +882,41 @@ class AppDatabase extends _$AppDatabase {
     if (!columns.contains('score_components_json')) {
       await customStatement(
         "ALTER TABLE local_recommendations ADD COLUMN score_components_json TEXT NOT NULL DEFAULT '{}'",
+      );
+    }
+  }
+
+  /// v10 adds the durable local-only playback cursor to
+  /// `local_routine_sessions` (RAHA-052): the active step position, its capped
+  /// active seconds, and the last time that cursor advanced. These are nullable
+  /// so existing sessions migrate with no active step, and they are excluded
+  /// from wire payloads. Guarded against a missing table (partial legacy
+  /// fixtures) and columns already present (fresh installs created by
+  /// [MigrationStrategy.onCreate]).
+  Future<void> _migrateToV10(Migrator m) async {
+    if (!await _tableExists('local_routine_sessions')) return;
+    await _addPlaybackCursorColumns();
+  }
+
+  /// Adds the nullable playback-cursor columns to `local_routine_sessions`
+  /// without touching existing rows. Shared by the v10 forward migration and by
+  /// the v3 table-reconciliation step (which rebuilds the table against the
+  /// current definition and therefore must see these columns before copying).
+  Future<void> _addPlaybackCursorColumns() async {
+    final columns = await _tableColumnNames('local_routine_sessions');
+    if (!columns.contains('current_step_position')) {
+      await customStatement(
+        'ALTER TABLE local_routine_sessions ADD COLUMN current_step_position INTEGER NULL',
+      );
+    }
+    if (!columns.contains('current_step_active_seconds')) {
+      await customStatement(
+        'ALTER TABLE local_routine_sessions ADD COLUMN current_step_active_seconds INTEGER NULL',
+      );
+    }
+    if (!columns.contains('current_step_updated_at')) {
+      await customStatement(
+        'ALTER TABLE local_routine_sessions ADD COLUMN current_step_updated_at INTEGER NULL',
       );
     }
   }
@@ -1350,9 +1409,20 @@ class LocalUserDataRepository {
     await _enqueueBuilt('saved_routine', savedRoutine.routineId.value);
   });
 
+  /// Atomically persists a routine session row, its step snapshots, and its
+  /// outbox operation. When [explicitlyAbandoned] is true the session becomes
+  /// terminal with status `abandoned` regardless of the RAHA-001 completion
+  /// threshold (and regardless of any still-`pending` steps), so an explicit
+  /// abandonment can never award completion progress. When false (the default),
+  /// the normal terminal completion policy is unchanged: a terminal session is
+  /// `completed` only when it meets the credited-duration and skipped-step
+  /// thresholds, otherwise it is `abandoned`.
   Future<void> saveSessionWithSteps({
     required LocalRoutineSessionsCompanion session,
     required Iterable<LocalSessionStepsCompanion> steps,
+    int? currentStepPosition,
+    int? currentStepActiveSeconds,
+    bool explicitlyAbandoned = false,
   }) => _database.transaction(() async {
     _requireOwner(session.userId.value);
     final old = await (_database.select(
@@ -1421,13 +1491,29 @@ class LocalUserDataRepository {
         stepList.length != session.totalSteps.value) {
       throw ArgumentError('Invalid session aggregates');
     }
-    final terminal = stepList.every((step) => step.status.value != 'pending');
-    final isCompleted =
+    final allStepsTerminal = stepList.every(
+      (step) => step.status.value != 'pending',
+    );
+    // RAHA-001: a session becomes terminal through explicit abandonment OR
+    // completion evaluation. Explicit abandonment always terminalizes as
+    // `abandoned` (never `completed`) regardless of the threshold, so an
+    // explicit abandonment can never award completion progress.
+    final terminal = explicitlyAbandoned || allStepsTerminal;
+    final meetsThreshold =
         actual * 100 >= session.targetDurationSeconds.value * 80 &&
         skipped <= session.totalSteps.value ~/ 5;
-    final status = terminal
-        ? (isCompleted ? 'completed' : 'abandoned')
-        : 'in_progress';
+    final status = !terminal
+        ? 'in_progress'
+        : (explicitlyAbandoned || !meetsThreshold ? 'abandoned' : 'completed');
+    // Resolve (and validate) the durable playback cursor before the
+    // terminal-immutability guard: a terminal session clears the cursor while
+    // an in-progress session keeps it on a still-pending step.
+    final cursor = _resolveCursor(
+      stepList,
+      terminal: terminal,
+      currentStepPosition: currentStepPosition,
+      currentStepActiveSeconds: currentStepActiveSeconds,
+    );
     if (old != null && old.status != 'in_progress') {
       final persistedSteps = await (_database.select(
         _database.localSessionSteps,
@@ -1470,6 +1556,9 @@ class LocalUserDataRepository {
       stepsPartial: Value(partial),
       stepsSkipped: Value(skipped),
       completedAt: terminal ? Value(now) : const Value(null),
+      currentStepPosition: Value(cursor.position),
+      currentStepActiveSeconds: Value(cursor.activeSeconds),
+      currentStepUpdatedAt: Value(cursor.position == null ? null : now),
       syncState: Value(
         old == null ? SyncState.pendingCreate : SyncState.pendingUpdate,
       ),
@@ -1499,6 +1588,74 @@ class LocalUserDataRepository {
     );
     await _enqueueBuilt('routine_session', session.id.value);
   });
+
+  /// Advances the durable local-only playback cursor for an in-progress
+  /// session: which step is currently playing and how many active seconds it
+  /// has accrued. This does not terminalize the active step, does not
+  /// re-evaluate completion, and does not enqueue a sync operation (the cursor
+  /// is never synchronized). The active step must still be `pending`.
+  Future<void> savePlaybackCursor({
+    required String sessionId,
+    required int currentStepPosition,
+    required int activeSeconds,
+  }) => _database.transaction(() async {
+    final session = await (_database.select(
+      _database.localRoutineSessions,
+    )..where((r) => r.id.equals(sessionId))).getSingleOrNull();
+    if (session == null) {
+      throw StateError('Session not found');
+    }
+    if (session.userId != activeUserId) {
+      throw StateError('Cross-account session cursor');
+    }
+    if (session.status != 'in_progress') {
+      throw StateError('Terminal session has no playback cursor');
+    }
+    if (currentStepPosition < 1 || currentStepPosition > session.totalSteps) {
+      throw ArgumentError('Playback cursor position out of range');
+    }
+    final step =
+        await (_database.select(_database.localSessionSteps)..where(
+              (r) =>
+                  r.sessionId.equals(sessionId) &
+                  r.positionSnapshot.equals(currentStepPosition),
+            ))
+            .getSingleOrNull();
+    if (step == null) {
+      throw StateError('Playback cursor step not found');
+    }
+    if (step.status != 'pending') {
+      throw ArgumentError('Active step must remain pending while playing');
+    }
+    if (activeSeconds < 0 || activeSeconds > step.targetDurationSeconds) {
+      throw ArgumentError('Playback cursor seconds must be within [0, target]');
+    }
+    final now = _now();
+    await (_database.update(
+      _database.localRoutineSessions,
+    )..where((r) => r.id.equals(sessionId))).write(
+      LocalRoutineSessionsCompanion(
+        currentStepPosition: Value(currentStepPosition),
+        currentStepActiveSeconds: Value(activeSeconds),
+        currentStepUpdatedAt: Value(now),
+        localUpdatedAt: Value(now),
+      ),
+    );
+  });
+
+  /// The most recently active in-progress session for the active user, if any.
+  /// The returned row carries the durable playback cursor
+  /// (`currentStepPosition` and `currentStepActiveSeconds`) so the player can
+  /// resume without re-terminalizing the active step.
+  Future<LocalRoutineSession?> resumableSession() {
+    final query = _database.select(_database.localRoutineSessions)
+      ..where(
+        (r) => r.userId.equals(activeUserId) & r.status.equals('in_progress'),
+      )
+      ..orderBy([(r) => OrderingTerm.desc(r.localUpdatedAt)])
+      ..limit(1);
+    return query.getSingleOrNull();
+  }
 
   Future<void> savePreferences({
     required LocalUserPreferencesCompanion preferences,
@@ -1697,6 +1854,11 @@ class LocalUserDataRepository {
     await _database.delete(_database.localMediaCacheEntries).go();
   });
 
+  /// Retention cleanup for unfinished check-ins (RAHA-001): deletes check-ins
+  /// that were never completed more than 24 hours ago, together with their
+  /// body-area rows and outbox operations. This is preserved independently of
+  /// session inactivity; stale `in_progress` sessions are abandoned by
+  /// [expireInactiveSessions] instead.
   Future<void> expireLocalData() => _database.transaction(() async {
     final cutoff = _now().subtract(const Duration(hours: 24));
     final expired =
@@ -1724,7 +1886,15 @@ class LocalUserDataRepository {
     }
   });
 
-  /// Idempotently abandons sessions with no credited activity for 24 hours.
+  /// RAHA-052 pre-resume cleanup. Idempotently abandons `in_progress` sessions
+  /// whose latest credited activity (a finished/started step or an active
+  /// playback-cursor tick) is older than 24 hours, clearing their local-only
+  /// playback cursor so a stale session is never surfaced for resumption.
+  ///
+  /// The routine-player layer invokes this before reading a resumable session:
+  /// it resolves the active user id, constructs a [LocalUserDataRepository]
+  /// bound to that user with an injected UTC clock, and awaits this method;
+  /// [resumableSession] then returns only still-valid in-progress sessions.
   Future<void> expireInactiveSessions() => _database.transaction(() async {
     final cutoff = _now().subtract(const Duration(hours: 24));
     final sessions =
@@ -1738,15 +1908,24 @@ class LocalUserDataRepository {
       final steps = await (_database.select(
         _database.localSessionSteps,
       )..where((r) => r.sessionId.equals(session.id))).get();
-      final creditedActivity = steps
-          .where((step) => step.activeDurationSeconds > 0)
-          .map(
-            (step) => step.finishedAt ?? step.startedAt ?? session.startedAt,
-          );
-      final activity = creditedActivity.fold<DateTime>(
-        session.startedAt,
-        (latest, timestamp) => timestamp.isAfter(latest) ? timestamp : latest,
-      );
+      var activity = session.startedAt;
+      for (final step in steps) {
+        if (step.activeDurationSeconds > 0) {
+          final timestamp =
+              step.finishedAt ?? step.startedAt ?? session.startedAt;
+          if (timestamp.isAfter(activity)) activity = timestamp;
+        }
+      }
+      // The active step's in-progress seconds live on the cursor, not on the
+      // step row, so its last tick also counts as credited activity.
+      final cursorSeconds = session.currentStepActiveSeconds;
+      final cursorUpdatedAt = session.currentStepUpdatedAt;
+      if (cursorSeconds != null &&
+          cursorSeconds > 0 &&
+          cursorUpdatedAt != null &&
+          cursorUpdatedAt.isAfter(activity)) {
+        activity = cursorUpdatedAt;
+      }
       if (!activity.isAfter(cutoff)) {
         final now = _now();
         await (_database.update(
@@ -1755,6 +1934,9 @@ class LocalUserDataRepository {
           LocalRoutineSessionsCompanion(
             status: const Value('abandoned'),
             completedAt: Value(now),
+            currentStepPosition: const Value(null),
+            currentStepActiveSeconds: const Value(null),
+            currentStepUpdatedAt: const Value(null),
             syncState: const Value(SyncState.pendingUpdate),
             localUpdatedAt: Value(now),
             lastSyncError: const Value(null),
@@ -1766,6 +1948,44 @@ class LocalUserDataRepository {
   });
 
   DateTime _now() => _clock().toUtc();
+
+  /// Validates and normalizes the durable playback cursor supplied to
+  /// [saveSessionWithSteps]. Returns the step position and its (non-negative,
+  /// step-target-capped) active seconds to persist, or nulls when there is no
+  /// active step. A terminal session always clears the cursor; an in-progress
+  /// session may carry a cursor only on a still-`pending` step.
+  ({int? position, int? activeSeconds}) _resolveCursor(
+    List<LocalSessionStepsCompanion> stepList, {
+    required bool terminal,
+    required int? currentStepPosition,
+    required int? currentStepActiveSeconds,
+  }) {
+    if (terminal) {
+      // A terminal session has no active step; any supplied cursor is ignored.
+      return (position: null, activeSeconds: null);
+    }
+    if ((currentStepPosition == null) != (currentStepActiveSeconds == null)) {
+      throw ArgumentError('Playback cursor requires position and seconds');
+    }
+    if (currentStepPosition == null) {
+      return (position: null, activeSeconds: null);
+    }
+    if (currentStepPosition < 1 || currentStepPosition > stepList.length) {
+      throw ArgumentError('Playback cursor position out of range');
+    }
+    final active = stepList.firstWhere(
+      (step) => step.positionSnapshot.value == currentStepPosition,
+      orElse: () => throw ArgumentError('Playback cursor step not found'),
+    );
+    if (active.status.value != 'pending') {
+      throw ArgumentError('Active step must remain pending while playing');
+    }
+    final seconds = currentStepActiveSeconds!;
+    if (seconds < 0 || seconds > active.targetDurationSeconds.value) {
+      throw ArgumentError('Playback cursor seconds must be within [0, target]');
+    }
+    return (position: currentStepPosition, activeSeconds: seconds);
+  }
 
   /// Preserves credited playback: a Skip after playback began is a partial
   /// step, never a zero-credit skipped step.
