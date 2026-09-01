@@ -1,7 +1,7 @@
 ---
 description: Builds Raha Move's Flutter UI, state, navigation, localization, offline flows, and routine player
 mode: subagent
-model: deepseek/deepseek-v4-pro
+model: openai/gpt-5.6-terra
 permission: allow
 ---
 
