@@ -715,6 +715,8 @@ included in a beta or production build, or treated as production content. See
 **Owner:** Product + Backend + Mobile Engineering  
 **Dependencies:** RAHA-001, RAHA-025, RAHA-052
 
+**Approved policy:** [RAHA-070 points and weekly goals policy](decisions/raha-070-points-and-weekly-goals.md).
+
 **Acceptance criteria**
 
 - A versioned rule awards points only for behavior approved by product, such as a qualifying routine completion.

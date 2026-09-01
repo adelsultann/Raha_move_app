@@ -468,11 +468,12 @@ Use an append-only ledger rather than a mutable total.
 | `user_id` | `uuid` FK | Recipient |
 | `points` | `integer` | Positive award or explicit correction |
 | `reason_code` | `text` | Routine completion, milestone, correction |
+| `rule_version` | `text` | Immutable policy version that produced the award |
 | `source_type` | `text` | Session, achievement, challenge, admin |
 | `source_id` | `uuid` nullable | Idempotency source |
 | `created_at` | `timestamptz` | Award time |
 
-Add a unique constraint on `(user_id, reason_code, source_type, source_id)` where `source_id` is not null. This prevents retrying a completed session from awarding points twice.
+Add a unique constraint on `(user_id, reason_code, source_type, source_id)` where `source_id` is not null. This prevents retrying a completed session from awarding points twice. Point-award rules are server-owned and versioned; every ledger row stores the rule version that created it.
 
 ### `achievements`
 
