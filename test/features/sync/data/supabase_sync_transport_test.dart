@@ -107,6 +107,14 @@ void main() {
             'points': [
               {'id': 'p1', 'points': 5, 'created_at': '2026-08-30T10:00:00Z'},
             ],
+            'points_balance': 5,
+            'weekly_progress': {
+              'week_start': '2026-08-30T21:00:00+00:00',
+              'timezone': 'Asia/Riyadh',
+              'goal_days': 3,
+              'movement_days': 1,
+              'updated_at': '2026-08-30T10:00:00Z',
+            },
             'streak': null,
           },
         },
@@ -129,9 +137,16 @@ void main() {
 
       final accepted = response as SyncAccepted;
       expect(accepted.cursor, 42);
-      expect(accepted.projections, hasLength(1));
-      expect(accepted.projections.single.projectionType, 'points');
-      expect(accepted.projections.single.payloadJson, contains('"points":5'));
+      expect(accepted.projections, hasLength(2));
+      final points = accepted.projections.singleWhere(
+        (projection) => projection.projectionType == 'points',
+      );
+      final weekly = accepted.projections.singleWhere(
+        (projection) => projection.projectionType == 'weekly_progress',
+      );
+      expect(points.payloadJson, contains('"points_balance":5'));
+      expect(points.payloadJson, contains('"points":'));
+      expect(weekly.payloadJson, contains('"movement_days":1'));
     },
   );
 

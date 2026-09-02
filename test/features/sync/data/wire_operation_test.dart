@@ -92,6 +92,7 @@ void main() {
       expect(envelopes[2].payload, {
         'session_id': 'session-1',
         'completion_policy_version': 'raha_001_v1',
+        'completed_timezone': 'Asia/Riyadh',
       });
     },
   );

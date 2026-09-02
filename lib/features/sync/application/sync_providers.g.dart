@@ -311,3 +311,102 @@ final class UserDataSyncEngineFamily extends $Family
   @override
   String toString() => r'userDataSyncEngineProvider';
 }
+
+/// Privacy-safe post-sync delivery gate for authoritative point-ledger awards.
+/// It is deliberately bound to the active user and cannot write a ledger.
+
+@ProviderFor(pointsAwardAnalyticsGate)
+final pointsAwardAnalyticsGateProvider = PointsAwardAnalyticsGateFamily._();
+
+/// Privacy-safe post-sync delivery gate for authoritative point-ledger awards.
+/// It is deliberately bound to the active user and cannot write a ledger.
+
+final class PointsAwardAnalyticsGateProvider
+    extends
+        $FunctionalProvider<
+          PointsAwardAnalyticsGate,
+          PointsAwardAnalyticsGate,
+          PointsAwardAnalyticsGate
+        >
+    with $Provider<PointsAwardAnalyticsGate> {
+  /// Privacy-safe post-sync delivery gate for authoritative point-ledger awards.
+  /// It is deliberately bound to the active user and cannot write a ledger.
+  PointsAwardAnalyticsGateProvider._({
+    required PointsAwardAnalyticsGateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'pointsAwardAnalyticsGateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$pointsAwardAnalyticsGateHash();
+
+  @override
+  String toString() {
+    return r'pointsAwardAnalyticsGateProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<PointsAwardAnalyticsGate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  PointsAwardAnalyticsGate create(Ref ref) {
+    final argument = this.argument as String;
+    return pointsAwardAnalyticsGate(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PointsAwardAnalyticsGate value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PointsAwardAnalyticsGate>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PointsAwardAnalyticsGateProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$pointsAwardAnalyticsGateHash() =>
+    r'c08406db142068855f142f3d76ac59d2b8dfd60f';
+
+/// Privacy-safe post-sync delivery gate for authoritative point-ledger awards.
+/// It is deliberately bound to the active user and cannot write a ledger.
+
+final class PointsAwardAnalyticsGateFamily extends $Family
+    with $FunctionalFamilyOverride<PointsAwardAnalyticsGate, String> {
+  PointsAwardAnalyticsGateFamily._()
+    : super(
+        retry: null,
+        name: r'pointsAwardAnalyticsGateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Privacy-safe post-sync delivery gate for authoritative point-ledger awards.
+  /// It is deliberately bound to the active user and cannot write a ledger.
+
+  PointsAwardAnalyticsGateProvider call(String activeUserId) =>
+      PointsAwardAnalyticsGateProvider._(argument: activeUserId, from: this);
+
+  @override
+  String toString() => r'pointsAwardAnalyticsGateProvider';
+}

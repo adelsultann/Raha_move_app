@@ -618,4 +618,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackDone => 'Done';
+
+  @override
+  String gamificationWeeklyGoalProgress(int completed, int goal) {
+    return '$completed of $goal movement days this week';
+  }
+
+  @override
+  String gamificationPointsPending(int points) {
+    return '$points points pending confirmation';
+  }
+
+  @override
+  String gamificationPointsConfirmed(int points) {
+    return '$points movement points confirmed';
+  }
+
+  @override
+  String get gamificationProgressUnavailable =>
+      'Your progress will be ready when it can be refreshed.';
+
+  @override
+  String get gamificationSummarySemantics => 'Weekly movement goal and points';
 }

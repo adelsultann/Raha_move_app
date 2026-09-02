@@ -101,8 +101,25 @@ final class SupabaseSyncTransport implements SyncTransport {
   List<SyncProjection> _parseProjections(Object? raw) {
     if (raw is! Map) return const [];
     final projections = <SyncProjection>[];
+    // The trusted RPC emits an append-only `points` ledger array alongside the
+    // authoritative `points_balance`. Cache them together under one local
+    // projection so callers cannot mistake a client-derived total for a server
+    // balance.
+    if (raw['points'] != null || raw['points_balance'] != null) {
+      projections.add(
+        SyncProjection(
+          projectionType: 'points',
+          payloadJson: jsonEncode(<String, Object?>{
+            if (raw['points'] != null) 'points': raw['points'],
+            if (raw['points_balance'] != null)
+              'points_balance': raw['points_balance'],
+          }),
+          serverUpdatedAt: _latestTimestamp(raw['points']) ?? _clock().toUtc(),
+        ),
+      );
+    }
     for (final key in const [
-      'points',
+      'weekly_progress',
       'achievements',
       'streak',
       'entitlements',

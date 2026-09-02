@@ -613,4 +613,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get feedbackDone => 'تم';
+
+  @override
+  String gamificationWeeklyGoalProgress(int completed, int goal) {
+    return '$completed من $goal أيام حركة هذا الأسبوع';
+  }
+
+  @override
+  String gamificationPointsPending(int points) {
+    return '$points نقاط بانتظار التأكيد';
+  }
+
+  @override
+  String gamificationPointsConfirmed(int points) {
+    return 'تم تأكيد $points من نقاط الحركة';
+  }
+
+  @override
+  String get gamificationProgressUnavailable => 'سيظهر تقدّمك عند تحديثه.';
+
+  @override
+  String get gamificationSummarySemantics => 'هدف الحركة الأسبوعي والنقاط';
 }

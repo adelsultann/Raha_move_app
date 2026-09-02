@@ -1,6 +1,8 @@
 import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
 import 'package:raha_move/core/database/app_database.dart';
+import 'package:raha_move/core/telemetry/telemetry_providers.dart';
 import 'package:raha_move/features/authentication/application/auth_controller.dart';
+import 'package:raha_move/features/gamification/data/points_award_analytics_gate.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/drift_sync_outbox_repository.dart';
@@ -50,5 +52,19 @@ UserDataSyncEngine userDataSyncEngine(Ref ref, String activeUserId) {
       operationIdGenerator: generateUuidV4,
     ),
     transport: ref.watch(syncTransportProvider(activeUserId)),
+  );
+}
+
+/// Privacy-safe post-sync delivery gate for authoritative point-ledger awards.
+/// It is deliberately bound to the active user and cannot write a ledger.
+@riverpod
+PointsAwardAnalyticsGate pointsAwardAnalyticsGate(
+  Ref ref,
+  String activeUserId,
+) {
+  return PointsAwardAnalyticsGate(
+    database: ref.watch(appDatabaseProvider),
+    activeUserId: activeUserId,
+    analytics: ref.watch(analyticsServiceProvider),
   );
 }

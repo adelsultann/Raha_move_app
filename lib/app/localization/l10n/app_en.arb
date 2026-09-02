@@ -253,5 +253,26 @@
   "feedbackLessComfortableMessage": "Thanks for sharing that. Please stop for today and choose a comfortable option next time.",
   "feedbackSaveError": "We couldn't save your feedback. Please try again.",
   "feedbackRetry": "Try again",
-  "feedbackDone": "Done"
+  "feedbackDone": "Done",
+  "gamificationWeeklyGoalProgress": "{completed} of {goal} movement days this week",
+  "@gamificationWeeklyGoalProgress": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+  "gamificationPointsPending": "{points} points pending confirmation",
+  "@gamificationPointsPending": {
+    "placeholders": {
+      "points": { "type": "int" }
+    }
+  },
+  "gamificationPointsConfirmed": "{points} movement points confirmed",
+  "@gamificationPointsConfirmed": {
+    "placeholders": {
+      "points": { "type": "int" }
+    }
+  },
+  "gamificationProgressUnavailable": "Your progress will be ready when it can be refreshed.",
+  "gamificationSummarySemantics": "Weekly movement goal and points"
 }

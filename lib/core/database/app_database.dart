@@ -432,6 +432,11 @@ class LocalRoutineSessions extends Table with SyncColumns {
   TextColumn get status => text()();
   DateTimeColumn get startedAt => dateTime()();
   DateTimeColumn get completedAt => dateTime().nullable()();
+
+  /// IANA timezone captured when this session became terminal. This preserves
+  /// its movement-day boundary if the user later changes their profile timezone.
+  /// It is local progress metadata, not evidence for a server reward.
+  TextColumn get completedTimezone => text().nullable()();
   IntColumn get targetDurationSeconds => integer()();
   IntColumn get actualDurationSeconds => integer()();
   IntColumn get totalSteps => integer()();
@@ -537,6 +542,23 @@ class LocalProgressProjections extends Table {
   Set<Column<Object>> get primaryKey => {userId, projectionType};
 }
 
+/// Durable delivery receipts for privacy-safe analytics emitted from a
+/// server-authoritative point ledger. The ledger identifier is retained only
+/// locally for idempotency and is never included in the analytics payload.
+class LocalAnalyticsEmissionReceipts extends Table {
+  TextColumn get userId => text()();
+  TextColumn get eventName => text()();
+  TextColumn get authoritativeLedgerId => text()();
+  DateTimeColumn get emittedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {
+    userId,
+    eventName,
+    authoritativeLedgerId,
+  };
+}
+
 @TableIndex(
   name: 'sync_outbox_owner_due',
   columns: {#ownerUserId, #status, #nextAttemptAt},
@@ -625,6 +647,7 @@ class LocalSyncState extends Table {
     LocalSessionFeedback,
     LocalSavedRoutines,
     LocalProgressProjections,
+    LocalAnalyticsEmissionReceipts,
     LocalIdMappings,
     LocalSyncState,
     SyncOutbox,
@@ -634,7 +657,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -649,6 +672,8 @@ class AppDatabase extends _$AppDatabase {
       if (from < 8) await _migrateToV8(m);
       if (from < 9) await _migrateToV9(m);
       if (from < 10) await _migrateToV10(m);
+      if (from < 11) await _migrateToV11(m);
+      if (from < 12) await _migrateToV12(m);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -707,9 +732,11 @@ class AppDatabase extends _$AppDatabase {
     );
     // The table reconciliation below rebuilds `local_routine_sessions` against
     // the current table definition. Legacy v2 tables lack the nullable
-    // playback-cursor columns introduced in v10, so add them first or the
+    // playback-cursor columns introduced in v10 and completion-timezone column
+    // introduced in v11, so add them first or the
     // rebuild's copy would reference columns that do not exist yet.
     await _addPlaybackCursorColumns();
+    await _addCompletedTimezoneColumn();
     await m.alterTable(TableMigration(localRoutineSessions));
     await _createV3Indexes();
   }
@@ -896,6 +923,32 @@ class AppDatabase extends _$AppDatabase {
   Future<void> _migrateToV10(Migrator m) async {
     if (!await _tableExists('local_routine_sessions')) return;
     await _addPlaybackCursorColumns();
+  }
+
+  /// v11 preserves the IANA timezone active when a session becomes terminal so
+  /// RAHA-070 movement-day history does not shift after a timezone preference
+  /// change. Legacy sessions intentionally remain null and use the then-current
+  /// profile timezone only as a compatibility fallback in the projection reader.
+  Future<void> _migrateToV11(Migrator m) async {
+    if (!await _tableExists('local_routine_sessions')) return;
+    await _addCompletedTimezoneColumn();
+  }
+
+  /// v12 adds local-only analytics emission receipts. They make confirmed
+  /// ledger award tracking idempotent across repeated projections and restarts;
+  /// deleting the local database necessarily deletes these receipts too.
+  Future<void> _migrateToV12(Migrator m) async {
+    if (!await _tableExists('local_analytics_emission_receipts')) {
+      await m.createTable(localAnalyticsEmissionReceipts);
+    }
+  }
+
+  Future<void> _addCompletedTimezoneColumn() async {
+    final columns = await _tableColumnNames('local_routine_sessions');
+    if (columns.contains('completed_timezone')) return;
+    await customStatement(
+      'ALTER TABLE local_routine_sessions ADD COLUMN completed_timezone TEXT NULL',
+    );
   }
 
   /// Adds the nullable playback-cursor columns to `local_routine_sessions`
@@ -1246,6 +1299,12 @@ final class WireOperationBuilder {
           payload: <String, Object?>{
             'session_id': id,
             'completion_policy_version': row.completionPolicyVersion,
+            // Captured from the owned profile when this terminal session was
+            // persisted. The trusted backend validates this optional IANA value
+            // and remains solely responsible for the resulting movement day.
+            if (row.completedTimezone != null &&
+                row.completedTimezone!.isNotEmpty)
+              'completed_timezone': row.completedTimezone,
           },
         ),
       );
@@ -1549,6 +1608,13 @@ class LocalUserDataRepository {
       throw StateError('Terminal session cannot change');
     }
     final now = _now();
+    final profile =
+        await (_database.select(_database.localProfiles)
+              ..where((profile) => profile.userId.equals(activeUserId)))
+            .getSingleOrNull();
+    if (terminal && profile == null) {
+      throw StateError('Terminal session requires an owned profile timezone');
+    }
     final prepared = session.copyWith(
       status: Value(status),
       actualDurationSeconds: Value(actual),
@@ -1556,6 +1622,9 @@ class LocalUserDataRepository {
       stepsPartial: Value(partial),
       stepsSkipped: Value(skipped),
       completedAt: terminal ? Value(now) : const Value(null),
+      completedTimezone: terminal
+          ? Value(profile!.timezone)
+          : const Value<String?>.absent(),
       currentStepPosition: Value(cursor.position),
       currentStepActiveSeconds: Value(cursor.activeSeconds),
       currentStepUpdatedAt: Value(cursor.position == null ? null : now),
@@ -1844,6 +1913,9 @@ class LocalUserDataRepository {
     )..where((r) => r.userId.equals(activeUserId))).go();
     await (_database.delete(
       _database.localProgressProjections,
+    )..where((r) => r.userId.equals(activeUserId))).go();
+    await (_database.delete(
+      _database.localAnalyticsEmissionReceipts,
     )..where((r) => r.userId.equals(activeUserId))).go();
     await (_database.delete(
       _database.localSyncState,

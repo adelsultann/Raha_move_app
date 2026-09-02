@@ -1183,6 +1183,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get feedbackDone;
+
+  /// No description provided for @gamificationWeeklyGoalProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {goal} movement days this week'**
+  String gamificationWeeklyGoalProgress(int completed, int goal);
+
+  /// No description provided for @gamificationPointsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} points pending confirmation'**
+  String gamificationPointsPending(int points);
+
+  /// No description provided for @gamificationPointsConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} movement points confirmed'**
+  String gamificationPointsConfirmed(int points);
+
+  /// No description provided for @gamificationProgressUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress will be ready when it can be refreshed.'**
+  String get gamificationProgressUnavailable;
+
+  /// No description provided for @gamificationSummarySemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly movement goal and points'**
+  String get gamificationSummarySemantics;
 }
 
 class _AppLocalizationsDelegate

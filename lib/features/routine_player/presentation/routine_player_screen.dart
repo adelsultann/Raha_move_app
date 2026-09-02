@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
+import 'package:raha_move/features/gamification/presentation/completion_gamification_summary.dart';
 
 import '../application/routine_feedback_controller.dart';
 import '../application/routine_feedback_state.dart';
@@ -674,6 +675,10 @@ class _FeedbackAcknowledged extends StatelessWidget {
             ),
           ),
         ),
+        if (!lessComfortable) ...[
+          const SizedBox(height: 20),
+          const CompletionGamificationSummary(),
+        ],
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,

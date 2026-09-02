@@ -2,12 +2,16 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
+import 'package:raha_move/core/analytics/analytics_catalog.dart';
+import 'package:raha_move/core/analytics/analytics_service_impls.dart';
 import 'package:raha_move/core/database/app_database.dart';
+import 'package:raha_move/core/telemetry/telemetry_providers.dart';
 import 'package:raha_move/features/sync/application/sync_providers.dart';
 import 'package:raha_move/features/sync/application/user_data_sync_coordinator.dart';
 import 'package:raha_move/features/sync/data/drift_sync_outbox_repository.dart';
 import 'package:raha_move/features/sync/data/sync_rpc_gateway.dart';
 import 'package:raha_move/features/sync/domain/user_data_sync_engine.dart';
+import 'package:raha_move/features/sync/domain/sync_transport.dart';
 
 import '../support/sync_test_harness.dart';
 
@@ -53,6 +57,7 @@ void main() {
   ProviderContainer container({
     String? activeUserId,
     required FakeSyncRpcGateway gateway,
+    InMemoryAnalyticsService? analytics,
   }) {
     final container = ProviderContainer(
       overrides: [
@@ -60,6 +65,8 @@ void main() {
         appVersionProvider.overrideWithValue('1.0.0'),
         syncRpcGatewayProvider.overrideWithValue(gateway),
         activeUserIdProvider.overrideWithValue(activeUserId),
+        if (analytics != null)
+          analyticsServiceProvider.overrideWithValue(analytics),
         userDataSyncEngineProvider.overrideWith((ref, userId) {
           return UserDataSyncEngine(
             outbox: DriftSyncOutboxRepository(
@@ -157,4 +164,41 @@ void main() {
     expect(result, isNotNull);
     expect(await db.select(db.syncOutbox).get(), isEmpty);
   });
+
+  test(
+    'emits a consented event only after sync stores a points projection',
+    () async {
+      final analytics = InMemoryAnalyticsService(enabled: true);
+      transport = FakeSyncTransport(
+        onPull: (cursor) async => SyncPullSuccess(
+          changes: const [],
+          cursor: cursor + 1,
+          projections: [
+            SyncProjection(
+              projectionType: 'points',
+              payloadJson: '[{"id":"server-ledger-id","points":10,"rule_version":"points_completion_v1","source_type":"session","source_id":"private-session-id"}]',
+              serverUpdatedAt: now,
+            ),
+          ],
+        ),
+      );
+      final c = container(
+        activeUserId: 'user-1',
+        gateway: FakeSyncRpcGateway(currentUserId: 'user-1'),
+        analytics: analytics,
+      );
+
+      await c.read(activeUserSyncCoordinatorProvider.notifier).synchronizeNow();
+
+      expect(analytics.recordedEvents, hasLength(1));
+      expect(
+        analytics.recordedEvents.single.name,
+        AnalyticsEventName.pointsAwarded,
+      );
+      expect(
+        analytics.recordedEvents.single.properties.keys,
+        unorderedEquals(['rule_version', 'point_amount', 'source_type']),
+      );
+    },
+  );
 }

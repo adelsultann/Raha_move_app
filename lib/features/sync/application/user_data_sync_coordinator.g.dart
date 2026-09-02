@@ -66,7 +66,7 @@ final class ActiveUserSyncCoordinatorProvider
 }
 
 String _$activeUserSyncCoordinatorHash() =>
-    r'ee1ee286e60d234e5b9a6925d82dac9840491684';
+    r'72f2a3581a03d8840a35a7a8c276dc42a1792ac6';
 
 /// App-owned, active-user sync trigger.
 ///

@@ -10438,6 +10438,18 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _completedTimezoneMeta = const VerificationMeta(
+    'completedTimezone',
+  );
+  @override
+  late final GeneratedColumn<String> completedTimezone =
+      GeneratedColumn<String>(
+        'completed_timezone',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _targetDurationSecondsMeta =
       const VerificationMeta('targetDurationSeconds');
   @override
@@ -10571,6 +10583,7 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
     status,
     startedAt,
     completedAt,
+    completedTimezone,
     targetDurationSeconds,
     actualDurationSeconds,
     totalSteps,
@@ -10678,6 +10691,15 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
         completedAt.isAcceptableOrUnknown(
           data['completed_at']!,
           _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('completed_timezone')) {
+      context.handle(
+        _completedTimezoneMeta,
+        completedTimezone.isAcceptableOrUnknown(
+          data['completed_timezone']!,
+          _completedTimezoneMeta,
         ),
       );
     }
@@ -10846,6 +10868,10 @@ class $LocalRoutineSessionsTable extends LocalRoutineSessions
         DriftSqlType.dateTime,
         data['${effectivePrefix}completed_at'],
       ),
+      completedTimezone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}completed_timezone'],
+      ),
       targetDurationSeconds: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}target_duration_seconds'],
@@ -10926,6 +10952,11 @@ class LocalRoutineSession extends DataClass
   final String status;
   final DateTime startedAt;
   final DateTime? completedAt;
+
+  /// IANA timezone captured when this session became terminal. This preserves
+  /// its movement-day boundary if the user later changes their profile timezone.
+  /// It is local progress metadata, not evidence for a server reward.
+  final String? completedTimezone;
   final int targetDurationSeconds;
   final int actualDurationSeconds;
   final int totalSteps;
@@ -10963,6 +10994,7 @@ class LocalRoutineSession extends DataClass
     required this.status,
     required this.startedAt,
     this.completedAt,
+    this.completedTimezone,
     required this.targetDurationSeconds,
     required this.actualDurationSeconds,
     required this.totalSteps,
@@ -11005,6 +11037,9 @@ class LocalRoutineSession extends DataClass
     map['started_at'] = Variable<DateTime>(startedAt);
     if (!nullToAbsent || completedAt != null) {
       map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    if (!nullToAbsent || completedTimezone != null) {
+      map['completed_timezone'] = Variable<String>(completedTimezone);
     }
     map['target_duration_seconds'] = Variable<int>(targetDurationSeconds);
     map['actual_duration_seconds'] = Variable<int>(actualDurationSeconds);
@@ -11052,6 +11087,9 @@ class LocalRoutineSession extends DataClass
       completedAt: completedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(completedAt),
+      completedTimezone: completedTimezone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedTimezone),
       targetDurationSeconds: Value(targetDurationSeconds),
       actualDurationSeconds: Value(actualDurationSeconds),
       totalSteps: Value(totalSteps),
@@ -11093,6 +11131,9 @@ class LocalRoutineSession extends DataClass
       status: serializer.fromJson<String>(json['status']),
       startedAt: serializer.fromJson<DateTime>(json['startedAt']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      completedTimezone: serializer.fromJson<String?>(
+        json['completedTimezone'],
+      ),
       targetDurationSeconds: serializer.fromJson<int>(
         json['targetDurationSeconds'],
       ),
@@ -11140,6 +11181,7 @@ class LocalRoutineSession extends DataClass
       'status': serializer.toJson<String>(status),
       'startedAt': serializer.toJson<DateTime>(startedAt),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'completedTimezone': serializer.toJson<String?>(completedTimezone),
       'targetDurationSeconds': serializer.toJson<int>(targetDurationSeconds),
       'actualDurationSeconds': serializer.toJson<int>(actualDurationSeconds),
       'totalSteps': serializer.toJson<int>(totalSteps),
@@ -11173,6 +11215,7 @@ class LocalRoutineSession extends DataClass
     String? status,
     DateTime? startedAt,
     Value<DateTime?> completedAt = const Value.absent(),
+    Value<String?> completedTimezone = const Value.absent(),
     int? targetDurationSeconds,
     int? actualDurationSeconds,
     int? totalSteps,
@@ -11203,6 +11246,9 @@ class LocalRoutineSession extends DataClass
     status: status ?? this.status,
     startedAt: startedAt ?? this.startedAt,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    completedTimezone: completedTimezone.present
+        ? completedTimezone.value
+        : this.completedTimezone,
     targetDurationSeconds: targetDurationSeconds ?? this.targetDurationSeconds,
     actualDurationSeconds: actualDurationSeconds ?? this.actualDurationSeconds,
     totalSteps: totalSteps ?? this.totalSteps,
@@ -11248,6 +11294,9 @@ class LocalRoutineSession extends DataClass
       completedAt: data.completedAt.present
           ? data.completedAt.value
           : this.completedAt,
+      completedTimezone: data.completedTimezone.present
+          ? data.completedTimezone.value
+          : this.completedTimezone,
       targetDurationSeconds: data.targetDurationSeconds.present
           ? data.targetDurationSeconds.value
           : this.targetDurationSeconds,
@@ -11297,6 +11346,7 @@ class LocalRoutineSession extends DataClass
           ..write('status: $status, ')
           ..write('startedAt: $startedAt, ')
           ..write('completedAt: $completedAt, ')
+          ..write('completedTimezone: $completedTimezone, ')
           ..write('targetDurationSeconds: $targetDurationSeconds, ')
           ..write('actualDurationSeconds: $actualDurationSeconds, ')
           ..write('totalSteps: $totalSteps, ')
@@ -11326,6 +11376,7 @@ class LocalRoutineSession extends DataClass
     status,
     startedAt,
     completedAt,
+    completedTimezone,
     targetDurationSeconds,
     actualDurationSeconds,
     totalSteps,
@@ -11354,6 +11405,7 @@ class LocalRoutineSession extends DataClass
           other.status == this.status &&
           other.startedAt == this.startedAt &&
           other.completedAt == this.completedAt &&
+          other.completedTimezone == this.completedTimezone &&
           other.targetDurationSeconds == this.targetDurationSeconds &&
           other.actualDurationSeconds == this.actualDurationSeconds &&
           other.totalSteps == this.totalSteps &&
@@ -11381,6 +11433,7 @@ class LocalRoutineSessionsCompanion
   final Value<String> status;
   final Value<DateTime> startedAt;
   final Value<DateTime?> completedAt;
+  final Value<String?> completedTimezone;
   final Value<int> targetDurationSeconds;
   final Value<int> actualDurationSeconds;
   final Value<int> totalSteps;
@@ -11406,6 +11459,7 @@ class LocalRoutineSessionsCompanion
     this.status = const Value.absent(),
     this.startedAt = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.completedTimezone = const Value.absent(),
     this.targetDurationSeconds = const Value.absent(),
     this.actualDurationSeconds = const Value.absent(),
     this.totalSteps = const Value.absent(),
@@ -11432,6 +11486,7 @@ class LocalRoutineSessionsCompanion
     required String status,
     required DateTime startedAt,
     this.completedAt = const Value.absent(),
+    this.completedTimezone = const Value.absent(),
     required int targetDurationSeconds,
     required int actualDurationSeconds,
     required int totalSteps,
@@ -11469,6 +11524,7 @@ class LocalRoutineSessionsCompanion
     Expression<String>? status,
     Expression<DateTime>? startedAt,
     Expression<DateTime>? completedAt,
+    Expression<String>? completedTimezone,
     Expression<int>? targetDurationSeconds,
     Expression<int>? actualDurationSeconds,
     Expression<int>? totalSteps,
@@ -11495,6 +11551,7 @@ class LocalRoutineSessionsCompanion
       if (status != null) 'status': status,
       if (startedAt != null) 'started_at': startedAt,
       if (completedAt != null) 'completed_at': completedAt,
+      if (completedTimezone != null) 'completed_timezone': completedTimezone,
       if (targetDurationSeconds != null)
         'target_duration_seconds': targetDurationSeconds,
       if (actualDurationSeconds != null)
@@ -11529,6 +11586,7 @@ class LocalRoutineSessionsCompanion
     Value<String>? status,
     Value<DateTime>? startedAt,
     Value<DateTime?>? completedAt,
+    Value<String?>? completedTimezone,
     Value<int>? targetDurationSeconds,
     Value<int>? actualDurationSeconds,
     Value<int>? totalSteps,
@@ -11555,6 +11613,7 @@ class LocalRoutineSessionsCompanion
       status: status ?? this.status,
       startedAt: startedAt ?? this.startedAt,
       completedAt: completedAt ?? this.completedAt,
+      completedTimezone: completedTimezone ?? this.completedTimezone,
       targetDurationSeconds:
           targetDurationSeconds ?? this.targetDurationSeconds,
       actualDurationSeconds:
@@ -11618,6 +11677,9 @@ class LocalRoutineSessionsCompanion
     }
     if (completedAt.present) {
       map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (completedTimezone.present) {
+      map['completed_timezone'] = Variable<String>(completedTimezone.value);
     }
     if (targetDurationSeconds.present) {
       map['target_duration_seconds'] = Variable<int>(
@@ -11683,6 +11745,7 @@ class LocalRoutineSessionsCompanion
           ..write('status: $status, ')
           ..write('startedAt: $startedAt, ')
           ..write('completedAt: $completedAt, ')
+          ..write('completedTimezone: $completedTimezone, ')
           ..write('targetDurationSeconds: $targetDurationSeconds, ')
           ..write('actualDurationSeconds: $actualDurationSeconds, ')
           ..write('totalSteps: $totalSteps, ')
@@ -14151,6 +14214,352 @@ class LocalProgressProjectionsCompanion
   }
 }
 
+class $LocalAnalyticsEmissionReceiptsTable
+    extends LocalAnalyticsEmissionReceipts
+    with
+        TableInfo<
+          $LocalAnalyticsEmissionReceiptsTable,
+          LocalAnalyticsEmissionReceipt
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalAnalyticsEmissionReceiptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventNameMeta = const VerificationMeta(
+    'eventName',
+  );
+  @override
+  late final GeneratedColumn<String> eventName = GeneratedColumn<String>(
+    'event_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _authoritativeLedgerIdMeta =
+      const VerificationMeta('authoritativeLedgerId');
+  @override
+  late final GeneratedColumn<String> authoritativeLedgerId =
+      GeneratedColumn<String>(
+        'authoritative_ledger_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _emittedAtMeta = const VerificationMeta(
+    'emittedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> emittedAt = GeneratedColumn<DateTime>(
+    'emitted_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    userId,
+    eventName,
+    authoritativeLedgerId,
+    emittedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_analytics_emission_receipts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalAnalyticsEmissionReceipt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('event_name')) {
+      context.handle(
+        _eventNameMeta,
+        eventName.isAcceptableOrUnknown(data['event_name']!, _eventNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventNameMeta);
+    }
+    if (data.containsKey('authoritative_ledger_id')) {
+      context.handle(
+        _authoritativeLedgerIdMeta,
+        authoritativeLedgerId.isAcceptableOrUnknown(
+          data['authoritative_ledger_id']!,
+          _authoritativeLedgerIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_authoritativeLedgerIdMeta);
+    }
+    if (data.containsKey('emitted_at')) {
+      context.handle(
+        _emittedAtMeta,
+        emittedAt.isAcceptableOrUnknown(data['emitted_at']!, _emittedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_emittedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {
+    userId,
+    eventName,
+    authoritativeLedgerId,
+  };
+  @override
+  LocalAnalyticsEmissionReceipt map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalAnalyticsEmissionReceipt(
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      eventName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_name'],
+      )!,
+      authoritativeLedgerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}authoritative_ledger_id'],
+      )!,
+      emittedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}emitted_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalAnalyticsEmissionReceiptsTable createAlias(String alias) {
+    return $LocalAnalyticsEmissionReceiptsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalAnalyticsEmissionReceipt extends DataClass
+    implements Insertable<LocalAnalyticsEmissionReceipt> {
+  final String userId;
+  final String eventName;
+  final String authoritativeLedgerId;
+  final DateTime emittedAt;
+  const LocalAnalyticsEmissionReceipt({
+    required this.userId,
+    required this.eventName,
+    required this.authoritativeLedgerId,
+    required this.emittedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['user_id'] = Variable<String>(userId);
+    map['event_name'] = Variable<String>(eventName);
+    map['authoritative_ledger_id'] = Variable<String>(authoritativeLedgerId);
+    map['emitted_at'] = Variable<DateTime>(emittedAt);
+    return map;
+  }
+
+  LocalAnalyticsEmissionReceiptsCompanion toCompanion(bool nullToAbsent) {
+    return LocalAnalyticsEmissionReceiptsCompanion(
+      userId: Value(userId),
+      eventName: Value(eventName),
+      authoritativeLedgerId: Value(authoritativeLedgerId),
+      emittedAt: Value(emittedAt),
+    );
+  }
+
+  factory LocalAnalyticsEmissionReceipt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalAnalyticsEmissionReceipt(
+      userId: serializer.fromJson<String>(json['userId']),
+      eventName: serializer.fromJson<String>(json['eventName']),
+      authoritativeLedgerId: serializer.fromJson<String>(
+        json['authoritativeLedgerId'],
+      ),
+      emittedAt: serializer.fromJson<DateTime>(json['emittedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'userId': serializer.toJson<String>(userId),
+      'eventName': serializer.toJson<String>(eventName),
+      'authoritativeLedgerId': serializer.toJson<String>(authoritativeLedgerId),
+      'emittedAt': serializer.toJson<DateTime>(emittedAt),
+    };
+  }
+
+  LocalAnalyticsEmissionReceipt copyWith({
+    String? userId,
+    String? eventName,
+    String? authoritativeLedgerId,
+    DateTime? emittedAt,
+  }) => LocalAnalyticsEmissionReceipt(
+    userId: userId ?? this.userId,
+    eventName: eventName ?? this.eventName,
+    authoritativeLedgerId: authoritativeLedgerId ?? this.authoritativeLedgerId,
+    emittedAt: emittedAt ?? this.emittedAt,
+  );
+  LocalAnalyticsEmissionReceipt copyWithCompanion(
+    LocalAnalyticsEmissionReceiptsCompanion data,
+  ) {
+    return LocalAnalyticsEmissionReceipt(
+      userId: data.userId.present ? data.userId.value : this.userId,
+      eventName: data.eventName.present ? data.eventName.value : this.eventName,
+      authoritativeLedgerId: data.authoritativeLedgerId.present
+          ? data.authoritativeLedgerId.value
+          : this.authoritativeLedgerId,
+      emittedAt: data.emittedAt.present ? data.emittedAt.value : this.emittedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalAnalyticsEmissionReceipt(')
+          ..write('userId: $userId, ')
+          ..write('eventName: $eventName, ')
+          ..write('authoritativeLedgerId: $authoritativeLedgerId, ')
+          ..write('emittedAt: $emittedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(userId, eventName, authoritativeLedgerId, emittedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalAnalyticsEmissionReceipt &&
+          other.userId == this.userId &&
+          other.eventName == this.eventName &&
+          other.authoritativeLedgerId == this.authoritativeLedgerId &&
+          other.emittedAt == this.emittedAt);
+}
+
+class LocalAnalyticsEmissionReceiptsCompanion
+    extends UpdateCompanion<LocalAnalyticsEmissionReceipt> {
+  final Value<String> userId;
+  final Value<String> eventName;
+  final Value<String> authoritativeLedgerId;
+  final Value<DateTime> emittedAt;
+  final Value<int> rowid;
+  const LocalAnalyticsEmissionReceiptsCompanion({
+    this.userId = const Value.absent(),
+    this.eventName = const Value.absent(),
+    this.authoritativeLedgerId = const Value.absent(),
+    this.emittedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LocalAnalyticsEmissionReceiptsCompanion.insert({
+    required String userId,
+    required String eventName,
+    required String authoritativeLedgerId,
+    required DateTime emittedAt,
+    this.rowid = const Value.absent(),
+  }) : userId = Value(userId),
+       eventName = Value(eventName),
+       authoritativeLedgerId = Value(authoritativeLedgerId),
+       emittedAt = Value(emittedAt);
+  static Insertable<LocalAnalyticsEmissionReceipt> custom({
+    Expression<String>? userId,
+    Expression<String>? eventName,
+    Expression<String>? authoritativeLedgerId,
+    Expression<DateTime>? emittedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (userId != null) 'user_id': userId,
+      if (eventName != null) 'event_name': eventName,
+      if (authoritativeLedgerId != null)
+        'authoritative_ledger_id': authoritativeLedgerId,
+      if (emittedAt != null) 'emitted_at': emittedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LocalAnalyticsEmissionReceiptsCompanion copyWith({
+    Value<String>? userId,
+    Value<String>? eventName,
+    Value<String>? authoritativeLedgerId,
+    Value<DateTime>? emittedAt,
+    Value<int>? rowid,
+  }) {
+    return LocalAnalyticsEmissionReceiptsCompanion(
+      userId: userId ?? this.userId,
+      eventName: eventName ?? this.eventName,
+      authoritativeLedgerId:
+          authoritativeLedgerId ?? this.authoritativeLedgerId,
+      emittedAt: emittedAt ?? this.emittedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (eventName.present) {
+      map['event_name'] = Variable<String>(eventName.value);
+    }
+    if (authoritativeLedgerId.present) {
+      map['authoritative_ledger_id'] = Variable<String>(
+        authoritativeLedgerId.value,
+      );
+    }
+    if (emittedAt.present) {
+      map['emitted_at'] = Variable<DateTime>(emittedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalAnalyticsEmissionReceiptsCompanion(')
+          ..write('userId: $userId, ')
+          ..write('eventName: $eventName, ')
+          ..write('authoritativeLedgerId: $authoritativeLedgerId, ')
+          ..write('emittedAt: $emittedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $LocalIdMappingsTable extends LocalIdMappings
     with TableInfo<$LocalIdMappingsTable, LocalIdMapping> {
   @override
@@ -15426,6 +15835,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $LocalSavedRoutinesTable(this);
   late final $LocalProgressProjectionsTable localProgressProjections =
       $LocalProgressProjectionsTable(this);
+  late final $LocalAnalyticsEmissionReceiptsTable
+  localAnalyticsEmissionReceipts = $LocalAnalyticsEmissionReceiptsTable(this);
   late final $LocalIdMappingsTable localIdMappings = $LocalIdMappingsTable(
     this,
   );
@@ -15466,6 +15877,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     localSessionFeedback,
     localSavedRoutines,
     localProgressProjections,
+    localAnalyticsEmissionReceipts,
     localIdMappings,
     localSyncState,
     syncOutbox,
@@ -26888,6 +27300,7 @@ typedef $$LocalRoutineSessionsTableCreateCompanionBuilder =
       required String status,
       required DateTime startedAt,
       Value<DateTime?> completedAt,
+      Value<String?> completedTimezone,
       required int targetDurationSeconds,
       required int actualDurationSeconds,
       required int totalSteps,
@@ -26915,6 +27328,7 @@ typedef $$LocalRoutineSessionsTableUpdateCompanionBuilder =
       Value<String> status,
       Value<DateTime> startedAt,
       Value<DateTime?> completedAt,
+      Value<String?> completedTimezone,
       Value<int> targetDurationSeconds,
       Value<int> actualDurationSeconds,
       Value<int> totalSteps,
@@ -27102,6 +27516,11 @@ class $$LocalRoutineSessionsTableFilterComposer
 
   ColumnFilters<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get completedTimezone => $composableBuilder(
+    column: $table.completedTimezone,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -27334,6 +27753,11 @@ class $$LocalRoutineSessionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get completedTimezone => $composableBuilder(
+    column: $table.completedTimezone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get targetDurationSeconds => $composableBuilder(
     column: $table.targetDurationSeconds,
     builder: (column) => ColumnOrderings(column),
@@ -27504,6 +27928,11 @@ class $$LocalRoutineSessionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get completedTimezone => $composableBuilder(
+    column: $table.completedTimezone,
     builder: (column) => column,
   );
 
@@ -27737,6 +28166,7 @@ class $$LocalRoutineSessionsTableTableManager
                 Value<String> status = const Value.absent(),
                 Value<DateTime> startedAt = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<String?> completedTimezone = const Value.absent(),
                 Value<int> targetDurationSeconds = const Value.absent(),
                 Value<int> actualDurationSeconds = const Value.absent(),
                 Value<int> totalSteps = const Value.absent(),
@@ -27762,6 +28192,7 @@ class $$LocalRoutineSessionsTableTableManager
                 status: status,
                 startedAt: startedAt,
                 completedAt: completedAt,
+                completedTimezone: completedTimezone,
                 targetDurationSeconds: targetDurationSeconds,
                 actualDurationSeconds: actualDurationSeconds,
                 totalSteps: totalSteps,
@@ -27789,6 +28220,7 @@ class $$LocalRoutineSessionsTableTableManager
                 required String status,
                 required DateTime startedAt,
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<String?> completedTimezone = const Value.absent(),
                 required int targetDurationSeconds,
                 required int actualDurationSeconds,
                 required int totalSteps,
@@ -27814,6 +28246,7 @@ class $$LocalRoutineSessionsTableTableManager
                 status: status,
                 startedAt: startedAt,
                 completedAt: completedAt,
+                completedTimezone: completedTimezone,
                 targetDurationSeconds: targetDurationSeconds,
                 actualDurationSeconds: actualDurationSeconds,
                 totalSteps: totalSteps,
@@ -30022,6 +30455,208 @@ typedef $$LocalProgressProjectionsTableProcessedTableManager =
       LocalProgressProjection,
       PrefetchHooks Function({bool userId})
     >;
+typedef $$LocalAnalyticsEmissionReceiptsTableCreateCompanionBuilder =
+    LocalAnalyticsEmissionReceiptsCompanion Function({
+      required String userId,
+      required String eventName,
+      required String authoritativeLedgerId,
+      required DateTime emittedAt,
+      Value<int> rowid,
+    });
+typedef $$LocalAnalyticsEmissionReceiptsTableUpdateCompanionBuilder =
+    LocalAnalyticsEmissionReceiptsCompanion Function({
+      Value<String> userId,
+      Value<String> eventName,
+      Value<String> authoritativeLedgerId,
+      Value<DateTime> emittedAt,
+      Value<int> rowid,
+    });
+
+class $$LocalAnalyticsEmissionReceiptsTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalAnalyticsEmissionReceiptsTable> {
+  $$LocalAnalyticsEmissionReceiptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get eventName => $composableBuilder(
+    column: $table.eventName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get authoritativeLedgerId => $composableBuilder(
+    column: $table.authoritativeLedgerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get emittedAt => $composableBuilder(
+    column: $table.emittedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalAnalyticsEmissionReceiptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalAnalyticsEmissionReceiptsTable> {
+  $$LocalAnalyticsEmissionReceiptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get eventName => $composableBuilder(
+    column: $table.eventName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get authoritativeLedgerId => $composableBuilder(
+    column: $table.authoritativeLedgerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get emittedAt => $composableBuilder(
+    column: $table.emittedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalAnalyticsEmissionReceiptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalAnalyticsEmissionReceiptsTable> {
+  $$LocalAnalyticsEmissionReceiptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get eventName =>
+      $composableBuilder(column: $table.eventName, builder: (column) => column);
+
+  GeneratedColumn<String> get authoritativeLedgerId => $composableBuilder(
+    column: $table.authoritativeLedgerId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get emittedAt =>
+      $composableBuilder(column: $table.emittedAt, builder: (column) => column);
+}
+
+class $$LocalAnalyticsEmissionReceiptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalAnalyticsEmissionReceiptsTable,
+          LocalAnalyticsEmissionReceipt,
+          $$LocalAnalyticsEmissionReceiptsTableFilterComposer,
+          $$LocalAnalyticsEmissionReceiptsTableOrderingComposer,
+          $$LocalAnalyticsEmissionReceiptsTableAnnotationComposer,
+          $$LocalAnalyticsEmissionReceiptsTableCreateCompanionBuilder,
+          $$LocalAnalyticsEmissionReceiptsTableUpdateCompanionBuilder,
+          (
+            LocalAnalyticsEmissionReceipt,
+            BaseReferences<
+              _$AppDatabase,
+              $LocalAnalyticsEmissionReceiptsTable,
+              LocalAnalyticsEmissionReceipt
+            >,
+          ),
+          LocalAnalyticsEmissionReceipt,
+          PrefetchHooks Function()
+        > {
+  $$LocalAnalyticsEmissionReceiptsTableTableManager(
+    _$AppDatabase db,
+    $LocalAnalyticsEmissionReceiptsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalAnalyticsEmissionReceiptsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$LocalAnalyticsEmissionReceiptsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LocalAnalyticsEmissionReceiptsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> userId = const Value.absent(),
+                Value<String> eventName = const Value.absent(),
+                Value<String> authoritativeLedgerId = const Value.absent(),
+                Value<DateTime> emittedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocalAnalyticsEmissionReceiptsCompanion(
+                userId: userId,
+                eventName: eventName,
+                authoritativeLedgerId: authoritativeLedgerId,
+                emittedAt: emittedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String userId,
+                required String eventName,
+                required String authoritativeLedgerId,
+                required DateTime emittedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LocalAnalyticsEmissionReceiptsCompanion.insert(
+                userId: userId,
+                eventName: eventName,
+                authoritativeLedgerId: authoritativeLedgerId,
+                emittedAt: emittedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalAnalyticsEmissionReceiptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalAnalyticsEmissionReceiptsTable,
+      LocalAnalyticsEmissionReceipt,
+      $$LocalAnalyticsEmissionReceiptsTableFilterComposer,
+      $$LocalAnalyticsEmissionReceiptsTableOrderingComposer,
+      $$LocalAnalyticsEmissionReceiptsTableAnnotationComposer,
+      $$LocalAnalyticsEmissionReceiptsTableCreateCompanionBuilder,
+      $$LocalAnalyticsEmissionReceiptsTableUpdateCompanionBuilder,
+      (
+        LocalAnalyticsEmissionReceipt,
+        BaseReferences<
+          _$AppDatabase,
+          $LocalAnalyticsEmissionReceiptsTable,
+          LocalAnalyticsEmissionReceipt
+        >,
+      ),
+      LocalAnalyticsEmissionReceipt,
+      PrefetchHooks Function()
+    >;
 typedef $$LocalIdMappingsTableCreateCompanionBuilder =
     LocalIdMappingsCompanion Function({
       required String kind,
@@ -30995,6 +31630,12 @@ class $AppDatabaseManager {
       $$LocalProgressProjectionsTableTableManager(
         _db,
         _db.localProgressProjections,
+      );
+  $$LocalAnalyticsEmissionReceiptsTableTableManager
+  get localAnalyticsEmissionReceipts =>
+      $$LocalAnalyticsEmissionReceiptsTableTableManager(
+        _db,
+        _db.localAnalyticsEmissionReceipts,
       );
   $$LocalIdMappingsTableTableManager get localIdMappings =>
       $$LocalIdMappingsTableTableManager(_db, _db.localIdMappings);

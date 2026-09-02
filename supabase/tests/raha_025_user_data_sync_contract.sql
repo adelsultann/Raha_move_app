@@ -55,7 +55,13 @@ do $$ declare r jsonb; begin
   jsonb_build_object('operation_id','02500000-0000-0000-0000-000000000105','kind','saved_routine_set','payload',jsonb_build_object('routine_id','02500000-0000-0000-0000-000000000012','saved',false,'operation_at','2026-08-30T10:01:00Z'))));
  if r->'projections' is null or (select status from public.routine_sessions where id='02500000-0000-0000-0000-000000000022') <> 'completed' then raise exception 'push did not create terminal session/projections'; end if;
  if (select count(*) from public.check_in_body_areas where check_in_id='02500000-0000-0000-0000-000000000021') <> 2 then raise exception 'check-in body areas were not synchronized'; end if;
- if r #> '{operations,3,reward_result}' is null or r #>> '{operations,3,reward_result,version}' <> 'raha_025_reward_result_v1' or jsonb_array_length(r #> '{operations,3,reward_result,awards,points}') <> 0 then raise exception 'finalization reward result contract is incorrect'; end if;
+  if r #> '{operations,3,reward_result}' is null
+     or r #>> '{operations,3,reward_result,version}' <> 'raha_025_reward_result_v1'
+     or jsonb_array_length(r #> '{operations,3,reward_result,awards,points}') <> 1
+     or r #>> '{operations,3,reward_result,awards,points,0,points}' <> '10'
+     or r #>> '{operations,3,reward_result,awards,points,0,rule_version}' <> 'points_completion_v1'
+     or r #>> '{operations,3,reward_result,awards,points,0,reason_code}' <> 'routine_completion'
+  then raise exception 'finalization reward result contract is incorrect'; end if;
  begin update public.routine_sessions set status='abandoned' where id='02500000-0000-0000-0000-000000000022'; raise exception 'direct session update accepted'; exception when insufficient_privilege then null; end;
  begin delete from public.routine_sessions where id='02500000-0000-0000-0000-000000000022'; raise exception 'direct session delete accepted'; exception when insufficient_privilege then null; end;
  if not exists (select 1 from jsonb_array_elements(public.sync_pull_user_data(0,100)->'changes') change where change->>'entity_type'='check_in' and change->'payload' ? 'body_area_ids') then raise exception 'canonical check-in change omitted body_area_ids'; end if;

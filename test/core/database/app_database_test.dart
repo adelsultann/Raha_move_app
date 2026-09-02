@@ -270,12 +270,44 @@ void main() {
         ),
         throwsStateError,
       );
+      await database
+          .into(database.localAnalyticsEmissionReceipts)
+          .insert(
+            LocalAnalyticsEmissionReceiptsCompanion.insert(
+              userId: 'user-1',
+              eventName: 'points_awarded',
+              authoritativeLedgerId: 'ledger-user-1',
+              emittedAt: now,
+            ),
+          );
+      await database
+          .into(database.localAnalyticsEmissionReceipts)
+          .insert(
+            LocalAnalyticsEmissionReceiptsCompanion.insert(
+              userId: 'user-2',
+              eventName: 'points_awarded',
+              authoritativeLedgerId: 'ledger-user-2',
+              emittedAt: now,
+            ),
+          );
       await second.purgeActiveUser();
       expect(
         await (database.select(
           database.localProfiles,
         )..where((r) => r.userId.equals('user-1'))).getSingleOrNull(),
         isNotNull,
+      );
+      expect(
+        await (database.select(
+          database.localAnalyticsEmissionReceipts,
+        )..where((r) => r.userId.equals('user-2'))).get(),
+        isEmpty,
+      );
+      expect(
+        await (database.select(
+          database.localAnalyticsEmissionReceipts,
+        )..where((r) => r.userId.equals('user-1'))).get(),
+        hasLength(1),
       );
     },
   );
@@ -860,6 +892,7 @@ void main() {
         database.localRoutineSessions,
       )..where((r) => r.id.equals('complete-cursor'))).getSingle();
       expect(row.status, 'completed');
+      expect(row.completedTimezone, 'Asia/Riyadh');
       expect(row.currentStepPosition, isNull);
 
       // Idempotent retry of the exact terminal state does not duplicate or regress.
@@ -918,6 +951,7 @@ void main() {
       expect(jsonDecode(finalize.single.payloadJson), {
         'session_id': 'explicit-abandon-full',
         'completion_policy_version': 'mvp_v1',
+        'completed_timezone': 'Asia/Riyadh',
       });
     },
   );

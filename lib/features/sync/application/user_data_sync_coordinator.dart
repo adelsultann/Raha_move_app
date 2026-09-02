@@ -69,6 +69,18 @@ class ActiveUserSyncCoordinator extends _$ActiveUserSyncCoordinator {
 
     state = const SyncCoordinatorState(phase: SyncCoordinatorPhase.syncing);
     final result = await action(ref.read(userDataSyncEngineProvider(userId)));
+    // The engine stores returned projections before it returns. Run the
+    // consent-gated delivery pass afterwards so no client-created or merely
+    // provisional point estimate can produce analytics. A tracking failure is
+    // isolated from sync; the missing receipt leaves it retryable next pass.
+    try {
+      await ref
+          .read(pointsAwardAnalyticsGateProvider(userId))
+          .emitPendingAwards();
+    } catch (_) {
+      // Analytics is optional and must not turn an otherwise successful sync
+      // into a user-visible failure.
+    }
     state = SyncCoordinatorState(
       phase: result.hasFailures
           ? SyncCoordinatorPhase.failed

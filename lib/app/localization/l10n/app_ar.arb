@@ -253,5 +253,26 @@
   "feedbackLessComfortableMessage": "شكرًا لإخبارنا. توقّف لليوم واختر خيارًا مريحًا في المرة القادمة.",
   "feedbackSaveError": "تعذّر حفظ تقييمك. يرجى المحاولة مجددًا.",
   "feedbackRetry": "حاول مجددًا",
-  "feedbackDone": "تم"
+  "feedbackDone": "تم",
+  "gamificationWeeklyGoalProgress": "{completed} من {goal} أيام حركة هذا الأسبوع",
+  "@gamificationWeeklyGoalProgress": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+  "gamificationPointsPending": "{points} نقاط بانتظار التأكيد",
+  "@gamificationPointsPending": {
+    "placeholders": {
+      "points": { "type": "int" }
+    }
+  },
+  "gamificationPointsConfirmed": "تم تأكيد {points} من نقاط الحركة",
+  "@gamificationPointsConfirmed": {
+    "placeholders": {
+      "points": { "type": "int" }
+    }
+  },
+  "gamificationProgressUnavailable": "سيظهر تقدّمك عند تحديثه.",
+  "gamificationSummarySemantics": "هدف الحركة الأسبوعي والنقاط"
 }

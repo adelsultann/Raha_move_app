@@ -16,6 +16,7 @@ abstract final class AnalyticsEventName {
   static const String savedRoutineChanged = 'saved_routine_changed';
   static const String languageChanged = 'language_changed';
   static const String preferencesSaved = 'preferences_saved';
+  static const String pointsAwarded = 'points_awarded';
 }
 
 /// Approved categorical property keys. Values are limited to booleans, numbers,
@@ -66,6 +67,9 @@ abstract final class AnalyticsPropertyKey {
 
   /// Number of body areas selected in a check-in (1..7).
   static const String bodyAreaCount = 'body_area_count';
+  static const String ruleVersion = 'rule_version';
+  static const String pointAmount = 'point_amount';
+  static const String sourceType = 'source_type';
 }
 
 /// The implementation-enforced allowlist for analytics properties. Any key not
@@ -89,5 +93,8 @@ abstract final class AnalyticsPropertyAllowlist {
     AnalyticsPropertyKey.availableMinutes,
     AnalyticsPropertyKey.positionKey,
     AnalyticsPropertyKey.bodyAreaCount,
+    AnalyticsPropertyKey.ruleVersion,
+    AnalyticsPropertyKey.pointAmount,
+    AnalyticsPropertyKey.sourceType,
   };
 }
