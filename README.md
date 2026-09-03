@@ -47,6 +47,26 @@ flutter build apk --debug --dart-define=RAHA_ENV=development
 
 Generated files are committed and must be refreshed after changing a route, provider, Freezed model, Drift table, localization resource, or asset.
 
+### Today golden-test font
+
+Today visual tests use locally or CI-provisioned Arabic-capable and Latin fonts
+so bilingual goldens verify shaped text rather than Flutter's Ahem test glyphs.
+Font bytes are intentionally not committed. Provision the approved Noto Naskh
+Arabic Regular and Roboto Regular fonts from the pinned Flutter SDK
+distribution, verify their SHA-256 values in your CI configuration, and set
+their absolute paths before running the golden suite:
+
+```powershell
+$env:RAHA_GOLDEN_FONT_PATH = 'C:\path\to\NotoNaskhArabic-Regular.ttf'
+$env:RAHA_GOLDEN_LATIN_FONT_PATH = 'C:\path\to\Roboto-Regular.ttf'
+flutter test test/features/today/presentation/today_screen_golden_test.dart
+```
+
+CI provisions these files from Flutter Engine and verifies the pinned SHA-256
+values before `flutter test`; see `.github/workflows/quality.yml`. The
+environment variables are read only by the Today golden-test harness; they are
+not runtime application settings and no font file is packaged or committed.
+
 ## Foundation scope
 
 RAHA-010 establishes project structure and tooling only. Product features, remote services, secrets, and licensed media are intentionally not included.

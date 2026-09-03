@@ -640,4 +640,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gamificationSummarySemantics => 'Weekly movement goal and points';
+
+  @override
+  String get todayGreeting => 'Welcome back';
+
+  @override
+  String get todayCheckInPrompt => 'What movement feels right for today?';
+
+  @override
+  String get todayWeeklyGoal => 'Your weekly goal';
+
+  @override
+  String get todayProgressSynced => 'Progress is up to date';
+
+  @override
+  String get todayProgressLocal => 'Showing your local progress';
+
+  @override
+  String get todayResumeTitle => 'Continue your routine';
+
+  @override
+  String get todayResumeBody =>
+      'Your unfinished routine is ready when you are.';
+
+  @override
+  String todayResumeRoutine(String routineName) {
+    return 'Resume $routineName when you are ready.';
+  }
+
+  @override
+  String get todayRoutineNameUnavailable =>
+      'Your unfinished routine is ready when you are.';
+
+  @override
+  String get todayRecentTitle => 'Recent routine';
+
+  @override
+  String get todayRepeat => 'Start again';
+
+  @override
+  String get todayNewUser =>
+      'Start a check-in to find a short routine for today.';
+
+  @override
+  String get todayBenefitTitle => 'A small benefit';
+
+  @override
+  String get todayBenefitStart =>
+      'Short movement breaks may support a comfortable daily routine.';
+
+  @override
+  String get todayBenefitWithMovement =>
+      'Regular, comfortable movement may support a steady routine.';
+
+  @override
+  String get todayUnavailable =>
+      'We couldn\'t load Today right now. Please try again.';
 }

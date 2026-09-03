@@ -274,5 +274,26 @@
     }
   },
   "gamificationProgressUnavailable": "سيظهر تقدّمك عند تحديثه.",
-  "gamificationSummarySemantics": "هدف الحركة الأسبوعي والنقاط"
+  "gamificationSummarySemantics": "هدف الحركة الأسبوعي والنقاط",
+  "todayGreeting": "مرحبًا بعودتك",
+  "todayCheckInPrompt": "ما الحركة المناسبة لك اليوم؟",
+  "todayWeeklyGoal": "هدفك الأسبوعي",
+  "todayProgressSynced": "تقدّمك محدّث",
+  "todayProgressLocal": "نعرض تقدّمك المحفوظ على جهازك",
+  "todayResumeTitle": "أكمل روتينك",
+  "todayResumeBody": "روتينك غير المكتمل جاهز عندما تكون مستعدًا.",
+  "todayResumeRoutine": "تابع {routineName} عندما تكون مستعدًا.",
+  "@todayResumeRoutine": {
+    "placeholders": {
+      "routineName": { "type": "String" }
+    }
+  },
+  "todayRoutineNameUnavailable": "روتينك غير المكتمل جاهز عندما تكون مستعدًا.",
+  "todayRecentTitle": "روتين حديث",
+  "todayRepeat": "ابدأ مجددًا",
+  "todayNewUser": "ابدأ تسجيلًا يوميًا لنجد لك روتينًا قصيرًا اليوم.",
+  "todayBenefitTitle": "فائدة صغيرة",
+  "todayBenefitStart": "قد تدعم فترات الحركة القصيرة روتينًا يوميًا مريحًا.",
+  "todayBenefitWithMovement": "قد تدعم الحركة المنتظمة والمريحة روتينًا ثابتًا.",
+  "todayUnavailable": "تعذّر تحميل صفحة اليوم الآن. يرجى المحاولة مجددًا."
 }

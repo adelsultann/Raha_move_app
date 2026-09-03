@@ -8,8 +8,7 @@ import 'package:raha_move/features/check_in/application/check_in_controller.dart
 import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
-
-import '../localization/l10n/app_localizations.dart';
+import 'package:raha_move/features/today/presentation/today_screen.dart';
 
 part 'app_routes.g.dart';
 
@@ -19,48 +18,14 @@ class FoundationRoute extends GoRouteData with $FoundationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    final strings = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Semantics(
-                  header: true,
-                  child: Text(
-                    strings.foundationMessage,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  strings.checkInStartSubtitle,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  key: const Key('start_check_in'),
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size.fromHeight(56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  onPressed: () => const CheckInRoute().push(context),
-                  child: Text(strings.checkInStartTitle),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    return TodayScreen(
+      onStartCheckIn: () => const CheckInRoute().push(context),
+      onResume: (routineId, sessionId) => RoutinePlayerRoute(
+        routineId: routineId,
+        sessionId: sessionId,
+      ).push(context),
+      onRepeat: (routineId) =>
+          RoutinePlayerRoute(routineId: routineId).push(context),
     );
   }
 }

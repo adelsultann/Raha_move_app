@@ -634,4 +634,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get gamificationSummarySemantics => 'هدف الحركة الأسبوعي والنقاط';
+
+  @override
+  String get todayGreeting => 'مرحبًا بعودتك';
+
+  @override
+  String get todayCheckInPrompt => 'ما الحركة المناسبة لك اليوم؟';
+
+  @override
+  String get todayWeeklyGoal => 'هدفك الأسبوعي';
+
+  @override
+  String get todayProgressSynced => 'تقدّمك محدّث';
+
+  @override
+  String get todayProgressLocal => 'نعرض تقدّمك المحفوظ على جهازك';
+
+  @override
+  String get todayResumeTitle => 'أكمل روتينك';
+
+  @override
+  String get todayResumeBody => 'روتينك غير المكتمل جاهز عندما تكون مستعدًا.';
+
+  @override
+  String todayResumeRoutine(String routineName) {
+    return 'تابع $routineName عندما تكون مستعدًا.';
+  }
+
+  @override
+  String get todayRoutineNameUnavailable =>
+      'روتينك غير المكتمل جاهز عندما تكون مستعدًا.';
+
+  @override
+  String get todayRecentTitle => 'روتين حديث';
+
+  @override
+  String get todayRepeat => 'ابدأ مجددًا';
+
+  @override
+  String get todayNewUser =>
+      'ابدأ تسجيلًا يوميًا لنجد لك روتينًا قصيرًا اليوم.';
+
+  @override
+  String get todayBenefitTitle => 'فائدة صغيرة';
+
+  @override
+  String get todayBenefitStart =>
+      'قد تدعم فترات الحركة القصيرة روتينًا يوميًا مريحًا.';
+
+  @override
+  String get todayBenefitWithMovement =>
+      'قد تدعم الحركة المنتظمة والمريحة روتينًا ثابتًا.';
+
+  @override
+  String get todayUnavailable =>
+      'تعذّر تحميل صفحة اليوم الآن. يرجى المحاولة مجددًا.';
 }

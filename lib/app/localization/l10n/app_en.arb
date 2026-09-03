@@ -274,5 +274,26 @@
     }
   },
   "gamificationProgressUnavailable": "Your progress will be ready when it can be refreshed.",
-  "gamificationSummarySemantics": "Weekly movement goal and points"
+  "gamificationSummarySemantics": "Weekly movement goal and points",
+  "todayGreeting": "Welcome back",
+  "todayCheckInPrompt": "What movement feels right for today?",
+  "todayWeeklyGoal": "Your weekly goal",
+  "todayProgressSynced": "Progress is up to date",
+  "todayProgressLocal": "Showing your local progress",
+  "todayResumeTitle": "Continue your routine",
+  "todayResumeBody": "Your unfinished routine is ready when you are.",
+  "todayResumeRoutine": "Resume {routineName} when you are ready.",
+  "@todayResumeRoutine": {
+    "placeholders": {
+      "routineName": { "type": "String" }
+    }
+  },
+  "todayRoutineNameUnavailable": "Your unfinished routine is ready when you are.",
+  "todayRecentTitle": "Recent routine",
+  "todayRepeat": "Start again",
+  "todayNewUser": "Start a check-in to find a short routine for today.",
+  "todayBenefitTitle": "A small benefit",
+  "todayBenefitStart": "Short movement breaks may support a comfortable daily routine.",
+  "todayBenefitWithMovement": "Regular, comfortable movement may support a steady routine.",
+  "todayUnavailable": "We couldn't load Today right now. Please try again."
 }

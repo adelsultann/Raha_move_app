@@ -1213,6 +1213,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weekly movement goal and points'**
   String get gamificationSummarySemantics;
+
+  /// No description provided for @todayGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get todayGreeting;
+
+  /// No description provided for @todayCheckInPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'What movement feels right for today?'**
+  String get todayCheckInPrompt;
+
+  /// No description provided for @todayWeeklyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weekly goal'**
+  String get todayWeeklyGoal;
+
+  /// No description provided for @todayProgressSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress is up to date'**
+  String get todayProgressSynced;
+
+  /// No description provided for @todayProgressLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing your local progress'**
+  String get todayProgressLocal;
+
+  /// No description provided for @todayResumeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue your routine'**
+  String get todayResumeTitle;
+
+  /// No description provided for @todayResumeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your unfinished routine is ready when you are.'**
+  String get todayResumeBody;
+
+  /// No description provided for @todayResumeRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume {routineName} when you are ready.'**
+  String todayResumeRoutine(String routineName);
+
+  /// No description provided for @todayRoutineNameUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your unfinished routine is ready when you are.'**
+  String get todayRoutineNameUnavailable;
+
+  /// No description provided for @todayRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent routine'**
+  String get todayRecentTitle;
+
+  /// No description provided for @todayRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Start again'**
+  String get todayRepeat;
+
+  /// No description provided for @todayNewUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a check-in to find a short routine for today.'**
+  String get todayNewUser;
+
+  /// No description provided for @todayBenefitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A small benefit'**
+  String get todayBenefitTitle;
+
+  /// No description provided for @todayBenefitStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Short movement breaks may support a comfortable daily routine.'**
+  String get todayBenefitStart;
+
+  /// No description provided for @todayBenefitWithMovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular, comfortable movement may support a steady routine.'**
+  String get todayBenefitWithMovement;
+
+  /// No description provided for @todayUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load Today right now. Please try again.'**
+  String get todayUnavailable;
 }
 
 class _AppLocalizationsDelegate
