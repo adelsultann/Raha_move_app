@@ -24,8 +24,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .golden-fonts
-          curl --fail --location --retry 3 --output .golden-fonts/NotoNaskhArabic-Regular.ttf https://github.com/flutter/engine/raw/main/src/flutter/txt/third_party/fonts/NotoNaskhArabic-Regular.ttf
-          curl --fail --location --retry 3 --output .golden-fonts/Roboto-Regular.ttf https://github.com/flutter/engine/raw/main/src/flutter/txt/third_party/fonts/Roboto-Regular.ttf
+          curl --fail --location --retry 3 --output .golden-fonts/NotoNaskhArabic-Regular.ttf https://raw.githubusercontent.com/flutter/flutter/master/engine/src/flutter/txt/third_party/fonts/NotoNaskhArabic-Regular.ttf
+          curl --fail --location --retry 3 --output .golden-fonts/Roboto-Regular.ttf https://raw.githubusercontent.com/flutter/flutter/master/engine/src/flutter/txt/third_party/fonts/Roboto-Regular.ttf
           echo '6b999662f669b2c9b00c10ce4a110b6f5179c20f3f77e5ccb897e3ab965cf9f5  .golden-fonts/NotoNaskhArabic-Regular.ttf' | sha256sum --check --strict
           echo '79e851404657dac2106b3d22ad256d47824a9a5765458edb72c9102a45816d95  .golden-fonts/Roboto-Regular.ttf' | sha256sum --check --strict
           echo "RAHA_GOLDEN_FONT_PATH=$GITHUB_WORKSPACE/.golden-fonts/NotoNaskhArabic-Regular.ttf" >> "$GITHUB_ENV"
