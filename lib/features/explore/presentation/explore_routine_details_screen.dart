@@ -4,6 +4,7 @@ import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
 import 'package:raha_move/features/exercise_library/domain/content_models.dart';
 import 'package:raha_move/features/recommendations/domain/routine_presentation.dart';
+import 'package:raha_move/features/saved_routines/application/saved_routine_controller.dart';
 
 import '../application/explore_providers.dart';
 import '../domain/explore_models.dart';
@@ -34,12 +35,12 @@ class ExploreRoutineDetailsScreen extends ConsumerWidget {
   }
 }
 
-class _DetailsContent extends StatelessWidget {
+class _DetailsContent extends ConsumerWidget {
   const _DetailsContent({required this.details});
   final ExploreRoutineDetails details;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final strings = AppLocalizations.of(context);
     final routine = details.presentation;
     return SafeArea(
@@ -70,24 +71,8 @@ class _DetailsContent extends StatelessWidget {
                   equipmentLabels: details.equipmentLabels,
                 ),
                 const SizedBox(height: 20),
-                // Reserved location only. RAHA-062 supplies a save control once
-                // its local-first state and sync semantics exist.
-                Semantics(
-                  container: true,
-                  label: strings.exploreSaveLocation,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Text(strings.exploreSaveLocation),
-                    ),
-                  ),
-                ),
+                if (details.eligibility is RoutineStartAllowed)
+                  _SaveRoutineButton(routineId: routine.routineId),
                 const SizedBox(height: 20),
                 Text(
                   strings.exploreMovementPreview,
@@ -113,6 +98,46 @@ class _DetailsContent extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SaveRoutineButton extends ConsumerWidget {
+  const _SaveRoutineButton({required this.routineId});
+  final String routineId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = AppLocalizations.of(context);
+    final saved = ref.watch(savedRoutineControllerProvider(routineId));
+    final isSaved = saved.value ?? false;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          enabled: !saved.isLoading,
+          child: OutlinedButton.icon(
+            key: const Key('explore_details_save'),
+            onPressed: saved.isLoading
+                ? null
+                : () => ref
+                      .read(savedRoutineControllerProvider(routineId).notifier)
+                      .toggle(),
+            icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_outline),
+            label: Text(
+              isSaved ? strings.savedRoutineUnsave : strings.savedRoutineSave,
+            ),
+          ),
+        ),
+        if (saved.hasError)
+          Padding(
+            padding: const EdgeInsetsDirectional.only(top: 8),
+            child: Text(
+              strings.savedRoutineChangeError,
+              key: const Key('explore_details_save_error'),
+            ),
+          ),
+      ],
     );
   }
 }

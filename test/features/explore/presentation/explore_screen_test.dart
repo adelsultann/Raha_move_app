@@ -1,4 +1,5 @@
 import 'dart:ui' show SemanticsAction;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,10 @@ import 'package:raha_move/features/explore/domain/explore_models.dart';
 import 'package:raha_move/features/explore/presentation/explore_routine_details_screen.dart';
 import 'package:raha_move/features/explore/presentation/explore_screen.dart';
 import 'package:raha_move/features/recommendations/domain/routine_presentation.dart';
+import 'package:raha_move/features/saved_routines/application/saved_routines_providers.dart';
+import 'package:raha_move/features/saved_routines/domain/saved_routine.dart';
+import 'package:raha_move/features/saved_routines/domain/saved_routines_repository.dart';
+import 'package:raha_move/features/sync/application/sync_providers.dart';
 
 void main() {
   testWidgets('populated Explore and filter sheet remain usable at 200%', (
@@ -58,6 +63,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const Key('explore_start_blocked')), findsOneWidget);
+      expect(find.byKey(const Key('explore_details_save')), findsNothing);
       final start = find.byKey(const Key('explore_start'));
       expect(start, findsOneWidget);
       expect(
@@ -84,6 +90,70 @@ void main() {
       expect(tester.takeException(), isNull);
     }
   });
+
+  testWidgets(
+    'details save control changes immediately between save and unsave',
+    (tester) async {
+      await _pumpDetails(
+        tester,
+        const Locale('en'),
+        _allowedDetails(const Locale('en')),
+      );
+      await tester.pumpAndSettle();
+      final save = find.byKey(const Key('explore_details_save'));
+      await tester.scrollUntilVisible(save, 200);
+      await tester.tap(save);
+      await tester.pumpAndSettle();
+      expect(find.text('Remove from saved'), findsOneWidget);
+      await tester.tap(save);
+      await tester.pumpAndSettle();
+      expect(find.text('Save routine'), findsOneWidget);
+    },
+  );
+
+  testWidgets('ineligible details never render a save control', (tester) async {
+    for (final reason in RoutineStartBlock.values) {
+      final source = _details(const Locale('en'));
+      final details = ExploreRoutineDetails(
+        presentation: source.presentation,
+        eligibility: RoutineStartEligibility.blocked(reason),
+        equipmentLabels: source.equipmentLabels,
+      );
+      await _pumpDetails(tester, const Locale('en'), details);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('explore_details_save')), findsNothing);
+      expect(find.byKey(const Key('explore_start_blocked')), findsOneWidget);
+    }
+  });
+
+  testWidgets(
+    'save control is disabled with preserved semantics while pending',
+    (tester) async {
+      final repository = _DelayedSavedRepository();
+      await _pumpDetails(
+        tester,
+        const Locale('en'),
+        _allowedDetails(const Locale('en')),
+        savedRepository: repository,
+      );
+      await tester.pumpAndSettle();
+      final save = find.byKey(const Key('explore_details_save'));
+      await tester.scrollUntilVisible(save, 200);
+      await tester.tap(save);
+      await tester.pump();
+      expect(repository.saveCalls, 1);
+      expect(
+        tester
+            .getSemantics(save)
+            .getSemanticsData()
+            .hasAction(SemanticsAction.tap),
+        isFalse,
+      );
+      repository.completeSave();
+      await tester.pumpAndSettle();
+      expect(find.text('Remove from saved'), findsOneWidget);
+    },
+  );
 
   testWidgets('category retry replaces the error with cached category data', (
     tester,
@@ -113,6 +183,10 @@ Future<void> _pumpExplore(
       overrides: [
         exploreRepositoryProvider.overrideWithValue(repository),
         exploreLocaleProvider.overrideWithValue(locale),
+        activeUserIdProvider.overrideWithValue('user'),
+        savedRoutinesRepositoryProvider.overrideWithValue(
+          const _SavedRepository(),
+        ),
       ],
       child: _app(locale, const ExploreScreen()),
     ),
@@ -122,8 +196,9 @@ Future<void> _pumpExplore(
 Future<void> _pumpDetails(
   WidgetTester tester,
   Locale locale,
-  ExploreRoutineDetails details,
-) async {
+  ExploreRoutineDetails details, {
+  SavedRoutinesRepository savedRepository = const _SavedRepository(),
+}) async {
   await tester.binding.setSurfaceSize(const Size(360, 640));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
@@ -133,6 +208,8 @@ Future<void> _pumpDetails(
           _DetailsRepository(details),
         ),
         exploreLocaleProvider.overrideWithValue(locale),
+        activeUserIdProvider.overrideWithValue('user'),
+        savedRoutinesRepositoryProvider.overrideWithValue(savedRepository),
       ],
       child: _app(
         locale,
@@ -174,6 +251,15 @@ ExploreRoutineDetails _details(Locale locale) {
       RoutineStartBlock.unavailable,
     ),
     equipmentLabels: {'body_weight': arabic ? 'بدون أدوات' : 'No equipment'},
+  );
+}
+
+ExploreRoutineDetails _allowedDetails(Locale locale) {
+  final details = _details(locale);
+  return ExploreRoutineDetails(
+    presentation: details.presentation,
+    eligibility: const RoutineStartEligibility.allowed(),
+    equipmentLabels: details.equipmentLabels,
   );
 }
 
@@ -233,4 +319,41 @@ class _DetailsRepository extends _EmptyExploreRepository {
     String routineId,
     String locale,
   ) async => value;
+}
+
+class _SavedRepository implements SavedRoutinesRepository {
+  const _SavedRepository();
+  @override
+  Future<bool> isSaved({
+    required String userId,
+    required String routineId,
+  }) async => false;
+  @override
+  Future<List<SavedRoutine>> list({
+    required String userId,
+    required String locale,
+  }) async => const [];
+  @override
+  Future<void> save({
+    required String userId,
+    required String routineId,
+  }) async {}
+  @override
+  Future<void> unsave({
+    required String userId,
+    required String routineId,
+  }) async {}
+}
+
+class _DelayedSavedRepository extends _SavedRepository {
+  final Completer<void> _saveCompleter = Completer<void>();
+  int saveCalls = 0;
+
+  @override
+  Future<void> save({required String userId, required String routineId}) async {
+    saveCalls++;
+    await _saveCompleter.future;
+  }
+
+  void completeSave() => _saveCompleter.complete();
 }

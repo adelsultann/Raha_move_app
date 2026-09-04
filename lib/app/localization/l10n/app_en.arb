@@ -315,10 +315,23 @@
   "exploreCategoriesError": "We couldn't load routine categories right now.",
   "exploreMovementPreview": "Movement preview",
   "exploreExerciseCount": "Exercise count",
-  "exploreSaveLocation": "Save routines will be available here soon.",
+  "exploreSaveLocation": "Save routines",
   "exploreDetailsUnavailable": "This routine is no longer available.",
   "exploreStartRetired": "This routine is no longer available to start.",
   "exploreStartIncompatible": "This routine is not compatible with the current catalog.",
   "exploreStartUnavailable": "This routine is not ready to start right now.",
-  "exploreStartUnauthorized": "You don't have access to start this routine."
+  "exploreStartUnauthorized": "You don't have access to start this routine.",
+  "savedRoutinesOpen": "Saved routines",
+  "savedRoutinesTitle": "Saved routines",
+  "savedRoutineSave": "Save routine",
+  "savedRoutineUnsave": "Remove from saved",
+  "savedRoutineChangeError": "We couldn't update your saved routines. Please try again.",
+  "savedRoutinesEmptyTitle": "No saved routines yet",
+  "savedRoutinesEmptyBody": "Save a routine from Explore to return to it whenever you like.",
+  "savedRoutinesError": "We couldn't load your saved routines.",
+  "savedRoutinesUnavailableBody": "This saved routine is no longer available to play.",
+  "savedRoutinesUnavailableSemantics": "{title}, unavailable",
+  "@savedRoutinesUnavailableSemantics": {
+    "placeholders": { "title": { "type": "String" } }
+  }
 }

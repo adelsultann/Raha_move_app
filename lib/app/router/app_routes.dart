@@ -10,6 +10,7 @@ import 'package:raha_move/features/explore/presentation/explore_routine_details_
 import 'package:raha_move/features/explore/presentation/explore_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
+import 'package:raha_move/features/saved_routines/presentation/saved_routines_screen.dart';
 import 'package:raha_move/features/today/presentation/today_screen.dart';
 
 part 'app_routes.g.dart';
@@ -74,6 +75,15 @@ class ExploreRoutineDetailsRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       ExploreRoutineDetailsScreen(routineId: routineId);
+}
+
+@TypedGoRoute<SavedRoutinesRoute>(path: '/saved-routines')
+class SavedRoutinesRoute extends GoRouteData with $SavedRoutinesRoute {
+  const SavedRoutinesRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SavedRoutinesScreen();
 }
 
 @TypedGoRoute<RecommendationRoute>(path: '/recommendation/:checkInId')

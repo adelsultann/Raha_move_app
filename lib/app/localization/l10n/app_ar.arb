@@ -315,10 +315,23 @@
   "exploreCategoriesError": "تعذّر تحميل فئات الروتينات الآن.",
   "exploreMovementPreview": "معاينة الحركات",
   "exploreExerciseCount": "عدد التمارين",
-  "exploreSaveLocation": "سيصبح حفظ الروتينات متاحًا هنا قريبًا.",
+  "exploreSaveLocation": "حفظ الروتينات",
   "exploreDetailsUnavailable": "هذا الروتين لم يعد متاحًا.",
   "exploreStartRetired": "لم يعد هذا الروتين متاحًا للبدء.",
   "exploreStartIncompatible": "هذا الروتين غير متوافق مع قائمة المحتوى الحالية.",
   "exploreStartUnavailable": "هذا الروتين غير جاهز للبدء الآن.",
-  "exploreStartUnauthorized": "ليس لديك صلاحية لبدء هذا الروتين."
+  "exploreStartUnauthorized": "ليس لديك صلاحية لبدء هذا الروتين.",
+  "savedRoutinesOpen": "الروتينات المحفوظة",
+  "savedRoutinesTitle": "الروتينات المحفوظة",
+  "savedRoutineSave": "حفظ الروتين",
+  "savedRoutineUnsave": "إزالة من المحفوظات",
+  "savedRoutineChangeError": "تعذّر تحديث الروتينات المحفوظة. يرجى المحاولة مجددًا.",
+  "savedRoutinesEmptyTitle": "لا توجد روتينات محفوظة بعد",
+  "savedRoutinesEmptyBody": "احفظ روتينًا من صفحة الاستكشاف لتعود إليه متى أردت.",
+  "savedRoutinesError": "تعذّر تحميل الروتينات المحفوظة.",
+  "savedRoutinesUnavailableBody": "لم يعد هذا الروتين المحفوظ متاحًا للتشغيل.",
+  "savedRoutinesUnavailableSemantics": "{title}، غير متاح",
+  "@savedRoutinesUnavailableSemantics": {
+    "placeholders": { "title": { "type": "String" } }
+  }
 }

@@ -758,8 +758,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreExerciseCount => 'Exercise count';
 
   @override
-  String get exploreSaveLocation =>
-      'Save routines will be available here soon.';
+  String get exploreSaveLocation => 'Save routines';
 
   @override
   String get exploreDetailsUnavailable =>
@@ -780,4 +779,39 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get exploreStartUnauthorized =>
       'You don\'t have access to start this routine.';
+
+  @override
+  String get savedRoutinesOpen => 'Saved routines';
+
+  @override
+  String get savedRoutinesTitle => 'Saved routines';
+
+  @override
+  String get savedRoutineSave => 'Save routine';
+
+  @override
+  String get savedRoutineUnsave => 'Remove from saved';
+
+  @override
+  String get savedRoutineChangeError =>
+      'We couldn\'t update your saved routines. Please try again.';
+
+  @override
+  String get savedRoutinesEmptyTitle => 'No saved routines yet';
+
+  @override
+  String get savedRoutinesEmptyBody =>
+      'Save a routine from Explore to return to it whenever you like.';
+
+  @override
+  String get savedRoutinesError => 'We couldn\'t load your saved routines.';
+
+  @override
+  String get savedRoutinesUnavailableBody =>
+      'This saved routine is no longer available to play.';
+
+  @override
+  String savedRoutinesUnavailableSemantics(String title) {
+    return '$title, unavailable';
+  }
 }

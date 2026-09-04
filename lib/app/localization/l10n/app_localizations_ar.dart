@@ -750,7 +750,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exploreExerciseCount => 'عدد التمارين';
 
   @override
-  String get exploreSaveLocation => 'سيصبح حفظ الروتينات متاحًا هنا قريبًا.';
+  String get exploreSaveLocation => 'حفظ الروتينات';
 
   @override
   String get exploreDetailsUnavailable => 'هذا الروتين لم يعد متاحًا.';
@@ -767,4 +767,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get exploreStartUnauthorized => 'ليس لديك صلاحية لبدء هذا الروتين.';
+
+  @override
+  String get savedRoutinesOpen => 'الروتينات المحفوظة';
+
+  @override
+  String get savedRoutinesTitle => 'الروتينات المحفوظة';
+
+  @override
+  String get savedRoutineSave => 'حفظ الروتين';
+
+  @override
+  String get savedRoutineUnsave => 'إزالة من المحفوظات';
+
+  @override
+  String get savedRoutineChangeError =>
+      'تعذّر تحديث الروتينات المحفوظة. يرجى المحاولة مجددًا.';
+
+  @override
+  String get savedRoutinesEmptyTitle => 'لا توجد روتينات محفوظة بعد';
+
+  @override
+  String get savedRoutinesEmptyBody =>
+      'احفظ روتينًا من صفحة الاستكشاف لتعود إليه متى أردت.';
+
+  @override
+  String get savedRoutinesError => 'تعذّر تحميل الروتينات المحفوظة.';
+
+  @override
+  String get savedRoutinesUnavailableBody =>
+      'لم يعد هذا الروتين المحفوظ متاحًا للتشغيل.';
+
+  @override
+  String savedRoutinesUnavailableSemantics(String title) {
+    return '$title، غير متاح';
+  }
 }

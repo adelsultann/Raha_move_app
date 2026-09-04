@@ -11,6 +11,7 @@ List<RouteBase> get $appRoutes => [
   $checkInRoute,
   $exploreRoute,
   $exploreRoutineDetailsRoute,
+  $savedRoutinesRoute,
   $recommendationRoute,
   $routinePlayerRoute,
   $signInRoute,
@@ -113,6 +114,33 @@ mixin $ExploreRoutineDetailsRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/explore/routine/${Uri.encodeComponent(_self.routineId)}',
   );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $savedRoutinesRoute => GoRouteData.$route(
+  path: '/saved-routines',
+  hasOverriddenOnExit: false,
+  factory: $SavedRoutinesRoute._fromState,
+);
+
+mixin $SavedRoutinesRoute on GoRouteData {
+  static SavedRoutinesRoute _fromState(GoRouterState state) =>
+      const SavedRoutinesRoute();
+
+  @override
+  String get location => GoRouteData.$location('/saved-routines');
 
   @override
   void go(BuildContext context) => context.go(location);

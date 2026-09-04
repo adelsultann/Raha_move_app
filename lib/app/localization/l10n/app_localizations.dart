@@ -1421,7 +1421,7 @@ abstract class AppLocalizations {
   /// No description provided for @exploreSaveLocation.
   ///
   /// In en, this message translates to:
-  /// **'Save routines will be available here soon.'**
+  /// **'Save routines'**
   String get exploreSaveLocation;
 
   /// No description provided for @exploreDetailsUnavailable.
@@ -1453,6 +1453,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You don\'t have access to start this routine.'**
   String get exploreStartUnauthorized;
+
+  /// No description provided for @savedRoutinesOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved routines'**
+  String get savedRoutinesOpen;
+
+  /// No description provided for @savedRoutinesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved routines'**
+  String get savedRoutinesTitle;
+
+  /// No description provided for @savedRoutineSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save routine'**
+  String get savedRoutineSave;
+
+  /// No description provided for @savedRoutineUnsave.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from saved'**
+  String get savedRoutineUnsave;
+
+  /// No description provided for @savedRoutineChangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update your saved routines. Please try again.'**
+  String get savedRoutineChangeError;
+
+  /// No description provided for @savedRoutinesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved routines yet'**
+  String get savedRoutinesEmptyTitle;
+
+  /// No description provided for @savedRoutinesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a routine from Explore to return to it whenever you like.'**
+  String get savedRoutinesEmptyBody;
+
+  /// No description provided for @savedRoutinesError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your saved routines.'**
+  String get savedRoutinesError;
+
+  /// No description provided for @savedRoutinesUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This saved routine is no longer available to play.'**
+  String get savedRoutinesUnavailableBody;
+
+  /// No description provided for @savedRoutinesUnavailableSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{title}, unavailable'**
+  String savedRoutinesUnavailableSemantics(String title);
 }
 
 class _AppLocalizationsDelegate

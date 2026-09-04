@@ -26,7 +26,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
     final categories = ref.watch(exploreCategoriesProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(strings.exploreTitle)),
+      appBar: AppBar(
+        title: Text(strings.exploreTitle),
+        actions: [
+          IconButton(
+            key: const Key('explore_saved_routines'),
+            tooltip: strings.savedRoutinesOpen,
+            icon: const Icon(Icons.bookmark_outline),
+            onPressed: () => const SavedRoutinesRoute().push(context),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
