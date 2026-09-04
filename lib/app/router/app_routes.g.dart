@@ -9,6 +9,8 @@ part of 'app_routes.dart';
 List<RouteBase> get $appRoutes => [
   $foundationRoute,
   $checkInRoute,
+  $exploreRoute,
+  $exploreRoutineDetailsRoute,
   $recommendationRoute,
   $routinePlayerRoute,
   $signInRoute,
@@ -69,6 +71,63 @@ mixin $CheckInRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $exploreRoute => GoRouteData.$route(
+  path: '/explore',
+  hasOverriddenOnExit: false,
+  factory: $ExploreRoute._fromState,
+);
+
+mixin $ExploreRoute on GoRouteData {
+  static ExploreRoute _fromState(GoRouterState state) => const ExploreRoute();
+
+  @override
+  String get location => GoRouteData.$location('/explore');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $exploreRoutineDetailsRoute => GoRouteData.$route(
+  path: '/explore/routine/:routineId',
+  hasOverriddenOnExit: false,
+  factory: $ExploreRoutineDetailsRoute._fromState,
+);
+
+mixin $ExploreRoutineDetailsRoute on GoRouteData {
+  static ExploreRoutineDetailsRoute _fromState(GoRouterState state) =>
+      ExploreRoutineDetailsRoute(routineId: state.pathParameters['routineId']!);
+
+  ExploreRoutineDetailsRoute get _self => this as ExploreRoutineDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/explore/routine/${Uri.encodeComponent(_self.routineId)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $recommendationRoute => GoRouteData.$route(
   path: '/recommendation/:checkInId',
   hasOverriddenOnExit: false,
@@ -112,6 +171,7 @@ mixin $RoutinePlayerRoute on GoRouteData {
         routineId: state.pathParameters['routineId']!,
         recommendationId: state.uri.queryParameters['recommendationId'],
         sessionId: state.uri.queryParameters['sessionId'],
+        source: state.uri.queryParameters['source'],
       );
 
   RoutinePlayerRoute get _self => this as RoutinePlayerRoute;
@@ -123,6 +183,7 @@ mixin $RoutinePlayerRoute on GoRouteData {
       if (_self.recommendationId != null)
         'recommendationId': _self.recommendationId,
       if (_self.sessionId != null) 'sessionId': _self.sessionId,
+      if (_self.source != null) 'source': _self.source,
     },
   );
 

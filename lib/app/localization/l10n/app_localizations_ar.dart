@@ -689,4 +689,82 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get todayUnavailable =>
       'تعذّر تحميل صفحة اليوم الآن. يرجى المحاولة مجددًا.';
+
+  @override
+  String get exploreTitle => 'استكشف الروتينات';
+
+  @override
+  String get exploreAllCategories => 'كل الروتينات';
+
+  @override
+  String get exploreDuration => 'المدة';
+
+  @override
+  String exploreMinutes(int minutes) {
+    return '$minutes دقائق';
+  }
+
+  @override
+  String get exploreBodyArea => 'منطقة الجسم';
+
+  @override
+  String get explorePosition => 'الوضعية';
+
+  @override
+  String get exploreDifficulty => 'المستوى';
+
+  @override
+  String get exploreEquipment => 'الأدوات';
+
+  @override
+  String get exploreClear => 'مسح عوامل التصفية';
+
+  @override
+  String get exploreApply => 'تطبيق عوامل التصفية';
+
+  @override
+  String get exploreEmptyTitle => 'لا توجد روتينات جاهزة للاستكشاف بعد.';
+
+  @override
+  String get exploreEmptyBody =>
+      'ستظهر الروتينات الموجّهة هنا عندما تصبح متاحة على جهازك.';
+
+  @override
+  String get exploreEmptyFilteredTitle =>
+      'لا توجد روتينات تطابق عوامل التصفية هذه.';
+
+  @override
+  String get exploreEmptyFilteredBody =>
+      'جرّب مسح عامل تصفية واحد أو أكثر لرؤية روتينات موجّهة أخرى.';
+
+  @override
+  String get exploreError => 'تعذّر تحميل الروتينات المتاحة محليًا.';
+
+  @override
+  String get exploreCategoriesError => 'تعذّر تحميل فئات الروتينات الآن.';
+
+  @override
+  String get exploreMovementPreview => 'معاينة الحركات';
+
+  @override
+  String get exploreExerciseCount => 'عدد التمارين';
+
+  @override
+  String get exploreSaveLocation => 'سيصبح حفظ الروتينات متاحًا هنا قريبًا.';
+
+  @override
+  String get exploreDetailsUnavailable => 'هذا الروتين لم يعد متاحًا.';
+
+  @override
+  String get exploreStartRetired => 'لم يعد هذا الروتين متاحًا للبدء.';
+
+  @override
+  String get exploreStartIncompatible =>
+      'هذا الروتين غير متوافق مع قائمة المحتوى الحالية.';
+
+  @override
+  String get exploreStartUnavailable => 'هذا الروتين غير جاهز للبدء الآن.';
+
+  @override
+  String get exploreStartUnauthorized => 'ليس لديك صلاحية لبدء هذا الروتين.';
 }

@@ -643,7 +643,7 @@ included in a beta or production build, or treated as production content. See
 - Explore presents guided routines rather than a raw exercise encyclopedia.
 - Users can browse published routines by approved category and filter by duration, body area, position, difficulty, and equipment.
 - Filters combine consistently, can be cleared, and produce an informative empty state.
-- Routine details show localized purpose, duration, difficulty, position, equipment, exercise count, movement preview, save state, and start action.
+- Routine details show localized purpose, duration, difficulty, position, equipment, exercise count, movement preview, a reserved save-action location, and start action. Interactive save state and save/unsave behavior are delivered by RAHA-062.
 - Retired, incompatible, unavailable, or unauthorized routines cannot be newly started.
 - Search/filter behavior works from locally cached content while offline.
 

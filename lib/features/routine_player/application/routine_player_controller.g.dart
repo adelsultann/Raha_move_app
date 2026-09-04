@@ -84,7 +84,7 @@ final class RoutinePlayerControllerProvider
 }
 
 String _$routinePlayerControllerHash() =>
-    r'38cf9ae9f7c4e6bef444b3a8466e8d0a40a56d54';
+    r'0109ceba8ad40b9cac510ffee7f455c570883e74';
 
 /// The deterministic state machine for one focused routine playback session.
 ///

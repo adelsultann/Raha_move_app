@@ -26,11 +26,13 @@ class RoutinePlayerScreen extends ConsumerStatefulWidget {
     required this.routineId,
     this.recommendationId,
     this.sessionId,
+    this.source,
   });
 
   final String routineId;
   final String? recommendationId;
   final String? sessionId;
+  final String? source;
 
   @override
   ConsumerState<RoutinePlayerScreen> createState() =>
@@ -43,6 +45,7 @@ class _RoutinePlayerScreenState extends ConsumerState<RoutinePlayerScreen>
     routineId: widget.routineId,
     recommendationId: widget.recommendationId,
     sessionId: widget.sessionId,
+    source: widget.source,
   );
 
   RoutinePlayerController? _controller;

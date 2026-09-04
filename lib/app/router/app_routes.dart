@@ -6,6 +6,8 @@ import 'package:raha_move/features/authentication/presentation/sign_in_screen.da
 import 'package:raha_move/features/authentication/presentation/sign_up_screen.dart';
 import 'package:raha_move/features/check_in/application/check_in_controller.dart';
 import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
+import 'package:raha_move/features/explore/presentation/explore_routine_details_screen.dart';
+import 'package:raha_move/features/explore/presentation/explore_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
 import 'package:raha_move/features/today/presentation/today_screen.dart';
@@ -56,6 +58,24 @@ class CheckInRoute extends GoRouteData with $CheckInRoute {
   }
 }
 
+@TypedGoRoute<ExploreRoute>(path: '/explore')
+class ExploreRoute extends GoRouteData with $ExploreRoute {
+  const ExploreRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ExploreScreen();
+}
+
+@TypedGoRoute<ExploreRoutineDetailsRoute>(path: '/explore/routine/:routineId')
+class ExploreRoutineDetailsRoute extends GoRouteData
+    with $ExploreRoutineDetailsRoute {
+  const ExploreRoutineDetailsRoute({required this.routineId});
+  final String routineId;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ExploreRoutineDetailsScreen(routineId: routineId);
+}
+
 @TypedGoRoute<RecommendationRoute>(path: '/recommendation/:checkInId')
 class RecommendationRoute extends GoRouteData with $RecommendationRoute {
   const RecommendationRoute({required this.checkInId});
@@ -83,6 +103,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
     required this.routineId,
     @TypedQueryParameter(name: 'recommendationId') this.recommendationId,
     @TypedQueryParameter(name: 'sessionId') this.sessionId,
+    @TypedQueryParameter(name: 'source') this.source,
   });
 
   final String routineId;
@@ -92,6 +113,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
   /// Stable identifier used to restore a previously started session. A null
   /// [sessionId] starts a new session.
   final String? sessionId;
+  final String? source;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -99,6 +121,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
       routineId: routineId,
       recommendationId: recommendationId,
       sessionId: sessionId,
+      source: source,
     );
   }
 }

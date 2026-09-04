@@ -29,6 +29,7 @@ abstract class RoutinePlayerArgs with _$RoutinePlayerArgs {
     required String routineId,
     String? recommendationId,
     String? sessionId,
+    String? source,
   }) = _RoutinePlayerArgs;
 }
 
@@ -47,6 +48,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
   DateTime? _sessionStartedAt;
   RoutinePlayerArgs _args = const RoutinePlayerArgs(routineId: '');
   RoutineSessionSnapshot? _conflict;
+  String _sessionSource = 'recommendation';
   bool _startChecked = false;
   final Set<String> _emittedTerminalSessionIds = {};
   Future<void> Function()? _pendingSave;
@@ -124,6 +126,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
   }
 
   void _startSession(RoutinePlayerArgs args, RoutinePlaybackPlan plan) {
+    _sessionSource = args.source == 'explore' ? 'explore' : 'recommendation';
     final now = _clock().toUtc();
     _sessionStartedAt = now;
     _session = RoutinePlaybackSession(
@@ -158,6 +161,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     RoutinePlaybackPlan plan,
   ) {
     _sessionStartedAt = snapshot.startedAt;
+    _sessionSource = snapshot.source;
     _session = _mapSnapshotToSession(snapshot, plan);
     // Restore is always paused and user-controlled; it never emits
     // routine_started and never auto-resumes playback.
@@ -336,6 +340,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
       routineId: conflict.routineId,
       recommendationId: conflict.recommendationId,
       status: PlaybackStatus.abandoned,
+      source: conflict.source,
     );
     final plan = _plan;
     if (plan == null) return;
@@ -528,6 +533,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
         routineId: session.routineId,
         routineVersion: session.routineVersion,
         recommendationId: session.recommendationId,
+        source: _source,
         startedAt: _sessionStartedAt ?? _clock().toUtc(),
         steps: [
           for (var i = 0; i < session.steps.length; i++)
@@ -635,6 +641,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
         routineId: snapshot.routineId,
         routineVersion: snapshot.routineVersion,
         recommendationId: snapshot.recommendationId,
+        source: snapshot.source,
         startedAt: snapshot.startedAt,
         steps: steps,
         explicitlyAbandoned: true,
@@ -759,7 +766,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
             properties: <String, Object?>{
               AnalyticsPropertyKey.routineId: session.routineId,
               AnalyticsPropertyKey.sessionId: session.sessionId,
-              AnalyticsPropertyKey.source: 'recommendation',
+              AnalyticsPropertyKey.source: _source,
               if (session.recommendationId != null)
                 AnalyticsPropertyKey.recommendationId: session.recommendationId,
             },
@@ -772,6 +779,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     required String routineId,
     String? recommendationId,
     required PlaybackStatus status,
+    String? source,
   }) {
     if (!_emittedTerminalSessionIds.add(sessionId)) return;
     final name = status == PlaybackStatus.completed
@@ -785,12 +793,14 @@ class RoutinePlayerController extends _$RoutinePlayerController {
             properties: <String, Object?>{
               AnalyticsPropertyKey.routineId: routineId,
               AnalyticsPropertyKey.sessionId: sessionId,
-              AnalyticsPropertyKey.source: 'recommendation',
+              AnalyticsPropertyKey.source: source ?? _source,
               AnalyticsPropertyKey.recommendationId: ?recommendationId,
             },
           ),
         );
   }
+
+  String get _source => _sessionSource;
 
   static List<RoutineStepPlayback> _updateStep(
     List<RoutineStepPlayback> steps,

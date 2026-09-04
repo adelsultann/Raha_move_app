@@ -24,7 +24,11 @@ final class DriftRoutinePlaybackLoader implements RoutinePlaybackLoader {
     final routine = await (_database.select(
       _database.localRoutines,
     )..where((r) => r.id.equals(routineId))).getSingleOrNull();
-    if (routine == null || routine.status != 'published') {
+    // Routine-level access is independent of media. A cached file cannot grant
+    // access to a retired or unauthorized routine.
+    if (routine == null ||
+        routine.status != 'published' ||
+        routine.accessTier != 'free') {
       throw const RoutinePlaybackUnavailableException();
     }
 
@@ -41,6 +45,17 @@ final class DriftRoutinePlaybackLoader implements RoutinePlaybackLoader {
             .get();
 
     final exerciseIds = steps.map((s) => s.exerciseId).toSet();
+    if (steps.isEmpty) throw const RoutinePlaybackUnavailableException();
+    final exercises = await (_database.select(
+      _database.localExercises,
+    )..where((exercise) => exercise.id.isIn(exerciseIds))).get();
+    if (exercises.length != exerciseIds.length ||
+        exercises.any(
+          (exercise) =>
+              exercise.status != 'published' || !exercise.safetyApproved,
+        )) {
+      throw const RoutinePlaybackUnavailableException();
+    }
     final exerciseTranslations = exerciseIds.isEmpty
         ? const <LocalExerciseTranslation>[]
         : await (_database.select(

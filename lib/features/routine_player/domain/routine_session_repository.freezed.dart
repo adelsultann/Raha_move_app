@@ -509,6 +509,7 @@ mixin _$RoutineSessionSnapshot {
   String get routineId;
   int get routineVersion;
   String? get recommendationId;
+  String get source;
   DateTime get startedAt;
   String get status;
   int? get currentStepPosition;
@@ -538,6 +539,7 @@ mixin _$RoutineSessionSnapshot {
                 other.routineVersion == routineVersion) &&
             (identical(other.recommendationId, recommendationId) ||
                 other.recommendationId == recommendationId) &&
+            (identical(other.source, source) || other.source == source) &&
             (identical(other.startedAt, startedAt) ||
                 other.startedAt == startedAt) &&
             (identical(other.status, status) || other.status == status) &&
@@ -558,6 +560,7 @@ mixin _$RoutineSessionSnapshot {
     routineId,
     routineVersion,
     recommendationId,
+    source,
     startedAt,
     status,
     currentStepPosition,
@@ -567,7 +570,7 @@ mixin _$RoutineSessionSnapshot {
 
   @override
   String toString() {
-    return 'RoutineSessionSnapshot(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, recommendationId: $recommendationId, startedAt: $startedAt, status: $status, currentStepPosition: $currentStepPosition, currentStepActiveSeconds: $currentStepActiveSeconds, steps: $steps)';
+    return 'RoutineSessionSnapshot(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, recommendationId: $recommendationId, source: $source, startedAt: $startedAt, status: $status, currentStepPosition: $currentStepPosition, currentStepActiveSeconds: $currentStepActiveSeconds, steps: $steps)';
   }
 }
 
@@ -583,6 +586,7 @@ abstract mixin class $RoutineSessionSnapshotCopyWith<$Res> {
     String routineId,
     int routineVersion,
     String? recommendationId,
+    String source,
     DateTime startedAt,
     String status,
     int? currentStepPosition,
@@ -608,6 +612,7 @@ class _$RoutineSessionSnapshotCopyWithImpl<$Res>
     Object? routineId = null,
     Object? routineVersion = null,
     Object? recommendationId = freezed,
+    Object? source = null,
     Object? startedAt = null,
     Object? status = null,
     Object? currentStepPosition = freezed,
@@ -632,6 +637,10 @@ class _$RoutineSessionSnapshotCopyWithImpl<$Res>
             ? _self.recommendationId
             : recommendationId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        source: null == source
+            ? _self.source
+            : source // ignore: cast_nullable_to_non_nullable
+                  as String,
         startedAt: null == startedAt
             ? _self.startedAt
             : startedAt // ignore: cast_nullable_to_non_nullable
@@ -755,6 +764,7 @@ extension RoutineSessionSnapshotPatterns on RoutineSessionSnapshot {
       String routineId,
       int routineVersion,
       String? recommendationId,
+      String source,
       DateTime startedAt,
       String status,
       int? currentStepPosition,
@@ -772,6 +782,7 @@ extension RoutineSessionSnapshotPatterns on RoutineSessionSnapshot {
           _that.routineId,
           _that.routineVersion,
           _that.recommendationId,
+          _that.source,
           _that.startedAt,
           _that.status,
           _that.currentStepPosition,
@@ -803,6 +814,7 @@ extension RoutineSessionSnapshotPatterns on RoutineSessionSnapshot {
       String routineId,
       int routineVersion,
       String? recommendationId,
+      String source,
       DateTime startedAt,
       String status,
       int? currentStepPosition,
@@ -819,6 +831,7 @@ extension RoutineSessionSnapshotPatterns on RoutineSessionSnapshot {
           _that.routineId,
           _that.routineVersion,
           _that.recommendationId,
+          _that.source,
           _that.startedAt,
           _that.status,
           _that.currentStepPosition,
@@ -849,6 +862,7 @@ extension RoutineSessionSnapshotPatterns on RoutineSessionSnapshot {
       String routineId,
       int routineVersion,
       String? recommendationId,
+      String source,
       DateTime startedAt,
       String status,
       int? currentStepPosition,
@@ -865,6 +879,7 @@ extension RoutineSessionSnapshotPatterns on RoutineSessionSnapshot {
           _that.routineId,
           _that.routineVersion,
           _that.recommendationId,
+          _that.source,
           _that.startedAt,
           _that.status,
           _that.currentStepPosition,
@@ -885,6 +900,7 @@ class _RoutineSessionSnapshot implements RoutineSessionSnapshot {
     required this.routineId,
     required this.routineVersion,
     this.recommendationId,
+    this.source = 'recommendation',
     required this.startedAt,
     required this.status,
     this.currentStepPosition,
@@ -900,6 +916,9 @@ class _RoutineSessionSnapshot implements RoutineSessionSnapshot {
   final int routineVersion;
   @override
   final String? recommendationId;
+  @override
+  @JsonKey()
+  final String source;
   @override
   final DateTime startedAt;
   @override
@@ -940,6 +959,7 @@ class _RoutineSessionSnapshot implements RoutineSessionSnapshot {
                 other.routineVersion == routineVersion) &&
             (identical(other.recommendationId, recommendationId) ||
                 other.recommendationId == recommendationId) &&
+            (identical(other.source, source) || other.source == source) &&
             (identical(other.startedAt, startedAt) ||
                 other.startedAt == startedAt) &&
             (identical(other.status, status) || other.status == status) &&
@@ -960,6 +980,7 @@ class _RoutineSessionSnapshot implements RoutineSessionSnapshot {
     routineId,
     routineVersion,
     recommendationId,
+    source,
     startedAt,
     status,
     currentStepPosition,
@@ -969,7 +990,7 @@ class _RoutineSessionSnapshot implements RoutineSessionSnapshot {
 
   @override
   String toString() {
-    return 'RoutineSessionSnapshot(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, recommendationId: $recommendationId, startedAt: $startedAt, status: $status, currentStepPosition: $currentStepPosition, currentStepActiveSeconds: $currentStepActiveSeconds, steps: $steps)';
+    return 'RoutineSessionSnapshot(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, recommendationId: $recommendationId, source: $source, startedAt: $startedAt, status: $status, currentStepPosition: $currentStepPosition, currentStepActiveSeconds: $currentStepActiveSeconds, steps: $steps)';
   }
 }
 
@@ -987,6 +1008,7 @@ abstract mixin class _$RoutineSessionSnapshotCopyWith<$Res>
     String routineId,
     int routineVersion,
     String? recommendationId,
+    String source,
     DateTime startedAt,
     String status,
     int? currentStepPosition,
@@ -1012,6 +1034,7 @@ class __$RoutineSessionSnapshotCopyWithImpl<$Res>
     Object? routineId = null,
     Object? routineVersion = null,
     Object? recommendationId = freezed,
+    Object? source = null,
     Object? startedAt = null,
     Object? status = null,
     Object? currentStepPosition = freezed,
@@ -1036,6 +1059,10 @@ class __$RoutineSessionSnapshotCopyWithImpl<$Res>
             ? _self.recommendationId
             : recommendationId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        source: null == source
+            ? _self.source
+            : source // ignore: cast_nullable_to_non_nullable
+                  as String,
         startedAt: null == startedAt
             ? _self.startedAt
             : startedAt // ignore: cast_nullable_to_non_nullable

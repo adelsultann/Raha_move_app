@@ -696,4 +696,88 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get todayUnavailable =>
       'We couldn\'t load Today right now. Please try again.';
+
+  @override
+  String get exploreTitle => 'Explore routines';
+
+  @override
+  String get exploreAllCategories => 'All routines';
+
+  @override
+  String get exploreDuration => 'Duration';
+
+  @override
+  String exploreMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get exploreBodyArea => 'Body area';
+
+  @override
+  String get explorePosition => 'Position';
+
+  @override
+  String get exploreDifficulty => 'Difficulty';
+
+  @override
+  String get exploreEquipment => 'Equipment';
+
+  @override
+  String get exploreClear => 'Clear filters';
+
+  @override
+  String get exploreApply => 'Apply filters';
+
+  @override
+  String get exploreEmptyTitle => 'No routines are ready to explore yet.';
+
+  @override
+  String get exploreEmptyBody =>
+      'New guided routines will appear here when they are available on your device.';
+
+  @override
+  String get exploreEmptyFilteredTitle => 'No routines match these filters.';
+
+  @override
+  String get exploreEmptyFilteredBody =>
+      'Try clearing one or more filters to see other guided routines.';
+
+  @override
+  String get exploreError =>
+      'We couldn\'t load your locally available routines.';
+
+  @override
+  String get exploreCategoriesError =>
+      'We couldn\'t load routine categories right now.';
+
+  @override
+  String get exploreMovementPreview => 'Movement preview';
+
+  @override
+  String get exploreExerciseCount => 'Exercise count';
+
+  @override
+  String get exploreSaveLocation =>
+      'Save routines will be available here soon.';
+
+  @override
+  String get exploreDetailsUnavailable =>
+      'This routine is no longer available.';
+
+  @override
+  String get exploreStartRetired =>
+      'This routine is no longer available to start.';
+
+  @override
+  String get exploreStartIncompatible =>
+      'This routine is not compatible with the current catalog.';
+
+  @override
+  String get exploreStartUnavailable =>
+      'This routine is not ready to start right now.';
+
+  @override
+  String get exploreStartUnauthorized =>
+      'You don\'t have access to start this routine.';
 }

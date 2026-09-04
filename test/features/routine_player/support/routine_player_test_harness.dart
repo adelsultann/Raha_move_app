@@ -160,6 +160,7 @@ final class SessionSaveCall {
     required this.routineId,
     required this.routineVersion,
     this.recommendationId,
+    required this.source,
     required this.startedAt,
     required this.steps,
     this.currentStepPosition,
@@ -172,6 +173,7 @@ final class SessionSaveCall {
   final String routineId;
   final int routineVersion;
   final String? recommendationId;
+  final String source;
   final DateTime startedAt;
   final List<RoutineStepSnapshot> steps;
   final int? currentStepPosition;
@@ -221,6 +223,7 @@ final class FakeRoutineSessionRepository implements RoutineSessionRepository {
     required String routineId,
     required int routineVersion,
     String? recommendationId,
+    String source = 'recommendation',
     required DateTime startedAt,
     required List<RoutineStepSnapshot> steps,
     int? currentStepPosition,
@@ -237,6 +240,7 @@ final class FakeRoutineSessionRepository implements RoutineSessionRepository {
         routineId: routineId,
         routineVersion: routineVersion,
         recommendationId: recommendationId,
+        source: source,
         startedAt: startedAt,
         steps: steps,
         currentStepPosition: currentStepPosition,

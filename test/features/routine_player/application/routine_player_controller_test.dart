@@ -406,6 +406,7 @@ void main() {
         routineId: 'rt-1',
         routineVersion: 1,
         recommendationId: 'rec-1',
+        source: 'explore',
         startedAt: DateTime.utc(2026, 8, 29, 12),
         status: 'in_progress',
         currentStepPosition: 1,
@@ -453,6 +454,13 @@ void main() {
         analytics.recordedEvents.where((e) => e.name == 'routine_started'),
         isEmpty,
       );
+      await container
+          .read(routinePlayerControllerProvider(args).notifier)
+          .abandon();
+      final abandoned = analytics.recordedEvents
+          .where((event) => event.name == 'routine_abandoned')
+          .single;
+      expect(abandoned.properties['source'], 'explore');
     },
   );
 
@@ -462,6 +470,7 @@ void main() {
       sessionId: 'old-session',
       routineId: 'rt-1',
       routineVersion: 1,
+      source: 'explore',
       startedAt: DateTime.utc(2026, 8, 29, 12),
       status: 'in_progress',
       currentStepPosition: 1,
@@ -526,6 +535,7 @@ void main() {
     final abandonSave = repository.saves.first;
     expect(abandonSave.sessionId, 'old-session');
     expect(abandonSave.currentStepPosition, isNull);
+    expect(abandonSave.source, 'explore');
     // ...then a fresh session started.
     final startSave = repository.saves.last;
     expect(startSave.sessionId, isNot('old-session'));
@@ -545,6 +555,7 @@ void main() {
         routineId: 'rt-1',
         routineVersion: 1,
         recommendationId: 'rec-1',
+        source: 'explore',
         startedAt: DateTime.utc(2026, 8, 29, 12),
         status: 'in_progress',
         currentStepPosition: 1,
@@ -599,6 +610,7 @@ void main() {
       expect(abandoned.single.properties['session_id'], 'old-session');
       expect(abandoned.single.properties['routine_id'], 'rt-1');
       expect(abandoned.single.properties['recommendation_id'], 'rec-1');
+      expect(abandoned.single.properties['source'], 'explore');
     },
   );
 

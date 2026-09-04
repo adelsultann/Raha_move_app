@@ -1309,6 +1309,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t load Today right now. Please try again.'**
   String get todayUnavailable;
+
+  /// No description provided for @exploreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore routines'**
+  String get exploreTitle;
+
+  /// No description provided for @exploreAllCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All routines'**
+  String get exploreAllCategories;
+
+  /// No description provided for @exploreDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get exploreDuration;
+
+  /// No description provided for @exploreMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String exploreMinutes(int minutes);
+
+  /// No description provided for @exploreBodyArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Body area'**
+  String get exploreBodyArea;
+
+  /// No description provided for @explorePosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get explorePosition;
+
+  /// No description provided for @exploreDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get exploreDifficulty;
+
+  /// No description provided for @exploreEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get exploreEquipment;
+
+  /// No description provided for @exploreClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get exploreClear;
+
+  /// No description provided for @exploreApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filters'**
+  String get exploreApply;
+
+  /// No description provided for @exploreEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No routines are ready to explore yet.'**
+  String get exploreEmptyTitle;
+
+  /// No description provided for @exploreEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'New guided routines will appear here when they are available on your device.'**
+  String get exploreEmptyBody;
+
+  /// No description provided for @exploreEmptyFilteredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No routines match these filters.'**
+  String get exploreEmptyFilteredTitle;
+
+  /// No description provided for @exploreEmptyFilteredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try clearing one or more filters to see other guided routines.'**
+  String get exploreEmptyFilteredBody;
+
+  /// No description provided for @exploreError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your locally available routines.'**
+  String get exploreError;
+
+  /// No description provided for @exploreCategoriesError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load routine categories right now.'**
+  String get exploreCategoriesError;
+
+  /// No description provided for @exploreMovementPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement preview'**
+  String get exploreMovementPreview;
+
+  /// No description provided for @exploreExerciseCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise count'**
+  String get exploreExerciseCount;
+
+  /// No description provided for @exploreSaveLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Save routines will be available here soon.'**
+  String get exploreSaveLocation;
+
+  /// No description provided for @exploreDetailsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This routine is no longer available.'**
+  String get exploreDetailsUnavailable;
+
+  /// No description provided for @exploreStartRetired.
+  ///
+  /// In en, this message translates to:
+  /// **'This routine is no longer available to start.'**
+  String get exploreStartRetired;
+
+  /// No description provided for @exploreStartIncompatible.
+  ///
+  /// In en, this message translates to:
+  /// **'This routine is not compatible with the current catalog.'**
+  String get exploreStartIncompatible;
+
+  /// No description provided for @exploreStartUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This routine is not ready to start right now.'**
+  String get exploreStartUnavailable;
+
+  /// No description provided for @exploreStartUnauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have access to start this routine.'**
+  String get exploreStartUnauthorized;
 }
 
 class _AppLocalizationsDelegate
