@@ -811,6 +811,89 @@ class AppLocalizationsEn extends AppLocalizations {
       'This saved routine is no longer available to play.';
 
   @override
+  String get progressTitle => 'Your progress';
+
+  @override
+  String get progressThisWeek => 'Your movement this week';
+
+  @override
+  String progressWeekStarting(String date) {
+    return 'Week starting $date';
+  }
+
+  @override
+  String get progressPreviousWeek => 'Previous week';
+
+  @override
+  String get progressNextWeek => 'Next week';
+
+  @override
+  String get progressWeeklyGoal => 'Weekly goal';
+
+  @override
+  String progressMovementDays(int days, int goal) {
+    return '$days of $goal movement days';
+  }
+
+  @override
+  String progressGoalSemantics(int days, int goal) {
+    return '$days of $goal movement days this week';
+  }
+
+  @override
+  String get progressMovementDaysLabel => 'Movement days';
+
+  @override
+  String get progressVerifiedMinutes => 'Verified active minutes';
+
+  @override
+  String get progressCompletedRoutines => 'Completed routines';
+
+  @override
+  String get progressFeedbackTrend => 'How you felt afterward';
+
+  @override
+  String progressFeedbackSummary(int better, int total) {
+    return '$better of $total sessions felt better';
+  }
+
+  @override
+  String get progressNoFeedback => 'No feedback recorded for this week yet.';
+
+  @override
+  String get progressBodyAreas => 'Areas you moved';
+
+  @override
+  String get progressRecentHistory => 'Recent completed routines';
+
+  @override
+  String progressMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String progressHistorySemantics(String routine, int minutes) {
+    return '$routine, $minutes verified active minutes';
+  }
+
+  @override
+  String get progressLocalPending =>
+      'This completed movement is saved on this device and will be confirmed when you reconnect.';
+
+  @override
+  String get progressEmptyTitle => 'Your movement history will appear here';
+
+  @override
+  String get progressEmptyBody =>
+      'When you are ready, a short comfortable routine is a good place to begin.';
+
+  @override
+  String get progressError => 'We couldn\'t load your progress right now.';
+
+  @override
+  String get progressRoutineUnavailable => 'Completed routine';
+
+  @override
   String savedRoutinesUnavailableSemantics(String title) {
     return '$title, unavailable';
   }

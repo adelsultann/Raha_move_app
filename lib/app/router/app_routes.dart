@@ -8,6 +8,7 @@ import 'package:raha_move/features/check_in/application/check_in_controller.dart
 import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
 import 'package:raha_move/features/explore/presentation/explore_routine_details_screen.dart';
 import 'package:raha_move/features/explore/presentation/explore_screen.dart';
+import 'package:raha_move/features/progress/presentation/progress_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
 import 'package:raha_move/features/saved_routines/presentation/saved_routines_screen.dart';
@@ -65,6 +66,15 @@ class ExploreRoute extends GoRouteData with $ExploreRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ExploreScreen();
+}
+
+@TypedGoRoute<ProgressRoute>(path: '/progress')
+class ProgressRoute extends GoRouteData with $ProgressRoute {
+  const ProgressRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ProgressScreen();
 }
 
 @TypedGoRoute<ExploreRoutineDetailsRoute>(path: '/explore/routine/:routineId')

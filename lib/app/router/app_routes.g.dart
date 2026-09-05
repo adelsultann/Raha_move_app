@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
   $foundationRoute,
   $checkInRoute,
   $exploreRoute,
+  $progressRoute,
   $exploreRoutineDetailsRoute,
   $savedRoutinesRoute,
   $recommendationRoute,
@@ -83,6 +84,32 @@ mixin $ExploreRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/explore');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $progressRoute => GoRouteData.$route(
+  path: '/progress',
+  hasOverriddenOnExit: false,
+  factory: $ProgressRoute._fromState,
+);
+
+mixin $ProgressRoute on GoRouteData {
+  static ProgressRoute _fromState(GoRouterState state) => const ProgressRoute();
+
+  @override
+  String get location => GoRouteData.$location('/progress');
 
   @override
   void go(BuildContext context) => context.go(location);

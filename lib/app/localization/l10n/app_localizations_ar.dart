@@ -799,6 +799,89 @@ class AppLocalizationsAr extends AppLocalizations {
       'لم يعد هذا الروتين المحفوظ متاحًا للتشغيل.';
 
   @override
+  String get progressTitle => 'تقدّمك';
+
+  @override
+  String get progressThisWeek => 'حركتك هذا الأسبوع';
+
+  @override
+  String progressWeekStarting(String date) {
+    return 'أسبوع يبدأ في $date';
+  }
+
+  @override
+  String get progressPreviousWeek => 'الأسبوع السابق';
+
+  @override
+  String get progressNextWeek => 'الأسبوع التالي';
+
+  @override
+  String get progressWeeklyGoal => 'الهدف الأسبوعي';
+
+  @override
+  String progressMovementDays(int days, int goal) {
+    return '$days من $goal أيام حركة';
+  }
+
+  @override
+  String progressGoalSemantics(int days, int goal) {
+    return '$days من $goal أيام حركة هذا الأسبوع';
+  }
+
+  @override
+  String get progressMovementDaysLabel => 'أيام الحركة';
+
+  @override
+  String get progressVerifiedMinutes => 'دقائق الحركة المؤكدة';
+
+  @override
+  String get progressCompletedRoutines => 'الروتينات المكتملة';
+
+  @override
+  String get progressFeedbackTrend => 'كيف شعرت بعد ذلك';
+
+  @override
+  String progressFeedbackSummary(int better, int total) {
+    return 'شعرت بتحسن بعد $better من $total جلسات';
+  }
+
+  @override
+  String get progressNoFeedback => 'لا توجد ملاحظات مسجّلة لهذا الأسبوع بعد.';
+
+  @override
+  String get progressBodyAreas => 'المناطق التي حرّكتها';
+
+  @override
+  String get progressRecentHistory => 'الروتينات المكتملة مؤخرًا';
+
+  @override
+  String progressMinutes(int minutes) {
+    return '$minutes د';
+  }
+
+  @override
+  String progressHistorySemantics(String routine, int minutes) {
+    return '$routine، $minutes دقيقة حركة مؤكدة';
+  }
+
+  @override
+  String get progressLocalPending =>
+      'هذه الحركة المكتملة محفوظة على جهازك وستتأكد عند عودة الاتصال.';
+
+  @override
+  String get progressEmptyTitle => 'سيظهر سجل حركتك هنا';
+
+  @override
+  String get progressEmptyBody =>
+      'عندما تكون مستعدًا، يمكنك البدء بروتين قصير ومريح.';
+
+  @override
+  String get progressError => 'تعذّر تحميل تقدّمك الآن.';
+
+  @override
+  String get progressRoutineUnavailable => 'روتين مكتمل';
+
+  @override
   String savedRoutinesUnavailableSemantics(String title) {
     return '$title، غير متاح';
   }

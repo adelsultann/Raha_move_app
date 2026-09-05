@@ -1508,6 +1508,144 @@ abstract class AppLocalizations {
   /// **'This saved routine is no longer available to play.'**
   String get savedRoutinesUnavailableBody;
 
+  /// No description provided for @progressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress'**
+  String get progressTitle;
+
+  /// No description provided for @progressThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Your movement this week'**
+  String get progressThisWeek;
+
+  /// No description provided for @progressWeekStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Week starting {date}'**
+  String progressWeekStarting(String date);
+
+  /// No description provided for @progressPreviousWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous week'**
+  String get progressPreviousWeek;
+
+  /// No description provided for @progressNextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get progressNextWeek;
+
+  /// No description provided for @progressWeeklyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly goal'**
+  String get progressWeeklyGoal;
+
+  /// No description provided for @progressMovementDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} of {goal} movement days'**
+  String progressMovementDays(int days, int goal);
+
+  /// No description provided for @progressGoalSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} of {goal} movement days this week'**
+  String progressGoalSemantics(int days, int goal);
+
+  /// No description provided for @progressMovementDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement days'**
+  String get progressMovementDaysLabel;
+
+  /// No description provided for @progressVerifiedMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified active minutes'**
+  String get progressVerifiedMinutes;
+
+  /// No description provided for @progressCompletedRoutines.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed routines'**
+  String get progressCompletedRoutines;
+
+  /// No description provided for @progressFeedbackTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'How you felt afterward'**
+  String get progressFeedbackTrend;
+
+  /// No description provided for @progressFeedbackSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{better} of {total} sessions felt better'**
+  String progressFeedbackSummary(int better, int total);
+
+  /// No description provided for @progressNoFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'No feedback recorded for this week yet.'**
+  String get progressNoFeedback;
+
+  /// No description provided for @progressBodyAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Areas you moved'**
+  String get progressBodyAreas;
+
+  /// No description provided for @progressRecentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent completed routines'**
+  String get progressRecentHistory;
+
+  /// No description provided for @progressMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String progressMinutes(int minutes);
+
+  /// No description provided for @progressHistorySemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{routine}, {minutes} verified active minutes'**
+  String progressHistorySemantics(String routine, int minutes);
+
+  /// No description provided for @progressLocalPending.
+  ///
+  /// In en, this message translates to:
+  /// **'This completed movement is saved on this device and will be confirmed when you reconnect.'**
+  String get progressLocalPending;
+
+  /// No description provided for @progressEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your movement history will appear here'**
+  String get progressEmptyTitle;
+
+  /// No description provided for @progressEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When you are ready, a short comfortable routine is a good place to begin.'**
+  String get progressEmptyBody;
+
+  /// No description provided for @progressError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your progress right now.'**
+  String get progressError;
+
+  /// No description provided for @progressRoutineUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed routine'**
+  String get progressRoutineUnavailable;
+
   /// No description provided for @savedRoutinesUnavailableSemantics.
   ///
   /// In en, this message translates to:
