@@ -343,6 +343,7 @@
   "@progressGoalSemantics": { "placeholders": { "days": { "type": "int" }, "goal": { "type": "int" } } },
   "progressMovementDaysLabel": "أيام الحركة",
   "progressVerifiedMinutes": "دقائق الحركة المؤكدة",
+  "progressLocalActiveMinutes": "دقائق الحركة (محفوظة محليًا)",
   "progressCompletedRoutines": "الروتينات المكتملة",
   "progressFeedbackTrend": "كيف شعرت بعد ذلك",
   "progressFeedbackSummary": "شعرت بتحسن بعد {better} من {total} جلسات",

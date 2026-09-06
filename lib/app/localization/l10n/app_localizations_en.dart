@@ -847,6 +847,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressVerifiedMinutes => 'Verified active minutes';
 
   @override
+  String get progressLocalActiveMinutes => 'Active minutes (saved locally)';
+
+  @override
   String get progressCompletedRoutines => 'Completed routines';
 
   @override

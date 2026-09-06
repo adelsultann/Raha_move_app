@@ -25,6 +25,7 @@ void main() {
       expect(find.text('Your movement this week'), findsOneWidget);
       expect(find.text('2 of 3 movement days'), findsOneWidget);
       expect(find.text('10'), findsOneWidget);
+      expect(find.text('Active minutes (saved locally)'), findsOneWidget);
       expect(find.text('Neck'), findsOneWidget);
       expect(find.text('Recent completed routines'), findsOneWidget);
     },

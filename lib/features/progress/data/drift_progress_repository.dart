@@ -101,7 +101,12 @@ final class DriftProgressRepository implements ProgressRepository {
       _database.localSessionFeedback,
     )..where((row) => row.userId.equals(activeUserId))).get();
     final feedbackBySession = {
-      for (final row in feedbackRows) row.sessionId: row,
+      for (final row in feedbackRows.where(
+        (row) =>
+            row.syncState != SyncState.failed &&
+            row.syncState != SyncState.pendingDelete,
+      ))
+        row.sessionId: row,
     };
     final routineNames = await _routineNames(visibleHistory, locale);
     final localAreaLabels = await _bodyAreas(visibleHistory, locale);
@@ -109,7 +114,7 @@ final class DriftProgressRepository implements ProgressRepository {
     var littleBetter = 0;
     var same = 0;
     var lessComfortable = 0;
-    for (final session in localWeekSessions) {
+    for (final session in visibleHistory) {
       switch (feedbackBySession[session.id]?.rating) {
         case 'much_better':
           muchBetter++;
@@ -125,13 +130,6 @@ final class DriftProgressRepository implements ProgressRepository {
           break;
       }
     }
-    final pendingDays = <MovementDate>{
-      for (final session in pending)
-        _dateResolver.resolve(
-          session.completedAt!,
-          session.completedTimezone ?? profile.timezone,
-        ),
-    };
     final authoritativeDays = authority.movementDates;
     final localMovementDays = <MovementDate>{
       for (final session in visibleHistory)
@@ -141,7 +139,7 @@ final class DriftProgressRepository implements ProgressRepository {
         ),
     };
     final movementDays = authority.hasExactMovementDates
-        ? {...authoritativeDays!, ...pendingDays}.length
+        ? {...authoritativeDays!, ...localMovementDays}.length
         : localMovementDays.length;
     final localActiveSeconds = visibleHistory.fold<int>(
       0,

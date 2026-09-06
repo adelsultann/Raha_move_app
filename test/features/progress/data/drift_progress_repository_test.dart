@@ -123,6 +123,63 @@ void main() {
     },
   );
 
+  test('excludes failed and pending-delete feedback from the trend', () async {
+    await _session(
+      database,
+      id: 'confirmed',
+      completedAt: DateTime.utc(2026, 9, 8),
+    );
+    await _session(
+      database,
+      id: 'feedback-failed',
+      completedAt: DateTime.utc(2026, 9, 8, 1),
+    );
+    await _session(
+      database,
+      id: 'feedback-deleting',
+      completedAt: DateTime.utc(2026, 9, 8, 2),
+    );
+    await database
+        .into(database.localSessionFeedback)
+        .insert(
+          LocalSessionFeedbackCompanion.insert(
+            sessionId: 'confirmed',
+            userId: 'user-1',
+            rating: 'much_better',
+            createdAt: DateTime.utc(2026, 9, 8),
+            localUpdatedAt: DateTime.utc(2026, 9, 8),
+          ),
+        );
+    await database
+        .into(database.localSessionFeedback)
+        .insert(
+          LocalSessionFeedbackCompanion.insert(
+            sessionId: 'feedback-failed',
+            userId: 'user-1',
+            rating: 'much_better',
+            createdAt: DateTime.utc(2026, 9, 8, 1),
+            localUpdatedAt: DateTime.utc(2026, 9, 8, 1),
+            syncState: const Value(SyncState.failed),
+          ),
+        );
+    await database
+        .into(database.localSessionFeedback)
+        .insert(
+          LocalSessionFeedbackCompanion.insert(
+            sessionId: 'feedback-deleting',
+            userId: 'user-1',
+            rating: 'little_better',
+            createdAt: DateTime.utc(2026, 9, 8, 2),
+            localUpdatedAt: DateTime.utc(2026, 9, 8, 2),
+            syncState: const Value(SyncState.pendingDelete),
+          ),
+        );
+
+    final summary = await _summary(repository);
+    expect(summary.feedback.total, 1);
+    expect(summary.feedback.feltBetter, 1);
+  });
+
   test(
     'weekly authority uses movement dates while detailed progress stays local',
     () async {
@@ -152,6 +209,29 @@ void main() {
       expect(summary.verifiedActiveSeconds, 600);
       expect(summary.completedRoutines, 2);
       expect(summary.hasProvisionalProgress, isTrue);
+    },
+  );
+
+  test(
+    'keeps a server-acknowledged local movement day until projection refresh',
+    () async {
+      await _session(
+        database,
+        id: 'acknowledged',
+        completedAt: DateTime.utc(2026, 9, 8),
+      );
+      await database
+          .into(database.localProgressProjections)
+          .insert(
+            LocalProgressProjectionsCompanion.insert(
+              userId: 'user-1',
+              projectionType: 'weekly_progress',
+              serverUpdatedAt: DateTime.utc(2026, 9, 8),
+              payloadJson: '{"rule_version":"weekly_movement_v1","week_start":"2026-09-06T21:00:00Z","week_end":"2026-09-13T21:00:00Z","timezone":"Asia/Riyadh","goal_days":3,"movement_days":0,"movement_dates":[]}',
+            ),
+          );
+
+      expect((await _summary(repository)).movementDays, 1);
     },
   );
 

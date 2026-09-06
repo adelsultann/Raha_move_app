@@ -231,7 +231,9 @@ class _Metrics extends StatelessWidget {
         ),
         Expanded(
           child: _Metric(
-            label: s.progressVerifiedMinutes,
+            label: summary.hasProvisionalProgress
+                ? s.progressLocalActiveMinutes
+                : s.progressVerifiedMinutes,
             value: '${summary.verifiedActiveMinutes}',
           ),
         ),

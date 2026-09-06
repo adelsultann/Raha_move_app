@@ -1568,6 +1568,12 @@ abstract class AppLocalizations {
   /// **'Verified active minutes'**
   String get progressVerifiedMinutes;
 
+  /// No description provided for @progressLocalActiveMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Active minutes (saved locally)'**
+  String get progressLocalActiveMinutes;
+
   /// No description provided for @progressCompletedRoutines.
   ///
   /// In en, this message translates to:

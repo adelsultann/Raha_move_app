@@ -343,6 +343,7 @@
   "@progressGoalSemantics": { "placeholders": { "days": { "type": "int" }, "goal": { "type": "int" } } },
   "progressMovementDaysLabel": "Movement days",
   "progressVerifiedMinutes": "Verified active minutes",
+  "progressLocalActiveMinutes": "Active minutes (saved locally)",
   "progressCompletedRoutines": "Completed routines",
   "progressFeedbackTrend": "How you felt afterward",
   "progressFeedbackSummary": "{better} of {total} sessions felt better",

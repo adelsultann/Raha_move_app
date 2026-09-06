@@ -835,6 +835,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get progressVerifiedMinutes => 'دقائق الحركة المؤكدة';
 
   @override
+  String get progressLocalActiveMinutes => 'دقائق الحركة (محفوظة محليًا)';
+
+  @override
   String get progressCompletedRoutines => 'الروتينات المكتملة';
 
   @override
