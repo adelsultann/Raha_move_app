@@ -2,6 +2,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/core/database/app_database.dart';
 import 'package:raha_move/features/onboarding/domain/app_language.dart';
+import 'package:raha_move/features/preferences/domain/experience_level.dart';
 import 'package:raha_move/features/profile/data/drift_profile_repository.dart';
 import 'package:raha_move/features/profile/domain/profile_settings.dart';
 
@@ -57,6 +58,7 @@ void main() {
         'user',
         ProfileSettings(
           language: AppLanguage.en,
+          experienceLevel: ExperienceLevel.intermediate,
           weeklyGoalDays: 5,
           permittedPositions: const {'seated', 'standing'},
           soundEnabled: false,
@@ -69,6 +71,7 @@ void main() {
       );
       final restored = await repository.read('user');
       expect(restored.language, AppLanguage.en);
+      expect(restored.experienceLevel, ExperienceLevel.intermediate);
       expect(restored.weeklyGoalDays, 5);
       expect(restored.permittedPositions, {'seated', 'standing'});
       expect(restored.analyticsEnabled, isTrue);
@@ -79,6 +82,7 @@ void main() {
       expect(outbox.kind, WireOperationKind.preferenceUpsert);
       expect(outbox.payloadJson, contains('preferences_v1'));
       expect(outbox.payloadJson, contains('analytics_consent'));
+      expect(outbox.payloadJson, contains('experience_level'));
     },
   );
 

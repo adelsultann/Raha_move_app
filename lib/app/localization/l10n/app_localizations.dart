@@ -1682,6 +1682,12 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get profileLanguage;
 
+  /// No description provided for @profileMovementExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement experience'**
+  String get profileMovementExperience;
+
   /// No description provided for @profileWeeklyGoal.
   ///
   /// In en, this message translates to:
@@ -1897,6 +1903,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue clearing this device'**
   String get accountDeletionRecoveryRetry;
+
+  /// No description provided for @accountDeletionRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finishing account cleanup'**
+  String get accountDeletionRecoveryTitle;
+
+  /// No description provided for @accountDeletionRecoveryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For your privacy, Raha Move is clearing this device before you continue. Your deletion request has already been accepted.'**
+  String get accountDeletionRecoveryBody;
 
   /// No description provided for @profileDeleteRequiresSignIn.
   ///

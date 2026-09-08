@@ -66,11 +66,9 @@ void main() {
     (tester) async {
       await tester.pumpWidget(_app(const Locale('en'), deletion: _Deletion()));
       await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('profile_delete_account')),
-        300,
-      );
-      await tester.tap(find.byKey(const Key('profile_delete_account')));
+      final delete = find.byKey(const Key('profile_delete_account'));
+      await tester.scrollUntilVisible(delete, 300);
+      tester.widget<ListTile>(delete).onTap!();
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('profile_confirm_delete')), findsOneWidget);
       final handle = tester.ensureSemantics();
@@ -123,6 +121,113 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('cleanup retry restores app only after recovery completes', (
+    tester,
+  ) async {
+    var attempts = 0;
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          accountDeletionRecoveryProvider.overrideWith(
+            (_) async => attempts++ == 0
+                ? AccountDeletionCleanupResult.pending
+                : AccountDeletionCleanupResult.completed,
+          ),
+        ],
+        child: const AccountDeletionRecoveryGate(
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text('normal route'),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Finishing account cleanup'), findsOneWidget);
+    expect(find.text('normal route'), findsNothing);
+    await tester.tap(find.byKey(const Key('account_deletion_recovery_retry')));
+    await tester.pumpAndSettle();
+    expect(find.text('normal route'), findsOneWidget);
+  });
+
+  testWidgets('deletion recovery is localized and blocks its child in Arabic', (
+    tester,
+  ) async {
+    tester.binding.platformDispatcher.localeTestValue = const Locale('ar');
+    addTearDown(tester.binding.platformDispatcher.clearLocaleTestValue);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          accountDeletionRecoveryProvider.overrideWith(
+            (_) async => AccountDeletionCleanupResult.pending,
+          ),
+        ],
+        child: const AccountDeletionRecoveryGate(child: Text('normal route')),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('نُكمل تنظيف الحساب'), findsOneWidget);
+    expect(find.text('normal route'), findsNothing);
+    expect(
+      tester
+          .widget<Directionality>(find.byType(Directionality).first)
+          .textDirection,
+      TextDirection.rtl,
+    );
+  });
+
+  testWidgets(
+    'language changes immediately while Profile route and user settings remain',
+    (tester) async {
+      await tester.pumpWidget(_languageApp());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Profile'), findsOneWidget);
+      expect(find.text('3 days per week'), findsOneWidget);
+      expect(
+        tester
+            .widget<Directionality>(find.byType(Directionality).first)
+            .textDirection,
+        TextDirection.ltr,
+      );
+
+      await tester.tap(find.byType(DropdownButton<AppLanguage>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('العربية').last);
+      await tester.pumpAndSettle();
+
+      expect(find.text('حسابي'), findsOneWidget);
+      expect(find.text('3 أيام في الأسبوع'), findsOneWidget);
+      expect(find.byKey(const Key('profile_language')), findsOneWidget);
+      expect(
+        tester
+            .widget<Directionality>(find.byType(Directionality).first)
+            .textDirection,
+        TextDirection.rtl,
+      );
+    },
+  );
+
+  testWidgets('selecting movement experience updates the Profile controller', (
+    tester,
+  ) async {
+    _EditableProfile.lastSaved = null;
+    await tester.pumpWidget(_languageApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('profile_movement_experience')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const Key('profile_movement_experience_intermediate')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Some experience'), findsOneWidget);
+    expect(_EditableProfile.lastSaved?.experienceLevel.code, 'intermediate');
+  });
 }
 
 Widget _app(
@@ -159,6 +264,32 @@ Widget _app(
       onHelp: () {},
       onPrivacy: () {},
       onTerms: () {},
+    ),
+  ),
+);
+
+Widget _languageApp() => ProviderScope(
+  overrides: [
+    profileControllerProvider.overrideWith(_EditableProfile.new),
+    authControllerProvider.overrideWith(_Auth.new),
+    localeControllerProvider.overrideWith(_ImmediateLocale.new),
+  ],
+  child: Consumer(
+    builder: (context, ref, _) => MaterialApp(
+      locale: ref.watch(localeControllerProvider).value,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: ProfileScreen(
+        onSavedRoutines: () {},
+        onHelp: () {},
+        onPrivacy: () {},
+        onTerms: () {},
+      ),
     ),
   ),
 );
@@ -200,6 +331,29 @@ final class _Locale extends LocaleController {
   Future<Locale> build() async => const Locale('ar');
   @override
   Future<void> selectLanguage(AppLanguage language) async {}
+}
+
+final class _EditableProfile extends _Profile {
+  static ProfileSettings? lastSaved;
+  @override
+  Future<ProfileSettings> build() async =>
+      _Profile.value.copyWith(language: AppLanguage.en);
+
+  @override
+  Future<void> saveSettings(ProfileSettings settings) async {
+    lastSaved = settings;
+    state = AsyncData(settings);
+  }
+}
+
+final class _ImmediateLocale extends LocaleController {
+  @override
+  Future<Locale> build() async => const Locale('en');
+
+  @override
+  Future<void> selectLanguage(AppLanguage language) async {
+    state = AsyncData(Locale(language.code));
+  }
 }
 
 final class _Deletion implements AccountDeletionAction {

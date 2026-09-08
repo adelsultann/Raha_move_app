@@ -902,6 +902,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileLanguage => 'اللغة';
 
   @override
+  String get profileMovementExperience => 'خبرتك في الحركة';
+
+  @override
   String get profileWeeklyGoal => 'هدف الحركة الأسبوعي';
 
   @override
@@ -1020,6 +1023,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accountDeletionRecoveryRetry => 'متابعة مسح بيانات هذا الجهاز';
+
+  @override
+  String get accountDeletionRecoveryTitle => 'نُكمل تنظيف الحساب';
+
+  @override
+  String get accountDeletionRecoveryBody =>
+      'لحماية خصوصيتك، يمسح راحة موف بيانات هذا الجهاز قبل المتابعة. تم قبول طلب الحذف بالفعل.';
 
   @override
   String get profileDeleteRequiresSignIn =>

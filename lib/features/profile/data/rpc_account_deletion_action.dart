@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../core/database/app_database.dart';
 import '../../authentication/domain/auth_repository.dart';
 import '../../authentication/domain/guest_identity_store.dart';
@@ -39,6 +41,10 @@ final class RpcAccountDeletionAction implements AccountDeletionAction {
       return AccountDeletionResult.unavailable;
     }
     try {
+      // Make the privacy boundary durable before the request crosses the
+      // network. A process death after a successful RPC can therefore never
+      // restore this account's old local session or data on the next launch.
+      await _cleanup.prepareDeletionRequest(userId: userId);
       final envelope = await _gateway.rpc('request_account_deletion', const {});
       if (envelope?['version'] != 'raha_064_deletion_v1' ||
           envelope?['status'] != 'requested') {
@@ -46,7 +52,7 @@ final class RpcAccountDeletionAction implements AccountDeletionAction {
       }
       final cleanup = await _cleanup.clearAcceptedRequest(
         userId: userId,
-        mediaOwnerId: _mediaOwnerId(),
+        mediaOwnerId: _mediaOwnerId() ?? userId,
       );
       return cleanup == AccountDeletionCleanupResult.completed
           ? AccountDeletionResult.accepted
@@ -60,6 +66,10 @@ final class RpcAccountDeletionAction implements AccountDeletionAction {
 }
 
 abstract interface class AccountDeletionCleanup {
+  /// Arms fail-closed local recovery before a deletion RPC is sent. An unknown
+  /// RPC outcome is safer to recover as cleanup than to restore old data.
+  Future<void> prepareDeletionRequest({required String userId});
+
   Future<AccountDeletionCleanupResult> clearAcceptedRequest({
     required String userId,
     required String? mediaOwnerId,
@@ -68,10 +78,12 @@ abstract interface class AccountDeletionCleanup {
 
 enum AccountDeletionCleanupResult { completed, pending }
 
-/// Idempotent cleanup after a verified accepted request. Credentials are
-/// cleared last, so a local cleanup failure never leaves an honest "signed in"
-/// UI after the secure session is already gone.
+/// Idempotent cleanup after a verified accepted request. The durable marker is
+/// the privacy boundary: while it exists, startup must not restore normal app
+/// routes. A new guest identity is created only after private media metadata,
+/// user rows, and local credentials have all been removed.
 final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
+  static const markerPrefix = 'account_deletion_cleanup_';
   DriftAccountDeletionCleanup(
     this._database,
     this._auth,
@@ -84,17 +96,25 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
   final GuestIdentityStore _identities;
   final Future<MediaCacheLifecycle> Function() _mediaLifecycle;
 
+  @override
+  Future<void> prepareDeletionRequest({required String userId}) =>
+      _writeMarker(userId: userId, mediaOwnerId: userId);
+
   /// Resumes only locally durable, already-accepted deletion requests. This
   /// deliberately has no RPC dependency: retrying must remain safe offline and
   /// must never submit a second deletion request.
   Future<AccountDeletionCleanupResult> recoverPending() async {
     final entries = await _database.select(_database.environmentEntries).get();
     for (final entry in entries.where(
-      (entry) => entry.key.startsWith('account_deletion_cleanup_'),
+      (entry) => entry.key.startsWith(markerPrefix),
     )) {
-      final userId = entry.key.substring('account_deletion_cleanup_'.length);
+      final userId = entry.key.substring(markerPrefix.length);
+      final mediaOwnerId = _mediaOwnerFromMarker(entry.value) ?? userId;
       if (userId.isEmpty ||
-          await clearAcceptedRequest(userId: userId, mediaOwnerId: userId) ==
+          await clearAcceptedRequest(
+                userId: userId,
+                mediaOwnerId: mediaOwnerId,
+              ) ==
               AccountDeletionCleanupResult.pending) {
         return AccountDeletionCleanupResult.pending;
       }
@@ -107,16 +127,11 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
     required String userId,
     required String? mediaOwnerId,
   }) async {
-    final marker = 'account_deletion_cleanup_$userId';
+    final marker = '$markerPrefix$userId';
+    final ownerToPurge = mediaOwnerId ?? userId;
     try {
-      await _database
-          .into(_database.environmentEntries)
-          .insertOnConflictUpdate(
-            EnvironmentEntriesCompanion.insert(key: marker, value: 'pending'),
-          );
-      if (mediaOwnerId != null) {
-        await (await _mediaLifecycle()).purgeOwner(mediaOwnerId);
-      }
+      await _writeMarker(userId: userId, mediaOwnerId: ownerToPurge);
+      await (await _mediaLifecycle()).purgeOwner(ownerToPurge);
       await LocalUserDataRepository(
         _database,
         activeUserId: userId,
@@ -125,15 +140,6 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
       await (_database.delete(
         _database.environmentEntries,
       )..where((row) => row.key.equals('telemetry_consent_$userId'))).go();
-      String? activeLocalUserId;
-      try {
-        activeLocalUserId = await _identities.currentLocalUserId();
-      } catch (_) {
-        // Startup recovery runs before auth has minted a new guest identity.
-      }
-      if (activeLocalUserId == userId) {
-        await _identities.resetForSignOut();
-      }
       // The request was already accepted. Credential removal must work offline.
       await _auth.clearLocalSession();
       // Server-wide revocation is worthwhile but cannot block a fresh offline
@@ -141,6 +147,9 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
       try {
         await _auth.signOut();
       } catch (_) {}
+      // Do this last: creating a guest profile earlier would restore normal
+      // guest state while deletion cleanup was still incomplete.
+      await _identities.resetForSignOut();
       await (_database.delete(
         _database.environmentEntries,
       )..where((row) => row.key.equals(marker))).go();
@@ -149,4 +158,31 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
       return AccountDeletionCleanupResult.pending;
     }
   }
+
+  String? _mediaOwnerFromMarker(String value) {
+    try {
+      final decoded = jsonDecode(value);
+      if (decoded is Map<String, dynamic>) {
+        final owner = decoded['media_owner_id'];
+        return owner is String && owner.isNotEmpty ? owner : null;
+      }
+    } on FormatException {
+      // Legacy `pending` markers safely fall back to the deleted user id.
+    }
+    return null;
+  }
+
+  Future<void> _writeMarker({
+    required String userId,
+    required String mediaOwnerId,
+  }) => _database
+      .into(_database.environmentEntries)
+      .insertOnConflictUpdate(
+        EnvironmentEntriesCompanion.insert(
+          key: '$markerPrefix$userId',
+          // The owner id is needed only to resume local cache cleanup. It is never
+          // sent remotely or included in telemetry.
+          value: jsonEncode({'media_owner_id': mediaOwnerId}),
+        ),
+      );
 }

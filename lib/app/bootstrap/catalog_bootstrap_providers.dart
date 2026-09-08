@@ -18,18 +18,22 @@ part 'catalog_bootstrap_providers.g.dart';
 /// isolated in-memory database.
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
-  final database = AppDatabase(
-    LazyDatabase(() async {
-      final support = await getApplicationSupportDirectory();
-      final file = File(
-        '${support.path}${Platform.pathSeparator}raha_move.sqlite',
-      );
-      return NativeDatabase.createInBackground(file);
-    }),
-  );
+  final database = createAppDatabase();
   ref.onDispose(database.close);
   return database;
 }
+
+/// Opens the application-owned Drift database for an isolated startup task.
+/// Callers must close the returned database when their preflight is complete.
+AppDatabase createAppDatabase() => AppDatabase(
+  LazyDatabase(() async {
+    final support = await getApplicationSupportDirectory();
+    final file = File(
+      '${support.path}${Platform.pathSeparator}raha_move.sqlite',
+    );
+    return NativeDatabase.createInBackground(file);
+  }),
+);
 
 /// Injectable catalog source. Defaults to an offline no-op so no live SDK or
 /// configuration is required; override with a real source when one exists.

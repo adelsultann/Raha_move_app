@@ -915,6 +915,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLanguage => 'Language';
 
   @override
+  String get profileMovementExperience => 'Movement experience';
+
+  @override
   String get profileWeeklyGoal => 'Weekly movement goal';
 
   @override
@@ -1035,6 +1038,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountDeletionRecoveryRetry => 'Continue clearing this device';
+
+  @override
+  String get accountDeletionRecoveryTitle => 'Finishing account cleanup';
+
+  @override
+  String get accountDeletionRecoveryBody =>
+      'For your privacy, Raha Move is clearing this device before you continue. Your deletion request has already been accepted.';
 
   @override
   String get profileDeleteRequiresSignIn =>

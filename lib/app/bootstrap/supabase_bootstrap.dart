@@ -1,6 +1,18 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/profile/data/account_deletion_startup_guard.dart';
 import 'secure_local_storage.dart';
+
+/// Runs deletion recovery preflight before Supabase can restore a persisted
+/// session or issue authenticated refresh traffic.
+Future<void> initializeSupabaseAfterDeletionPreflight({
+  required AccountDeletionStartupGuard deletionGuard,
+  required Future<void> Function() initialize,
+}) async {
+  if (await deletionGuard.permitsSupabaseInitialization()) {
+    await initialize();
+  }
+}
 
 /// Initializes the public Supabase client only when both non-secret build
 /// values are present. Local tests and the bundled offline experience require

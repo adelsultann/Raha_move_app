@@ -43,6 +43,7 @@ do $$ declare pr jsonb; begin
   if pr->>'contract_version' <> 'preferences_v1' then raise exception 'RAHA-064: projection contract version wrong'; end if;
   if pr->>'preferred_locale' <> 'ar' then raise exception 'RAHA-064: default locale wrong'; end if;
   if (pr->>'weekly_goal_days')::int <> 3 then raise exception 'RAHA-064: default weekly goal wrong'; end if;
+  if pr->>'experience_level' <> 'beginner' then raise exception 'RAHA-064: default experience level wrong'; end if;
   if pr->'position_ids' <> '[]'::jsonb then raise exception 'RAHA-064: default positions not empty'; end if;
   if pr->>'analytics_consent' <> 'false' then raise exception 'RAHA-064: analytics must default off'; end if;
   if pr->>'crash_reporting_consent' <> 'false' then raise exception 'RAHA-064: crash reporting must default off'; end if;
@@ -65,6 +66,7 @@ do $$ declare r jsonb; begin
       'operation_at','2026-09-06T10:00:00Z',
       'preferred_locale','en',
       'weekly_goal_days',5,
+      'experience_level','intermediate',
       'position_ids', jsonb_build_array('06400000-0000-0000-0000-000000000201','06400000-0000-0000-0000-000000000202'),
       'sound_enabled',false,
       'vibration_enabled',false,
@@ -76,6 +78,7 @@ do $$ declare r jsonb; begin
   if r #>> '{operations,0,status}' <> 'applied' then raise exception 'RAHA-064: expected applied'; end if;
   if r #>> '{operations,0,preferences,preferred_locale}' <> 'en' then raise exception 'RAHA-064: locale not applied'; end if;
   if r #>> '{operations,0,preferences,weekly_goal_days}' <> '5' then raise exception 'RAHA-064: goal not applied'; end if;
+  if r #>> '{operations,0,preferences,experience_level}' <> 'intermediate' then raise exception 'RAHA-064: experience level not applied'; end if;
   if jsonb_array_length(r #> '{operations,0,preferences,position_ids}') <> 2 then raise exception 'RAHA-064: positions not applied'; end if;
   if r #>> '{operations,0,preferences,analytics_consent}' <> 'true' then raise exception 'RAHA-064: analytics consent not applied'; end if;
   if r #>> '{projections,preferences,preferred_locale}' <> 'en' then raise exception 'RAHA-064: projection missing preferences'; end if;
@@ -85,6 +88,7 @@ reset role;
 do $$ begin
   if (select preferred_locale from public.profiles where user_id='06400000-0000-0000-0000-000000000001') <> 'en' then raise exception 'RAHA-064: profile locale not persisted'; end if;
   if (select weekly_goal_days from public.profiles where user_id='06400000-0000-0000-0000-000000000001') <> 5 then raise exception 'RAHA-064: weekly goal not persisted'; end if;
+  if (select experience_level::text from public.user_preferences where user_id='06400000-0000-0000-0000-000000000001') <> 'intermediate' then raise exception 'RAHA-064: experience level not persisted'; end if;
   if (select sound_enabled from public.user_preferences where user_id='06400000-0000-0000-0000-000000000001') <> false then raise exception 'RAHA-064: sound not persisted'; end if;
   if (select analytics_consent from public.user_preferences where user_id='06400000-0000-0000-0000-000000000001') <> true then raise exception 'RAHA-064: analytics consent not persisted'; end if;
   if (select count(*) from public.user_preferred_positions where user_id='06400000-0000-0000-0000-000000000001') <> 2 then raise exception 'RAHA-064: positions not persisted'; end if;
@@ -102,6 +106,7 @@ do $$ declare r jsonb; begin
     'payload', jsonb_build_object(
       'contract_version','preferences_v1','operation_at','2026-09-06T10:00:00Z',
       'preferred_locale','en','weekly_goal_days',5,
+      'experience_level','intermediate',
       'position_ids', jsonb_build_array('06400000-0000-0000-0000-000000000201','06400000-0000-0000-0000-000000000202'),
       'sound_enabled',false,'vibration_enabled',false,'download_on_wifi_only',false,
       'reminders_enabled',true,'analytics_consent',true,'crash_reporting_consent',false))));
@@ -157,7 +162,8 @@ do $$ begin
       'position_ids', '[]'::jsonb,
       'sound_enabled',false,'vibration_enabled',false,'download_on_wifi_only',false,
       'reminders_enabled',true,'analytics_consent',true,'crash_reporting_consent',false))));
-  if (select count(*) from public.user_preferred_positions where user_id='06400000-0000-0000-0000-000000000001') <> 0 then raise exception 'RAHA-064: positions not cleared'; end if;
+   if (select count(*) from public.user_preferred_positions where user_id='06400000-0000-0000-0000-000000000001') <> 0 then raise exception 'RAHA-064: positions not cleared'; end if;
+   if (select experience_level::text from public.user_preferences where user_id='06400000-0000-0000-0000-000000000001') <> 'intermediate' then raise exception 'RAHA-064: old-client payload overwrote experience level'; end if;
 end $$;
 reset role;
 
@@ -192,10 +198,20 @@ do $$ begin
     raise exception 'RAHA-064: inactive position accepted';
   exception when raise_exception then if sqlerrm <> 'position_ids must reference active positions' then raise; end if; end;
 
-  begin
+   begin
     perform public.sync_push_user_data(jsonb_build_array(jsonb_build_object('operation_id','06400000-0000-0000-0000-000000000316','kind','preference_upsert','payload', jsonb_build_object('contract_version','preferences_v1','operation_at','2026-09-07T00:00:00Z','preferred_locale','en','weekly_goal_days',3,'position_ids','[]'::jsonb,'sound_enabled','yes','vibration_enabled',true,'download_on_wifi_only',true,'reminders_enabled',false,'analytics_consent',false,'crash_reporting_consent',false))));
     raise exception 'RAHA-064: non-boolean accepted';
-  exception when raise_exception then if sqlerrm <> 'sound_enabled must be boolean' then raise; end if; end;
+   exception when raise_exception then if sqlerrm <> 'sound_enabled must be boolean' then raise; end if; end;
+
+   begin
+    perform public.sync_push_user_data(jsonb_build_array(jsonb_build_object('operation_id','06400000-0000-0000-0000-000000000317','kind','preference_upsert','payload', jsonb_build_object('contract_version','preferences_v1','operation_at','2026-09-07T00:00:00Z','preferred_locale','en','weekly_goal_days',3,'experience_level','expert','position_ids','[]'::jsonb,'sound_enabled',true,'vibration_enabled',true,'download_on_wifi_only',true,'reminders_enabled',false,'analytics_consent',false,'crash_reporting_consent',false))));
+    raise exception 'RAHA-064: invalid experience level accepted';
+   exception when raise_exception then if sqlerrm <> 'invalid experience_level' then raise; end if; end;
+
+   begin
+    perform public.sync_push_user_data(jsonb_build_array(jsonb_build_object('operation_id','06400000-0000-0000-0000-000000000318','kind','preference_upsert','payload', jsonb_build_object('contract_version','preferences_v1','operation_at','2026-09-07T00:00:00Z','preferred_locale','en','weekly_goal_days',3,'experience_level',3,'position_ids','[]'::jsonb,'sound_enabled',true,'vibration_enabled',true,'download_on_wifi_only',true,'reminders_enabled',false,'analytics_consent',false,'crash_reporting_consent',false))));
+    raise exception 'RAHA-064: non-string experience level accepted';
+   exception when raise_exception then if sqlerrm <> 'experience_level must be a string' then raise; end if; end;
 end $$;
 reset role;
 

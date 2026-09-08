@@ -10,6 +10,7 @@ import 'package:raha_move/features/media/application/media_cache_lifecycle.dart'
 import 'package:raha_move/features/media/domain/media_delivery.dart';
 import 'package:raha_move/features/authentication/domain/recent_sign_in.dart';
 import 'package:raha_move/features/profile/data/rpc_account_deletion_action.dart';
+import 'package:raha_move/features/profile/data/account_deletion_startup_guard.dart';
 import 'package:raha_move/features/profile/domain/account_deletion_action.dart';
 import 'package:raha_move/features/sync/data/sync_rpc_gateway.dart';
 
@@ -133,6 +134,7 @@ void main() {
         AccountDeletionResult.accepted,
       );
       expect(gateway.calls, ['request_account_deletion']);
+      expect(cleanup.arms, 1);
       expect(cleanup.calls, 1);
     },
   );
@@ -154,6 +156,7 @@ void main() {
       AccountDeletionResult.failed,
     );
     expect(cleanup.calls, 0);
+    expect(cleanup.arms, 1);
   });
 
   test(
@@ -172,6 +175,30 @@ void main() {
       );
     },
   );
+
+  test('deletion intent is durable before an RPC can return', () async {
+    final database = AppDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final cleanup = DriftAccountDeletionCleanup(
+      database,
+      _Auth(),
+      DriftGuestIdentityStore(database, uuidGenerator: () => 'fresh'),
+      () async => MediaCacheLifecycle(cache: _Cache(), files: _Files()),
+    );
+
+    await cleanup.prepareDeletionRequest(userId: 'user-1');
+
+    expect(await hasPendingAccountDeletionCleanup(database), isTrue);
+    expect(
+      await (database.select(database.environmentEntries)..where(
+            (entry) => entry.key.equals(
+              '${DriftAccountDeletionCleanup.markerPrefix}user-1',
+            ),
+          ))
+          .getSingleOrNull(),
+      isNotNull,
+    );
+  });
 }
 
 final class _Gateway implements SyncRpcGateway {
@@ -200,7 +227,13 @@ final class _Gateway implements SyncRpcGateway {
 final class _Cleanup implements AccountDeletionCleanup {
   _Cleanup({this.result = AccountDeletionCleanupResult.completed});
   int calls = 0;
+  int arms = 0;
   final AccountDeletionCleanupResult result;
+  @override
+  Future<void> prepareDeletionRequest({required String userId}) async {
+    arms++;
+  }
+
   @override
   Future<AccountDeletionCleanupResult> clearAcceptedRequest({
     required String userId,

@@ -379,10 +379,18 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
       return;
     }
     final locale = payload['preferred_locale'];
+    final experienceLevel = payload['experience_level'];
     final goal = _asInt(payload['weekly_goal_days']);
     final positions = payload['position_ids'];
     if (locale is! String ||
         !const {'ar', 'en'}.contains(locale) ||
+        (experienceLevel != null &&
+            (experienceLevel is! String ||
+                !const {
+                  'beginner',
+                  'intermediate',
+                  'advanced',
+                }.contains(experienceLevel))) ||
         goal == null ||
         goal < 1 ||
         goal > 7 ||
@@ -430,6 +438,9 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
       _database.localUserPreferences,
     )..where((row) => row.userId.equals(activeUserId))).write(
       LocalUserPreferencesCompanion(
+        experienceLevel: experienceLevel is String
+            ? Value(experienceLevel)
+            : const Value.absent(),
         soundEnabled: Value(payload['sound_enabled'] as bool),
         vibrationEnabled: Value(payload['vibration_enabled'] as bool),
         downloadOnWifiOnly: Value(payload['download_on_wifi_only'] as bool),

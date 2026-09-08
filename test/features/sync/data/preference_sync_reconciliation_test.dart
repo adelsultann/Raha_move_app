@@ -61,6 +61,7 @@ void main() {
       expect(profile.preferredLocale, 'en');
       expect(profile.weeklyGoalDays, 5);
       expect(preferences.preferredPositionsJson, jsonEncode(['seated']));
+      expect(preferences.experienceLevel, 'intermediate');
       expect(preferences.soundEnabled, isFalse);
       expect(preferences.reminderInterest, isTrue);
       final consent = await database
@@ -101,6 +102,7 @@ SyncProjection _projection(DateTime at) => SyncProjection(
     'contract_version': 'preferences_v1',
     'preferred_locale': 'en',
     'weekly_goal_days': 5,
+    'experience_level': 'intermediate',
     'position_ids': ['00000000-0000-4000-8000-000000000001'],
     'sound_enabled': false,
     'vibration_enabled': true,

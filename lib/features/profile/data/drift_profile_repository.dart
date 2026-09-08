@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 
 import '../../../core/database/app_database.dart';
 import '../../onboarding/domain/app_language.dart';
+import '../../preferences/domain/experience_level.dart';
 import '../domain/profile_repository.dart';
 import '../domain/profile_settings.dart';
 
@@ -35,6 +36,7 @@ final class DriftProfileRepository implements ProfileRepository {
               .toSet();
     return ProfileSettings(
       language: AppLanguage.fromCode(profile.preferredLocale) ?? AppLanguage.ar,
+      experienceLevel: ExperienceLevel.fromCode(preferences.experienceLevel),
       weeklyGoalDays: profile.weeklyGoalDays,
       permittedPositions: positions,
       soundEnabled: preferences.soundEnabled,
@@ -60,6 +62,7 @@ final class DriftProfileRepository implements ProfileRepository {
         ),
         preferences: LocalUserPreferencesCompanion(
           userId: Value(userId),
+          experienceLevel: Value(settings.experienceLevel.code),
           soundEnabled: Value(settings.soundEnabled),
           vibrationEnabled: Value(settings.vibrationEnabled),
           downloadOnWifiOnly: Value(settings.wifiOnlyDownloads),

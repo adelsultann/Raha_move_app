@@ -1401,6 +1401,7 @@ final class WireOperationBuilder {
           'operation_at': _iso(profile.localUpdatedAt),
           'preferred_locale': profile.preferredLocale,
           'weekly_goal_days': profile.weeklyGoalDays,
+          'experience_level': preferences.experienceLevel,
           'position_ids': positionIds,
           'sound_enabled': preferences.soundEnabled,
           'vibration_enabled': preferences.vibrationEnabled,

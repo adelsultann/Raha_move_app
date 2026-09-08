@@ -58,7 +58,7 @@ do $$ declare r jsonb; r2 jsonb; begin
   r := public.request_account_deletion();
   if r->>'version' <> 'raha_064_deletion_v1' then raise exception 'RAHA-064: envelope version incorrect'; end if;
   if r->>'status' <> 'requested' then raise exception 'RAHA-064: status not requested'; end if;
-  if r->>'policy_version' <> 'deletion_v1' then raise exception 'RAHA-064: policy_version incorrect'; end if;
+  if r->>'policy_version' <> 'deletion_v2' then raise exception 'RAHA-064: policy_version incorrect'; end if;
   if (r->>'purge_after')::timestamptz <= (r->>'requested_at')::timestamptz then raise exception 'RAHA-064: purge was not deferred'; end if;
   if (r->>'purge_after')::timestamptz > (r->>'requested_at')::timestamptz + interval '30 days' then raise exception 'RAHA-064: purge exceeds 30-day cap'; end if;
   if r->>'cancelled_at' is not null then raise exception 'RAHA-064: fresh request has cancelled_at'; end if;
@@ -116,7 +116,7 @@ set local role service_role;
 do $$ begin perform public.process_due_account_deletions(now()+interval '1 hour'); raise exception 'future purge accepted'; exception when raise_exception then if sqlerrm <> 'cannot process deletions scheduled in the future' then raise; end if; end $$;
 do $$ declare r jsonb; begin
   r := public.process_due_account_deletions();
-  if r->>'version' <> 'raha_064_deletion_v1' then raise exception 'RAHA-064: purge version incorrect'; end if;
+  if r->>'version' <> 'raha_064_deletion_v2' then raise exception 'RAHA-064: purge version incorrect'; end if;
   if (r->>'purged')::int <> 1 then raise exception 'RAHA-064: purge count incorrect'; end if;
 end $$;
 reset role;

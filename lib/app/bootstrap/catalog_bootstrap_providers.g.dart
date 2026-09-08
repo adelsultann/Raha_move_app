@@ -55,7 +55,7 @@ final class AppDatabaseProvider
   }
 }
 
-String _$appDatabaseHash() => r'2e20363aeadfacbb04086cb16c9c98297865d5c8';
+String _$appDatabaseHash() => r'374e85cbbcc811e569bd5524651eee80d1fd9148';
 
 /// Injectable catalog source. Defaults to an offline no-op so no live SDK or
 /// configuration is required; override with a real source when one exists.

@@ -368,6 +368,7 @@
   "profileSaveError": "تعذّر حفظ إعداداتك. يرجى المحاولة مجددًا.",
   "profilePreferences": "التفضيلات",
   "profileLanguage": "اللغة",
+  "profileMovementExperience": "خبرتك في الحركة",
   "profileWeeklyGoal": "هدف الحركة الأسبوعي",
   "profileDaysPerWeek": "{days} أيام في الأسبوع",
   "@profileDaysPerWeek": { "placeholders": { "days": { "type": "int" } } },
@@ -405,6 +406,8 @@
   "profileDeleteAccepted": "تم قبول طلب الحذف.",
   "profileDeleteAcceptedCleanupPending": "تمت جدولة الحذف. ستُمسح بعض البيانات عند اكتمال التنظيف المحلي.",
   "accountDeletionRecoveryRetry": "متابعة مسح بيانات هذا الجهاز",
+  "accountDeletionRecoveryTitle": "نُكمل تنظيف الحساب",
+  "accountDeletionRecoveryBody": "لحماية خصوصيتك، يمسح راحة موف بيانات هذا الجهاز قبل المتابعة. تم قبول طلب الحذف بالفعل.",
   "profileDeleteRequiresSignIn": "يرجى تسجيل الدخول مجددًا ثم حاول طلب الحذف.",
   "profileDeleteUnavailable": "حذف الحساب غير متاح الآن. يرجى المحاولة لاحقًا.",
   "profileDeleteFailed": "تعذّر بدء طلب الحذف. لا يزال حسابك مسجّل الدخول."

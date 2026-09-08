@@ -7,6 +7,7 @@ import '../../authentication/application/auth_controller.dart';
 import '../../authentication/domain/auth_state.dart';
 import '../../onboarding/application/locale_controller.dart';
 import '../../onboarding/domain/app_language.dart';
+import '../../preferences/domain/experience_level.dart';
 import '../application/profile_controller.dart';
 import '../application/profile_providers.dart';
 import '../domain/account_deletion_action.dart';
@@ -45,6 +46,7 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             _Heading(strings.profilePreferences),
             _LanguageTile(settings: value),
+            _ExperienceTile(settings: value),
             _GoalTile(settings: value),
             _PositionsTile(settings: value),
             _SwitchTile(
@@ -227,6 +229,11 @@ class ProfileScreen extends ConsumerWidget {
       ref.invalidate(authControllerProvider);
       ref.invalidate(profileControllerProvider);
     }
+    if (result == AccountDeletionResult.acceptedWithPendingCleanup) {
+      // The server has accepted the deletion. Immediately move the root gate
+      // into its privacy boundary; it retries only the durable local cleanup.
+      ref.invalidate(accountDeletionRecoveryProvider);
+    }
     final message = switch (result) {
       AccountDeletionResult.accepted => s.profileDeleteAccepted,
       AccountDeletionResult.acceptedWithPendingCleanup =>
@@ -370,6 +377,54 @@ class _GoalTile extends ConsumerWidget {
           for (var i = 1; i <= 7; i++)
             DropdownMenuItem(value: i, child: Text('$i')),
         ],
+      ),
+    );
+  }
+}
+
+class _ExperienceTile extends ConsumerWidget {
+  const _ExperienceTile({required this.settings});
+
+  final ProfileSettings settings;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = AppLocalizations.of(context);
+    String labelFor(ExperienceLevel level) => switch (level) {
+      ExperienceLevel.beginner => strings.preferencesExperienceBeginner,
+      ExperienceLevel.intermediate => strings.preferencesExperienceIntermediate,
+      ExperienceLevel.advanced => strings.preferencesExperienceAdvanced,
+    };
+    return ListTile(
+      key: const Key('profile_movement_experience'),
+      title: Text(strings.profileMovementExperience),
+      subtitle: Text(labelFor(settings.experienceLevel)),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => showModalBottomSheet<void>(
+        context: context,
+        builder: (sheetContext) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final level in ExperienceLevel.values)
+                ListTile(
+                  key: Key('profile_movement_experience_${level.code}'),
+                  title: Text(labelFor(level)),
+                  trailing: level == settings.experienceLevel
+                      ? const Icon(Icons.check)
+                      : null,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    saveProfileSettings(
+                      context,
+                      ref,
+                      settings.copyWith(experienceLevel: level),
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

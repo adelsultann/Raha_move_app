@@ -1,9 +1,11 @@
 import '../../onboarding/domain/app_language.dart';
+import '../../preferences/domain/experience_level.dart';
 
 /// Local-first settings owned by the Profile feature.
 final class ProfileSettings {
   const ProfileSettings({
     required this.language,
+    this.experienceLevel = ExperienceLevel.beginner,
     required this.weeklyGoalDays,
     required this.permittedPositions,
     required this.soundEnabled,
@@ -15,6 +17,7 @@ final class ProfileSettings {
   });
 
   final AppLanguage language;
+  final ExperienceLevel experienceLevel;
   final int weeklyGoalDays;
   final Set<String> permittedPositions;
   final bool soundEnabled;
@@ -26,6 +29,7 @@ final class ProfileSettings {
 
   ProfileSettings copyWith({
     AppLanguage? language,
+    ExperienceLevel? experienceLevel,
     int? weeklyGoalDays,
     Set<String>? permittedPositions,
     bool? soundEnabled,
@@ -36,6 +40,7 @@ final class ProfileSettings {
     bool? crashReportingEnabled,
   }) => ProfileSettings(
     language: language ?? this.language,
+    experienceLevel: experienceLevel ?? this.experienceLevel,
     weeklyGoalDays: weeklyGoalDays ?? this.weeklyGoalDays,
     permittedPositions: permittedPositions ?? this.permittedPositions,
     soundEnabled: soundEnabled ?? this.soundEnabled,

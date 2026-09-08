@@ -368,6 +368,7 @@
   "profileSaveError": "We couldn't save your settings. Please try again.",
   "profilePreferences": "Preferences",
   "profileLanguage": "Language",
+  "profileMovementExperience": "Movement experience",
   "profileWeeklyGoal": "Weekly movement goal",
   "profileDaysPerWeek": "{days} days per week",
   "@profileDaysPerWeek": { "placeholders": { "days": { "type": "int" } } },
@@ -405,6 +406,8 @@
   "profileDeleteAccepted": "Your deletion request was accepted.",
   "profileDeleteAcceptedCleanupPending": "Your deletion is scheduled. Some data will be cleared when local cleanup can finish.",
   "accountDeletionRecoveryRetry": "Continue clearing this device",
+  "accountDeletionRecoveryTitle": "Finishing account cleanup",
+  "accountDeletionRecoveryBody": "For your privacy, Raha Move is clearing this device before you continue. Your deletion request has already been accepted.",
   "profileDeleteRequiresSignIn": "Please sign in again recently, then try your deletion request.",
   "profileDeleteUnavailable": "Account deletion is not available right now. Please try again later.",
   "profileDeleteFailed": "We couldn't start your deletion request. Your account is still signed in."

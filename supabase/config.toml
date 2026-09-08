@@ -384,6 +384,10 @@ deno_version = 2
 [functions.resolve-media-delivery]
 verify_jwt = true
 
+[functions.account-deletion-deadline-alert]
+# Protected by ACCOUNT_DELETION_ALERT_DISPATCH_TOKEN, not a user JWT.
+verify_jwt = false
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

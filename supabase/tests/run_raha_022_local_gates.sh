@@ -12,6 +12,11 @@ supabase db reset
 "${psql_local[@]}" -f /workspace/supabase/tests/raha_022_authorization.sql
 "${psql_local[@]}" -f /workspace/supabase/tests/raha_024_content_release_contract.sql
 "${psql_local[@]}" -f /workspace/supabase/tests/raha_025_user_data_sync_contract.sql
+"${psql_local[@]}" -f /workspace/supabase/tests/raha_064_account_deletion.sql
+"${psql_local[@]}" -f /workspace/supabase/tests/raha_064_recent_auth.sql
+"${psql_local[@]}" -f /workspace/supabase/tests/raha_064_profile_settings_sync.sql
+"${psql_local[@]}" -f /workspace/supabase/tests/raha_064_deletion_worker.sql
+"${psql_local[@]}" -f /workspace/supabase/tests/raha_064_deletion_alerts.sql
 
 upgrade_db="raha_022_upgrade_gate"
 docker exec "$db_container" psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "drop database if exists ${upgrade_db};"
