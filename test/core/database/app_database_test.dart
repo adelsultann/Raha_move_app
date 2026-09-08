@@ -446,12 +446,19 @@ void main() {
         activeUserId: 'user-1',
         clock: () => now,
       );
-      await repository.savePreferences(
-        preferences: LocalUserPreferencesCompanion.insert(
-          userId: 'user-1',
-          experienceLevel: 'beginner',
-          localUpdatedAt: now,
+      await repository.saveProfilePreferences(
+        profile: const LocalProfilesCompanion(
+          userId: Value('user-1'),
+          preferredLocale: Value('ar'),
+          timezone: Value('Asia/Riyadh'),
+          weeklyGoalDays: Value(3),
         ),
+        preferences: const LocalUserPreferencesCompanion(
+          userId: Value('user-1'),
+          experienceLevel: Value('beginner'),
+        ),
+        analyticsConsent: false,
+        crashReportingConsent: false,
       );
       await repository.saveReminder(
         reminder: LocalReminderSchedulesCompanion.insert(
@@ -463,8 +470,8 @@ void main() {
           localUpdatedAt: now,
         ),
       );
-      // No RAHA-025 wire contract exists for preferences/reminders yet, so they
-      // persist locally without an outbox operation.
+      // Preferences now have one atomic RAHA-064 wire operation; reminder
+      // schedules remain local-only until RAHA-065 defines their contract.
       final preferences = await (database.select(
         database.localUserPreferences,
       )..where((r) => r.userId.equals('user-1'))).getSingle();
@@ -473,7 +480,7 @@ void main() {
       )..where((r) => r.id.equals('reminder-1'))).getSingle();
       expect(preferences.syncState, SyncState.pendingUpdate);
       expect(reminder.syncState, SyncState.pendingCreate);
-      expect(await repository.dueOutbox(), isEmpty);
+      expect(await repository.dueOutbox(), hasLength(1));
       await expectLater(
         repository.saveReminder(
           reminder: LocalReminderSchedulesCompanion.insert(

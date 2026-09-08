@@ -20,6 +20,7 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
     DateTime Function()? clock,
     String Function()? operationIdGenerator,
     this.appVersion = '1.0.0',
+    this.onTelemetryConsentChanged,
   }) : _clock = clock ?? _systemClock,
        _userData = LocalUserDataRepository(
          _database,
@@ -34,6 +35,8 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
   final String appVersion;
   final DateTime Function() _clock;
   final LocalUserDataRepository _userData;
+  final Future<void> Function(bool analytics, bool crashReporting)?
+  onTelemetryConsentChanged;
 
   static DateTime _systemClock() => DateTime.now();
 
@@ -142,17 +145,35 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
   @override
   Future<void> storeProjections(Iterable<SyncProjection> projections) async {
     if (projections.isEmpty) return;
-    await _database.batch(
-      (b) => b.insertAllOnConflictUpdate(_database.localProgressProjections, [
-        for (final projection in projections)
-          LocalProgressProjectionsCompanion.insert(
-            userId: activeUserId,
-            projectionType: projection.projectionType,
-            payloadJson: projection.payloadJson,
-            serverUpdatedAt: projection.serverUpdatedAt.toUtc(),
-          ),
-      ]),
-    );
+    await _database.transaction(() async {
+      for (final projection in projections) {
+        await _database
+            .into(_database.localProgressProjections)
+            .insertOnConflictUpdate(
+              LocalProgressProjectionsCompanion.insert(
+                userId: activeUserId,
+                projectionType: projection.projectionType,
+                payloadJson: projection.payloadJson,
+                serverUpdatedAt: projection.serverUpdatedAt.toUtc(),
+              ),
+            );
+        if (projection.projectionType == 'preferences') {
+          await _applyPreferencesProjection(projection);
+        }
+      }
+    });
+    // Consent is security-sensitive runtime state. Apply authoritative values
+    // immediately after the durable projection transaction, fail-closed.
+    for (final projection in projections.where(
+      (projection) => projection.projectionType == 'preferences',
+    )) {
+      final payload = _decodePayload(projection.payloadJson);
+      final analytics = payload?['analytics_consent'];
+      final crash = payload?['crash_reporting_consent'];
+      if (analytics is bool && crash is bool) {
+        await onTelemetryConsentChanged?.call(analytics, crash);
+      }
+    }
   }
 
   @override
@@ -274,6 +295,25 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
                 lastSyncError: error,
               ),
             );
+      case 'profile_preferences':
+        await (_database.update(
+          _database.localProfiles,
+        )..where((r) => r.userId.equals(activeUserId))).write(
+          LocalProfilesCompanion(
+            syncState: Value(syncState),
+            serverUpdatedAt: serverUpdatedAt,
+            lastSyncError: error,
+          ),
+        );
+        await (_database.update(
+          _database.localUserPreferences,
+        )..where((r) => r.userId.equals(activeUserId))).write(
+          LocalUserPreferencesCompanion(
+            syncState: Value(syncState),
+            serverUpdatedAt: serverUpdatedAt,
+            lastSyncError: error,
+          ),
+        );
       default:
         // Unknown entity type: leave the domain row untouched; the outbox item
         // is still acknowledged so a future additive entity cannot wedge the
@@ -320,6 +360,96 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
             localUpdatedAt: operationAt,
             serverUpdatedAt: Value<DateTime?>(change.occurredAt.toUtc()),
             lastSyncError: const Value<SyncDiagnosticCode?>(null),
+          ),
+        );
+  }
+
+  /// Applies the authoritative RAHA-064 document only when no newer local
+  /// preference write is queued or parked. Position UUIDs are never guessed:
+  /// every server id must resolve through the content-release mapping.
+  Future<void> _applyPreferencesProjection(SyncProjection projection) async {
+    final payload = _decodePayload(projection.payloadJson);
+    if (payload == null || payload['contract_version'] != 'preferences_v1') {
+      return;
+    }
+    if (await _hasPendingOrRejectedOutbox(
+      'profile_preferences',
+      activeUserId,
+    )) {
+      return;
+    }
+    final locale = payload['preferred_locale'];
+    final goal = _asInt(payload['weekly_goal_days']);
+    final positions = payload['position_ids'];
+    if (locale is! String ||
+        !const {'ar', 'en'}.contains(locale) ||
+        goal == null ||
+        goal < 1 ||
+        goal > 7 ||
+        positions is! List ||
+        ![
+          'sound_enabled',
+          'vibration_enabled',
+          'download_on_wifi_only',
+          'reminders_enabled',
+          'analytics_consent',
+          'crash_reporting_consent',
+        ].every((key) => payload[key] is bool)) {
+      return;
+    }
+    final localPositionKeys = <String>[];
+    for (final id in positions) {
+      if (id is! String) return;
+      final mapping =
+          await (_database.select(_database.localIdMappings)..where(
+                (row) =>
+                    row.kind.equals(RemoteIdMappingKind.taxonomy) &
+                    row.remoteId.equals(id),
+              ))
+              .getSingleOrNull();
+      if (mapping == null) return;
+      localPositionKeys.add(mapping.localId);
+    }
+    final operationAt =
+        _parseIso(payload['operation_at']) ??
+        _parseIso(payload['updated_at']) ??
+        projection.serverUpdatedAt;
+    await (_database.update(
+      _database.localProfiles,
+    )..where((row) => row.userId.equals(activeUserId))).write(
+      LocalProfilesCompanion(
+        preferredLocale: Value(locale),
+        weeklyGoalDays: Value(goal),
+        syncState: const Value(SyncState.synced),
+        localUpdatedAt: Value(operationAt.toUtc()),
+        serverUpdatedAt: Value(projection.serverUpdatedAt.toUtc()),
+        lastSyncError: const Value<SyncDiagnosticCode?>(null),
+      ),
+    );
+    await (_database.update(
+      _database.localUserPreferences,
+    )..where((row) => row.userId.equals(activeUserId))).write(
+      LocalUserPreferencesCompanion(
+        soundEnabled: Value(payload['sound_enabled'] as bool),
+        vibrationEnabled: Value(payload['vibration_enabled'] as bool),
+        downloadOnWifiOnly: Value(payload['download_on_wifi_only'] as bool),
+        reminderInterest: Value(payload['reminders_enabled'] as bool),
+        preferredPositionsJson: Value(jsonEncode(localPositionKeys..sort())),
+        syncState: const Value(SyncState.synced),
+        localUpdatedAt: Value(operationAt.toUtc()),
+        serverUpdatedAt: Value(projection.serverUpdatedAt.toUtc()),
+        lastSyncError: const Value<SyncDiagnosticCode?>(null),
+      ),
+    );
+    await _database
+        .into(_database.environmentEntries)
+        .insertOnConflictUpdate(
+          EnvironmentEntriesCompanion.insert(
+            key: 'telemetry_consent_$activeUserId',
+            value: jsonEncode({
+              'analytics': payload['analytics_consent'],
+              'crashReporting': payload['crash_reporting_consent'],
+            }),
           ),
         );
   }

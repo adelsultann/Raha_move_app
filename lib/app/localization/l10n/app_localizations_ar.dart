@@ -888,4 +888,148 @@ class AppLocalizationsAr extends AppLocalizations {
   String savedRoutinesUnavailableSemantics(String title) {
     return '$title، غير متاح';
   }
+
+  @override
+  String get profileTitle => 'حسابي';
+
+  @override
+  String get profileSaveError => 'تعذّر حفظ إعداداتك. يرجى المحاولة مجددًا.';
+
+  @override
+  String get profilePreferences => 'التفضيلات';
+
+  @override
+  String get profileLanguage => 'اللغة';
+
+  @override
+  String get profileWeeklyGoal => 'هدف الحركة الأسبوعي';
+
+  @override
+  String profileDaysPerWeek(int days) {
+    return '$days أيام في الأسبوع';
+  }
+
+  @override
+  String get profileMovementPositions => 'أوضاع الحركة';
+
+  @override
+  String get profileAnyPosition => 'أي وضع';
+
+  @override
+  String get profileSound => 'الصوت';
+
+  @override
+  String get profileVibration => 'الاهتزاز';
+
+  @override
+  String get profileWifiOnly => 'التنزيل عبر Wi-Fi فقط';
+
+  @override
+  String get profileWifiOnlyHint =>
+      'استخدم Wi-Fi لتنزيل الروتينات عندما يكون متاحًا.';
+
+  @override
+  String get profileReminderInterest => 'تذكيرات لطيفة';
+
+  @override
+  String get profileReminderInterestHint =>
+      'أخبرنا أنك مهتم، ويمكنك اختيار الموعد لاحقًا.';
+
+  @override
+  String get profilePrivacy => 'عناصر تحكم الخصوصية';
+
+  @override
+  String get profileAnalytics => 'تحليلات المنتج';
+
+  @override
+  String get profileAnalyticsHint =>
+      'اختياري. يساعدنا على معرفة الميزات المفيدة.';
+
+  @override
+  String get profileCrashReporting => 'تقارير الأعطال';
+
+  @override
+  String get profileCrashReportingHint =>
+      'اختياري. يساعدنا على اكتشاف المشكلات التقنية.';
+
+  @override
+  String get profileAccessibility => 'إمكانية الوصول';
+
+  @override
+  String get profileDeviceTextSize => 'يتبع راحة موف إعداد حجم النص على جهازك.';
+
+  @override
+  String get profileSupport => 'الدعم والمعلومات';
+
+  @override
+  String get profileHelp => 'المساعدة';
+
+  @override
+  String get profileHelpBody =>
+      'يوفر راحة موف روتينات حركة قصيرة ومريحة. تحرّك ضمن نطاق مريح وتوقّف إذا شعرت بألم حاد.';
+
+  @override
+  String get profilePrivacyPolicy => 'الخصوصية';
+
+  @override
+  String get profileTerms => 'الشروط';
+
+  @override
+  String get profileLegalPending =>
+      'سياسة الخصوصية والشروط النهائية للإصدار العام بانتظار المراجعة.';
+
+  @override
+  String get profileAccount => 'الحساب';
+
+  @override
+  String get profileGuestAccount => 'حساب ضيف';
+
+  @override
+  String get profileGuestAccountHint => 'تفضيلاتك محفوظة على هذا الجهاز.';
+
+  @override
+  String get profileRegisteredAccount => 'حساب مسجّل';
+
+  @override
+  String get profileRegisteredAccountHint =>
+      'حسابك مسجّل الدخول على هذا الجهاز.';
+
+  @override
+  String get profileDeleteAccount => 'حذف الحساب';
+
+  @override
+  String get profileDeleteConfirmTitle => 'حذف الحساب؟';
+
+  @override
+  String get profileDeleteGuestBody =>
+      'سيبدأ هذا حذف بيانات الضيف المحلية. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get profileDeleteRegisteredBody =>
+      'يتطلب هذا الطلب تسجيل دخول حديثًا ويبدأ عملية تنظيف الحساب. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get profileDeleteConfirm => 'حذف الحساب';
+
+  @override
+  String get profileDeleteAccepted => 'تم قبول طلب الحذف.';
+
+  @override
+  String get profileDeleteAcceptedCleanupPending =>
+      'تمت جدولة الحذف. ستُمسح بعض البيانات عند اكتمال التنظيف المحلي.';
+
+  @override
+  String get accountDeletionRecoveryRetry => 'متابعة مسح بيانات هذا الجهاز';
+
+  @override
+  String get profileDeleteRequiresSignIn =>
+      'يرجى تسجيل الدخول مجددًا ثم حاول طلب الحذف.';
+
+  @override
+  String get profileDeleteUnavailable =>
+      'حذف الحساب غير متاح الآن. يرجى المحاولة لاحقًا.';
+
+  @override
+  String get profileDeleteFailed =>
+      'تعذّر بدء طلب الحذف. لا يزال حسابك مسجّل الدخول.';
 }

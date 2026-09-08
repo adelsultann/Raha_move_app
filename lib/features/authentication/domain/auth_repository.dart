@@ -51,5 +51,8 @@ abstract interface class AuthRepository {
 
   Future<void> signOut();
 
+  /// Clears credentials stored on this device without requiring connectivity.
+  Future<void> clearLocalSession();
+
   Future<void> resendConfirmation({required String email});
 }

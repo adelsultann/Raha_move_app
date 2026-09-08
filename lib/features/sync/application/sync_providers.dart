@@ -50,6 +50,11 @@ UserDataSyncEngine userDataSyncEngine(Ref ref, String activeUserId) {
       activeUserId: activeUserId,
       appVersion: ref.watch(appVersionProvider),
       operationIdGenerator: generateUuidV4,
+      onTelemetryConsentChanged: (analytics, crashReporting) async {
+        final consent = ref.read(telemetryConsentStoreProvider);
+        await consent.setAnalytics(analytics);
+        await consent.setCrashReporting(crashReporting);
+      },
     ),
     transport: ref.watch(syncTransportProvider(activeUserId)),
   );

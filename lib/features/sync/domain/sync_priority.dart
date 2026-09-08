@@ -24,6 +24,7 @@ const Map<String, int> syncKindPriority = <String, int>{
   'session_finalize': 4,
   'feedback_upsert': 5,
   'saved_routine_set': 6,
+  'preference_upsert': 7,
 };
 
 /// Priority rank for a wire operation [kind]. Unknown kinds are treated as

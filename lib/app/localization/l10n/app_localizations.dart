@@ -1657,6 +1657,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{title}, unavailable'**
   String savedRoutinesUnavailableSemantics(String title);
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save your settings. Please try again.'**
+  String get profileSaveError;
+
+  /// No description provided for @profilePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get profilePreferences;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileWeeklyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly movement goal'**
+  String get profileWeeklyGoal;
+
+  /// No description provided for @profileDaysPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days per week'**
+  String profileDaysPerWeek(int days);
+
+  /// No description provided for @profileMovementPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement positions'**
+  String get profileMovementPositions;
+
+  /// No description provided for @profileAnyPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Any position'**
+  String get profileAnyPosition;
+
+  /// No description provided for @profileSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get profileSound;
+
+  /// No description provided for @profileVibration.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration'**
+  String get profileVibration;
+
+  /// No description provided for @profileWifiOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Download on Wi-Fi only'**
+  String get profileWifiOnly;
+
+  /// No description provided for @profileWifiOnlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Wi-Fi for routine downloads when possible.'**
+  String get profileWifiOnlyHint;
+
+  /// No description provided for @profileReminderInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle reminders'**
+  String get profileReminderInterest;
+
+  /// No description provided for @profileReminderInterestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us you are interested. You can choose a schedule later.'**
+  String get profileReminderInterestHint;
+
+  /// No description provided for @profilePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy controls'**
+  String get profilePrivacy;
+
+  /// No description provided for @profileAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Product analytics'**
+  String get profileAnalytics;
+
+  /// No description provided for @profileAnalyticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Helps us understand which app features are useful.'**
+  String get profileAnalyticsHint;
+
+  /// No description provided for @profileCrashReporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Crash reporting'**
+  String get profileCrashReporting;
+
+  /// No description provided for @profileCrashReportingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Helps us identify technical problems.'**
+  String get profileCrashReportingHint;
+
+  /// No description provided for @profileAccessibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get profileAccessibility;
+
+  /// No description provided for @profileDeviceTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Raha Move follows your device text-size setting.'**
+  String get profileDeviceTextSize;
+
+  /// No description provided for @profileSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support and information'**
+  String get profileSupport;
+
+  /// No description provided for @profileHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get profileHelp;
+
+  /// No description provided for @profileHelpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Raha Move offers short, comfortable movement routines. Move within a comfortable range and stop if you feel sharp pain.'**
+  String get profileHelpBody;
+
+  /// No description provided for @profilePrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get profilePrivacyPolicy;
+
+  /// No description provided for @profileTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get profileTerms;
+
+  /// No description provided for @profileLegalPending.
+  ///
+  /// In en, this message translates to:
+  /// **'The final public-release policy and terms are pending review.'**
+  String get profileLegalPending;
+
+  /// No description provided for @profileAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get profileAccount;
+
+  /// No description provided for @profileGuestAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest account'**
+  String get profileGuestAccount;
+
+  /// No description provided for @profileGuestAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your settings are saved on this device.'**
+  String get profileGuestAccountHint;
+
+  /// No description provided for @profileRegisteredAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered account'**
+  String get profileRegisteredAccount;
+
+  /// No description provided for @profileRegisteredAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is signed in on this device.'**
+  String get profileRegisteredAccountHint;
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @profileDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get profileDeleteConfirmTitle;
+
+  /// No description provided for @profileDeleteGuestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This starts deletion of your local guest data. This cannot be undone.'**
+  String get profileDeleteGuestBody;
+
+  /// No description provided for @profileDeleteRegisteredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This request requires a recent sign-in and starts the account cleanup workflow. This cannot be undone.'**
+  String get profileDeleteRegisteredBody;
+
+  /// No description provided for @profileDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteConfirm;
+
+  /// No description provided for @profileDeleteAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your deletion request was accepted.'**
+  String get profileDeleteAccepted;
+
+  /// No description provided for @profileDeleteAcceptedCleanupPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your deletion is scheduled. Some data will be cleared when local cleanup can finish.'**
+  String get profileDeleteAcceptedCleanupPending;
+
+  /// No description provided for @accountDeletionRecoveryRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue clearing this device'**
+  String get accountDeletionRecoveryRetry;
+
+  /// No description provided for @profileDeleteRequiresSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in again recently, then try your deletion request.'**
+  String get profileDeleteRequiresSignIn;
+
+  /// No description provided for @profileDeleteUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deletion is not available right now. Please try again later.'**
+  String get profileDeleteUnavailable;
+
+  /// No description provided for @profileDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t start your deletion request. Your account is still signed in.'**
+  String get profileDeleteFailed;
 }
 
 class _AppLocalizationsDelegate

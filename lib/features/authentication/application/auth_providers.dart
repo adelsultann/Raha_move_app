@@ -5,6 +5,7 @@ import '../data/drift_guest_identity_store.dart';
 import '../data/supabase_auth_repository.dart';
 import '../domain/auth_repository.dart';
 import '../domain/guest_identity_store.dart';
+import '../domain/recent_sign_in.dart';
 
 part 'auth_providers.g.dart';
 
@@ -18,3 +19,7 @@ AuthRepository authRepository(Ref ref) => resolveLiveAuthRepository();
 @Riverpod(keepAlive: true)
 GuestIdentityStore guestIdentityStore(Ref ref) =>
     DriftGuestIdentityStore(ref.watch(appDatabaseProvider));
+
+/// A restored session is deliberately not treated as recent re-authentication.
+@Riverpod(keepAlive: true)
+RecentSignInTracker recentSignInTracker(Ref ref) => RecentSignInTracker();

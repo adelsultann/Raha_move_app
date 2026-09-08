@@ -110,9 +110,16 @@ final class SupabaseAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-    } on AuthException {
-      // Best-effort: the local identity is still reset by the caller.
+    } on AuthException catch (e) {
+      // Callers that perform account-deletion cleanup must fail closed rather
+      // than reporting success when secure session removal is uncertain.
+      throw _mapAuthException(e);
     }
+  }
+
+  @override
+  Future<void> clearLocalSession() async {
+    await _auth.signOut(scope: SignOutScope.local);
   }
 
   @override

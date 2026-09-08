@@ -137,6 +137,7 @@ class AuthController extends _$AuthController {
       );
       // Existing-account path: switch identity without merging guest data.
       await store.activateAccount(account.id);
+      ref.read(recentSignInTrackerProvider).markVerified();
       state = AsyncData(_stateForAccount(account));
     } on AuthFailureException catch (e) {
       _setFailure(
@@ -167,6 +168,7 @@ class AuthController extends _$AuthController {
           );
         case SignedIn(account: final account):
           await store.activateAccount(account.id);
+          ref.read(recentSignInTrackerProvider).markVerified();
           state = AsyncData(_stateForAccount(account));
       }
     } on AuthFailureException catch (e) {
@@ -199,6 +201,7 @@ class AuthController extends _$AuthController {
           pendingEmail: account.emailConfirmed ? null : email,
         ),
       );
+      ref.read(recentSignInTrackerProvider).markVerified();
     } on AuthFailureException catch (e) {
       _setFailure(
         e,
@@ -218,6 +221,7 @@ class AuthController extends _$AuthController {
     } catch (_) {
       // Best-effort: local identity reset still proceeds.
     }
+    ref.read(recentSignInTrackerProvider).clear();
     try {
       await store.resetForSignOut();
       final freshId = await store.currentLocalUserId();

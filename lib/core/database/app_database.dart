@@ -41,6 +41,7 @@ abstract final class WireOperationKind {
   static const sessionFinalize = 'session_finalize';
   static const feedbackUpsert = 'feedback_upsert';
   static const savedRoutineSet = 'saved_routine_set';
+  static const preferenceUpsert = 'preference_upsert';
 }
 
 /// A stable UUIDv4 generator used for client-generated operation ids.
@@ -1122,6 +1123,7 @@ final class WireOperationBuilder {
       'routine_session' => _buildSession(entityId),
       'session_feedback' => _buildFeedback(entityId),
       'saved_routine' => _buildSavedRoutine(entityId),
+      'profile_preferences' => _buildProfilePreferences(entityId),
       _ => throw UnsupportedError('Unsupported sync entity type: $entityType'),
     };
   }
@@ -1367,12 +1369,66 @@ final class WireOperationBuilder {
     ];
   }
 
+  Future<List<OutboxEnvelope>> _buildProfilePreferences(String userId) async {
+    if (userId != activeUserId) throw StateError('Cross-account preferences');
+    final profile = await (_database.select(
+      _database.localProfiles,
+    )..where((row) => row.userId.equals(userId))).getSingle();
+    final preferences = await (_database.select(
+      _database.localUserPreferences,
+    )..where((row) => row.userId.equals(userId))).getSingle();
+    final consent =
+        await (_database.select(_database.environmentEntries)
+              ..where((row) => row.key.equals('telemetry_consent_$userId')))
+            .getSingleOrNull();
+    final consentValues = _decodeObject(consent?.value);
+    final positionKeys = preferences.preferredPositionsJson.isEmpty
+        ? const <String>[]
+        : _decodeStringList(preferences.preferredPositionsJson);
+    final sortedPositionKeys = List<String>.of(positionKeys)..sort();
+    final positionIds = <String>[
+      for (final key in sortedPositionKeys)
+        await _requireRemoteUuid(RemoteIdMappingKind.taxonomy, key),
+    ];
+    return [
+      OutboxEnvelope(
+        kind: WireOperationKind.preferenceUpsert,
+        entityType: 'profile_preferences',
+        entityId: userId,
+        sequence: 0,
+        payload: <String, Object?>{
+          'contract_version': 'preferences_v1',
+          'operation_at': _iso(profile.localUpdatedAt),
+          'preferred_locale': profile.preferredLocale,
+          'weekly_goal_days': profile.weeklyGoalDays,
+          'position_ids': positionIds,
+          'sound_enabled': preferences.soundEnabled,
+          'vibration_enabled': preferences.vibrationEnabled,
+          'download_on_wifi_only': preferences.downloadOnWifiOnly,
+          'reminders_enabled': preferences.reminderInterest,
+          'analytics_consent': consentValues['analytics'] == true,
+          'crash_reporting_consent': consentValues['crashReporting'] == true,
+        },
+      ),
+    ];
+  }
+
   static String _iso(DateTime value) => value.toUtc().toIso8601String();
 
   static List<String> _decodeStringList(String source) {
     final decoded = jsonDecode(source);
     if (decoded is! List) return const [];
     return decoded.whereType<String>().toList();
+  }
+
+  static Map<String, dynamic> _decodeObject(String? source) {
+    if (source == null || source.isEmpty) return const {};
+    try {
+      final decoded = jsonDecode(source);
+      return decoded is Map<String, dynamic> ? decoded : const {};
+    } on FormatException {
+      return const {};
+    }
   }
 }
 
@@ -1726,22 +1782,60 @@ class LocalUserDataRepository {
     return query.getSingleOrNull();
   }
 
-  Future<void> savePreferences({
+  /// Persists the RAHA-064 preference document and its single durable outbox
+  /// write in one transaction. Telemetry remains independently opt-in and
+  /// defaults to disabled when no consent document exists.
+  Future<void> saveProfilePreferences({
+    required LocalProfilesCompanion profile,
     required LocalUserPreferencesCompanion preferences,
+    required bool analyticsConsent,
+    required bool crashReportingConsent,
   }) => _database.transaction(() async {
+    _requireOwner(profile.userId.value);
     _requireOwner(preferences.userId.value);
     final now = _now();
+    final existingProfile = await (_database.select(
+      _database.localProfiles,
+    )..where((row) => row.userId.equals(activeUserId))).getSingleOrNull();
+    final existingPreferences = await (_database.select(
+      _database.localUserPreferences,
+    )..where((row) => row.userId.equals(activeUserId))).getSingleOrNull();
     await _database
-        .into(_database.localUserPreferences)
+        .into(_database.localProfiles)
         .insertOnConflictUpdate(
-          preferences.copyWith(
+          profile.copyWith(
+            timezone: profile.timezone.present
+                ? profile.timezone
+                : Value(existingProfile?.timezone ?? 'UTC'),
             syncState: const Value(SyncState.pendingUpdate),
             localUpdatedAt: Value(now),
             lastSyncError: const Value(null),
           ),
         );
-    // Preferences have no RAHA-025 wire contract yet; they remain local-first
-    // until their owning task defines the push/pull shape.
+    await _database
+        .into(_database.localUserPreferences)
+        .insertOnConflictUpdate(
+          preferences.copyWith(
+            experienceLevel: preferences.experienceLevel.present
+                ? preferences.experienceLevel
+                : Value(existingPreferences?.experienceLevel ?? 'beginner'),
+            syncState: const Value(SyncState.pendingUpdate),
+            localUpdatedAt: Value(now),
+            lastSyncError: const Value(null),
+          ),
+        );
+    await _database
+        .into(_database.environmentEntries)
+        .insertOnConflictUpdate(
+          EnvironmentEntriesCompanion.insert(
+            key: 'telemetry_consent_$activeUserId',
+            value: jsonEncode({
+              'analytics': analyticsConsent,
+              'crashReporting': crashReportingConsent,
+            }),
+          ),
+        );
+    await _enqueueBuilt('profile_preferences', activeUserId);
   });
 
   Future<void> saveRecommendation({
@@ -1923,7 +2017,8 @@ class LocalUserDataRepository {
     await (_database.delete(
       _database.localProfiles,
     )..where((r) => r.userId.equals(activeUserId))).go();
-    await _database.delete(_database.localMediaCacheEntries).go();
+    // Media cache entries are owner-partitioned. The media lifecycle purges
+    // only the active account's private bytes and metadata.
   });
 
   /// Retention cleanup for unfinished check-ins (RAHA-001): deletes check-ins
@@ -2205,6 +2300,7 @@ class LocalUserDataRepository {
     'routine_session' => WireOperationKind.sessionStart,
     'session_feedback' => WireOperationKind.feedbackUpsert,
     'saved_routine' => WireOperationKind.savedRoutineSet,
+    'profile_preferences' => WireOperationKind.preferenceUpsert,
     _ => 'unsupported_$entityType',
   };
 
@@ -2367,6 +2463,23 @@ class LocalUserDataRepository {
                 lastSyncError: error,
               ),
             );
+      case 'profile_preferences':
+        await (_database.update(
+          _database.localProfiles,
+        )..where((r) => r.userId.equals(activeUserId))).write(
+          LocalProfilesCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
+        await (_database.update(
+          _database.localUserPreferences,
+        )..where((r) => r.userId.equals(activeUserId))).write(
+          LocalUserPreferencesCompanion(
+            syncState: const Value(SyncState.failed),
+            lastSyncError: error,
+          ),
+        );
       default:
         break;
     }

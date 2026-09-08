@@ -98,6 +98,9 @@ final class FakeAuthRepository implements AuthRepository {
   Future<void> signOut() async {}
 
   @override
+  Future<void> clearLocalSession() async {}
+
+  @override
   Future<void> resendConfirmation({required String email}) async {}
 }
 

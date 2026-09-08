@@ -390,6 +390,9 @@ final class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> clearLocalSession() async {}
+
+  @override
   Future<void> resendConfirmation({required String email}) async {
     resendCalls++;
   }

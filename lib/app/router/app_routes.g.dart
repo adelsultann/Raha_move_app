@@ -11,6 +11,10 @@ List<RouteBase> get $appRoutes => [
   $checkInRoute,
   $exploreRoute,
   $progressRoute,
+  $profileRoute,
+  $profileHelpRoute,
+  $profilePrivacyRoute,
+  $profileTermsRoute,
   $exploreRoutineDetailsRoute,
   $savedRoutinesRoute,
   $recommendationRoute,
@@ -110,6 +114,113 @@ mixin $ProgressRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/progress');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $profileRoute => GoRouteData.$route(
+  path: '/profile',
+  hasOverriddenOnExit: false,
+  factory: $ProfileRoute._fromState,
+);
+
+mixin $ProfileRoute on GoRouteData {
+  static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profile');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $profileHelpRoute => GoRouteData.$route(
+  path: '/profile/help',
+  hasOverriddenOnExit: false,
+  factory: $ProfileHelpRoute._fromState,
+);
+
+mixin $ProfileHelpRoute on GoRouteData {
+  static ProfileHelpRoute _fromState(GoRouterState state) =>
+      const ProfileHelpRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profile/help');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $profilePrivacyRoute => GoRouteData.$route(
+  path: '/profile/privacy',
+  hasOverriddenOnExit: false,
+  factory: $ProfilePrivacyRoute._fromState,
+);
+
+mixin $ProfilePrivacyRoute on GoRouteData {
+  static ProfilePrivacyRoute _fromState(GoRouterState state) =>
+      const ProfilePrivacyRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profile/privacy');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $profileTermsRoute => GoRouteData.$route(
+  path: '/profile/terms',
+  hasOverriddenOnExit: false,
+  factory: $ProfileTermsRoute._fromState,
+);
+
+mixin $ProfileTermsRoute on GoRouteData {
+  static ProfileTermsRoute _fromState(GoRouterState state) =>
+      const ProfileTermsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profile/terms');
 
   @override
   void go(BuildContext context) => context.go(location);

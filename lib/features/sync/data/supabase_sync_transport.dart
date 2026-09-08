@@ -123,6 +123,7 @@ final class SupabaseSyncTransport implements SyncTransport {
       'achievements',
       'streak',
       'entitlements',
+      'preferences',
     ]) {
       final value = raw[key];
       if (value == null) continue;

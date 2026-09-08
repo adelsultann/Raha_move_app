@@ -51,7 +51,7 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'8ac3b11b97492eb13beaa9472f8a7232c5edb8db';
+String _$authControllerHash() => r'658f35cce5a1d9688a6ccc0a07844063b7aeb5e8';
 
 /// App-owned authentication lifecycle.
 ///

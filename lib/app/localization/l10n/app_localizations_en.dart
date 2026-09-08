@@ -900,4 +900,151 @@ class AppLocalizationsEn extends AppLocalizations {
   String savedRoutinesUnavailableSemantics(String title) {
     return '$title, unavailable';
   }
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileSaveError =>
+      'We couldn\'t save your settings. Please try again.';
+
+  @override
+  String get profilePreferences => 'Preferences';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileWeeklyGoal => 'Weekly movement goal';
+
+  @override
+  String profileDaysPerWeek(int days) {
+    return '$days days per week';
+  }
+
+  @override
+  String get profileMovementPositions => 'Movement positions';
+
+  @override
+  String get profileAnyPosition => 'Any position';
+
+  @override
+  String get profileSound => 'Sound';
+
+  @override
+  String get profileVibration => 'Vibration';
+
+  @override
+  String get profileWifiOnly => 'Download on Wi-Fi only';
+
+  @override
+  String get profileWifiOnlyHint =>
+      'Use Wi-Fi for routine downloads when possible.';
+
+  @override
+  String get profileReminderInterest => 'Gentle reminders';
+
+  @override
+  String get profileReminderInterestHint =>
+      'Tell us you are interested. You can choose a schedule later.';
+
+  @override
+  String get profilePrivacy => 'Privacy controls';
+
+  @override
+  String get profileAnalytics => 'Product analytics';
+
+  @override
+  String get profileAnalyticsHint =>
+      'Optional. Helps us understand which app features are useful.';
+
+  @override
+  String get profileCrashReporting => 'Crash reporting';
+
+  @override
+  String get profileCrashReportingHint =>
+      'Optional. Helps us identify technical problems.';
+
+  @override
+  String get profileAccessibility => 'Accessibility';
+
+  @override
+  String get profileDeviceTextSize =>
+      'Raha Move follows your device text-size setting.';
+
+  @override
+  String get profileSupport => 'Support and information';
+
+  @override
+  String get profileHelp => 'Help';
+
+  @override
+  String get profileHelpBody =>
+      'Raha Move offers short, comfortable movement routines. Move within a comfortable range and stop if you feel sharp pain.';
+
+  @override
+  String get profilePrivacyPolicy => 'Privacy';
+
+  @override
+  String get profileTerms => 'Terms';
+
+  @override
+  String get profileLegalPending =>
+      'The final public-release policy and terms are pending review.';
+
+  @override
+  String get profileAccount => 'Account';
+
+  @override
+  String get profileGuestAccount => 'Guest account';
+
+  @override
+  String get profileGuestAccountHint =>
+      'Your settings are saved on this device.';
+
+  @override
+  String get profileRegisteredAccount => 'Registered account';
+
+  @override
+  String get profileRegisteredAccountHint =>
+      'Your account is signed in on this device.';
+
+  @override
+  String get profileDeleteAccount => 'Delete account';
+
+  @override
+  String get profileDeleteConfirmTitle => 'Delete account?';
+
+  @override
+  String get profileDeleteGuestBody =>
+      'This starts deletion of your local guest data. This cannot be undone.';
+
+  @override
+  String get profileDeleteRegisteredBody =>
+      'This request requires a recent sign-in and starts the account cleanup workflow. This cannot be undone.';
+
+  @override
+  String get profileDeleteConfirm => 'Delete account';
+
+  @override
+  String get profileDeleteAccepted => 'Your deletion request was accepted.';
+
+  @override
+  String get profileDeleteAcceptedCleanupPending =>
+      'Your deletion is scheduled. Some data will be cleared when local cleanup can finish.';
+
+  @override
+  String get accountDeletionRecoveryRetry => 'Continue clearing this device';
+
+  @override
+  String get profileDeleteRequiresSignIn =>
+      'Please sign in again recently, then try your deletion request.';
+
+  @override
+  String get profileDeleteUnavailable =>
+      'Account deletion is not available right now. Please try again later.';
+
+  @override
+  String get profileDeleteFailed =>
+      'We couldn\'t start your deletion request. Your account is still signed in.';
 }

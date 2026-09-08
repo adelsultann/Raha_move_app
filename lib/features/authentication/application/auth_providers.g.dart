@@ -112,3 +112,56 @@ final class GuestIdentityStoreProvider
 
 String _$guestIdentityStoreHash() =>
     r'6f2846a6e4d908f4e66086a72281f50ccc6c5790';
+
+/// A restored session is deliberately not treated as recent re-authentication.
+
+@ProviderFor(recentSignInTracker)
+final recentSignInTrackerProvider = RecentSignInTrackerProvider._();
+
+/// A restored session is deliberately not treated as recent re-authentication.
+
+final class RecentSignInTrackerProvider
+    extends
+        $FunctionalProvider<
+          RecentSignInTracker,
+          RecentSignInTracker,
+          RecentSignInTracker
+        >
+    with $Provider<RecentSignInTracker> {
+  /// A restored session is deliberately not treated as recent re-authentication.
+  RecentSignInTrackerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recentSignInTrackerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$recentSignInTrackerHash();
+
+  @$internal
+  @override
+  $ProviderElement<RecentSignInTracker> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RecentSignInTracker create(Ref ref) {
+    return recentSignInTracker(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RecentSignInTracker value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RecentSignInTracker>(value),
+    );
+  }
+}
+
+String _$recentSignInTrackerHash() =>
+    r'bd5c72907f6c96f63762c06a9c87b358be7301ba';

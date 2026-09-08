@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/onboarding/application/locale_controller.dart';
+import '../features/profile/application/profile_controller.dart';
 import 'localization/l10n/app_localizations.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
@@ -16,6 +17,9 @@ class RahaMoveApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeControllerProvider).value;
+    // Starts local Profile restoration so independent telemetry consents are
+    // reapplied before optional feature telemetry is used.
+    ref.watch(profileControllerProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,

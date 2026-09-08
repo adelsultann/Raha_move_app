@@ -9,6 +9,8 @@ import 'package:raha_move/features/check_in/presentation/check_in_screen.dart';
 import 'package:raha_move/features/explore/presentation/explore_routine_details_screen.dart';
 import 'package:raha_move/features/explore/presentation/explore_screen.dart';
 import 'package:raha_move/features/progress/presentation/progress_screen.dart';
+import 'package:raha_move/features/profile/presentation/profile_information_screen.dart';
+import 'package:raha_move/features/profile/presentation/profile_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
 import 'package:raha_move/features/saved_routines/presentation/saved_routines_screen.dart';
@@ -75,6 +77,42 @@ class ProgressRoute extends GoRouteData with $ProgressRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProgressScreen();
+}
+
+@TypedGoRoute<ProfileRoute>(path: '/profile')
+class ProfileRoute extends GoRouteData with $ProfileRoute {
+  const ProfileRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) => ProfileScreen(
+    onSavedRoutines: () => const SavedRoutinesRoute().push(context),
+    onHelp: () => const ProfileHelpRoute().push(context),
+    onPrivacy: () => const ProfilePrivacyRoute().push(context),
+    onTerms: () => const ProfileTermsRoute().push(context),
+  );
+}
+
+@TypedGoRoute<ProfileHelpRoute>(path: '/profile/help')
+class ProfileHelpRoute extends GoRouteData with $ProfileHelpRoute {
+  const ProfileHelpRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ProfileInformationScreen(page: ProfileInformationPage.help);
+}
+
+@TypedGoRoute<ProfilePrivacyRoute>(path: '/profile/privacy')
+class ProfilePrivacyRoute extends GoRouteData with $ProfilePrivacyRoute {
+  const ProfilePrivacyRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ProfileInformationScreen(page: ProfileInformationPage.privacy);
+}
+
+@TypedGoRoute<ProfileTermsRoute>(path: '/profile/terms')
+class ProfileTermsRoute extends GoRouteData with $ProfileTermsRoute {
+  const ProfileTermsRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ProfileInformationScreen(page: ProfileInformationPage.terms);
 }
 
 @TypedGoRoute<ExploreRoutineDetailsRoute>(path: '/explore/routine/:routineId')

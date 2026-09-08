@@ -286,7 +286,7 @@ final class UserDataSyncEngineProvider
 }
 
 String _$userDataSyncEngineHash() =>
-    r'40e4920a0a58bb21fff179a7e38be7829aab5bd8';
+    r'531bd455cef512a9609cb77ded73417523db3c1f';
 
 /// The user-data sync engine for the active user. Bound to one user because
 /// outbox acknowledgement, cursor, and projection writes are owner-scoped.
