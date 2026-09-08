@@ -1,7 +1,7 @@
 ---
 description: Reviews Raha Move security, privacy, licensing, and release risks without modifying files
 mode: subagent
-model: deepseek/deepseek-v4-pro
+model: openai/gpt-5.6-terra
 temperature: 0.1
 permission: allow
 ---

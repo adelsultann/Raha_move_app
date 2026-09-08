@@ -16,11 +16,12 @@ class AccountDeletionRecoveryGate extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final recovery = ref.watch(accountDeletionRecoveryProvider);
     return recovery.when(
-      loading: () => _app(const Center(child: CircularProgressIndicator())),
-      error: (_, _) => _app(_retry(context, ref)),
+      loading: () =>
+          _app((_) => const Center(child: CircularProgressIndicator())),
+      error: (_, _) => _app((context) => _retry(context, ref)),
       data: (result) => result == AccountDeletionCleanupResult.completed
           ? child
-          : _app(_retry(context, ref)),
+          : _app((context) => _retry(context, ref)),
     );
   }
 
@@ -32,8 +33,8 @@ class AccountDeletionRecoveryGate extends ConsumerWidget {
     ),
   );
 
-  Widget _app(Widget body) => MaterialApp(
-    home: Scaffold(body: body),
+  Widget _app(WidgetBuilder bodyBuilder) => MaterialApp(
+    home: Scaffold(body: Builder(builder: bodyBuilder)),
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: const [
       AppLocalizations.delegate,

@@ -11,9 +11,11 @@ import 'package:raha_move/features/onboarding/application/locale_controller.dart
 import 'package:raha_move/features/onboarding/domain/app_language.dart';
 import 'package:raha_move/features/profile/application/profile_controller.dart';
 import 'package:raha_move/features/profile/application/profile_providers.dart';
+import 'package:raha_move/features/profile/data/rpc_account_deletion_action.dart';
 import 'package:raha_move/features/profile/domain/account_deletion_action.dart';
 import 'package:raha_move/features/profile/domain/profile_settings.dart';
 import 'package:raha_move/features/profile/presentation/profile_screen.dart';
+import 'package:raha_move/features/profile/presentation/account_deletion_recovery_gate.dart';
 
 void main() {
   testWidgets('shows every Profile control in Arabic RTL on compact 200%', (
@@ -98,6 +100,28 @@ void main() {
         .onPressed();
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('profile_save_retry')), findsNothing);
+  });
+
+  testWidgets('pending deletion cleanup shows localized retry control', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          accountDeletionRecoveryProvider.overrideWith(
+            (_) async => AccountDeletionCleanupResult.pending,
+          ),
+        ],
+        child: const AccountDeletionRecoveryGate(child: SizedBox()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('account_deletion_recovery_retry')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 }
 

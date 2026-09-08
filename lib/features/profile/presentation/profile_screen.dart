@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/localization/l10n/app_localizations.dart';
+import '../../../app/router/app_routes.dart';
 import '../../authentication/application/auth_controller.dart';
 import '../../authentication/domain/auth_state.dart';
 import '../../onboarding/application/locale_controller.dart';
@@ -235,8 +236,17 @@ class ProfileScreen extends ConsumerWidget {
       AccountDeletionResult.unavailable => s.profileDeleteUnavailable,
       AccountDeletionResult.failed => s.profileDeleteFailed,
     };
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: result == AccountDeletionResult.requiresRecentSignIn
+            ? SnackBarAction(
+                label: s.signInButton,
+                onPressed: () => const SignInRoute().push(context),
+              )
+            : null,
+      ),
+    );
   }
 }
 
