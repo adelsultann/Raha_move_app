@@ -440,19 +440,26 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-class _CompletedState extends ConsumerWidget {
+class _CompletedState extends ConsumerStatefulWidget {
   const _CompletedState({required this.session, required this.onDone});
 
   final RoutinePlaybackSession session;
   final VoidCallback onDone;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_CompletedState> createState() => _CompletedStateState();
+}
+
+class _CompletedStateState extends ConsumerState<_CompletedState> {
+  var _feedbackSkipped = false;
+
+  @override
+  Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final args = RoutineFeedbackArgs(
-      sessionId: session.sessionId,
-      routineId: session.routineId,
+      sessionId: widget.session.sessionId,
+      routineId: widget.session.routineId,
     );
     final feedbackState = ref.watch(routineFeedbackControllerProvider(args));
     final controller = ref.read(
@@ -483,7 +490,9 @@ class _CompletedState extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                strings.feedbackActiveMinutes(session.verifiedActiveMinutes),
+                strings.feedbackActiveMinutes(
+                  widget.session.verifiedActiveMinutes,
+                ),
                 key: const Key('feedback_active_minutes'),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -491,13 +500,16 @@ class _CompletedState extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              _FeedbackBody(
-                state: feedbackState,
-                onSelect: controller.submit,
-                onRetry: controller.retry,
-                onSkip: onDone,
-                onDone: onDone,
-              ),
+              if (_feedbackSkipped)
+                _CompletionProgress(onDone: widget.onDone)
+              else
+                _FeedbackBody(
+                  state: feedbackState,
+                  onSelect: controller.submit,
+                  onRetry: controller.retry,
+                  onSkip: () => setState(() => _feedbackSkipped = true),
+                  onDone: widget.onDone,
+                ),
             ],
           ),
         ),
@@ -678,10 +690,8 @@ class _FeedbackAcknowledged extends StatelessWidget {
             ),
           ),
         ),
-        if (!lessComfortable) ...[
-          const SizedBox(height: 20),
-          const CompletionGamificationSummary(),
-        ],
+        const SizedBox(height: 20),
+        const CompletionGamificationSummary(),
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
@@ -696,6 +706,37 @@ class _FeedbackAcknowledged extends StatelessWidget {
             onPressed: onDone,
             child: Text(strings.feedbackDone),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Shown when feedback is optional so completion progress remains visible
+/// without treating the skipped feedback path as celebratory.
+class _CompletionProgress extends StatelessWidget {
+  const _CompletionProgress({required this.onDone});
+
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const CompletionGamificationSummary(),
+        const SizedBox(height: 24),
+        FilledButton(
+          key: const Key('feedback_done'),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(56),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          onPressed: onDone,
+          child: Text(strings.feedbackDone),
         ),
       ],
     );

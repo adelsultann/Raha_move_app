@@ -49,18 +49,23 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
   @override
   Future<void> markSynced(SyncOperation operation) {
     return _database.transaction(() async {
-      await (_database.delete(
-        _database.syncOutbox,
-      )..where((r) => r.id.equals(operation.outboxId))).go();
-      final remaining = await _hasPendingOutboxItem(operation);
-      if (!remaining) {
-        await _writeDomainState(
-          operation,
-          syncState: SyncState.synced,
-          lastSyncError: null,
-        );
-      }
+      await _markSynced(operation);
     });
+  }
+
+  @override
+  Future<void> acknowledgeAccepted(
+    SyncOperation operation, {
+    required Iterable<SyncProjection> projections,
+    int? cursor,
+  }) async {
+    final acceptedProjections = projections.toList(growable: false);
+    await _database.transaction(() async {
+      await _storeProjections(acceptedProjections);
+      if (cursor != null) await _userData.storePullCursor(cursor);
+      await _markSynced(operation);
+    });
+    await _applyTelemetryConsent(acceptedProjections);
   }
 
   @override
@@ -144,24 +149,35 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
 
   @override
   Future<void> storeProjections(Iterable<SyncProjection> projections) async {
-    if (projections.isEmpty) return;
+    final received = projections.toList(growable: false);
+    if (received.isEmpty) return;
     await _database.transaction(() async {
-      for (final projection in projections) {
-        await _database
-            .into(_database.localProgressProjections)
-            .insertOnConflictUpdate(
-              LocalProgressProjectionsCompanion.insert(
-                userId: activeUserId,
-                projectionType: projection.projectionType,
-                payloadJson: projection.payloadJson,
-                serverUpdatedAt: projection.serverUpdatedAt.toUtc(),
-              ),
-            );
-        if (projection.projectionType == 'preferences') {
-          await _applyPreferencesProjection(projection);
-        }
-      }
+      await _storeProjections(received);
     });
+    await _applyTelemetryConsent(received);
+  }
+
+  Future<void> _storeProjections(Iterable<SyncProjection> projections) async {
+    for (final projection in projections) {
+      await _database
+          .into(_database.localProgressProjections)
+          .insertOnConflictUpdate(
+            LocalProgressProjectionsCompanion.insert(
+              userId: activeUserId,
+              projectionType: projection.projectionType,
+              payloadJson: projection.payloadJson,
+              serverUpdatedAt: projection.serverUpdatedAt.toUtc(),
+            ),
+          );
+      if (projection.projectionType == 'preferences') {
+        await _applyPreferencesProjection(projection);
+      }
+    }
+  }
+
+  Future<void> _applyTelemetryConsent(
+    Iterable<SyncProjection> projections,
+  ) async {
     // Consent is security-sensitive runtime state. Apply authoritative values
     // immediately after the durable projection transaction, fail-closed.
     for (final projection in projections.where(
@@ -173,6 +189,20 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
       if (analytics is bool && crash is bool) {
         await onTelemetryConsentChanged?.call(analytics, crash);
       }
+    }
+  }
+
+  Future<void> _markSynced(SyncOperation operation) async {
+    await (_database.delete(
+      _database.syncOutbox,
+    )..where((r) => r.id.equals(operation.outboxId))).go();
+    final remaining = await _hasPendingOutboxItem(operation);
+    if (!remaining) {
+      await _writeDomainState(
+        operation,
+        syncState: SyncState.synced,
+        lastSyncError: null,
+      );
     }
   }
 

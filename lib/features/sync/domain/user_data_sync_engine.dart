@@ -88,13 +88,13 @@ final class UserDataSyncEngine {
       final response = await _push(operation);
       switch (response) {
         case SyncAccepted(:final projections, :final cursor):
-          await outbox.markSynced(operation);
+          await outbox.acknowledgeAccepted(
+            operation,
+            projections: projections,
+            cursor: cursor,
+          );
           if (projections.isNotEmpty) {
-            await outbox.storeProjections(projections);
             storedProjections.addAll(projections);
-          }
-          if (cursor != null) {
-            await outbox.storePullCursor(cursor);
           }
           succeeded++;
         case SyncRejected(:final code):

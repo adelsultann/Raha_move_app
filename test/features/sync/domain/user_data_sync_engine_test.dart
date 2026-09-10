@@ -365,6 +365,38 @@ void main() {
     },
   );
 
+  test('accepting an offline completion persists its reward before acknowledgement', () async {
+    final repo = userData(db, now);
+    await enqueueOfflineJourney(
+      repo: repo,
+      checkInId: 'check-in-1',
+      recommendationId: 'recommendation-1',
+      sessionId: 'session-1',
+    );
+    final reward = SyncProjection(
+      projectionType: 'points',
+      payloadJson: '{"points":[{"source_id":"session-1","points":10}]}',
+      serverUpdatedAt: now,
+    );
+    transport = FakeSyncTransport(
+      onPush: (op) async => op.kind == 'session_finalize'
+          ? SyncAccepted(projections: [reward], cursor: 100)
+          : const SyncAccepted(),
+    );
+
+    await engine().synchronize();
+
+    final session = await (db.select(
+      db.localRoutineSessions,
+    )..where((row) => row.id.equals('session-1'))).getSingle();
+    final projections = await (db.select(
+      db.localProgressProjections,
+    )..where((row) => row.projectionType.equals('points'))).get();
+    expect(session.syncState, SyncState.synced);
+    expect(projections.single.payloadJson, contains('session-1'));
+    expect(await outbox.pullCursor(), 100);
+  });
+
   test(
     'an unavailable transport retains the outbox without consuming budget',
     () async {

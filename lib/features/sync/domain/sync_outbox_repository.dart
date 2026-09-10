@@ -22,6 +22,16 @@ abstract interface class SyncOutboxRepository {
   /// row(s) `synced`. Repeated acknowledgement is a no-op.
   Future<void> markSynced(SyncOperation operation);
 
+  /// Atomically records a confirmed acceptance and its authoritative response.
+  /// This keeps an offline projection visible across an interruption: a
+  /// completed session can never become locally synced before the server's
+  /// matching projections are durable.
+  Future<void> acknowledgeAccepted(
+    SyncOperation operation, {
+    required Iterable<SyncProjection> projections,
+    int? cursor,
+  });
+
   /// Records a transient failure: bumps the attempt count, schedules the next
   /// attempt, and marks the domain row `failed` with a recoverable diagnostic.
   Future<void> markRetryableFailure(

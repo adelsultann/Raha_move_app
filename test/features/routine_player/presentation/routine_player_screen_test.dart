@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/core/analytics/analytics_service_impls.dart';
+import 'package:raha_move/features/gamification/presentation/completion_gamification_summary.dart';
 import 'package:raha_move/features/onboarding/domain/app_language.dart';
 import 'package:raha_move/features/routine_player/domain/routine_feedback.dart';
 import 'package:raha_move/features/routine_player/domain/routine_session_repository.dart';
@@ -454,7 +455,7 @@ void main() {
     expect(find.byKey(const Key('feedback_same')), findsOneWidget);
     expect(find.byKey(const Key('feedback_less_comfortable')), findsOneWidget);
     expect(find.byKey(const Key('feedback_skip')), findsOneWidget);
-    // No points, streaks, or rewards before RAHA-070.
+    // Points and rewards are shown after feedback is submitted or skipped.
     expect(find.textContaining('point'), findsNothing);
     expect(find.textContaining('streak'), findsNothing);
     expect(tester.takeException(), isNull);
@@ -488,10 +489,13 @@ void main() {
     );
     expect(find.byKey(const Key('feedback_done')), findsOneWidget);
     expect(find.byKey(const Key('feedback_much_better')), findsNothing);
+    expect(find.byType(CompletionGamificationSummary), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('skip leaves without saving feedback', (tester) async {
+  testWidgets('skip shows progress before leaving without saving feedback', (
+    tester,
+  ) async {
     final ticker = FakePlaybackTicker();
     final feedback = FakeRoutineFeedbackRepository();
     final container = buildRoutinePlayerContainer(
@@ -508,6 +512,12 @@ void main() {
     await _completeRoutine(tester, ticker);
 
     await tester.tap(find.byKey(const Key('feedback_skip')));
+    await _pumpUntil(tester, find.byType(CompletionGamificationSummary));
+
+    expect(find.byKey(const Key('feedback_done')), findsOneWidget);
+    expect(feedback.saves, isEmpty);
+
+    await tester.tap(find.byKey(const Key('feedback_done')));
     await _pumpUntil(tester, find.text('home'));
 
     expect(find.text('home'), findsOneWidget);
@@ -607,6 +617,7 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(find.byType(CompletionGamificationSummary), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
