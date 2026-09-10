@@ -12,6 +12,10 @@ import 'package:raha_move/features/onboarding/domain/onboarding_repository.dart'
 import 'package:raha_move/features/preferences/application/preferences_providers.dart';
 import 'package:raha_move/features/preferences/domain/preferences_repository.dart';
 import 'package:raha_move/features/preferences/domain/user_preferences.dart';
+import 'package:raha_move/features/reminders/application/reminder_lifecycle_service.dart';
+import 'package:raha_move/features/reminders/application/reminder_providers.dart';
+import 'package:raha_move/features/reminders/domain/reminder_repository.dart';
+import 'package:raha_move/features/reminders/domain/reminder_schedule.dart';
 
 /// In-memory onboarding persistence for tests.
 final class FakeOnboardingRepository implements OnboardingRepository {
@@ -153,6 +157,7 @@ final class FakePreferencesRepository implements PreferencesRepository {
 ProviderContainer buildOnboardingContainer({
   FakeOnboardingRepository? repository,
   InMemoryAnalyticsService? analytics,
+  ReminderLifecycleService? reminderLifecycleService,
 }) {
   return ProviderContainer(
     overrides: [
@@ -167,6 +172,48 @@ ProviderContainer buildOnboardingContainer({
       analyticsServiceProvider.overrideWithValue(
         analytics ?? InMemoryAnalyticsService(enabled: true),
       ),
+      reminderLifecycleServiceProvider.overrideWithValue(
+        reminderLifecycleService ??
+            ReminderLifecycleService(
+              _NoopReminderRepository(),
+              _NoopReminderPlatform(),
+            ),
+      ),
     ],
   );
+}
+
+final class _NoopReminderRepository implements ReminderRepository {
+  @override
+  Future<ReminderSchedule?> read(String userId) async => null;
+
+  @override
+  Future<void> remove(String userId) async {}
+
+  @override
+  Future<void> save(ReminderSchedule schedule) async {}
+}
+
+final class _NoopReminderPlatform implements ReminderPlatform {
+  @override
+  Future<void> cancel(String scheduleId) async {}
+
+  @override
+  Future<String> currentIanaTimezone() async => 'UTC';
+
+  @override
+  Future<void> openSettings() async {}
+
+  @override
+  Future<ReminderPermission> permissionStatus() async =>
+      ReminderPermission.granted;
+
+  @override
+  Future<bool> requestPermission() async => true;
+
+  @override
+  Future<void> schedule(
+    ReminderSchedule schedule,
+    ReminderNotificationContent content,
+  ) async {}
 }

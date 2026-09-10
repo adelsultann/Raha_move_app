@@ -7,6 +7,10 @@ import 'package:raha_move/features/authentication/domain/auth_failure.dart';
 import 'package:raha_move/features/authentication/domain/auth_repository.dart';
 import 'package:raha_move/features/authentication/domain/auth_state.dart';
 import 'package:raha_move/features/authentication/domain/guest_identity_store.dart';
+import 'package:raha_move/features/reminders/application/reminder_cancellation.dart';
+import 'package:raha_move/features/reminders/application/reminder_providers.dart';
+import 'package:raha_move/features/reminders/domain/reminder_repository.dart';
+import 'package:raha_move/features/reminders/domain/reminder_schedule.dart';
 
 void main() {
   test('build returns a guest state immediately without a network', () async {
@@ -302,12 +306,46 @@ final class _Harness {
           guestIdentityStoreProvider.overrideWithValue(
             store ?? _FakeGuestIdentityStore(currentId: 'guest-1'),
           ),
+          reminderCancellationProvider.overrideWithValue(
+            ReminderCancellation(
+              _NoopReminderRepository(),
+              _NoopReminderPlatform(),
+            ),
+          ),
         ],
       );
 
   final ProviderContainer container;
 
   void dispose() => container.dispose();
+}
+
+final class _NoopReminderRepository implements ReminderRepository {
+  @override
+  Future<ReminderSchedule?> read(String userId) async => null;
+  @override
+  Future<void> remove(String userId) async {}
+  @override
+  Future<void> save(ReminderSchedule schedule) async {}
+}
+
+final class _NoopReminderPlatform implements ReminderPlatform {
+  @override
+  Future<void> cancel(String scheduleId) async {}
+  @override
+  Future<String> currentIanaTimezone() async => 'UTC';
+  @override
+  Future<void> openSettings() async {}
+  @override
+  Future<ReminderPermission> permissionStatus() async =>
+      ReminderPermission.granted;
+  @override
+  Future<bool> requestPermission() async => true;
+  @override
+  Future<void> schedule(
+    ReminderSchedule schedule,
+    ReminderNotificationContent content,
+  ) async {}
 }
 
 final class _FakeAuthRepository implements AuthRepository {

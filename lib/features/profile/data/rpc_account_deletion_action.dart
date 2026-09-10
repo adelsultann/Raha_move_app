@@ -88,13 +88,15 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
     this._database,
     this._auth,
     this._identities,
-    this._mediaLifecycle,
-  );
+    this._mediaLifecycle, {
+    this.cancelReminders,
+  });
 
   final AppDatabase _database;
   final AuthRepository _auth;
   final GuestIdentityStore _identities;
   final Future<MediaCacheLifecycle> Function() _mediaLifecycle;
+  final Future<void> Function(String userId)? cancelReminders;
 
   @override
   Future<void> prepareDeletionRequest({required String userId}) =>
@@ -131,6 +133,7 @@ final class DriftAccountDeletionCleanup implements AccountDeletionCleanup {
     final ownerToPurge = mediaOwnerId ?? userId;
     try {
       await _writeMarker(userId: userId, mediaOwnerId: ownerToPurge);
+      await cancelReminders?.call(userId);
       await (await _mediaLifecycle()).purgeOwner(ownerToPurge);
       await LocalUserDataRepository(
         _database,

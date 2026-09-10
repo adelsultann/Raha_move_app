@@ -235,6 +235,57 @@ void main() {
     );
   });
 
+  test('sign-out purge transaction removes only outgoing user data and preserves user B', () async {
+    await _seedCatalog(database, now);
+    await _seedUserData(database, 'guest-a', now);
+    await _seedUserData(database, 'guest-b', now, checkInId: 'checkin-b');
+    await database
+        .into(database.localIdentity)
+        .insert(
+          LocalIdentityCompanion.insert(id: const Value(1), userId: 'guest-a'),
+        );
+
+    await store.resetForSignOut();
+
+    expect(await store.currentLocalUserId(), 'guest-1');
+    expect(
+      await (database.select(
+        database.localProfiles,
+      )..where((r) => r.userId.equals('guest-a'))).get(),
+      isEmpty,
+    );
+    expect(
+      await (database.select(
+        database.localCheckIns,
+      )..where((r) => r.userId.equals('guest-a'))).get(),
+      isEmpty,
+    );
+    expect(
+      await (database.select(
+        database.syncOutbox,
+      )..where((r) => r.ownerUserId.equals('guest-a'))).get(),
+      isEmpty,
+    );
+    expect(
+      await (database.select(
+        database.localProfiles,
+      )..where((r) => r.userId.equals('guest-b'))).getSingleOrNull(),
+      isNotNull,
+    );
+    expect(
+      await (database.select(
+        database.localCheckIns,
+      )..where((r) => r.userId.equals('guest-b'))).getSingleOrNull(),
+      isNotNull,
+    );
+    expect(
+      await (database.select(
+        database.syncOutbox,
+      )..where((r) => r.ownerUserId.equals('guest-b'))).getSingleOrNull(),
+      isNotNull,
+    );
+  });
+
   test(
     'activateAccount switches identity without merging another user',
     () async {

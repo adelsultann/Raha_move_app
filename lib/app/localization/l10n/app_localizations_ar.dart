@@ -939,6 +939,71 @@ class AppLocalizationsAr extends AppLocalizations {
       'أخبرنا أنك مهتم، ويمكنك اختيار الموعد لاحقًا.';
 
   @override
+  String get reminderSettingsTitle => 'تذكيرات لطيفة';
+
+  @override
+  String get reminderSettingsIntro =>
+      'اختر وقتًا هادئًا يناسب يومك. تبقى التذكيرات على هذا الجهاز.';
+
+  @override
+  String get reminderSettingsTime => 'وقت التذكير';
+
+  @override
+  String get reminderSettingsDays => 'الأيام';
+
+  @override
+  String get reminderSettingsEveryDay => 'كل يوم';
+
+  @override
+  String get reminderSettingsWeekdays => 'أيام الأسبوع (الاثنين إلى الجمعة)';
+
+  @override
+  String get reminderSettingsSave => 'حفظ التذكير';
+
+  @override
+  String get reminderSettingsPause => 'إيقاف التذكير مؤقتًا';
+
+  @override
+  String get reminderSettingsResume => 'استئناف التذكير';
+
+  @override
+  String get reminderSettingsDisable => 'إيقاف التذكير';
+
+  @override
+  String get reminderSettingsDisabled => 'التذكيرات متوقفة';
+
+  @override
+  String get reminderSettingsPaused => 'تم إيقاف التذكير مؤقتًا';
+
+  @override
+  String get reminderSettingsActive => 'التذكير نشط';
+
+  @override
+  String get reminderSettingsPermissionNeeded =>
+      'اسمح بالإشعارات لتلقي هذا التذكير.';
+
+  @override
+  String get reminderSettingsPermissionDenied =>
+      'إشعارات راحة موف متوقفة. يمكنك تشغيلها من إعدادات جهازك.';
+
+  @override
+  String get reminderSettingsOpenSettings => 'فتح إعدادات الجهاز';
+
+  @override
+  String get reminderSettingsSaveError =>
+      'حُفظ اختيار التذكير، لكن تعذّرت جدولتُه. يمكنك المحاولة لاحقًا.';
+
+  @override
+  String get reminderSettingsRetry => 'إعادة محاولة الجدولة';
+
+  @override
+  String get reminderNotificationTitle => 'لحظة لطيفة للحركة';
+
+  @override
+  String get reminderNotificationBody =>
+      'استراحة حركة قصيرة ومريحة متاحة عندما تكون مستعدًا.';
+
+  @override
   String get profilePrivacy => 'عناصر تحكم الخصوصية';
 
   @override

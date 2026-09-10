@@ -1748,6 +1748,126 @@ abstract class AppLocalizations {
   /// **'Tell us you are interested. You can choose a schedule later.'**
   String get profileReminderInterestHint;
 
+  /// No description provided for @reminderSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle reminders'**
+  String get reminderSettingsTitle;
+
+  /// No description provided for @reminderSettingsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a calm time that suits your day. Reminders stay on this device.'**
+  String get reminderSettingsIntro;
+
+  /// No description provided for @reminderSettingsTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get reminderSettingsTime;
+
+  /// No description provided for @reminderSettingsDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get reminderSettingsDays;
+
+  /// No description provided for @reminderSettingsEveryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get reminderSettingsEveryDay;
+
+  /// No description provided for @reminderSettingsWeekdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekdays (Monday to Friday)'**
+  String get reminderSettingsWeekdays;
+
+  /// No description provided for @reminderSettingsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save reminder'**
+  String get reminderSettingsSave;
+
+  /// No description provided for @reminderSettingsPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause reminder'**
+  String get reminderSettingsPause;
+
+  /// No description provided for @reminderSettingsResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume reminder'**
+  String get reminderSettingsResume;
+
+  /// No description provided for @reminderSettingsDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable reminder'**
+  String get reminderSettingsDisable;
+
+  /// No description provided for @reminderSettingsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders are off'**
+  String get reminderSettingsDisabled;
+
+  /// No description provided for @reminderSettingsPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder paused'**
+  String get reminderSettingsPaused;
+
+  /// No description provided for @reminderSettingsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder active'**
+  String get reminderSettingsActive;
+
+  /// No description provided for @reminderSettingsPermissionNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications to receive this reminder.'**
+  String get reminderSettingsPermissionNeeded;
+
+  /// No description provided for @reminderSettingsPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for Raha Move. You can turn them on in your device settings.'**
+  String get reminderSettingsPermissionDenied;
+
+  /// No description provided for @reminderSettingsOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open device settings'**
+  String get reminderSettingsOpenSettings;
+
+  /// No description provided for @reminderSettingsSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reminder choice is saved, but we couldn\'t schedule it. Try again when you are ready.'**
+  String get reminderSettingsSaveError;
+
+  /// No description provided for @reminderSettingsRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try scheduling again'**
+  String get reminderSettingsRetry;
+
+  /// No description provided for @reminderNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle moment to move'**
+  String get reminderNotificationTitle;
+
+  /// No description provided for @reminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A short, comfortable movement break is here when you are ready.'**
+  String get reminderNotificationBody;
+
   /// No description provided for @profilePrivacy.
   ///
   /// In en, this message translates to:

@@ -11,6 +11,7 @@ import 'package:raha_move/features/explore/presentation/explore_screen.dart';
 import 'package:raha_move/features/progress/presentation/progress_screen.dart';
 import 'package:raha_move/features/profile/presentation/profile_information_screen.dart';
 import 'package:raha_move/features/profile/presentation/profile_screen.dart';
+import 'package:raha_move/features/reminders/presentation/reminder_settings_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
 import 'package:raha_move/features/saved_routines/presentation/saved_routines_screen.dart';
@@ -88,7 +89,16 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
     onHelp: () => const ProfileHelpRoute().push(context),
     onPrivacy: () => const ProfilePrivacyRoute().push(context),
     onTerms: () => const ProfileTermsRoute().push(context),
+    onReminders: () => const ReminderSettingsRoute().push(context),
   );
+}
+
+@TypedGoRoute<ReminderSettingsRoute>(path: '/profile/reminders')
+class ReminderSettingsRoute extends GoRouteData with $ReminderSettingsRoute {
+  const ReminderSettingsRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ReminderSettingsScreen();
 }
 
 @TypedGoRoute<ProfileHelpRoute>(path: '/profile/help')

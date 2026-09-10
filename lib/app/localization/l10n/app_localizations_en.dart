@@ -952,6 +952,71 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tell us you are interested. You can choose a schedule later.';
 
   @override
+  String get reminderSettingsTitle => 'Gentle reminders';
+
+  @override
+  String get reminderSettingsIntro =>
+      'Choose a calm time that suits your day. Reminders stay on this device.';
+
+  @override
+  String get reminderSettingsTime => 'Reminder time';
+
+  @override
+  String get reminderSettingsDays => 'Days';
+
+  @override
+  String get reminderSettingsEveryDay => 'Every day';
+
+  @override
+  String get reminderSettingsWeekdays => 'Weekdays (Monday to Friday)';
+
+  @override
+  String get reminderSettingsSave => 'Save reminder';
+
+  @override
+  String get reminderSettingsPause => 'Pause reminder';
+
+  @override
+  String get reminderSettingsResume => 'Resume reminder';
+
+  @override
+  String get reminderSettingsDisable => 'Disable reminder';
+
+  @override
+  String get reminderSettingsDisabled => 'Reminders are off';
+
+  @override
+  String get reminderSettingsPaused => 'Reminder paused';
+
+  @override
+  String get reminderSettingsActive => 'Reminder active';
+
+  @override
+  String get reminderSettingsPermissionNeeded =>
+      'Allow notifications to receive this reminder.';
+
+  @override
+  String get reminderSettingsPermissionDenied =>
+      'Notifications are off for Raha Move. You can turn them on in your device settings.';
+
+  @override
+  String get reminderSettingsOpenSettings => 'Open device settings';
+
+  @override
+  String get reminderSettingsSaveError =>
+      'Your reminder choice is saved, but we couldn\'t schedule it. Try again when you are ready.';
+
+  @override
+  String get reminderSettingsRetry => 'Try scheduling again';
+
+  @override
+  String get reminderNotificationTitle => 'A gentle moment to move';
+
+  @override
+  String get reminderNotificationBody =>
+      'A short, comfortable movement break is here when you are ready.';
+
+  @override
   String get profilePrivacy => 'Privacy controls';
 
   @override

@@ -6,6 +6,10 @@ import '../../../core/analytics/analytics_catalog.dart';
 import '../../../core/analytics/analytics_event.dart';
 import '../../../core/telemetry/telemetry_providers.dart';
 import '../../authentication/application/auth_controller.dart';
+import '../../reminders/application/reminder_providers.dart';
+import '../../reminders/domain/reminder_schedule.dart';
+import '../../../app/localization/l10n/app_localizations_ar.dart';
+import '../../../app/localization/l10n/app_localizations_en.dart';
 import '../domain/app_language.dart';
 import 'onboarding_providers.dart';
 
@@ -40,6 +44,11 @@ class LocaleController extends _$LocaleController {
     await ref
         .read(onboardingRepositoryProvider)
         .savePreferredLanguage(userId, language);
+    // The persisted locale is the authoritative mutation point. Re-schedule
+    // only an enabled existing reminder; this path never requests permission.
+    await ref
+        .read(reminderLifecycleServiceProvider)
+        .reconcile(userId: userId, content: _reminderContent(language));
 
     ref
         .read(analyticsServiceProvider)
@@ -49,5 +58,16 @@ class LocaleController extends _$LocaleController {
             properties: {AnalyticsPropertyKey.locale: language.code},
           ),
         );
+  }
+
+  ReminderNotificationContent _reminderContent(AppLanguage language) {
+    final strings = switch (language) {
+      AppLanguage.ar => AppLocalizationsAr(),
+      AppLanguage.en => AppLocalizationsEn(),
+    };
+    return ReminderNotificationContent(
+      title: strings.reminderNotificationTitle,
+      body: strings.reminderNotificationBody,
+    );
   }
 }

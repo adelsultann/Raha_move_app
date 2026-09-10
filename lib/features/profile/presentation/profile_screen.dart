@@ -20,11 +20,13 @@ class ProfileScreen extends ConsumerWidget {
     required this.onHelp,
     required this.onPrivacy,
     required this.onTerms,
+    this.onReminders,
   });
   final VoidCallback onSavedRoutines;
   final VoidCallback onHelp;
   final VoidCallback onPrivacy;
   final VoidCallback onTerms;
+  final VoidCallback? onReminders;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -80,16 +82,12 @@ class ProfileScreen extends ConsumerWidget {
                 value.copyWith(wifiOnlyDownloads: enabled),
               ),
             ),
-            _SwitchTile(
+            ListTile(
               key: const Key('profile_reminder_interest'),
-              label: strings.profileReminderInterest,
-              subtitle: strings.profileReminderInterestHint,
-              value: value.reminderInterest,
-              onChanged: (enabled) => saveProfileSettings(
-                context,
-                ref,
-                value.copyWith(reminderInterest: enabled),
-              ),
+              leading: const Icon(Icons.notifications_outlined),
+              title: Text(strings.profileReminderInterest),
+              subtitle: Text(strings.profileReminderInterestHint),
+              onTap: onReminders,
             ),
             _Heading(strings.profilePrivacy),
             _SwitchTile(

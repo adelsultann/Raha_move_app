@@ -5,6 +5,7 @@ import '../../authentication/application/auth_controller.dart';
 import '../../authentication/application/auth_providers.dart';
 import '../../media/application/media_providers.dart';
 import '../../sync/application/sync_providers.dart';
+import '../../reminders/application/reminder_providers.dart';
 import '../data/drift_profile_repository.dart';
 import '../data/rpc_account_deletion_action.dart';
 import '../domain/account_deletion_action.dart';
@@ -28,6 +29,8 @@ AccountDeletionAction accountDeletionAction(Ref ref) =>
         ref.watch(authRepositoryProvider),
         ref.watch(guestIdentityStoreProvider),
         () => ref.read(mediaCacheLifecycleProvider.future),
+        cancelReminders: (userId) =>
+            ref.read(reminderCancellationProvider).cancelForUser(userId),
       ),
     );
 
@@ -38,4 +41,6 @@ Future<AccountDeletionCleanupResult> accountDeletionRecovery(Ref ref) =>
       ref.watch(authRepositoryProvider),
       ref.watch(guestIdentityStoreProvider),
       () => ref.read(mediaCacheLifecycleProvider.future),
+      cancelReminders: (userId) =>
+          ref.read(reminderCancellationProvider).cancelForUser(userId),
     ).recoverPending();

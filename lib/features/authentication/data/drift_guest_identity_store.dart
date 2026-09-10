@@ -128,7 +128,96 @@ final class DriftGuestIdentityStore implements GuestIdentityStore {
   }
 
   @override
-  Future<void> resetForSignOut() => activateAccount(_uuidGenerator());
+  Future<void> resetForSignOut() async {
+    final outgoingUserId = await currentLocalUserId();
+    final freshUserId = _uuidGenerator();
+    await _database.transaction(() async {
+      await (_database.delete(
+        _database.syncOutbox,
+      )..where((r) => r.ownerUserId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localSessionFeedback,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await _database.customStatement(
+        'DELETE FROM local_session_steps WHERE session_id IN '
+        '(SELECT id FROM local_routine_sessions WHERE user_id = ?)',
+        [outgoingUserId],
+      );
+      await (_database.delete(
+        _database.localRoutineSessions,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localRecommendations,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await _database.customStatement(
+        'DELETE FROM local_check_in_body_areas WHERE check_in_id IN '
+        '(SELECT id FROM local_check_ins WHERE user_id = ?)',
+        [outgoingUserId],
+      );
+      await (_database.delete(
+        _database.localCheckIns,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localSavedRoutines,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localReminderSchedules,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localPreferredPositions,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localUserPreferences,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localProgressProjections,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localAnalyticsEmissionReceipts,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localSyncState,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localMediaCacheEntries,
+      )..where((r) => r.ownerId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.environmentEntries,
+      )..where((r) => r.key.equals('telemetry_consent_$outgoingUserId'))).go();
+      await (_database.delete(
+        _database.localProfiles,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await _database
+          .into(_database.localIdentity)
+          .insertOnConflictUpdate(
+            LocalIdentityCompanion.insert(
+              id: const Value(_identityRowId),
+              userId: freshUserId,
+            ),
+          );
+      final now = _clock();
+      await _database
+          .into(_database.localProfiles)
+          .insert(
+            LocalProfilesCompanion.insert(
+              userId: freshUserId,
+              preferredLocale: 'ar',
+              timezone: 'Asia/Riyadh',
+              weeklyGoalDays: 3,
+              localUpdatedAt: now,
+            ),
+          );
+      await _database
+          .into(_database.localUserPreferences)
+          .insert(
+            LocalUserPreferencesCompanion.insert(
+              userId: freshUserId,
+              experienceLevel: 'beginner',
+              localUpdatedAt: now,
+            ),
+          );
+    });
+  }
 
   Future<void> _rekey(
     String table,

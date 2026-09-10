@@ -8,6 +8,7 @@ import '../domain/auth_repository.dart';
 import '../domain/auth_state.dart';
 import '../domain/guest_identity_store.dart';
 import 'auth_providers.dart';
+import '../../reminders/application/reminder_providers.dart';
 
 part 'auth_controller.g.dart';
 
@@ -216,6 +217,14 @@ class AuthController extends _$AuthController {
     final repository = ref.read(authRepositoryProvider);
     final store = ref.read(guestIdentityStoreProvider);
     _setBusy();
+    try {
+      await ref
+          .read(reminderCancellationProvider)
+          .cancelForUser(_current.activeUserId);
+    } catch (_) {
+      // Local identity reset still proceeds; a retained disabled schedule is
+      // reconciled on any later app launch before it can be reused.
+    }
     try {
       await repository.signOut();
     } catch (_) {

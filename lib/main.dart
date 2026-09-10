@@ -11,9 +11,13 @@ import 'features/media/application/media_cache_auth_observer.dart';
 import 'features/onboarding/presentation/onboarding_gate.dart';
 import 'features/profile/presentation/account_deletion_recovery_gate.dart';
 import 'features/profile/data/account_deletion_startup_guard.dart';
+import 'features/reminders/application/reminder_cancellation.dart';
+import 'features/reminders/data/drift_reminder_repository.dart';
+import 'features/reminders/data/flutter_local_reminder_platform.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _retryReminderCancellations();
   await initializeSupabaseAfterDeletionPreflight(
     deletionGuard: _deletionStartupGuard(),
     initialize: initializeSupabaseIfConfigured,
@@ -29,6 +33,18 @@ Future<void> main() async {
       ),
     ),
   );
+}
+
+Future<void> _retryReminderCancellations() async {
+  final database = createAppDatabase();
+  try {
+    await ReminderCancellation(
+      DriftReminderRepository(database),
+      FlutterLocalReminderPlatform(),
+    ).retryPending();
+  } finally {
+    await database.close();
+  }
 }
 
 AccountDeletionStartupGuard _deletionStartupGuard() {

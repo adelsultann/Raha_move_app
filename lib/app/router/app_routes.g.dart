@@ -12,6 +12,7 @@ List<RouteBase> get $appRoutes => [
   $exploreRoute,
   $progressRoute,
   $profileRoute,
+  $reminderSettingsRoute,
   $profileHelpRoute,
   $profilePrivacyRoute,
   $profileTermsRoute,
@@ -140,6 +141,33 @@ mixin $ProfileRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/profile');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $reminderSettingsRoute => GoRouteData.$route(
+  path: '/profile/reminders',
+  hasOverriddenOnExit: false,
+  factory: $ReminderSettingsRoute._fromState,
+);
+
+mixin $ReminderSettingsRoute on GoRouteData {
+  static ReminderSettingsRoute _fromState(GoRouterState state) =>
+      const ReminderSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profile/reminders');
 
   @override
   void go(BuildContext context) => context.go(location);
