@@ -59,7 +59,8 @@ When documents disagree, do not silently choose one. Identify the conflict, its 
 ## Collaboration Rules
 
 - Begin work by naming the assigned `RAHA-###` task ID and desired user outcome.
-- One agent owns an implementation area at a time. Do not edit the same files concurrently without explicit coordination.
-- Escalate requirements questions to `product-planner`; content or recommendation questions to `recommendation-content-engineer`; data/RLS/sync questions to `backend-data-engineer`; test coverage to `qa-engineer`; and security, privacy, licensing, or release risk to `security-release-reviewer`.
+- `product-planner` owns product decisions, implementation, integration, and commits across Flutter, data, content, and recommendation work.
+- `security-release-reviewer` independently verifies acceptance, testing, accessibility, security, privacy, licensing, and release risk without modifying files.
+- Use the reviewer only when independent verification is useful or required by risk; avoid unnecessary handoffs for routine work.
+- Only `product-planner` may edit files. The reviewer may inspect files and run non-destructive verification commands.
 - Keep implementation within the assigned scope. Explain any needed scope expansion before making it.
-
