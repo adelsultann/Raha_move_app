@@ -1274,6 +1274,30 @@ abstract class AppLocalizations {
   /// **'Your milestones will be ready when they can be refreshed.'**
   String get achievementUnavailable;
 
+  /// No description provided for @navigationToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get navigationToday;
+
+  /// No description provided for @navigationExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get navigationExplore;
+
+  /// No description provided for @navigationProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get navigationProgress;
+
+  /// No description provided for @navigationProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navigationProfile;
+
   /// No description provided for @todayGreeting.
   ///
   /// In en, this message translates to:

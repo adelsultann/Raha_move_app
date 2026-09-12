@@ -676,6 +676,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get achievementUnavailable => 'ستظهر محطاتك عند تحديثها.';
 
   @override
+  String get navigationToday => 'اليوم';
+
+  @override
+  String get navigationExplore => 'استكشف';
+
+  @override
+  String get navigationProgress => 'تقدّمك';
+
+  @override
+  String get navigationProfile => 'حسابي';
+
+  @override
   String get todayGreeting => 'مرحبًا بعودتك';
 
   @override

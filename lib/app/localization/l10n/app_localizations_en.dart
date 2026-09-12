@@ -683,6 +683,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your milestones will be ready when they can be refreshed.';
 
   @override
+  String get navigationToday => 'Today';
+
+  @override
+  String get navigationExplore => 'Explore';
+
+  @override
+  String get navigationProgress => 'Progress';
+
+  @override
+  String get navigationProfile => 'Profile';
+
+  @override
   String get todayGreeting => 'Welcome back';
 
   @override
