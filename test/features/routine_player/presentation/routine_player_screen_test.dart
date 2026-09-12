@@ -489,7 +489,7 @@ void main() {
     );
     expect(find.byKey(const Key('feedback_done')), findsOneWidget);
     expect(find.byKey(const Key('feedback_much_better')), findsNothing);
-    expect(find.byType(CompletionGamificationSummary), findsOneWidget);
+    expect(find.byType(CompletionGamificationSummary), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -617,7 +617,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.byType(CompletionGamificationSummary), findsOneWidget);
+    expect(find.byType(CompletionGamificationSummary), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -682,6 +682,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const Key('feedback_question')), findsNothing);
+    expect(find.byKey(const Key('gamification_weekly_goal')), findsNothing);
     expect(feedback.saves, isEmpty);
     expect(
       analytics.recordedEvents.where((e) => e.name == 'feedback_submitted'),

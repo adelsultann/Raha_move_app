@@ -8,6 +8,7 @@ import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/features/gamification/application/gamification_providers.dart';
 import 'package:raha_move/features/gamification/domain/weekly_goal_progress.dart';
 import 'package:raha_move/features/gamification/domain/streak_progress.dart';
+import 'package:raha_move/features/gamification/domain/achievement_progress.dart';
 import 'package:raha_move/features/gamification/presentation/completion_gamification_summary.dart';
 
 void main() {
@@ -58,6 +59,28 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('shows only badges earned by this completion', (tester) async {
+    await tester.pumpWidget(
+      _wrap(
+        const Locale('en'),
+        Future.value(_progress()),
+        achievements: Future.value([
+          _achievement(key: 'first_step', sourceId: 'session-1'),
+          _achievement(key: 'gentle_habit_7', sourceId: 'older-session'),
+        ]),
+      ),
+    );
+    await tester.pump();
+    expect(
+      find.byKey(const Key('achievement_earned_first_step')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('achievement_earned_gentle_habit_7')),
+      findsNothing,
+    );
+  });
+
   testWidgets('has loading, error, and retry states', (tester) async {
     final completer = Completer<WeeklyGoalProgress>();
     var attempts = 0;
@@ -69,6 +92,9 @@ void main() {
             return attempts == 1 ? completer.future : Future.value(_progress());
           }),
           streakProgressProvider.overrideWith((ref) => Future.value(_streak())),
+          achievementProgressProvider.overrideWith(
+            (ref) => Future.value(const []),
+          ),
         ],
         child: _app(const Locale('en')),
       ),
@@ -106,10 +132,14 @@ Widget _wrap(
   Locale locale,
   Future<WeeklyGoalProgress> value, {
   double textScale = 1,
+  Future<List<AchievementProgress>>? achievements,
 }) => ProviderScope(
   overrides: [
     weeklyGoalProgressProvider.overrideWith((ref) => value),
     streakProgressProvider.overrideWith((ref) => Future.value(_streak())),
+    achievementProgressProvider.overrideWith(
+      (ref) => achievements ?? Future.value(const []),
+    ),
   ],
   child: _app(locale, textScale: textScale),
 );
@@ -134,7 +164,7 @@ Widget _app(Locale locale, {double textScale = 1}) => MaterialApp(
       ),
     ),
   ),
-  home: const CompletionGamificationSummary(),
+  home: const CompletionGamificationSummary(sessionId: 'session-1'),
 );
 
 WeeklyGoalProgress _progress({int? confirmedPoints, int pendingAwards = 0}) =>
@@ -152,4 +182,29 @@ StreakProgress _streak() => const StreakProgress(
   longestDays: 2,
   ruleVersion: 'streak_v1',
   isAuthoritative: true,
+);
+
+AchievementProgress _achievement({
+  required String key,
+  required String sourceId,
+}) => AchievementProgress(
+  key: key,
+  category: 'getting_started',
+  criteriaVersion: 1,
+  ruleVersion: 'achievement_sessions_v1',
+  iconKey: key == 'first_step' ? 'first_step' : 'gentle_habit',
+  status: 'published',
+  translations: const {
+    'en': AchievementTranslation(
+      title: 'First Step',
+      description: 'You completed your first routine.',
+    ),
+    'ar': AchievementTranslation(
+      title: 'خطوتك الأولى',
+      description: 'أكملت روتينك الأول.',
+    ),
+  },
+  earnedAt: DateTime.utc(2026, 9, 12),
+  sourceId: sourceId,
+  earnedCriteriaVersion: 1,
 );

@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:raha_move/core/database/app_database.dart';
 
 import '../domain/gamification_repository.dart';
+import '../domain/achievement_progress.dart';
 import '../domain/weekly_goal_progress.dart';
 import '../domain/streak_progress.dart';
 import 'timezone_movement_date_resolver.dart';
@@ -157,6 +158,91 @@ final class DriftGamificationRepository implements GamificationRepository {
           ),
         );
     return calculateStreakV1(movementDates: dates, today: today);
+  }
+
+  @override
+  Future<List<AchievementProgress>> achievements({String? userId}) async {
+    final owner = userId ?? activeUserId;
+    if (owner != activeUserId) {
+      throw StateError('Gamification repository is bound to one active user');
+    }
+    final row =
+        await (_database.select(_database.localProgressProjections)..where(
+              (projection) =>
+                  projection.userId.equals(owner) &
+                  projection.projectionType.equals('achievements'),
+            ))
+            .getSingleOrNull();
+    if (row == null) return const [];
+    final payload = _decodeMap(row.payloadJson);
+    if (payload == null) return const [];
+    final catalog = payload['catalog'];
+    final earned = payload['earned'];
+    if (catalog is! List) return const [];
+    final awardsByAchievementId = <String, Map<String, dynamic>>{
+      for (final raw in (earned is List ? earned : const <Object?>[]))
+        if (raw is Map && raw['achievement_id'] is String)
+          raw['achievement_id'] as String: Map<String, dynamic>.from(raw),
+    };
+    final achievements = <AchievementProgress>[];
+    for (final raw in catalog) {
+      if (raw is! Map) continue;
+      final definition = Map<String, dynamic>.from(raw);
+      final id = definition['id'];
+      final key = definition['key'];
+      final category = definition['category'];
+      final criteriaVersion = _asInt(definition['criteria_version']);
+      final iconKey = definition['icon_key'];
+      final status = definition['status'];
+      final criteria = definition['criteria'];
+      if (id is! String ||
+          key is! String ||
+          category is! String ||
+          criteriaVersion == null ||
+          iconKey is! String ||
+          status is! String ||
+          criteria is! Map) {
+        continue;
+      }
+      final ruleVersion = criteria['rule_version'];
+      final translations = _achievementTranslations(definition['translations']);
+      if (ruleVersion is! String || translations.isEmpty) continue;
+      final award = awardsByAchievementId[id];
+      achievements.add(
+        AchievementProgress(
+          key: key,
+          category: category,
+          criteriaVersion: criteriaVersion,
+          ruleVersion: ruleVersion,
+          iconKey: iconKey,
+          status: status,
+          translations: translations,
+          earnedAt: DateTime.tryParse(award?['earned_at']?.toString() ?? ''),
+          sourceId: award?['source_id']?.toString(),
+          earnedCriteriaVersion: _asInt(award?['criteria_version']),
+        ),
+      );
+    }
+    achievements.sort((a, b) => a.key.compareTo(b.key));
+    return achievements;
+  }
+
+  Map<String, AchievementTranslation> _achievementTranslations(Object? value) {
+    if (value is! Map) return const {};
+    final translations = <String, AchievementTranslation>{};
+    for (final entry in value.entries) {
+      if (entry.key is! String || entry.value is! Map) continue;
+      final data = Map<String, dynamic>.from(entry.value as Map);
+      final title = data['title'];
+      final description = data['description'];
+      if (title is String && description is String) {
+        translations[entry.key as String] = AchievementTranslation(
+          title: title,
+          description: description,
+        );
+      }
+    }
+    return translations;
   }
 
   Future<WeeklyGoalProgress?> _authoritativeWeeklyProgress(

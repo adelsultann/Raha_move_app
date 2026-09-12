@@ -145,3 +145,45 @@ final class StreakProgressProvider
 }
 
 String _$streakProgressHash() => r'0503c79d28fbac1d6da09e7dc6e9591a2a801284';
+
+@ProviderFor(achievementProgress)
+final achievementProgressProvider = AchievementProgressProvider._();
+
+final class AchievementProgressProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<AchievementProgress>>,
+          List<AchievementProgress>,
+          FutureOr<List<AchievementProgress>>
+        >
+    with
+        $FutureModifier<List<AchievementProgress>>,
+        $FutureProvider<List<AchievementProgress>> {
+  AchievementProgressProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'achievementProgressProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$achievementProgressHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<AchievementProgress>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<AchievementProgress>> create(Ref ref) {
+    return achievementProgress(ref);
+  }
+}
+
+String _$achievementProgressHash() =>
+    r'4cf5fa3c891019049563998ea774a9febf2dcbbb';

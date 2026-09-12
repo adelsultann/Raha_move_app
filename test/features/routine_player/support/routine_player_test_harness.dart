@@ -3,6 +3,10 @@ import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
 import 'package:raha_move/core/analytics/analytics_service_impls.dart';
 import 'package:raha_move/core/telemetry/telemetry_providers.dart';
 import 'package:raha_move/features/authentication/application/auth_providers.dart';
+import 'package:raha_move/features/gamification/application/gamification_providers.dart';
+import 'package:raha_move/features/gamification/domain/achievement_progress.dart';
+import 'package:raha_move/features/gamification/domain/streak_progress.dart';
+import 'package:raha_move/features/gamification/domain/weekly_goal_progress.dart';
 import 'package:raha_move/features/media/application/media_providers.dart';
 import 'package:raha_move/features/media/domain/media_delivery.dart';
 import 'package:raha_move/features/onboarding/application/onboarding_providers.dart';
@@ -380,6 +384,30 @@ ProviderContainer buildRoutinePlayerContainer({
       ),
       routinePlayerClockProvider.overrideWithValue(
         clock ?? () => DateTime.utc(2026, 8, 29, 12),
+      ),
+      weeklyGoalProgressProvider.overrideWith(
+        (ref) => Future.value(
+          const WeeklyGoalProgress(
+            weekStart: MovementDate(2026, 8, 24),
+            goalDays: 3,
+            movementDays: 1,
+            pendingPointAwards: 0,
+            isAuthoritative: true,
+          ),
+        ),
+      ),
+      streakProgressProvider.overrideWith(
+        (ref) => Future.value(
+          const StreakProgress(
+            currentDays: 0,
+            longestDays: 0,
+            ruleVersion: 'streak_v1',
+            isAuthoritative: true,
+          ),
+        ),
+      ),
+      achievementProgressProvider.overrideWith(
+        (ref) => Future.value(const <AchievementProgress>[]),
       ),
     ],
   );

@@ -651,6 +651,38 @@ class AppLocalizationsEn extends AppLocalizations {
       'Every movement day counts. Start again whenever it feels right.';
 
   @override
+  String get achievementsTitle => 'Your milestones';
+
+  @override
+  String get achievementEarned => 'Earned';
+
+  @override
+  String get achievementLocked => 'To explore';
+
+  @override
+  String achievementJustEarned(String title) {
+    return 'New milestone: $title';
+  }
+
+  @override
+  String achievementEarnedSemantics(String title) {
+    return 'Earned milestone: $title';
+  }
+
+  @override
+  String achievementLockedSemantics(String title) {
+    return 'Milestone to explore: $title';
+  }
+
+  @override
+  String get achievementsLockedInvitation =>
+      'More small milestones will appear as you keep moving comfortably.';
+
+  @override
+  String get achievementUnavailable =>
+      'Your milestones will be ready when they can be refreshed.';
+
+  @override
   String get todayGreeting => 'Welcome back';
 
   @override

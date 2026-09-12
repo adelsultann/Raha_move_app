@@ -1226,6 +1226,54 @@ abstract class AppLocalizations {
   /// **'Every movement day counts. Start again whenever it feels right.'**
   String get gamificationStreakRestart;
 
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your milestones'**
+  String get achievementsTitle;
+
+  /// No description provided for @achievementEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned'**
+  String get achievementEarned;
+
+  /// No description provided for @achievementLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'To explore'**
+  String get achievementLocked;
+
+  /// No description provided for @achievementJustEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'New milestone: {title}'**
+  String achievementJustEarned(String title);
+
+  /// No description provided for @achievementEarnedSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned milestone: {title}'**
+  String achievementEarnedSemantics(String title);
+
+  /// No description provided for @achievementLockedSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestone to explore: {title}'**
+  String achievementLockedSemantics(String title);
+
+  /// No description provided for @achievementsLockedInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'More small milestones will appear as you keep moving comfortably.'**
+  String get achievementsLockedInvitation;
+
+  /// No description provided for @achievementUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your milestones will be ready when they can be refreshed.'**
+  String get achievementUnavailable;
+
   /// No description provided for @todayGreeting.
   ///
   /// In en, this message translates to:

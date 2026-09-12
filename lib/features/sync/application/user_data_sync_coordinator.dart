@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../gamification/application/gamification_providers.dart';
+
 import '../domain/user_data_sync_engine.dart';
 import 'sync_providers.dart';
 
@@ -81,6 +83,12 @@ class ActiveUserSyncCoordinator extends _$ActiveUserSyncCoordinator {
       // Analytics is optional and must not turn an otherwise successful sync
       // into a user-visible failure.
     }
+    // Authoritative projections have been committed by the engine. Refresh the
+    // completion view in place so a delayed offline confirmation can add its
+    // newly-earned badge without requiring navigation or a manual retry.
+    ref.invalidate(weeklyGoalProgressProvider);
+    ref.invalidate(streakProgressProvider);
+    ref.invalidate(achievementProgressProvider);
     state = SyncCoordinatorState(
       phase: result.hasFailures
           ? SyncCoordinatorPhase.failed

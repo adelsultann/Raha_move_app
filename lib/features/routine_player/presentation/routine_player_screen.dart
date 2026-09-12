@@ -501,7 +501,10 @@ class _CompletedStateState extends ConsumerState<_CompletedState> {
               ),
               const SizedBox(height: 24),
               if (_feedbackSkipped)
-                _CompletionProgress(onDone: widget.onDone)
+                _CompletionProgress(
+                  sessionId: widget.session.sessionId,
+                  onDone: widget.onDone,
+                )
               else
                 _FeedbackBody(
                   state: feedbackState,
@@ -509,6 +512,7 @@ class _CompletedStateState extends ConsumerState<_CompletedState> {
                   onRetry: controller.retry,
                   onSkip: () => setState(() => _feedbackSkipped = true),
                   onDone: widget.onDone,
+                  sessionId: widget.session.sessionId,
                 ),
             ],
           ),
@@ -527,6 +531,7 @@ class _FeedbackBody extends StatelessWidget {
     required this.onRetry,
     required this.onSkip,
     required this.onDone,
+    required this.sessionId,
   });
 
   final RoutineFeedbackState state;
@@ -534,6 +539,7 @@ class _FeedbackBody extends StatelessWidget {
   final Future<void> Function() onRetry;
   final VoidCallback onSkip;
   final VoidCallback onDone;
+  final String sessionId;
 
   @override
   Widget build(BuildContext context) {
@@ -556,6 +562,7 @@ class _FeedbackBody extends StatelessWidget {
       ),
       RoutineFeedbackSaved(:final rating) => _FeedbackAcknowledged(
         rating: rating,
+        sessionId: sessionId,
         onDone: onDone,
       ),
       RoutineFeedbackError() => _FeedbackSaveError(
@@ -651,9 +658,14 @@ class _FeedbackChoice extends StatelessWidget {
 /// `less_comfortable` suppresses the celebratory check icon and uses the
 /// approved safety copy instead.
 class _FeedbackAcknowledged extends StatelessWidget {
-  const _FeedbackAcknowledged({required this.rating, required this.onDone});
+  const _FeedbackAcknowledged({
+    required this.rating,
+    required this.sessionId,
+    required this.onDone,
+  });
 
   final FeedbackRating rating;
+  final String sessionId;
   final VoidCallback onDone;
 
   @override
@@ -691,7 +703,8 @@ class _FeedbackAcknowledged extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const CompletionGamificationSummary(),
+        if (!lessComfortable)
+          CompletionGamificationSummary(sessionId: sessionId),
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
@@ -715,8 +728,9 @@ class _FeedbackAcknowledged extends StatelessWidget {
 /// Shown when feedback is optional so completion progress remains visible
 /// without treating the skipped feedback path as celebratory.
 class _CompletionProgress extends StatelessWidget {
-  const _CompletionProgress({required this.onDone});
+  const _CompletionProgress({required this.sessionId, required this.onDone});
 
+  final String sessionId;
   final VoidCallback onDone;
 
   @override
@@ -725,7 +739,7 @@ class _CompletionProgress extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CompletionGamificationSummary(),
+        CompletionGamificationSummary(sessionId: sessionId),
         const SizedBox(height: 24),
         FilledButton(
           key: const Key('feedback_done'),

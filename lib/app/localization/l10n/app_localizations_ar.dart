@@ -645,6 +645,37 @@ class AppLocalizationsAr extends AppLocalizations {
       'كل يوم حركة له قيمة. ابدأ من جديد عندما يناسبك ذلك.';
 
   @override
+  String get achievementsTitle => 'محطاتك';
+
+  @override
+  String get achievementEarned => 'تم تحقيقها';
+
+  @override
+  String get achievementLocked => 'للاستكشاف';
+
+  @override
+  String achievementJustEarned(String title) {
+    return 'محطة جديدة: $title';
+  }
+
+  @override
+  String achievementEarnedSemantics(String title) {
+    return 'محطة تم تحقيقها: $title';
+  }
+
+  @override
+  String achievementLockedSemantics(String title) {
+    return 'محطة للاستكشاف: $title';
+  }
+
+  @override
+  String get achievementsLockedInvitation =>
+      'ستظهر محطات بسيطة أخرى مع استمرارك في الحركة براحة.';
+
+  @override
+  String get achievementUnavailable => 'ستظهر محطاتك عند تحديثها.';
+
+  @override
   String get todayGreeting => 'مرحبًا بعودتك';
 
   @override

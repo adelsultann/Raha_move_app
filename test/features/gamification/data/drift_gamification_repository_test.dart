@@ -38,6 +38,62 @@ void main() {
     expect(progress.isAuthoritative, isFalse);
   });
 
+  test(
+    'reads only server-confirmed achievement awards from its projection',
+    () async {
+      await database
+          .into(database.localProgressProjections)
+          .insert(
+            LocalProgressProjectionsCompanion.insert(
+              userId: 'user-1',
+              projectionType: 'achievements',
+              payloadJson: jsonEncode({
+                'catalog': [
+                  {
+                    'id': 'achievement-1',
+                    'key': 'first_step',
+                    'category': 'getting_started',
+                    'criteria_version': 1,
+                    'criteria': {'rule_version': 'achievement_sessions_v1'},
+                    'icon_key': 'first_step',
+                    'status': 'published',
+                    'translations': {
+                      'en': {
+                        'title': 'First Step',
+                        'description': 'First routine.',
+                      },
+                      'ar': {
+                        'title': 'خطوتك الأولى',
+                        'description': 'روتينك الأول.',
+                      },
+                    },
+                  },
+                ],
+                'earned': [
+                  {
+                    'achievement_id': 'achievement-1',
+                    'earned_at': '2026-09-12T09:00:00Z',
+                    'source_id': 'session-confirmed',
+                    'criteria_version': 1,
+                  },
+                ],
+              }),
+              serverUpdatedAt: DateTime.utc(2026, 9, 12, 9),
+            ),
+          );
+
+      final achievements = await _repository(
+        database,
+        now: DateTime.utc(2026, 9, 12, 10),
+      ).achievements();
+
+      expect(achievements, hasLength(1));
+      expect(achievements.single.isEarned, isTrue);
+      expect(achievements.single.sourceId, 'session-confirmed');
+      expect(achievements.single.translationFor('ar')?.title, 'خطوتك الأولى');
+    },
+  );
+
   test('reconciles local estimates with the server weekly projection without double counting', () async {
     await _session(
       database,

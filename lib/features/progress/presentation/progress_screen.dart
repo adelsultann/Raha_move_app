@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/features/gamification/domain/weekly_goal_progress.dart';
+import 'package:raha_move/features/gamification/presentation/achievement_progress_section.dart';
 
 import '../application/progress_providers.dart';
 import '../domain/progress_summary.dart';
@@ -164,6 +165,8 @@ class _Summary extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(height: 24),
+          const AchievementProgressSection(),
         ],
       ),
     );

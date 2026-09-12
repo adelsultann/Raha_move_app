@@ -8,6 +8,8 @@ import 'package:raha_move/core/database/app_database.dart';
 import 'package:raha_move/core/telemetry/telemetry_providers.dart';
 import 'package:raha_move/features/sync/application/sync_providers.dart';
 import 'package:raha_move/features/sync/application/user_data_sync_coordinator.dart';
+import 'package:raha_move/features/gamification/application/gamification_providers.dart';
+import 'package:raha_move/features/gamification/domain/achievement_progress.dart';
 import 'package:raha_move/features/sync/data/drift_sync_outbox_repository.dart';
 import 'package:raha_move/features/sync/data/sync_rpc_gateway.dart';
 import 'package:raha_move/features/sync/domain/user_data_sync_engine.dart';
@@ -58,6 +60,7 @@ void main() {
     String? activeUserId,
     required FakeSyncRpcGateway gateway,
     InMemoryAnalyticsService? analytics,
+    void Function()? onAchievementRead,
   }) {
     final container = ProviderContainer(
       overrides: [
@@ -78,6 +81,11 @@ void main() {
             clock: () => now,
           );
         }),
+        if (onAchievementRead != null)
+          achievementProgressProvider.overrideWith((ref) {
+            onAchievementRead();
+            return Future.value(const <AchievementProgress>[]);
+          }),
       ],
     );
     addTearDown(container.dispose);
@@ -143,6 +151,25 @@ void main() {
       SyncCoordinatorPhase.synced,
     );
   });
+
+  test(
+    'refreshes the achievement projection after delayed synchronization',
+    () async {
+      final gateway = FakeSyncRpcGateway(currentUserId: 'user-1');
+      var reads = 0;
+      final c = container(
+        activeUserId: 'user-1',
+        gateway: gateway,
+        onAchievementRead: () => reads++,
+      );
+
+      await c.read(achievementProgressProvider.future);
+      await c.read(activeUserSyncCoordinatorProvider.notifier).synchronizeNow();
+      await c.read(achievementProgressProvider.future);
+
+      expect(reads, 2);
+    },
+  );
 
   test('retry() re-enqueues parked operations and syncs', () async {
     final gateway = FakeSyncRpcGateway(currentUserId: 'user-1');
