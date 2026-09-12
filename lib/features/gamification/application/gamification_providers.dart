@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/drift_gamification_repository.dart';
 import '../domain/gamification_repository.dart';
 import '../domain/weekly_goal_progress.dart';
+import '../domain/streak_progress.dart';
 
 part 'gamification_providers.g.dart';
 
@@ -23,3 +24,7 @@ GamificationRepository gamificationRepository(Ref ref) {
 @riverpod
 Future<WeeklyGoalProgress> weeklyGoalProgress(Ref ref) =>
     ref.watch(gamificationRepositoryProvider).currentWeeklyGoal();
+
+@riverpod
+Future<StreakProgress> streakProgress(Ref ref) =>
+    ref.watch(gamificationRepositoryProvider).currentStreak();

@@ -4,6 +4,7 @@ import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 
 import '../application/gamification_providers.dart';
 import '../domain/weekly_goal_progress.dart';
+import '../domain/streak_progress.dart';
 
 /// Calm, single reward/progress summary used after feedback is saved.
 class CompletionGamificationSummary extends ConsumerWidget {
@@ -12,6 +13,7 @@ class CompletionGamificationSummary extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progress = ref.watch(weeklyGoalProgressProvider);
+    final streak = ref.watch(streakProgressProvider);
     final strings = AppLocalizations.of(context);
     return Semantics(
       container: true,
@@ -36,15 +38,16 @@ class CompletionGamificationSummary extends ConsumerWidget {
             ),
           ],
         ),
-        data: (value) => _ProgressDetails(progress: value),
+        data: (value) => _ProgressDetails(progress: value, streak: streak),
       ),
     );
   }
 }
 
 class _ProgressDetails extends StatelessWidget {
-  const _ProgressDetails({required this.progress});
+  const _ProgressDetails({required this.progress, required this.streak});
   final WeeklyGoalProgress progress;
+  final AsyncValue<StreakProgress> streak;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +87,35 @@ class _ProgressDetails extends StatelessWidget {
             ),
           ),
         ],
+        streak.when(
+          data: (value) {
+            if (value.currentDays > 0) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  strings.gamificationStreak(value.currentDays),
+                  key: const Key('gamification_streak'),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              );
+            }
+            if (value.longestDays > 0) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  strings.gamificationStreakRestart,
+                  key: const Key('gamification_streak_restart'),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, _) => const SizedBox.shrink(),
+        ),
       ],
     );
   }

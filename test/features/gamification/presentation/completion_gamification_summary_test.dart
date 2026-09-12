@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/features/gamification/application/gamification_providers.dart';
 import 'package:raha_move/features/gamification/domain/weekly_goal_progress.dart';
+import 'package:raha_move/features/gamification/domain/streak_progress.dart';
 import 'package:raha_move/features/gamification/presentation/completion_gamification_summary.dart';
 
 void main() {
@@ -24,6 +25,7 @@ void main() {
     expect(find.text('2 of 3 movement days this week'), findsOneWidget);
     expect(find.text('20 movement points confirmed'), findsOneWidget);
     expect(find.text('10 points pending confirmation'), findsOneWidget);
+    expect(find.text('2-day movement streak'), findsOneWidget);
     expect(
       tester
           .widget<Directionality>(find.byType(Directionality).first)
@@ -66,6 +68,7 @@ void main() {
             attempts++;
             return attempts == 1 ? completer.future : Future.value(_progress());
           }),
+          streakProgressProvider.overrideWith((ref) => Future.value(_streak())),
         ],
         child: _app(const Locale('en')),
       ),
@@ -81,10 +84,18 @@ void main() {
     expect(find.byKey(const Key('gamification_weekly_goal')), findsOneWidget);
   });
 
-  testWidgets('supports English LTR at 200 percent compact scaling', (tester) async {
+  testWidgets('supports English LTR at 200 percent compact scaling', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(360, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(_wrap(const Locale('en'), Future.value(_progress(confirmedPoints: 10, pendingAwards: 1)), textScale: 2));
+    await tester.pumpWidget(
+      _wrap(
+        const Locale('en'),
+        Future.value(_progress(confirmedPoints: 10, pendingAwards: 1)),
+        textScale: 2,
+      ),
+    );
     await tester.pump();
     expect(find.text('2 of 3 movement days this week'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -96,7 +107,10 @@ Widget _wrap(
   Future<WeeklyGoalProgress> value, {
   double textScale = 1,
 }) => ProviderScope(
-  overrides: [weeklyGoalProgressProvider.overrideWith((ref) => value)],
+  overrides: [
+    weeklyGoalProgressProvider.overrideWith((ref) => value),
+    streakProgressProvider.overrideWith((ref) => Future.value(_streak())),
+  ],
   child: _app(locale, textScale: textScale),
 );
 
@@ -132,3 +146,10 @@ WeeklyGoalProgress _progress({int? confirmedPoints, int pendingAwards = 0}) =>
       isAuthoritative: pendingAwards == 0,
       confirmedPoints: confirmedPoints,
     );
+
+StreakProgress _streak() => const StreakProgress(
+  currentDays: 2,
+  longestDays: 2,
+  ruleVersion: 'streak_v1',
+  isAuthoritative: true,
+);

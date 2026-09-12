@@ -163,33 +163,38 @@ void main() {
     },
   );
 
-  test('unions same Monday from server movement_dates and offline session', () async {
-    await _session(
-      database,
-      id: 'offline-monday',
-      completedAt: DateTime.utc(2026, 9, 7, 8),
-    );
-    await database.into(database.localProgressProjections).insert(
-          LocalProgressProjectionsCompanion.insert(
-            userId: 'user-1',
-            projectionType: 'weekly_progress',
-            payloadJson: jsonEncode({
-              'week_start': '2026-09-06T21:00:00Z',
-              'timezone': 'Asia/Riyadh',
-              'goal_days': 3,
-              'movement_days': 1,
-              'movement_dates': ['2026-09-07'],
-            }),
-            serverUpdatedAt: DateTime.utc(2026, 9, 7),
-          ),
-        );
-    final progress = await _repository(
-      database,
-      now: DateTime.utc(2026, 9, 8),
-    ).currentWeeklyGoal();
-    expect(progress.movementDays, 1);
-    expect(progress.pendingPointAwards, 1);
-  });
+  test(
+    'unions same Monday from server movement_dates and offline session',
+    () async {
+      await _session(
+        database,
+        id: 'offline-monday',
+        completedAt: DateTime.utc(2026, 9, 7, 8),
+      );
+      await database
+          .into(database.localProgressProjections)
+          .insert(
+            LocalProgressProjectionsCompanion.insert(
+              userId: 'user-1',
+              projectionType: 'weekly_progress',
+              payloadJson: jsonEncode({
+                'week_start': '2026-09-06T21:00:00Z',
+                'timezone': 'Asia/Riyadh',
+                'goal_days': 3,
+                'movement_days': 1,
+                'movement_dates': ['2026-09-07'],
+              }),
+              serverUpdatedAt: DateTime.utc(2026, 9, 7),
+            ),
+          );
+      final progress = await _repository(
+        database,
+        now: DateTime.utc(2026, 9, 8),
+      ).currentWeeklyGoal();
+      expect(progress.movementDays, 1);
+      expect(progress.pendingPointAwards, 1);
+    },
+  );
 
   test(
     'uses Monday boundaries and the session timezone preserved at completion',
@@ -247,6 +252,143 @@ void main() {
       ).currentWeeklyGoal();
       expect(progress.weekStart, const MovementDate(2026, 3, 9));
       expect(progress.movementDays, 1);
+    },
+  );
+
+  test('projects an offline streak from captured session timezones', () async {
+    await _session(
+      database,
+      id: 'travel-day-one',
+      completedAt: DateTime.utc(2026, 9, 7, 23),
+      timezone: 'Pacific/Honolulu',
+    );
+    await _session(
+      database,
+      id: 'travel-day-two',
+      completedAt: DateTime.utc(2026, 9, 8, 23),
+      timezone: 'Pacific/Honolulu',
+    );
+
+    final streak = await _repository(
+      database,
+      now: DateTime.utc(2026, 9, 9, 12),
+    ).currentStreak();
+
+    expect(streak.currentDays, 2);
+    expect(streak.longestDays, 2);
+    expect(streak.isAuthoritative, isFalse);
+  });
+
+  test(
+    'authoritative streak projection replaces a delayed local estimate',
+    () async {
+      await _session(
+        database,
+        id: 'pending-streak',
+        completedAt: DateTime.utc(2026, 9, 7, 8),
+      );
+      await (database.update(
+        database.localRoutineSessions,
+      )..where((row) => row.id.equals('pending-streak'))).write(
+        const LocalRoutineSessionsCompanion(syncState: Value(SyncState.synced)),
+      );
+      await database
+          .into(database.localProgressProjections)
+          .insert(
+            LocalProgressProjectionsCompanion.insert(
+              userId: 'user-1',
+              projectionType: 'streak',
+              payloadJson: jsonEncode({
+                'current_streak_days': 4,
+                'longest_streak_days': 6,
+                'rule_version': 'streak_v1',
+                'last_movement_date': '2026-09-07',
+              }),
+              serverUpdatedAt: DateTime.utc(2026, 9, 7, 9),
+            ),
+          );
+
+      final streak = await _repository(
+        database,
+        now: DateTime.utc(2026, 9, 8),
+      ).currentStreak();
+
+      expect(streak.currentDays, 4);
+      expect(streak.longestDays, 6);
+      expect(streak.isAuthoritative, isTrue);
+    },
+  );
+
+  test(
+    'pending offline completion temporarily overrides a cached server streak',
+    () async {
+      await _session(
+        database,
+        id: 'prior-synced',
+        completedAt: DateTime.utc(2026, 9, 7, 8),
+      );
+      await (database.update(
+        database.localRoutineSessions,
+      )..where((row) => row.id.equals('prior-synced'))).write(
+        const LocalRoutineSessionsCompanion(syncState: Value(SyncState.synced)),
+      );
+      await _session(
+        database,
+        id: 'offline-next-day',
+        completedAt: DateTime.utc(2026, 9, 8, 8),
+      );
+      await database
+          .into(database.localProgressProjections)
+          .insert(
+            LocalProgressProjectionsCompanion.insert(
+              userId: 'user-1',
+              projectionType: 'streak',
+              payloadJson: jsonEncode({
+                'current_streak_days': 1,
+                'longest_streak_days': 1,
+                'rule_version': 'streak_v1',
+              }),
+              serverUpdatedAt: DateTime.utc(2026, 9, 7, 9),
+            ),
+          );
+
+      final streak = await _repository(
+        database,
+        now: DateTime.utc(2026, 9, 8, 12),
+      ).currentStreak();
+
+      expect(streak.currentDays, 2);
+      expect(streak.isAuthoritative, isFalse);
+    },
+  );
+
+  test(
+    'expires a cached active streak after a missed local day offline',
+    () async {
+      await database
+          .into(database.localProgressProjections)
+          .insert(
+            LocalProgressProjectionsCompanion.insert(
+              userId: 'user-1',
+              projectionType: 'streak',
+              payloadJson: jsonEncode({
+                'current_streak_days': 2,
+                'longest_streak_days': 4,
+                'last_movement_date': '2026-09-07',
+                'rule_version': 'streak_v1',
+              }),
+              serverUpdatedAt: DateTime.utc(2026, 9, 7, 9),
+            ),
+          );
+
+      final streak = await _repository(
+        database,
+        now: DateTime.utc(2026, 9, 9, 12),
+      ).currentStreak();
+
+      expect(streak.currentDays, 0);
+      expect(streak.longestDays, 4);
+      expect(streak.isAuthoritative, isFalse);
     },
   );
 }

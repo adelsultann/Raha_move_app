@@ -1214,6 +1214,18 @@ abstract class AppLocalizations {
   /// **'Weekly movement goal and points'**
   String get gamificationSummarySemantics;
 
+  /// No description provided for @gamificationStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day movement streak'**
+  String gamificationStreak(int days);
+
+  /// No description provided for @gamificationStreakRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Every movement day counts. Start again whenever it feels right.'**
+  String get gamificationStreakRestart;
+
   /// No description provided for @todayGreeting.
   ///
   /// In en, this message translates to:

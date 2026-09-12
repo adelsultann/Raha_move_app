@@ -5,6 +5,7 @@ import 'package:raha_move/core/database/app_database.dart';
 
 import '../domain/gamification_repository.dart';
 import '../domain/weekly_goal_progress.dart';
+import '../domain/streak_progress.dart';
 import 'timezone_movement_date_resolver.dart';
 
 /// Drift-backed local view of RAHA-070 progress. It never creates ledger rows;
@@ -89,6 +90,73 @@ final class DriftGamificationRepository implements GamificationRepository {
       pendingPointAwards: pendingPointAwards,
       isAuthoritative: false,
     );
+  }
+
+  @override
+  Future<StreakProgress> currentStreak({String? userId}) async {
+    final owner = userId ?? activeUserId;
+    if (owner != activeUserId) {
+      throw StateError('Gamification repository is bound to one active user');
+    }
+    final profile = await (_database.select(
+      _database.localProfiles,
+    )..where((row) => row.userId.equals(owner))).getSingleOrNull();
+    if (profile == null) throw StateError('Profile not found for active user');
+    final sessions =
+        await (_database.select(_database.localRoutineSessions)..where(
+              (row) =>
+                  row.userId.equals(owner) & row.status.equals('completed'),
+            ))
+            .get();
+    final hasPendingCompletion = sessions.any(
+      (session) => session.syncState != SyncState.synced,
+    );
+    final projection =
+        await (_database.select(_database.localProgressProjections)..where(
+              (row) =>
+                  row.userId.equals(owner) &
+                  row.projectionType.equals('streak'),
+            ))
+            .getSingleOrNull();
+    final payload = projection == null
+        ? null
+        : _decodeMap(projection.payloadJson);
+    final current = payload == null
+        ? null
+        : _asInt(payload['current_streak_days']);
+    final longest = payload == null
+        ? null
+        : _asInt(payload['longest_streak_days']);
+    final version = payload?['rule_version'];
+    final today = _dateResolver.resolve(_clock().toUtc(), profile.timezone);
+    final lastMovementDate = _movementDateFromIsoDate(
+      payload?['last_movement_date'],
+    );
+    if (!hasPendingCompletion &&
+        current != null &&
+        longest != null &&
+        version is String) {
+      final isExpired =
+          current > 0 &&
+          lastMovementDate != null &&
+          lastMovementDate != today &&
+          lastMovementDate != today.addDays(-1);
+      return StreakProgress(
+        currentDays: isExpired ? 0 : current,
+        longestDays: longest < current ? current : longest,
+        ruleVersion: version,
+        isAuthoritative: !isExpired,
+      );
+    }
+    final dates = sessions
+        .where((session) => session.completedAt != null)
+        .map(
+          (session) => _dateResolver.resolve(
+            session.completedAt!,
+            session.completedTimezone ?? profile.timezone,
+          ),
+        );
+    return calculateStreakV1(movementDates: dates, today: today);
   }
 
   Future<WeeklyGoalProgress?> _authoritativeWeeklyProgress(
@@ -178,14 +246,16 @@ final class DriftGamificationRepository implements GamificationRepository {
   }
 
   Future<Set<MovementDate>> _authoritativeMovementDates(String owner) async {
-    final row = await (_database.select(_database.localProgressProjections)
-          ..where(
-            (projection) =>
-                projection.userId.equals(owner) &
-                projection.projectionType.equals('weekly_progress'),
-          ))
-        .getSingleOrNull();
-    final dates = row == null ? null : _decodeMap(row.payloadJson)?['movement_dates'];
+    final row =
+        await (_database.select(_database.localProgressProjections)..where(
+              (projection) =>
+                  projection.userId.equals(owner) &
+                  projection.projectionType.equals('weekly_progress'),
+            ))
+            .getSingleOrNull();
+    final dates = row == null
+        ? null
+        : _decodeMap(row.payloadJson)?['movement_dates'];
     if (dates is! List) return const <MovementDate>{};
     return dates
         .whereType<String>()
@@ -229,4 +299,12 @@ final class DriftGamificationRepository implements GamificationRepository {
     String value => int.tryParse(value),
     _ => null,
   };
+
+  MovementDate? _movementDateFromIsoDate(Object? value) {
+    if (value is! String) return null;
+    final parsed = DateTime.tryParse(value);
+    return parsed == null
+        ? null
+        : MovementDate(parsed.year, parsed.month, parsed.day);
+  }
 }

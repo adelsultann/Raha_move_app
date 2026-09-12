@@ -3,6 +3,7 @@
 abstract final class GamificationRules {
   static const String pointsCompletionV1 = 'points_completion_v1';
   static const String movementDayV1 = 'movement_day_v1';
+  static const String streakV1 = 'streak_v1';
   static const int completionPoints = 10;
   static const int defaultWeeklyGoalDays = 3;
   static const int minWeeklyGoalDays = 1;

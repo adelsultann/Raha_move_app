@@ -106,3 +106,42 @@ final class WeeklyGoalProgressProvider
 
 String _$weeklyGoalProgressHash() =>
     r'b7af5b5054af379605ab9da420d87b60efbb7add';
+
+@ProviderFor(streakProgress)
+final streakProgressProvider = StreakProgressProvider._();
+
+final class StreakProgressProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<StreakProgress>,
+          StreakProgress,
+          FutureOr<StreakProgress>
+        >
+    with $FutureModifier<StreakProgress>, $FutureProvider<StreakProgress> {
+  StreakProgressProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'streakProgressProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$streakProgressHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<StreakProgress> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<StreakProgress> create(Ref ref) {
+    return streakProgress(ref);
+  }
+}
+
+String _$streakProgressHash() => r'0503c79d28fbac1d6da09e7dc6e9591a2a801284';

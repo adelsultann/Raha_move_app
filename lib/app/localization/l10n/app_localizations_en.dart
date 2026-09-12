@@ -642,6 +642,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gamificationSummarySemantics => 'Weekly movement goal and points';
 
   @override
+  String gamificationStreak(int days) {
+    return '$days-day movement streak';
+  }
+
+  @override
+  String get gamificationStreakRestart =>
+      'Every movement day counts. Start again whenever it feels right.';
+
+  @override
   String get todayGreeting => 'Welcome back';
 
   @override
