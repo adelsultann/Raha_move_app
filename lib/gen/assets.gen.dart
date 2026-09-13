@@ -17,6 +17,9 @@ class $AssetsStarterContentGen {
   /// Directory path: assets/starter_content/manifests
   $AssetsStarterContentManifestsGen get manifests =>
       const $AssetsStarterContentManifestsGen();
+
+  /// Directory path: assets/starter_content/media
+  $AssetsStarterContentMediaGen get media => const $AssetsStarterContentMediaGen();
 }
 
 class $AssetsStarterContentManifestsGen {
@@ -27,6 +30,28 @@ class $AssetsStarterContentManifestsGen {
 
   /// List of all assets
   List<String> get values => [starterCatalog];
+}
+
+class $AssetsStarterContentMediaGen {
+  const $AssetsStarterContentMediaGen();
+
+  /// Directory path: assets/starter_content/media/videos
+  $AssetsStarterContentMediaVideosGen get videos =>
+      const $AssetsStarterContentMediaVideosGen();
+}
+
+class $AssetsStarterContentMediaVideosGen {
+  const $AssetsStarterContentMediaVideosGen();
+
+  /// File path: assets/starter_content/media/videos/neck.gif
+  AssetGenImage get neck =>
+      const AssetGenImage('assets/starter_content/media/videos/neck.gif');
+
+  /// File path: assets/starter_content/media/videos/shoulder.mp4
+  String get shoulder => 'assets/starter_content/media/videos/shoulder.mp4';
+
+  /// List of all assets
+  List<dynamic> get values => [neck, shoulder];
 }
 
 abstract final class Assets {

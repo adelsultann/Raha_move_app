@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 /// A provider-neutral media record supplied by the published catalog.
 ///
-/// [deliveryReference] is an opaque server-issued reference, never a storage
-/// key, provider identifier, or URL. [version] changes whenever the published
-/// delivery bytes change.
+/// [deliveryReference] is an opaque server-issued reference for remote media,
+/// never a storage key, provider identifier, or URL. A bundled starter asset
+/// uses the `asset:` prefix and an application-owned asset path instead. The
+/// path is not a provider identity or a private capability. [version] changes
+/// whenever the published delivery bytes change.
 final class MediaDelivery {
   const MediaDelivery({
     required this.mediaId,

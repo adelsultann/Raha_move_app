@@ -64,16 +64,16 @@ final class RoutineMediaResolverProvider
 String _$routineMediaResolverHash() =>
     r'2dd2a782077123ef7f126c1437e3b55c2a79b985';
 
-/// The readiness preparer, backed by the media playback coordinator. Null while
-/// there is no media access scope (a guest with no Supabase identity yet), which
-/// the readiness controller surfaces as an unavailable/offline result.
+/// The readiness preparer uses bundled, integrity-checked starter media without
+/// an account or network. Other routines remain backed by the trusted media
+/// playback coordinator and are unavailable to an offline guest until cached.
 
 @ProviderFor(routineMediaPreparer)
 final routineMediaPreparerProvider = RoutineMediaPreparerProvider._();
 
-/// The readiness preparer, backed by the media playback coordinator. Null while
-/// there is no media access scope (a guest with no Supabase identity yet), which
-/// the readiness controller surfaces as an unavailable/offline result.
+/// The readiness preparer uses bundled, integrity-checked starter media without
+/// an account or network. Other routines remain backed by the trusted media
+/// playback coordinator and are unavailable to an offline guest until cached.
 
 final class RoutineMediaPreparerProvider
     extends
@@ -85,9 +85,9 @@ final class RoutineMediaPreparerProvider
     with
         $FutureModifier<RoutineMediaPreparer?>,
         $FutureProvider<RoutineMediaPreparer?> {
-  /// The readiness preparer, backed by the media playback coordinator. Null while
-  /// there is no media access scope (a guest with no Supabase identity yet), which
-  /// the readiness controller surfaces as an unavailable/offline result.
+  /// The readiness preparer uses bundled, integrity-checked starter media without
+  /// an account or network. Other routines remain backed by the trusted media
+  /// playback coordinator and are unavailable to an offline guest until cached.
   RoutineMediaPreparerProvider._()
     : super(
         from: null,
@@ -115,4 +115,4 @@ final class RoutineMediaPreparerProvider
 }
 
 String _$routineMediaPreparerHash() =>
-    r'b7074496266b78ef6b923bb99f86fcd9666762eb';
+    r'3631c930d1c8b2798d2756817542a117699fc80f';

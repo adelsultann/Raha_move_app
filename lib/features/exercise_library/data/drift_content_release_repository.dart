@@ -25,6 +25,9 @@ final class ContentReleaseRepository {
   static final RegExp _routinePublicId = RegExp(r'^raha_rt_[a-z0-9_]+$');
   static final RegExp _sha256 = RegExp(r'^[a-f0-9]{64}$');
   static final RegExp _opaqueReference = RegExp(r'^[a-zA-Z0-9_-]+$');
+  static final RegExp _bundledAssetReference = RegExp(
+    r'^asset:assets/starter_content/media/[a-zA-Z0-9_/-]+\.(gif|mp4)$',
+  );
 
   final AppDatabase _database;
   final DateTime Function() _clock;
@@ -369,7 +372,8 @@ final class ContentReleaseRepository {
   }
 
   void _validateMediaAsset(ManifestMediaAsset asset) {
-    if (!_opaqueReference.hasMatch(asset.deliveryReference)) {
+    if (!_opaqueReference.hasMatch(asset.deliveryReference) &&
+        !_bundledAssetReference.hasMatch(asset.deliveryReference)) {
       throw ContentReleaseException('invalid_delivery_reference', asset.id);
     }
     switch (asset.status) {

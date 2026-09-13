@@ -88,6 +88,7 @@ flutter:
   assets:
     - logo.png
     - assets/starter_content/manifests/
+    - assets/starter_content/media/videos/
 
 flutter_gen:
   output: lib/gen/

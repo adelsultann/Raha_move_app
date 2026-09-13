@@ -45,6 +45,14 @@ flutter test
 flutter build apk --debug --dart-define=RAHA_ENV=development
 ```
 
+Before a beta or production build, run the release-media guard. It blocks the
+internal RAHA-081 fixture package until licensed production media replaces it:
+
+```powershell
+dart run tool/release_media_guard.dart --environment=beta
+dart run tool/release_media_guard.dart --environment=production
+```
+
 Generated files are committed and must be refreshed after changing a route, provider, Freezed model, Drift table, localization resource, or asset.
 
 ### Today golden-test font

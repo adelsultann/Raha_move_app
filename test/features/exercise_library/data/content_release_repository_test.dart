@@ -299,13 +299,18 @@ void main() {
 
     expect(envelope.releaseId, '0');
     expect(
-      envelope.manifest.mediaAssets.every((m) => m.checksumSha256 == null),
+      envelope.manifest.mediaAssets.every(
+        (m) => m.status == 'published' && m.checksumSha256?.length == 64,
+      ),
       isTrue,
-      reason: 'Starter media must be designated pending, not invented',
+      reason: 'Approved internal starter media must be integrity protected',
     );
     expect(
-      envelope.manifest.mediaAssets.every((m) => m.status == 'pending'),
-      isTrue,
+      envelope.manifest.mediaAssets.map((m) => m.deliveryReference),
+      containsAll([
+        'asset:assets/starter_content/media/videos/neck.gif',
+        'asset:assets/starter_content/media/videos/shoulder.mp4',
+      ]),
     );
     await repository.applyRelease(envelope, appVersion: '1.0.0');
 
@@ -319,11 +324,12 @@ void main() {
       hasLength(4),
     );
 
-    // Pending media is persisted as pending with an empty checksum so it is
-    // never mistaken for delivered, playable content.
+    // Approved internal starter media is persisted as published only after its
+    // manifest checksum has been verified. The release-media guard blocks its
+    // use in beta and production builds.
     final media = await database.select(database.localMediaAssets).get();
-    expect(media.every((m) => m.status == 'pending'), isTrue);
-    expect(media.every((m) => m.checksumSha256.isEmpty), isTrue);
+    expect(media.every((m) => m.status == 'published'), isTrue);
+    expect(media.every((m) => m.checksumSha256.length == 64), isTrue);
   });
 
   test(

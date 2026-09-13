@@ -1,0 +1,26 @@
+name: Release media guard
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Intended distributable environment
+        required: true
+        type: choice
+        options: [beta, production]
+
+permissions:
+  contents: read
+
+jobs:
+  block-internal-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.0
+      - run: flutter pub get
+      - run: dart run tool/release_media_guard.dart --environment=${{ inputs.environment || 'production' }}
