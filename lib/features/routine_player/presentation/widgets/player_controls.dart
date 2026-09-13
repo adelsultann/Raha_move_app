@@ -28,32 +28,27 @@ class PlayerControls extends StatelessWidget {
     final strings = AppLocalizations.of(context);
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          key: const Key('player_previous'),
-          tooltip: strings.playerPrevious,
-          iconSize: 28,
-          constraints: const BoxConstraints(minWidth: 56, minHeight: 56),
-          onPressed: onPrevious,
-          icon: Icon(isRtl ? Icons.arrow_forward : Icons.arrow_back),
-        ),
-        const SizedBox(width: 20),
-        IconButton.filled(
-          key: const Key('player_pause'),
-          tooltip: isPlaying ? strings.playerPause : strings.playerResume,
-          iconSize: 34,
-          style: IconButton.styleFrom(
-            minimumSize: const Size(72, 72),
-            shape: const CircleBorder(),
-          ),
-          onPressed: onTogglePause,
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-        ),
-        const SizedBox(width: 20),
-        if (isLastStep)
-          FilledButton.icon(
+    final previous = IconButton(
+      key: const Key('player_previous'),
+      tooltip: strings.playerPrevious,
+      iconSize: 28,
+      constraints: const BoxConstraints(minWidth: 56, minHeight: 56),
+      onPressed: onPrevious,
+      icon: Icon(isRtl ? Icons.arrow_forward : Icons.arrow_back),
+    );
+    final pause = IconButton.filled(
+      key: const Key('player_pause'),
+      tooltip: isPlaying ? strings.playerPause : strings.playerResume,
+      iconSize: 34,
+      style: IconButton.styleFrom(
+        minimumSize: const Size(72, 72),
+        shape: const CircleBorder(),
+      ),
+      onPressed: onTogglePause,
+      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+    );
+    final advance = isLastStep
+        ? FilledButton.icon(
             key: const Key('player_finish'),
             style: FilledButton.styleFrom(
               minimumSize: const Size(0, 56),
@@ -66,16 +61,23 @@ class PlayerControls extends StatelessWidget {
             icon: const Icon(Icons.check),
             label: Text(strings.playerFinish),
           )
-        else
-          IconButton(
+        : IconButton(
             key: const Key('player_skip'),
             tooltip: strings.playerSkip,
             iconSize: 28,
             constraints: const BoxConstraints(minWidth: 56, minHeight: 56),
             onPressed: onSkip,
             icon: Icon(isRtl ? Icons.arrow_back : Icons.arrow_forward),
-          ),
-      ],
+          );
+
+    // A fixed row clips Finish at 200% text scale on compact phones. Wrapping
+    // keeps all controls visible while preserving their logical focus order.
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 20,
+      runSpacing: 12,
+      children: [previous, pause, advance],
     );
   }
 }

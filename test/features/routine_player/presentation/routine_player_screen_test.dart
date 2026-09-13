@@ -62,6 +62,57 @@ void main() {
     expect(find.byKey(const Key('player_paused')), findsNothing);
   });
 
+  testWidgets('player controls expose localized screen-reader names', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    final container = buildRoutinePlayerContainer();
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      _wrap(container, const RoutinePlayerScreen(routineId: 'rt-1')),
+    );
+    await _pumpUntilReady(tester);
+
+    expect(
+      tester.getSemantics(find.byKey(const Key('player_previous'))),
+      matchesSemantics(
+        tooltip: 'Previous',
+        isButton: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        isFocusable: true,
+      ),
+    );
+    expect(
+      tester.getSemantics(find.byKey(const Key('player_pause'))),
+      matchesSemantics(
+        tooltip: 'Pause',
+        isButton: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        isFocusable: true,
+      ),
+    );
+    expect(
+      tester.getSemantics(find.byKey(const Key('player_skip'))),
+      matchesSemantics(
+        tooltip: 'Skip',
+        isButton: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        isFocusable: true,
+      ),
+    );
+    semantics.dispose();
+  });
+
   testWidgets('skip advances and previous returns', (tester) async {
     final container = buildRoutinePlayerContainer();
     addTearDown(container.dispose);
@@ -428,6 +479,34 @@ void main() {
       ),
       findsWidgets,
     );
+  });
+
+  testWidgets('last-step controls remain visible at 200% scale in Arabic RTL', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final container = buildRoutinePlayerContainer(language: AppLanguage.ar);
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      _wrapScaled(
+        container,
+        const RoutinePlayerScreen(routineId: 'rt-1'),
+        locale: const Locale('ar'),
+      ),
+    );
+    await _pumpUntilReady(tester);
+    await tester.tap(find.byKey(const Key('player_skip')));
+    await _pumpUntil(tester, find.byKey(const Key('player_finish')));
+
+    expect(find.byKey(const Key('player_previous')), findsOneWidget);
+    expect(find.byKey(const Key('player_pause')), findsOneWidget);
+    expect(find.byKey(const Key('player_finish')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('completed routine shows feedback choices and active minutes', (

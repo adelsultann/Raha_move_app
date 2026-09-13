@@ -77,8 +77,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _next() {
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     _controller.nextPage(
-      duration: const Duration(milliseconds: 250),
+      duration: reduceMotion
+          ? Duration.zero
+          : const Duration(milliseconds: 250),
       curve: Curves.easeOut,
     );
   }
@@ -156,12 +159,15 @@ class _PageDots extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         for (var i = 0; i < count; i++)
           AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+            duration: reduceMotion
+                ? Duration.zero
+                : const Duration(milliseconds: 200),
             margin: const EdgeInsets.symmetric(horizontal: 4),
             width: i == current ? 20 : 8,
             height: 8,

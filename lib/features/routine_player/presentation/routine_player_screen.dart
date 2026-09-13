@@ -176,7 +176,7 @@ class _PlayerContent extends ConsumerWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -186,8 +186,6 @@ class _PlayerContent extends ConsumerWidget {
                         step.name,
                         key: const Key('player_movement_name'),
                         textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ),
@@ -197,6 +195,9 @@ class _PlayerContent extends ConsumerWidget {
                           ? step.shortCue!
                           : strings.playerDefaultCue,
                       textAlign: TextAlign.center,
+                      // Cues are optional supporting guidance. Keep this row
+                      // compact so the essential movement name and controls
+                      // remain visible at large text scales.
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -204,8 +205,7 @@ class _PlayerContent extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Semantics(
-                      liveRegion: true,
+                    ExcludeSemantics(
                       child: Text(
                         _formatTimer(remaining),
                         key: const Key('player_timer'),
@@ -414,7 +414,7 @@ class _TopBar extends StatelessWidget {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 16, 0),
       child: Row(
         children: [
           IconButton(
@@ -469,7 +469,7 @@ class _CompletedStateState extends ConsumerState<_CompletedState> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+          padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

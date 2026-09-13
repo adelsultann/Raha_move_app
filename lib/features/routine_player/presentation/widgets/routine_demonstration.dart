@@ -44,6 +44,7 @@ class _LoopingDemonstration extends StatefulWidget {
 class _LoopingDemonstrationState extends State<_LoopingDemonstration>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  var _reduceMotion = false;
 
   @override
   void initState() {
@@ -63,8 +64,18 @@ class _LoopingDemonstrationState extends State<_LoopingDemonstration>
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    if (_reduceMotion != reduceMotion) {
+      _reduceMotion = reduceMotion;
+      _syncAnimation();
+    }
+  }
+
   void _syncAnimation() {
-    if (widget.playing) {
+    if (widget.playing && !_reduceMotion) {
       _controller.repeat();
     } else {
       _controller.stop();
@@ -87,6 +98,7 @@ class _LoopingDemonstrationState extends State<_LoopingDemonstration>
         child: AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
+            if (_reduceMotion) return child!;
             final t = _controller.value;
             final scale = 0.92 + 0.08 * (0.5 + 0.5 * math.sin(t * 2 * math.pi));
             return Transform.rotate(
