@@ -2036,6 +2036,24 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get profileAccount;
 
+  /// No description provided for @profileCreateAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your progress with you'**
+  String get profileCreateAccountTitle;
+
+  /// No description provided for @profileCreateAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a free account to save and track your progress.'**
+  String get profileCreateAccountBody;
+
+  /// No description provided for @profileCreateAccountAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create free account'**
+  String get profileCreateAccountAction;
+
   /// No description provided for @profileGuestAccount.
   ///
   /// In en, this message translates to:

@@ -17,6 +17,7 @@ enum AppLanguage {
   static AppLanguage? fromCode(String? code) => switch (code) {
     'ar' => AppLanguage.ar,
     'en' => AppLanguage.en,
+    // default null 
     _ => null,
   };
 }

@@ -229,24 +229,40 @@ void main() {
     },
   );
 
-  test('sign-up needing confirmation sets pendingEmail', () async {
-    final repository = _FakeAuthRepository(
-      isConfigured: true,
-      restoredAccount: null,
-      signUpOutcome: const SignUpOutcome.needsConfirmation('a@example.com'),
-    );
-    final harness = _Harness(repository: repository);
-    addTearDown(harness.dispose);
+  test(
+    'guest sign-up upgrades its identity and preserves its history',
+    () async {
+      final store = _FakeGuestIdentityStore(currentId: 'guest-1');
+      final repository = _FakeAuthRepository(
+        isConfigured: true,
+        restoredAccount: null,
+        anonymousAccount: const AuthAccount(
+          id: 'anon-1',
+          isAnonymous: true,
+          emailConfirmed: false,
+        ),
+        convertedAccount: const AuthAccount(
+          id: 'anon-1',
+          isAnonymous: false,
+          emailConfirmed: false,
+        ),
+      );
+      final harness = _Harness(repository: repository, store: store);
+      addTearDown(harness.dispose);
 
-    await harness.container.read(authControllerProvider.future);
-    await harness.container
-        .read(authControllerProvider.notifier)
-        .signUpWithEmail(email: 'a@example.com', password: 'secret1');
+      await harness.container.read(authControllerProvider.future);
+      await harness.container
+          .read(authControllerProvider.notifier)
+          .signUpWithEmail(email: 'a@example.com', password: 'secret1');
 
-    final state = harness.container.read(authControllerProvider).value!;
-    expect(state.pendingEmail, 'a@example.com');
-    expect(state.status, AuthStatus.guest);
-  });
+      final state = harness.container.read(authControllerProvider).value!;
+      expect(state.pendingEmail, 'a@example.com');
+      expect(state.status, AuthStatus.authenticated);
+      expect(state.activeUserId, 'anon-1');
+      expect(store.linked, [('guest-1', 'anon-1')]);
+      expect(store.activated, isEmpty);
+    },
+  );
 
   test(
     'sign-in to an unconfirmed account surfaces unconfirmed + pendingEmail',
@@ -355,7 +371,6 @@ final class _FakeAuthRepository implements AuthRepository {
     this.anonymousAccount,
     this.emailAccount,
     this.emailError,
-    this.signUpOutcome,
     this.convertedAccount,
     this.onAnonymous,
   });
@@ -367,7 +382,6 @@ final class _FakeAuthRepository implements AuthRepository {
   final AuthAccount? anonymousAccount;
   final AuthAccount? emailAccount;
   final AuthFailureException? emailError;
-  final SignUpOutcome? signUpOutcome;
   final AuthAccount? convertedAccount;
   final Future<AuthAccount> Function()? onAnonymous;
 
@@ -406,11 +420,7 @@ final class _FakeAuthRepository implements AuthRepository {
   Future<SignUpOutcome> signUpWithEmail({
     required String email,
     required String password,
-  }) async {
-    final outcome = signUpOutcome;
-    if (outcome != null) return outcome;
-    throw const AuthFailureException(AuthFailure.networkOffline);
-  }
+  }) async => throw const AuthFailureException(AuthFailure.networkOffline);
 
   @override
   Future<AuthAccount> convertAnonymousToEmail({

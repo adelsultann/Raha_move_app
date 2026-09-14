@@ -158,6 +158,25 @@ class AuthController extends _$AuthController {
     final store = ref.read(guestIdentityStoreProvider);
     _setBusy();
     try {
+      if (_current.status != AuthStatus.authenticated) {
+        if (_current.status == AuthStatus.guest) {
+          final guestId = _current.activeUserId;
+          if (guestId == null) {
+            throw const AuthFailureException(AuthFailure.unknown);
+          }
+          final anonymousAccount = await repository.signInAnonymously();
+          await store.linkGuestToSupabaseUid(
+            guestId: guestId,
+            supabaseUid: anonymousAccount.id,
+          );
+          state = AsyncData(
+            _stateForAccount(anonymousAccount).copyWith(isBusy: true),
+          );
+        }
+        await convertAnonymousToEmail(email: email, password: password);
+        return;
+      }
+
       final outcome = await repository.signUpWithEmail(
         email: email,
         password: password,

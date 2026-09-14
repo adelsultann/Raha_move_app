@@ -46,6 +46,10 @@ class ProfileScreen extends ConsumerWidget {
         data: (value) => ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            if (auth != null && auth.status != AuthStatus.authenticated)
+              _GuestAccountPrompt(
+                onCreateAccount: () => const SignUpRoute().push(context),
+              ),
             _Heading(strings.profilePreferences),
             _LanguageTile(settings: value),
             _ExperienceTile(settings: value),
@@ -250,6 +254,56 @@ class ProfileScreen extends ConsumerWidget {
                 onPressed: () => const SignInRoute().push(context),
               )
             : null,
+      ),
+    );
+  }
+}
+
+class _GuestAccountPrompt extends StatelessWidget {
+  const _GuestAccountPrompt({required this.onCreateAccount});
+
+  final VoidCallback onCreateAccount;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
+    return Semantics(
+      container: true,
+      child: Card(
+        key: const Key('profile_create_account_prompt'),
+        color: colors.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.cloud_done_outlined,
+                    color: colors.onPrimaryContainer,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      strings.profileCreateAccountTitle,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(strings.profileCreateAccountBody),
+              const SizedBox(height: 16),
+              FilledButton(
+                key: const Key('profile_create_account'),
+                onPressed: onCreateAccount,
+                child: Text(strings.profileCreateAccountAction),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

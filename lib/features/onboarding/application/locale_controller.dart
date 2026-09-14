@@ -22,6 +22,7 @@ part 'locale_controller.g.dart';
 @Riverpod(keepAlive: true)
 class LocaleController extends _$LocaleController {
   @override
+  // build create the provider initial state 
   Future<Locale> build() async {
     final auth = await ref.watch(authControllerProvider.future);
     final userId = auth.activeUserId;

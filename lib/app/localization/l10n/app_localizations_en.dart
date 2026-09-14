@@ -1117,6 +1117,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileAccount => 'Account';
 
   @override
+  String get profileCreateAccountTitle => 'Keep your progress with you';
+
+  @override
+  String get profileCreateAccountBody =>
+      'Create a free account to save and track your progress.';
+
+  @override
+  String get profileCreateAccountAction => 'Create free account';
+
+  @override
   String get profileGuestAccount => 'Guest account';
 
   @override

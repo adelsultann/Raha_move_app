@@ -47,6 +47,10 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(_app(const Locale('en')));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('profile_language')),
+      300,
+    );
     expect(find.byKey(const Key('profile_language')), findsOneWidget);
     expect(
       tester
@@ -60,6 +64,45 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('shows the create-account prompt to a guest in Arabic RTL', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app(const Locale('ar')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('profile_create_account_prompt')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('profile_create_account')), findsOneWidget);
+    expect(
+      find.text('أنشئ حسابًا مجانيًا لحفظ تقدّمك ومتابعته.'),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<Directionality>(find.byType(Directionality).first)
+          .textDirection,
+      TextDirection.rtl,
+    );
+  });
+
+  testWidgets(
+    'does not show the create-account prompt to an authenticated user',
+    (tester) async {
+      await tester.pumpWidget(
+        _app(const Locale('en'), authStatus: AuthStatus.authenticated),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('profile_create_account_prompt')),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('profile_create_account')), findsNothing);
+    },
+  );
 
   testWidgets(
     'deletion confirmation exposes semantic actions and pending truth',
@@ -88,7 +131,13 @@ void main() {
 
   testWidgets('failed setting save is visible and retryable', (tester) async {
     _FailingProfile.failures = 1;
-    await tester.pumpWidget(_app(const Locale('en'), failing: true));
+    await tester.pumpWidget(
+      _app(
+        const Locale('en'),
+        failing: true,
+        authStatus: AuthStatus.authenticated,
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('profile_sound')).last);
     await tester.pump();
@@ -234,12 +283,13 @@ Widget _app(
   Locale locale, {
   AccountDeletionAction? deletion,
   bool failing = false,
+  AuthStatus authStatus = AuthStatus.anonymous,
 }) => ProviderScope(
   overrides: [
     profileControllerProvider.overrideWith(
       failing ? _FailingProfile.new : _Profile.new,
     ),
-    authControllerProvider.overrideWith(_Auth.new),
+    authControllerProvider.overrideWith(() => _Auth(status: authStatus)),
     localeControllerProvider.overrideWith(_Locale.new),
     accountDeletionActionProvider.overrideWithValue(
       deletion ?? const UnavailableAccountDeletionAction(),
@@ -321,9 +371,13 @@ final class _FailingProfile extends _Profile {
 }
 
 final class _Auth extends AuthController {
+  _Auth({this.status = AuthStatus.anonymous});
+
+  final AuthStatus status;
+
   @override
   Future<AuthState> build() async =>
-      const AuthState(activeUserId: 'user', status: AuthStatus.anonymous);
+      AuthState(activeUserId: 'user', status: status);
 }
 
 final class _Locale extends LocaleController {

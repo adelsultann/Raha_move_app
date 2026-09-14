@@ -1102,6 +1102,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileAccount => 'الحساب';
 
   @override
+  String get profileCreateAccountTitle => 'احتفظ بتقدّمك معك';
+
+  @override
+  String get profileCreateAccountBody =>
+      'أنشئ حسابًا مجانيًا لحفظ تقدّمك ومتابعته.';
+
+  @override
+  String get profileCreateAccountAction => 'إنشاء حساب مجاني';
+
+  @override
   String get profileGuestAccount => 'حساب ضيف';
 
   @override
