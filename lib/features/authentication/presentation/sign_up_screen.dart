@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
 import 'package:raha_move/features/authentication/application/auth_controller.dart';
+import 'package:raha_move/features/authentication/domain/auth_state.dart';
 
 import 'auth_failure_message.dart';
 
@@ -103,14 +104,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Future<void> _submit() async {
     final email = _email.text.trim();
     final password = _password.text;
+
     if (email.isEmpty || password.isEmpty) return;
     await ref
         .read(authControllerProvider.notifier)
         .signUpWithEmail(email: email, password: password);
     if (!mounted) return;
+
     final state = ref.read(authControllerProvider).value;
     if (state != null && state.pendingEmail != null) {
       const EmailConfirmationRoute().go(context);
+    } else if (state?.failure == null &&
+        state?.status == AuthStatus.authenticated) {
+      const FoundationRoute().go(context);
     }
   }
 }

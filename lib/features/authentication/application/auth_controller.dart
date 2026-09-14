@@ -156,6 +156,7 @@ class AuthController extends _$AuthController {
   }) async {
     final repository = ref.read(authRepositoryProvider);
     final store = ref.read(guestIdentityStoreProvider);
+    print('sign up with email now ');
     _setBusy();
     try {
       if (_current.status != AuthStatus.authenticated) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/features/authentication/application/auth_providers.dart';
 import 'package:raha_move/features/authentication/domain/auth_account.dart';
@@ -150,6 +151,63 @@ void main() {
     );
   });
 
+  testWidgets('successful account creation returns to the main route', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _routerWrap(
+        convertedAccount: const AuthAccount(
+          id: 'anon-1',
+          isAnonymous: false,
+          emailConfirmed: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const Key('sign_up_email')),
+      'a@example.com',
+    );
+    await tester.enterText(
+      find.byKey(const Key('sign_up_password')),
+      'secret1',
+    );
+    await tester.tap(find.byKey(const Key('sign_up_submit')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('main route'), findsOneWidget);
+    expect(find.byType(SignUpScreen), findsNothing);
+  });
+
+  testWidgets('successful sign-in returns to the main route', (tester) async {
+    await tester.pumpWidget(
+      _routerWrap(
+        initialLocation: '/sign-in',
+        convertedAccount: const AuthAccount(
+          id: 'anon-1',
+          isAnonymous: false,
+          emailConfirmed: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const Key('sign_in_email')),
+      'a@example.com',
+    );
+    await tester.enterText(
+      find.byKey(const Key('sign_in_password')),
+      'secret1',
+    );
+    await tester.tap(find.byKey(const Key('sign_in_submit')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('main route'), findsOneWidget);
+    expect(find.byType(SignInScreen), findsNothing);
+  });
+
   testWidgets('confirmation renders the pending email and resend action', (
     tester,
   ) async {
@@ -180,6 +238,7 @@ Widget _wrap(
   Locale? locale,
   AuthFailureException? emailError,
   AuthFailureException? signUpError,
+  AuthAccount? convertedAccount,
 }) {
   final container = ProviderContainer(
     overrides: [
@@ -188,6 +247,7 @@ Widget _wrap(
           isConfigured: isConfigured,
           emailError: emailError,
           signUpError: signUpError,
+          convertedAccount: convertedAccount,
         ),
       ),
       guestIdentityStoreProvider.overrideWithValue(_FakeStore()),
@@ -211,11 +271,48 @@ Widget _wrap(
   );
 }
 
+Widget _routerWrap({
+  required AuthAccount convertedAccount,
+  String initialLocation = '/sign-up',
+}) {
+  final container = ProviderContainer(
+    overrides: [
+      authRepositoryProvider.overrideWithValue(
+        _FakeRepository(isConfigured: true, convertedAccount: convertedAccount),
+      ),
+      guestIdentityStoreProvider.overrideWithValue(_FakeStore()),
+    ],
+  );
+  addTearDown(container.dispose);
+
+  return UncontrolledProviderScope(
+    container: container,
+    child: MaterialApp.router(
+      routerConfig: GoRouter(
+        initialLocation: initialLocation,
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const Text('main route')),
+          GoRoute(path: '/sign-in', builder: (_, _) => const SignInScreen()),
+          GoRoute(path: '/sign-up', builder: (_, _) => const SignUpScreen()),
+        ],
+      ),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+    ),
+  );
+}
+
 final class _FakeRepository implements AuthRepository {
   _FakeRepository({
     required this.isConfigured,
     this.emailError,
     this.signUpError,
+    this.convertedAccount,
   });
 
   @override
@@ -223,6 +320,7 @@ final class _FakeRepository implements AuthRepository {
 
   final AuthFailureException? emailError;
   final AuthFailureException? signUpError;
+  final AuthAccount? convertedAccount;
 
   @override
   Stream<AuthAccount?> watchAccount() => Stream<AuthAccount?>.value(null);
@@ -262,7 +360,13 @@ final class _FakeRepository implements AuthRepository {
   Future<AuthAccount> convertAnonymousToEmail({
     required String email,
     required String password,
-  }) async => throw const AuthFailureException(AuthFailure.networkOffline);
+  }) async {
+    final error = signUpError;
+    if (error != null) throw error;
+    final account = convertedAccount;
+    if (account != null) return account;
+    throw const AuthFailureException(AuthFailure.networkOffline);
+  }
 
   @override
   Future<void> signOut() async {}

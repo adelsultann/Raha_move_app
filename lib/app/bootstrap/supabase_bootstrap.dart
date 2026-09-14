@@ -20,6 +20,10 @@ Future<void> initializeSupabaseAfterDeletionPreflight({
 Future<void> initializeSupabaseIfConfigured() async {
   const url = String.fromEnvironment('SUPABASE_URL');
   const publishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+  const environment = String.fromEnvironment(
+    'RAHA_ENV',
+    defaultValue: 'development',
+  );
   if (url.isEmpty && publishableKey.isEmpty) return;
   if (url.isEmpty || publishableKey.isEmpty) {
     throw StateError(
@@ -27,10 +31,9 @@ Future<void> initializeSupabaseIfConfigured() async {
     );
   }
   final uri = Uri.tryParse(url);
-  final localHttp =
-      uri?.scheme == 'http' &&
-      (uri?.host == '127.0.0.1' || uri?.host == 'localhost');
-  if (uri == null || (!uri.isScheme('https') && !localHttp)) {
+  final localDevelopment =
+      environment == 'development' || environment == 'test';
+  if (!isPermittedSupabaseUrl(uri, allowLocalHttp: localDevelopment)) {
     throw StateError('SUPABASE_URL must use HTTPS outside local development');
   }
   await Supabase.initialize(
@@ -42,4 +45,15 @@ Future<void> initializeSupabaseIfConfigured() async {
       localStorage: SecureLocalStorage(),
     ),
   );
+}
+
+/// Validates the public Supabase API URL without accepting clear-text traffic
+/// outside local development. `10.0.2.2` is Android Emulator's alias for the
+/// host machine, where the local Supabase API commonly runs on port 54321.
+bool isPermittedSupabaseUrl(Uri? uri, {required bool allowLocalHttp}) {
+  if (uri == null) return false;
+  if (uri.isScheme('https')) return true;
+  return allowLocalHttp &&
+      uri.isScheme('http') &&
+      const {'127.0.0.1', 'localhost', '10.0.2.2'}.contains(uri.host);
 }

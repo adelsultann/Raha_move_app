@@ -4,6 +4,7 @@ import '../../../core/analytics/analytics_catalog.dart';
 import '../../../core/analytics/analytics_event.dart';
 import '../../../core/telemetry/telemetry_providers.dart';
 import '../../authentication/application/auth_controller.dart';
+import '../../authentication/domain/auth_state.dart';
 import 'onboarding_providers.dart';
 
 part 'onboarding_controller.g.dart';
@@ -17,6 +18,10 @@ class OnboardingController extends _$OnboardingController {
   @override
   Future<bool> build() async {
     final auth = await ref.watch(authControllerProvider.future);
+    // Email authentication happens from inside the already-onboarded guest
+    // experience. Switching to the account's local profile must not send the
+    // user through device onboarding again.
+    if (auth.status == AuthStatus.authenticated) return true;
     final userId = auth.activeUserId;
     if (userId == null) {
       throw StateError('OnboardingController requires an active user id');

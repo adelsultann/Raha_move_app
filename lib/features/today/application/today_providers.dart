@@ -33,23 +33,32 @@ final class TodayDashboard {
 @riverpod
 Stream<TodayDashboard> todayDashboard(Ref ref) async* {
   final auth = await ref.watch(authControllerProvider.future);
+  if (!ref.mounted) return;
   final userId = auth.activeUserId;
   if (userId == null) throw StateError('Today requires an active user');
   final locale = await ref.watch(localeControllerProvider.future);
+  if (!ref.mounted) return;
 
   final repository = ref.watch(todayRepositoryProvider);
+  final gamificationRepository = ref.watch(gamificationRepositoryProvider);
+  final sessionRepository = ref.watch(routineSessionRepositoryProvider);
 
-  Future<TodayDashboard> load() async {
-    ref.invalidate(weeklyGoalProgressProvider);
-    ref.invalidate(resumableRoutineSessionProvider);
+  Future<TodayDashboard?> load() async {
+    if (!ref.mounted) return null;
+    Future<RoutineSessionSnapshot?> loadResumableSession() async {
+      await sessionRepository.expireInactiveSessions(userId: userId);
+      return sessionRepository.resumable(userId: userId);
+    }
+
     final values = await Future.wait<Object?>([
-      ref.read(weeklyGoalProgressProvider.future),
-      ref.read(resumableRoutineSessionProvider.future),
+      gamificationRepository.currentWeeklyGoal(),
+      loadResumableSession(),
       repository.latestCompletedRoutine(
         userId: userId,
         locale: locale.languageCode,
       ),
     ]);
+    if (!ref.mounted) return null;
     final session = values[1] as RoutineSessionSnapshot?;
     final name = session == null
         ? null
@@ -57,6 +66,7 @@ Stream<TodayDashboard> todayDashboard(Ref ref) async* {
             routineId: session.routineId,
             locale: locale.languageCode,
           );
+    if (!ref.mounted) return null;
     return TodayDashboard(
       weeklyGoal: values[0]! as WeeklyGoalProgress,
       resumableRoutine: session == null
@@ -70,8 +80,12 @@ Stream<TodayDashboard> todayDashboard(Ref ref) async* {
     );
   }
 
-  yield await load();
+  final initialDashboard = await load();
+  if (!ref.mounted || initialDashboard == null) return;
+  yield initialDashboard;
   await for (final _ in repository.watchChanges(userId: userId)) {
-    yield await load();
+    final dashboard = await load();
+    if (!ref.mounted || dashboard == null) return;
+    yield dashboard;
   }
 }
