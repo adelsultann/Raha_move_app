@@ -31,8 +31,8 @@ void main() {
       onDestinationSelected: (_) {},
     );
 
-    expect(find.text('Today'), findsOneWidget);
-    expect(find.text('Explore'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('My Library'), findsOneWidget);
     expect(find.text('Progress'), findsOneWidget);
     expect(find.text('Profile'), findsOneWidget);
     expect(find.byIcon(Icons.home), findsOneWidget);
@@ -49,8 +49,8 @@ void main() {
       Directionality.of(tester.element(find.byType(NavigationBar))),
       TextDirection.rtl,
     );
-    expect(find.text('اليوم'), findsOneWidget);
-    expect(find.text('استكشف'), findsOneWidget);
+    expect(find.text('الرئيسية'), findsOneWidget);
+    expect(find.text('مكتبتي'), findsOneWidget);
     expect(find.text('تقدّمك'), findsOneWidget);
     expect(find.text('حسابي'), findsOneWidget);
   });

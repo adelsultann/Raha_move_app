@@ -451,5 +451,21 @@
   "accountDeletionRecoveryBody": "لحماية خصوصيتك، يمسح راحة موف بيانات هذا الجهاز قبل المتابعة. تم قبول طلب الحذف بالفعل.",
   "profileDeleteRequiresSignIn": "يرجى تسجيل الدخول مجددًا ثم حاول طلب الحذف.",
   "profileDeleteUnavailable": "حذف الحساب غير متاح الآن. يرجى المحاولة لاحقًا.",
-  "profileDeleteFailed": "تعذّر بدء طلب الحذف. لا يزال حسابك مسجّل الدخول."
+  "profileDeleteFailed": "تعذّر بدء طلب الحذف. لا يزال حسابك مسجّل الدخول.",
+  "navigationHome": "الرئيسية",
+  "navigationLibrary": "مكتبتي",
+  "homeHeadline": "امنح جسمك وقتًا للحركة",
+  "homeSubtitle": "حركة بسيطة. يوم أفضل.",
+  "homeRoutines": "اختر روتينك",
+  "homeBrowseAreas": "تصفح حسب المنطقة",
+  "homeRecommended": "تمارين مقترحة",
+  "homeViewAll": "عرض الكل",
+  "libraryRoutines": "الروتينات",
+  "libraryExercises": "التمارين",
+  "libraryExerciseEmpty": "احفظ تمرينًا من الرئيسية لتجده هنا.",
+  "libraryLocalNotice": "تُحفظ التمارين على هذا الجهاز.",
+  "exerciseSave": "حفظ التمرين",
+  "exerciseUnsave": "إزالة من المكتبة",
+  "exerciseOpenRoutine": "عرض الروتين",
+  "homeResume": "أكمل روتينك"
 }

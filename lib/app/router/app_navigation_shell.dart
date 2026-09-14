@@ -49,12 +49,12 @@ class RahaNavigationBar extends StatelessWidget {
         NavigationDestination(
           icon: const Icon(Icons.home_outlined),
           selectedIcon: const Icon(Icons.home),
-          label: strings.navigationToday,
+          label: strings.navigationHome,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.explore_outlined),
-          selectedIcon: const Icon(Icons.explore),
-          label: strings.navigationExplore,
+          icon: const Icon(Icons.bookmarks_outlined),
+          selectedIcon: const Icon(Icons.bookmarks),
+          label: strings.navigationLibrary,
         ),
         NavigationDestination(
           icon: const Icon(Icons.insights_outlined),

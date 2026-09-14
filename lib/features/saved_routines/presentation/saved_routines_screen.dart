@@ -7,7 +7,13 @@ import '../application/saved_routines_providers.dart';
 import '../domain/saved_routine.dart';
 
 class SavedRoutinesScreen extends ConsumerWidget {
-  const SavedRoutinesScreen({super.key, this.onOpenRoutine});
+  const SavedRoutinesScreen({
+    super.key,
+    this.onOpenRoutine,
+    this.embedded = false,
+  });
+
+  final bool embedded;
 
   final ValueChanged<String>? onOpenRoutine;
 
@@ -16,7 +22,7 @@ class SavedRoutinesScreen extends ConsumerWidget {
     final strings = AppLocalizations.of(context);
     final routines = ref.watch(savedRoutinesProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(strings.savedRoutinesTitle)),
+      appBar: embedded ? null : AppBar(title: Text(strings.savedRoutinesTitle)),
       body: routines.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) =>

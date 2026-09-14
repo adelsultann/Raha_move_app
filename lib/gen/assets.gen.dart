@@ -11,6 +11,49 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsCategoriesIconsGen {
+  const $AssetsCategoriesIconsGen();
+
+  /// File path: assets/categories_icons/FULLBODY_category_icon.png
+  AssetGenImage get fULLBODYCategoryIcon =>
+      const AssetGenImage('assets/categories_icons/FULLBODY_category_icon.png');
+
+  /// File path: assets/categories_icons/HIPS_category_icon.png
+  AssetGenImage get hIPSCategoryIcon =>
+      const AssetGenImage('assets/categories_icons/HIPS_category_icon.png');
+
+  /// File path: assets/categories_icons/KNEES_category_icon.png
+  AssetGenImage get kNEESCategoryIcon =>
+      const AssetGenImage('assets/categories_icons/KNEES_category_icon.png');
+
+  /// File path: assets/categories_icons/LowerBack_category_icon.png
+  AssetGenImage get lowerBackCategoryIcon =>
+      const AssetGenImage('assets/categories_icons/LowerBack_category_icon.png');
+
+  /// File path: assets/categories_icons/NECK_category_icon.png
+  AssetGenImage get nECKCategoryIcon =>
+      const AssetGenImage('assets/categories_icons/NECK_category_icon.png');
+
+  /// File path: assets/categories_icons/POSTURE_category_icon.png
+  AssetGenImage get pOSTURECategoryIcon =>
+      const AssetGenImage('assets/categories_icons/POSTURE_category_icon.png');
+
+  /// File path: assets/categories_icons/SHOULDERS_category_icon.png
+  AssetGenImage get sHOULDERSCategoryIcon =>
+      const AssetGenImage('assets/categories_icons/SHOULDERS_category_icon.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+    fULLBODYCategoryIcon,
+    hIPSCategoryIcon,
+    kNEESCategoryIcon,
+    lowerBackCategoryIcon,
+    nECKCategoryIcon,
+    pOSTURECategoryIcon,
+    sHOULDERSCategoryIcon,
+  ];
+}
+
 class $AssetsStarterContentGen {
   const $AssetsStarterContentGen();
 
@@ -55,6 +98,7 @@ class $AssetsStarterContentMediaVideosGen {
 }
 
 abstract final class Assets {
+  static const $AssetsCategoriesIconsGen categoriesIcons = $AssetsCategoriesIconsGen();
   static const $AssetsStarterContentGen starterContent = $AssetsStarterContentGen();
   static const AssetGenImage logo = AssetGenImage('logo.png');
 

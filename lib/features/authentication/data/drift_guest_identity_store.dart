@@ -104,6 +104,7 @@ final class DriftGuestIdentityStore implements GuestIdentityStore {
       await _rekey('local_routine_sessions', guestId, supabaseUid);
       await _rekey('local_session_feedback', guestId, supabaseUid);
       await _rekey('local_saved_routines', guestId, supabaseUid);
+      await _rekey('local_saved_exercises', guestId, supabaseUid);
       await _rekey('local_progress_projections', guestId, supabaseUid);
       await _rekey('local_sync_state', guestId, supabaseUid);
       await _rekey(
@@ -156,6 +157,9 @@ final class DriftGuestIdentityStore implements GuestIdentityStore {
       );
       await (_database.delete(
         _database.localCheckIns,
+      )..where((r) => r.userId.equals(outgoingUserId))).go();
+      await (_database.delete(
+        _database.localSavedExercises,
       )..where((r) => r.userId.equals(outgoingUserId))).go();
       await (_database.delete(
         _database.localSavedRoutines,

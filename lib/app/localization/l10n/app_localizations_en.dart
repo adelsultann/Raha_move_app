@@ -1185,4 +1185,54 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get profileDeleteFailed =>
       'We couldn\'t start your deletion request. Your account is still signed in.';
+
+  @override
+  String get navigationHome => 'Home';
+
+  @override
+  String get navigationLibrary => 'My Library';
+
+  @override
+  String get homeHeadline => 'Make room for movement';
+
+  @override
+  String get homeSubtitle => 'A little movement. A better day.';
+
+  @override
+  String get homeRoutines => 'Find your routine';
+
+  @override
+  String get homeBrowseAreas => 'Browse by Area';
+
+  @override
+  String get homeRecommended => 'Recommended Exercises';
+
+  @override
+  String get homeViewAll => 'View all';
+
+  @override
+  String get libraryRoutines => 'Routines';
+
+  @override
+  String get libraryExercises => 'Exercises';
+
+  @override
+  String get libraryExerciseEmpty =>
+      'Save an exercise from Home to find it here.';
+
+  @override
+  String get libraryLocalNotice =>
+      'Exercise bookmarks are saved on this device.';
+
+  @override
+  String get exerciseSave => 'Save exercise';
+
+  @override
+  String get exerciseUnsave => 'Remove from library';
+
+  @override
+  String get exerciseOpenRoutine => 'View routine';
+
+  @override
+  String get homeResume => 'Continue your routine';
 }

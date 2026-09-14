@@ -14,8 +14,8 @@ import 'package:raha_move/features/profile/presentation/profile_screen.dart';
 import 'package:raha_move/features/reminders/presentation/reminder_settings_screen.dart';
 import 'package:raha_move/features/recommendations/presentation/recommendation_screen.dart';
 import 'package:raha_move/features/routine_player/presentation/routine_player_screen.dart';
-import 'package:raha_move/features/saved_routines/presentation/saved_routines_screen.dart';
-import 'package:raha_move/features/today/presentation/today_screen.dart';
+import 'package:raha_move/features/home/home_screen.dart';
+import 'package:raha_move/features/home/my_library_screen.dart';
 
 part 'app_routes.g.dart';
 
@@ -25,15 +25,7 @@ class FoundationRoute extends GoRouteData with $FoundationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return TodayScreen(
-      onStartCheckIn: () => const CheckInRoute().push(context),
-      onResume: (routineId, sessionId) => RoutinePlayerRoute(
-        routineId: routineId,
-        sessionId: sessionId,
-      ).push(context),
-      onRepeat: (routineId) =>
-          RoutinePlayerRoute(routineId: routineId).push(context),
-    );
+    return const HomeScreen();
   }
 }
 
@@ -141,7 +133,7 @@ class SavedRoutinesRoute extends GoRouteData with $SavedRoutinesRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const SavedRoutinesScreen();
+      const MyLibraryScreen();
 }
 
 @TypedGoRoute<RecommendationRoute>(path: '/recommendation/:checkInId')

@@ -2155,6 +2155,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t start your deletion request. Your account is still signed in.'**
   String get profileDeleteFailed;
+
+  /// No description provided for @navigationHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navigationHome;
+
+  /// No description provided for @navigationLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'My Library'**
+  String get navigationLibrary;
+
+  /// No description provided for @homeHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Make room for movement'**
+  String get homeHeadline;
+
+  /// No description provided for @homeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A little movement. A better day.'**
+  String get homeSubtitle;
+
+  /// No description provided for @homeRoutines.
+  ///
+  /// In en, this message translates to:
+  /// **'Find your routine'**
+  String get homeRoutines;
+
+  /// No description provided for @homeBrowseAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse by Area'**
+  String get homeBrowseAreas;
+
+  /// No description provided for @homeRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Exercises'**
+  String get homeRecommended;
+
+  /// No description provided for @homeViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get homeViewAll;
+
+  /// No description provided for @libraryRoutines.
+  ///
+  /// In en, this message translates to:
+  /// **'Routines'**
+  String get libraryRoutines;
+
+  /// No description provided for @libraryExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get libraryExercises;
+
+  /// No description provided for @libraryExerciseEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Save an exercise from Home to find it here.'**
+  String get libraryExerciseEmpty;
+
+  /// No description provided for @libraryLocalNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise bookmarks are saved on this device.'**
+  String get libraryLocalNotice;
+
+  /// No description provided for @exerciseSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save exercise'**
+  String get exerciseSave;
+
+  /// No description provided for @exerciseUnsave.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from library'**
+  String get exerciseUnsave;
+
+  /// No description provided for @exerciseOpenRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'View routine'**
+  String get exerciseOpenRoutine;
+
+  /// No description provided for @homeResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue your routine'**
+  String get homeResume;
 }
 
 class _AppLocalizationsDelegate

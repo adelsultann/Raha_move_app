@@ -13869,6 +13869,276 @@ class LocalSavedRoutinesCompanion extends UpdateCompanion<LocalSavedRoutine> {
   }
 }
 
+class $LocalSavedExercisesTable extends LocalSavedExercises
+    with TableInfo<$LocalSavedExercisesTable, LocalSavedExercise> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalSavedExercisesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
+    'exerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseId = GeneratedColumn<String>(
+    'exercise_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _savedAtMeta = const VerificationMeta(
+    'savedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> savedAt = GeneratedColumn<DateTime>(
+    'saved_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [userId, exerciseId, savedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_saved_exercises';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalSavedExercise> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+        _exerciseIdMeta,
+        exerciseId.isAcceptableOrUnknown(data['exercise_id']!, _exerciseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    if (data.containsKey('saved_at')) {
+      context.handle(
+        _savedAtMeta,
+        savedAt.isAcceptableOrUnknown(data['saved_at']!, _savedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_savedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {userId, exerciseId};
+  @override
+  LocalSavedExercise map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalSavedExercise(
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      exerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_id'],
+      )!,
+      savedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}saved_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalSavedExercisesTable createAlias(String alias) {
+    return $LocalSavedExercisesTable(attachedDatabase, alias);
+  }
+}
+
+class LocalSavedExercise extends DataClass
+    implements Insertable<LocalSavedExercise> {
+  final String userId;
+  final String exerciseId;
+  final DateTime savedAt;
+  const LocalSavedExercise({
+    required this.userId,
+    required this.exerciseId,
+    required this.savedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['user_id'] = Variable<String>(userId);
+    map['exercise_id'] = Variable<String>(exerciseId);
+    map['saved_at'] = Variable<DateTime>(savedAt);
+    return map;
+  }
+
+  LocalSavedExercisesCompanion toCompanion(bool nullToAbsent) {
+    return LocalSavedExercisesCompanion(
+      userId: Value(userId),
+      exerciseId: Value(exerciseId),
+      savedAt: Value(savedAt),
+    );
+  }
+
+  factory LocalSavedExercise.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalSavedExercise(
+      userId: serializer.fromJson<String>(json['userId']),
+      exerciseId: serializer.fromJson<String>(json['exerciseId']),
+      savedAt: serializer.fromJson<DateTime>(json['savedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'userId': serializer.toJson<String>(userId),
+      'exerciseId': serializer.toJson<String>(exerciseId),
+      'savedAt': serializer.toJson<DateTime>(savedAt),
+    };
+  }
+
+  LocalSavedExercise copyWith({
+    String? userId,
+    String? exerciseId,
+    DateTime? savedAt,
+  }) => LocalSavedExercise(
+    userId: userId ?? this.userId,
+    exerciseId: exerciseId ?? this.exerciseId,
+    savedAt: savedAt ?? this.savedAt,
+  );
+  LocalSavedExercise copyWithCompanion(LocalSavedExercisesCompanion data) {
+    return LocalSavedExercise(
+      userId: data.userId.present ? data.userId.value : this.userId,
+      exerciseId: data.exerciseId.present
+          ? data.exerciseId.value
+          : this.exerciseId,
+      savedAt: data.savedAt.present ? data.savedAt.value : this.savedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalSavedExercise(')
+          ..write('userId: $userId, ')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('savedAt: $savedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(userId, exerciseId, savedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalSavedExercise &&
+          other.userId == this.userId &&
+          other.exerciseId == this.exerciseId &&
+          other.savedAt == this.savedAt);
+}
+
+class LocalSavedExercisesCompanion extends UpdateCompanion<LocalSavedExercise> {
+  final Value<String> userId;
+  final Value<String> exerciseId;
+  final Value<DateTime> savedAt;
+  final Value<int> rowid;
+  const LocalSavedExercisesCompanion({
+    this.userId = const Value.absent(),
+    this.exerciseId = const Value.absent(),
+    this.savedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LocalSavedExercisesCompanion.insert({
+    required String userId,
+    required String exerciseId,
+    required DateTime savedAt,
+    this.rowid = const Value.absent(),
+  }) : userId = Value(userId),
+       exerciseId = Value(exerciseId),
+       savedAt = Value(savedAt);
+  static Insertable<LocalSavedExercise> custom({
+    Expression<String>? userId,
+    Expression<String>? exerciseId,
+    Expression<DateTime>? savedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (userId != null) 'user_id': userId,
+      if (exerciseId != null) 'exercise_id': exerciseId,
+      if (savedAt != null) 'saved_at': savedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LocalSavedExercisesCompanion copyWith({
+    Value<String>? userId,
+    Value<String>? exerciseId,
+    Value<DateTime>? savedAt,
+    Value<int>? rowid,
+  }) {
+    return LocalSavedExercisesCompanion(
+      userId: userId ?? this.userId,
+      exerciseId: exerciseId ?? this.exerciseId,
+      savedAt: savedAt ?? this.savedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<String>(exerciseId.value);
+    }
+    if (savedAt.present) {
+      map['saved_at'] = Variable<DateTime>(savedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalSavedExercisesCompanion(')
+          ..write('userId: $userId, ')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('savedAt: $savedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $LocalProgressProjectionsTable extends LocalProgressProjections
     with TableInfo<$LocalProgressProjectionsTable, LocalProgressProjection> {
   @override
@@ -15833,6 +16103,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $LocalSessionFeedbackTable(this);
   late final $LocalSavedRoutinesTable localSavedRoutines =
       $LocalSavedRoutinesTable(this);
+  late final $LocalSavedExercisesTable localSavedExercises =
+      $LocalSavedExercisesTable(this);
   late final $LocalProgressProjectionsTable localProgressProjections =
       $LocalProgressProjectionsTable(this);
   late final $LocalAnalyticsEmissionReceiptsTable
@@ -15876,6 +16148,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     localSessionSteps,
     localSessionFeedback,
     localSavedRoutines,
+    localSavedExercises,
     localProgressProjections,
     localAnalyticsEmissionReceipts,
     localIdMappings,
@@ -30129,6 +30402,186 @@ typedef $$LocalSavedRoutinesTableProcessedTableManager =
       LocalSavedRoutine,
       PrefetchHooks Function({bool userId, bool routineId})
     >;
+typedef $$LocalSavedExercisesTableCreateCompanionBuilder =
+    LocalSavedExercisesCompanion Function({
+      required String userId,
+      required String exerciseId,
+      required DateTime savedAt,
+      Value<int> rowid,
+    });
+typedef $$LocalSavedExercisesTableUpdateCompanionBuilder =
+    LocalSavedExercisesCompanion Function({
+      Value<String> userId,
+      Value<String> exerciseId,
+      Value<DateTime> savedAt,
+      Value<int> rowid,
+    });
+
+class $$LocalSavedExercisesTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalSavedExercisesTable> {
+  $$LocalSavedExercisesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get savedAt => $composableBuilder(
+    column: $table.savedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalSavedExercisesTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalSavedExercisesTable> {
+  $$LocalSavedExercisesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get savedAt => $composableBuilder(
+    column: $table.savedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalSavedExercisesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalSavedExercisesTable> {
+  $$LocalSavedExercisesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get savedAt =>
+      $composableBuilder(column: $table.savedAt, builder: (column) => column);
+}
+
+class $$LocalSavedExercisesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalSavedExercisesTable,
+          LocalSavedExercise,
+          $$LocalSavedExercisesTableFilterComposer,
+          $$LocalSavedExercisesTableOrderingComposer,
+          $$LocalSavedExercisesTableAnnotationComposer,
+          $$LocalSavedExercisesTableCreateCompanionBuilder,
+          $$LocalSavedExercisesTableUpdateCompanionBuilder,
+          (
+            LocalSavedExercise,
+            BaseReferences<
+              _$AppDatabase,
+              $LocalSavedExercisesTable,
+              LocalSavedExercise
+            >,
+          ),
+          LocalSavedExercise,
+          PrefetchHooks Function()
+        > {
+  $$LocalSavedExercisesTableTableManager(
+    _$AppDatabase db,
+    $LocalSavedExercisesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalSavedExercisesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalSavedExercisesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LocalSavedExercisesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> userId = const Value.absent(),
+                Value<String> exerciseId = const Value.absent(),
+                Value<DateTime> savedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocalSavedExercisesCompanion(
+                userId: userId,
+                exerciseId: exerciseId,
+                savedAt: savedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String userId,
+                required String exerciseId,
+                required DateTime savedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LocalSavedExercisesCompanion.insert(
+                userId: userId,
+                exerciseId: exerciseId,
+                savedAt: savedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalSavedExercisesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalSavedExercisesTable,
+      LocalSavedExercise,
+      $$LocalSavedExercisesTableFilterComposer,
+      $$LocalSavedExercisesTableOrderingComposer,
+      $$LocalSavedExercisesTableAnnotationComposer,
+      $$LocalSavedExercisesTableCreateCompanionBuilder,
+      $$LocalSavedExercisesTableUpdateCompanionBuilder,
+      (
+        LocalSavedExercise,
+        BaseReferences<
+          _$AppDatabase,
+          $LocalSavedExercisesTable,
+          LocalSavedExercise
+        >,
+      ),
+      LocalSavedExercise,
+      PrefetchHooks Function()
+    >;
 typedef $$LocalProgressProjectionsTableCreateCompanionBuilder =
     LocalProgressProjectionsCompanion Function({
       required String userId,
@@ -31626,6 +32079,8 @@ class $AppDatabaseManager {
       $$LocalSessionFeedbackTableTableManager(_db, _db.localSessionFeedback);
   $$LocalSavedRoutinesTableTableManager get localSavedRoutines =>
       $$LocalSavedRoutinesTableTableManager(_db, _db.localSavedRoutines);
+  $$LocalSavedExercisesTableTableManager get localSavedExercises =>
+      $$LocalSavedExercisesTableTableManager(_db, _db.localSavedExercises);
   $$LocalProgressProjectionsTableTableManager get localProgressProjections =>
       $$LocalProgressProjectionsTableTableManager(
         _db,

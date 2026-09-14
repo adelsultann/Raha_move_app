@@ -451,5 +451,21 @@
   "accountDeletionRecoveryBody": "For your privacy, Raha Move is clearing this device before you continue. Your deletion request has already been accepted.",
   "profileDeleteRequiresSignIn": "Please sign in again recently, then try your deletion request.",
   "profileDeleteUnavailable": "Account deletion is not available right now. Please try again later.",
-  "profileDeleteFailed": "We couldn't start your deletion request. Your account is still signed in."
+  "profileDeleteFailed": "We couldn't start your deletion request. Your account is still signed in.",
+  "navigationHome": "Home",
+  "navigationLibrary": "My Library",
+  "homeHeadline": "Make room for movement",
+  "homeSubtitle": "A little movement. A better day.",
+  "homeRoutines": "Find your routine",
+  "homeBrowseAreas": "Browse by Area",
+  "homeRecommended": "Recommended Exercises",
+  "homeViewAll": "View all",
+  "libraryRoutines": "Routines",
+  "libraryExercises": "Exercises",
+  "libraryExerciseEmpty": "Save an exercise from Home to find it here.",
+  "libraryLocalNotice": "Exercise bookmarks are saved on this device.",
+  "exerciseSave": "Save exercise",
+  "exerciseUnsave": "Remove from library",
+  "exerciseOpenRoutine": "View routine",
+  "homeResume": "Continue your routine"
 }

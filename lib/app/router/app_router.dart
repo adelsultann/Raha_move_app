@@ -10,7 +10,7 @@ final GoRouter appRouter = GoRouter(
           AppNavigationShell(navigationShell: navigationShell),
       branches: [
         StatefulShellBranch(routes: [$foundationRoute]),
-        StatefulShellBranch(routes: [$exploreRoute]),
+        StatefulShellBranch(routes: [$savedRoutinesRoute]),
         StatefulShellBranch(routes: [$progressRoute]),
         StatefulShellBranch(routes: [$profileRoute]),
       ],
@@ -21,7 +21,7 @@ final GoRouter appRouter = GoRouter(
     $profilePrivacyRoute,
     $profileTermsRoute,
     $exploreRoutineDetailsRoute,
-    $savedRoutinesRoute,
+    $exploreRoute,
     $recommendationRoute,
     $routinePlayerRoute,
     $signInRoute,

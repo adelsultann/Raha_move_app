@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const primary = Color(0xFF176B68);
-  static const primaryDark = Color(0xFF0E4F4D);
-  static const primaryLight = Color(0xFFCFE8E2);
-  static const background = Color(0xFFFAF8F2);
-  static const surface = Color(0xFFFFFFFF);
-  static const textPrimary = Color(0xFF203332);
-  static const textSecondary = Color(0xFF526260);
-  static const outline = Color(0xFF687875);
-  static const error = Color(0xFFB94A48);
+  static const primary = Color(0xFF28BD91);
+  static const primaryDark = Color(0xFF86E5C7);
+  static const primaryLight = Color(0xFF123D3B);
+  static const background = Color(0xFF080F20);
+  static const surface = Color(0xFF11192C);
+  static const textPrimary = Color(0xFFF5F7FC);
+  static const textSecondary = Color(0xFFA5B2C8);
+  static const outline = Color(0xFF4E607A);
+  static const error = Color(0xFFFFB4AB);
 }
 
 abstract final class AppTheme {
   static ThemeData light() {
     return ThemeData(
-      colorScheme: const ColorScheme.light(
+      brightness: Brightness.dark,
+      colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
-        onPrimary: AppColors.surface,
+        onPrimary: AppColors.background,
         primaryContainer: AppColors.primaryLight,
         onPrimaryContainer: AppColors.primaryDark,
         surface: AppColors.surface,
@@ -25,10 +26,40 @@ abstract final class AppTheme {
         onSurfaceVariant: AppColors.textSecondary,
         outline: AppColors.outline,
         error: AppColors.error,
-        onError: AppColors.surface,
+        onError: AppColors.background,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      textTheme: Typography.material2021().black.apply(
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.background,
+        surfaceTintColor: Colors.transparent,
+      ),
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.surface,
+        indicatorColor: AppColors.primaryLight,
+        elevation: 0,
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? AppColors.primary
+                : AppColors.textSecondary,
+          ),
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: states.contains(WidgetState.selected)
+                ? AppColors.primary
+                : AppColors.textSecondary,
+          ),
+        ),
+      ),
+      textTheme: Typography.material2021().white.apply(
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,
       ),

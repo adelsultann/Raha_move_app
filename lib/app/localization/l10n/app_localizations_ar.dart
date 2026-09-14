@@ -1169,4 +1169,52 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get profileDeleteFailed =>
       'تعذّر بدء طلب الحذف. لا يزال حسابك مسجّل الدخول.';
+
+  @override
+  String get navigationHome => 'الرئيسية';
+
+  @override
+  String get navigationLibrary => 'مكتبتي';
+
+  @override
+  String get homeHeadline => 'امنح جسمك وقتًا للحركة';
+
+  @override
+  String get homeSubtitle => 'حركة بسيطة. يوم أفضل.';
+
+  @override
+  String get homeRoutines => 'اختر روتينك';
+
+  @override
+  String get homeBrowseAreas => 'تصفح حسب المنطقة';
+
+  @override
+  String get homeRecommended => 'تمارين مقترحة';
+
+  @override
+  String get homeViewAll => 'عرض الكل';
+
+  @override
+  String get libraryRoutines => 'الروتينات';
+
+  @override
+  String get libraryExercises => 'التمارين';
+
+  @override
+  String get libraryExerciseEmpty => 'احفظ تمرينًا من الرئيسية لتجده هنا.';
+
+  @override
+  String get libraryLocalNotice => 'تُحفظ التمارين على هذا الجهاز.';
+
+  @override
+  String get exerciseSave => 'حفظ التمرين';
+
+  @override
+  String get exerciseUnsave => 'إزالة من المكتبة';
+
+  @override
+  String get exerciseOpenRoutine => 'عرض الروتين';
+
+  @override
+  String get homeResume => 'أكمل روتينك';
 }

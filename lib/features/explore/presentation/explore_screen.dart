@@ -8,14 +8,17 @@ import '../application/explore_providers.dart';
 import '../domain/explore_models.dart';
 
 class ExploreScreen extends ConsumerStatefulWidget {
-  const ExploreScreen({super.key});
+  const ExploreScreen({super.key, this.initialBodyArea});
+  final String? initialBodyArea;
 
   @override
   ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
-  ExploreFilters _filters = const ExploreFilters();
+  late ExploreFilters _filters = ExploreFilters(
+    bodyAreas: {if (widget.initialBodyArea != null) widget.initialBodyArea!},
+  );
   String? _context;
 
   @override

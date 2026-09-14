@@ -522,6 +522,15 @@ class LocalSessionFeedback extends Table with SyncColumns {
   ];
 }
 
+/// Device-local exercise bookmarks. Routine bookmarks retain their sync contract.
+class LocalSavedExercises extends Table {
+  TextColumn get userId => text()();
+  TextColumn get exerciseId => text()();
+  DateTimeColumn get savedAt => dateTime()();
+  @override
+  Set<Column<Object>> get primaryKey => {userId, exerciseId};
+}
+
 class LocalSavedRoutines extends Table with SyncColumns {
   TextColumn get userId => text().references(LocalProfiles, #userId)();
   TextColumn get routineId => text().references(LocalRoutines, #id)();
@@ -647,6 +656,7 @@ class LocalSyncState extends Table {
     LocalSessionSteps,
     LocalSessionFeedback,
     LocalSavedRoutines,
+    LocalSavedExercises,
     LocalProgressProjections,
     LocalAnalyticsEmissionReceipts,
     LocalIdMappings,
@@ -658,7 +668,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -675,6 +685,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 10) await _migrateToV10(m);
       if (from < 11) await _migrateToV11(m);
       if (from < 12) await _migrateToV12(m);
+      if (from < 13) await m.createTable(localSavedExercises);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -1993,6 +2004,9 @@ class LocalUserDataRepository {
     );
     await (_database.delete(
       _database.localCheckIns,
+    )..where((r) => r.userId.equals(activeUserId))).go();
+    await (_database.delete(
+      _database.localSavedExercises,
     )..where((r) => r.userId.equals(activeUserId))).go();
     await (_database.delete(
       _database.localSavedRoutines,
