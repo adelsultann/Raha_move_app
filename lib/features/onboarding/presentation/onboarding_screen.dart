@@ -55,12 +55,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               width: double.infinity,
               child: FilledButton(
                 key: Key(isLast ? 'onboarding_get_started' : 'onboarding_next'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
                 onPressed: isLast ? widget.onFinish : _next,
                 child: Text(
                   isLast
@@ -126,7 +120,20 @@ class _OnboardingPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 72, color: theme.colorScheme.primary),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Icon(
+                    icon,
+                    size: 56,
+                    color: theme.colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              ),
               const SizedBox(height: 32),
               Semantics(
                 header: true,

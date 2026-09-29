@@ -54,6 +54,17 @@ class $AssetsCategoriesIconsGen {
   ];
 }
 
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/splash_breathing_arc.png
+  AssetGenImage get splashBreathingArc =>
+      const AssetGenImage('assets/images/splash_breathing_arc.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [splashBreathingArc];
+}
+
 class $AssetsStarterContentGen {
   const $AssetsStarterContentGen();
 
@@ -99,6 +110,7 @@ class $AssetsStarterContentMediaVideosGen {
 
 abstract final class Assets {
   static const $AssetsCategoriesIconsGen categoriesIcons = $AssetsCategoriesIconsGen();
+  static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsStarterContentGen starterContent = $AssetsStarterContentGen();
   static const AssetGenImage logo = AssetGenImage('logo.png');
 

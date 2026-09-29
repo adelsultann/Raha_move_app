@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
+import 'package:raha_move/app/theme/app_theme.dart';
 import 'package:raha_move/features/authentication/application/auth_controller.dart';
 
 /// Gates app startup until a guest identity exists. Shows a localized loading
@@ -25,7 +26,11 @@ class AuthGate extends ConsumerWidget {
   }
 
   Widget _gate(Widget body) => MaterialApp(
+    debugShowCheckedModeBanner: false,
     onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+    theme: AppTheme.forLocale(
+      WidgetsBinding.instance.platformDispatcher.locale,
+    ),
     home: Scaffold(body: body),
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: const [

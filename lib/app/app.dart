@@ -24,7 +24,7 @@ class RahaMoveApp extends ConsumerWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      theme: AppTheme.light(),
+      theme: AppTheme.forLocale(locale),
       routerConfig: appRouter,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,

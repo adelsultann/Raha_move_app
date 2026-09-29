@@ -12,12 +12,11 @@ The selected direction is **Calm Movement**.
 
 It combines:
 
-- Deep teal for trust, movement, and primary actions
-- Soft mint for selected and encouraging states
-- Warm ivory and white for calm, spacious surfaces
-- Warm sand for natural visual variety
-- Amber and coral for limited moments of reward and celebration
-- Deep neutral text colors for readability
+- Bright mint for movement, progress, and primary actions
+- Deep mint for selected and encouraging states
+- Dark navy for a calm, focused application background
+- Layered navy surfaces for clear hierarchy without visual noise
+- Cool white and muted blue-gray text for readability
 
 The same visual system must work in Arabic RTL and English LTR layouts.
 
@@ -25,37 +24,39 @@ The same visual system must work in Arabic RTL and English LTR layouts.
 
 | Token | Name | Hex | Primary usage |
 |---|---|---:|---|
-| `primary` | Deep Teal | `#176B68` | Main buttons, selected navigation, key actions |
-| `primaryDark` | Dark Teal | `#0E4F4D` | Pressed states, strong headings, dark accents |
-| `primaryLight` | Soft Mint | `#CFE8E2` | Selected cards, progress areas, soft highlights |
-| `background` | Warm Ivory | `#FAF8F2` | Main application background |
-| `surface` | White | `#FFFFFF` | Cards, sheets, dialogs, elevated areas |
-| `secondary` | Warm Sand | `#E9DCC8` | Category cards and gentle visual variety |
-| `reward` | Warm Amber | `#E9A23B` | Points, badges, milestones, meaningful progress |
-| `celebration` | Soft Coral | `#E67D68` | Occasional achievements and celebratory accents |
-| `textPrimary` | Deep Charcoal | `#203332` | Headings and primary body text |
-| `textSecondary` | Muted Slate | `#647674` | Supporting text and secondary information |
-| `border` | Pale Gray-green | `#DDE5E2` | Dividers, outlines, input borders, disabled controls |
+| `primary` | Bright Mint | `#28BD91` | Main buttons, selected navigation, key actions |
+| `onPrimary` | Deep Navy | `#080F20` | Text and icons on bright mint controls |
+| `primaryContainer` | Deep Mint | `#123D3B` | Selected cards, icon containers, soft highlights |
+| `onPrimaryContainer` | Light Mint | `#86E5C7` | Text and icons on deep mint containers |
+| `background` | Deep Navy | `#080F20` | Main application background |
+| `surface` | Navy Surface | `#11192C` | Cards, sheets, dialogs, navigation |
+| `surfaceRaised` | Raised Navy | `#1A263A` | Snackbars and raised surface hierarchy |
+| `surfaceArtwork` | Artwork Navy | `#24374A` | Illustration and media placeholders |
+| `textPrimary` | Cool White | `#F5F7FC` | Headings and primary body text |
+| `textSecondary` | Blue Gray | `#A5B2C8` | Supporting text and secondary information |
+| `outline` | Slate Outline | `#4E607A` | Input borders and prominent outlines |
+| `outlineSubtle` | Subtle Navy | `#2D3B50` | Dividers, inactive indicators, disabled controls |
+| `error` | Soft Error | `#FFB4AB` | Error text and destructive actions |
 
 The main brand combination is:
 
 ```text
-Deep Teal    #176B68
-Soft Mint    #CFE8E2
-Warm Ivory   #FAF8F2
-Warm Amber   #E9A23B
+Bright Mint  #28BD91
+Deep Mint    #123D3B
+Deep Navy    #080F20
+Navy Surface #11192C
 ```
 
-Teal, mint, ivory, and white should dominate. Amber and coral are accent colors and should not become general interface colors.
+Navy surfaces should dominate. Mint identifies actions, selection, and progress; cool white and blue gray carry the content hierarchy.
 
 ## Suggested Color Proportions
 
-- 60% warm ivory and white
-- 25% teal and mint
-- 10% neutral text, icons, and borders
-- 5% amber or coral accents
+- 60% deep navy background
+- 25% layered navy surfaces
+- 10% cool white, blue-gray text, icons, and borders
+- 5% mint actions and selected states
 
-If reward colors appear throughout the interface, they will stop feeling meaningful.
+If mint appears throughout the interface, selected states and primary actions lose emphasis.
 
 ## Semantic Colors
 
@@ -63,10 +64,10 @@ Semantic colors communicate system meaning independently from the brand palette.
 
 | Token | Meaning | Hex |
 |---|---|---:|
-| `success` | Successful completion or confirmation | `#2E7D61` |
+| `success` | Successful completion or confirmation | `#28BD91` |
 | `information` | Neutral informational state | `#3978A8` |
 | `warning` | Caution or attention required | `#C78324` |
-| `error` | Error, failure, or destructive action | `#B94A48` |
+| `error` | Error, failure, or destructive action | `#FFB4AB` |
 
 Red should not represent ordinary stiffness or unselected body areas. Doing so would make the experience feel unnecessarily alarming or medical.
 
@@ -74,52 +75,49 @@ Red should not represent ordinary stiffness or unselected body areas. Doing so w
 
 ### Today screen
 
-- Warm ivory page background
-- Deep teal primary check-in button
-- White routine cards
-- Soft mint weekly-goal area
-- Amber only for earned milestones
-- Deep charcoal primary text
+- Deep navy page background
+- Bright mint primary check-in button
+- Navy routine cards
+- Deep mint weekly-goal area
+- Cool white primary text
 
 ### Check-in selections
 
 Unselected state:
 
-- White surface
-- Pale gray-green border
-- Deep charcoal text
+- Navy surface
+- Slate outline
+- Cool white text
 
 Selected state:
 
-- Soft mint background
-- Deep teal border
-- Dark teal icon and text
+- Deep mint background
+- Bright mint border
+- Light mint icon and text
 
 ### Recommendation screen
 
-- Warm ivory background
-- White recommendation card
-- Deep teal title and primary action
-- Soft mint explanation area
-- Muted slate supporting metadata
+- Deep navy background
+- Navy recommendation card
+- Cool white title and bright mint primary action
+- Deep mint explanation area
+- Blue-gray supporting metadata
 
 ### Routine player
 
-- Neutral warm background that does not compete with the footage
-- Deep charcoal exercise title
-- Deep teal timer and progress indicator
-- Deep teal primary play or pause control
-- Pale neutral secondary controls
-- Little or no amber during the routine
+- Deep navy background that does not compete with the footage
+- Cool white exercise title
+- Bright mint timer and progress indicator
+- Bright mint primary play or pause control
+- Slate secondary controls
 
 The exercise animation remains the visual focus.
 
 ### Completion screen
 
-- Soft mint completion background or glow
-- Deep teal confirmation message
-- Warm amber points and milestone details
-- Soft coral used only as a small celebratory accent
+- Deep mint completion background or glow
+- Light mint confirmation message
+- Bright mint points and milestone details
 
 If the user reports feeling less comfortable, avoid a heavily celebratory color treatment.
 
@@ -141,11 +139,11 @@ Before implementation is finalized:
 
 ### Arabic
 
-The selected Arabic typeface is **Thmanyah Sans**.
+The selected Arabic typeface is **Noto Sans Arabic**.
 
-It is the recommended family for the application interface because it is designed for digital screens and supports a contemporary Arabic-first identity.
+It is designed for digital screens, provides broad Arabic-script coverage, and remains readable at the application’s supported text scales.
 
-Use Thmanyah Sans for:
+Use Noto Sans Arabic for:
 
 - Navigation labels
 - Buttons
@@ -157,18 +155,9 @@ Use Thmanyah Sans for:
 - Settings
 - Body text
 
-Thmanyah also provides Serif Display and Serif Text families. Serif Display may be explored sparingly in marketing or large promotional statements, but the initial application should use Thmanyah Sans consistently.
-
 ### English
 
-First test the Latin glyphs included with the downloaded Thmanyah digital family.
-
-If the Latin typography does not provide the desired quality or personality, pair Thmanyah Sans with one of:
-
-- Manrope
-- Inter
-
-The final English choice should visually match the Arabic family in weight, density, line height, and overall tone.
+The selected English typeface is **Manrope**. It pairs with Noto Sans Arabic in weight, density, and overall tone. Locale-aware theme construction applies Noto Sans Arabic to Arabic interfaces and Manrope to English interfaces, with the other family registered as fallback for mixed-language text.
 
 ## Suggested Type Scale
 
@@ -189,82 +178,64 @@ Arabic text may need slightly more line height than English, particularly for mu
 
 ## Font Assets
 
-Download Thmanyah directly from the official source and preserve the filenames provided in the package.
+Both font families are bundled so typography remains available offline. Preserve the upstream filenames and Open Font License files.
 
-Proposed asset location:
+Asset location:
 
 ```text
 assets/
 └── fonts/
-    └── thmanyah/
-        ├── [official regular font filename]
-        ├── [official medium font filename]
-        ├── [official semibold font filename]
-        └── [official bold font filename]
+    ├── manrope/
+    │   ├── Manrope[wght].ttf
+    │   └── OFL.txt
+    └── noto_sans_arabic/
+        ├── NotoSansArabic[wdth,wght].ttf
+        └── OFL.txt
 ```
 
-The exact files and supported weights will be recorded after the official package is downloaded and inspected.
-
-Example Flutter registration, using placeholders until the actual filenames are known:
+Flutter registration:
 
 ```yaml
 flutter:
   fonts:
-    - family: ThmanyahSans
+    - family: Manrope
       fonts:
-        - asset: assets/fonts/thmanyah/[official-regular-file]
-          weight: 400
-        - asset: assets/fonts/thmanyah/[official-medium-file]
-          weight: 500
-        - asset: assets/fonts/thmanyah/[official-semibold-file]
-          weight: 600
-        - asset: assets/fonts/thmanyah/[official-bold-file]
-          weight: 700
+        - asset: assets/fonts/manrope/Manrope[wght].ttf
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/noto_sans_arabic/NotoSansArabic[wdth,wght].ttf
 ```
 
-## Thmanyah License Notes
+## Font License Notes
 
-Thmanyah permits personal and commercial use in applications, websites, branding, print, and other design work, subject to its license.
+Manrope and Noto Sans Arabic are distributed under the SIL Open Font License 1.1. Their license files are stored beside the bundled font binaries.
 
 Project requirements:
 
-- Download the font from the official source.
-- Preserve the original license with internal project records.
+- Preserve each original license in the application repository.
 - Do not modify the font files.
 - Do not rename the font files.
-- Do not create a derivative font.
-- Do not republish or offer the raw files for standalone download.
-- Avoid committing the raw font files to a public repository.
-- Do not suggest endorsement, sponsorship, or partnership by Thmanyah.
-
-Official references:
-
-- [Thmanyah font page](https://font.thmanyah.com/)
-- [Thmanyah font usage and license guidance](https://ask.thmanyah.com/hc/en-001/articles/45993930027281-Thmanyah-Font-for-Everyone)
+- Review the bundled OFL files before redistributing modified font software.
 
 ## Flutter Theme Organization
 
-When implementation begins, define semantic tokens rather than placing raw hex values throughout widgets.
+Semantic tokens are defined centrally rather than placing raw hex values throughout widgets.
 
 Suggested organization:
 
 ```text
 lib/app/theme/
 ├── app_colors.dart
-├── app_text_styles.dart
-├── app_theme.dart
-├── app_spacing.dart
-├── app_radius.dart
-└── app_motion.dart
+├── app_typography.dart
+└── app_theme.dart
 ```
 
-Widgets should use theme roles such as `primary`, `surface`, and `textPrimary`. This keeps future palette adjustments manageable.
+Widgets use `Theme.of(context).colorScheme` and `textTheme` roles. `app_colors.dart` remains private to theme construction so future palette adjustments stay centralized.
 
-Dark mode is not yet defined. It should be designed as a separate semantic theme rather than mechanically inverting the light palette.
+The current product theme is the approved dark navy and mint scheme. A separate light theme is not defined.
 
 ## Related Documentation
 
 - Product and brand direction: [product-brief.md](product-brief.md)
 - Screen specifications: [design-and-screens.md](design-and-screens.md)
 - Flutter architecture: [project-structure.md](project-structure.md)
-

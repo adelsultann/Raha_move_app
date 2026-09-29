@@ -6,10 +6,41 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/core/analytics/analytics_catalog.dart';
 import 'package:raha_move/core/analytics/analytics_service_impls.dart';
 import 'package:raha_move/features/onboarding/presentation/onboarding_gate.dart';
+import 'package:raha_move/features/onboarding/presentation/onboarding_screen.dart';
 
 import '../support/onboarding_test_harness.dart';
 
 void main() {
+  testWidgets('onboarding uses the shared navy, mint, and locale font theme', (
+    tester,
+  ) async {
+    final container = buildOnboardingContainer();
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const OnboardingGate(child: _App()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final selectionTheme = Theme.of(
+      tester.element(find.byKey(const Key('language_english'))),
+    );
+    expect(selectionTheme.brightness, Brightness.dark);
+    expect(selectionTheme.colorScheme.primary, const Color(0xFF28BD91));
+    expect(selectionTheme.scaffoldBackgroundColor, const Color(0xFF080F20));
+
+    await tester.tap(find.byKey(const Key('language_english')));
+    await tester.pumpAndSettle();
+
+    final onboardingTheme = Theme.of(
+      tester.element(find.byType(OnboardingScreen)),
+    );
+    expect(onboardingTheme.textTheme.bodyMedium?.fontFamily, 'Manrope');
+  });
+
   testWidgets('presents Arabic and English with equal prominence', (
     tester,
   ) async {

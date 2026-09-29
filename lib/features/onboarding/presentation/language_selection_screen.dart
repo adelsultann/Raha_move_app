@@ -80,19 +80,7 @@ class _LanguageButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: FilledButton(
-        style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(56),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        onPressed: onPressed,
-        child: Text(
-          label,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-      ),
+      child: FilledButton(onPressed: onPressed, child: Text(label)),
     );
   }
 }

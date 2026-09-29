@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 
+import '../../../app/theme/app_theme.dart';
+
 import '../application/locale_controller.dart';
 import '../application/onboarding_controller.dart';
 import 'language_selection_screen.dart';
@@ -13,7 +15,7 @@ import 'onboarding_screen.dart';
 /// A new user sees language selection followed by the onboarding pages; a user
 /// who has already completed onboarding is sent straight to [child]. This
 /// mirrors the existing `AuthGate`/`CatalogBootstrapGate` pattern and renders
-/// its own localized `MaterialApp` until onboarding is done.
+/// its own localized, themed `MaterialApp` until onboarding is done.
 class OnboardingGate extends ConsumerWidget {
   const OnboardingGate({super.key, required this.child});
 
@@ -47,8 +49,10 @@ class OnboardingGate extends ConsumerWidget {
   }
 
   Widget _gate({required Locale? locale, required Widget body}) => MaterialApp(
+    debugShowCheckedModeBanner: false,
     onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
     locale: locale,
+    theme: AppTheme.forLocale(locale),
     home: Scaffold(body: body),
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: const [

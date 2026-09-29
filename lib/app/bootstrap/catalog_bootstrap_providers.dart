@@ -16,6 +16,10 @@ part 'catalog_bootstrap_providers.g.dart';
 
 /// Durable application database. Tests override this provider with an
 /// isolated in-memory database.
+/// Riverpod convert this into appDatabaseProvider
+/// keepAlive: true means the database should 
+/// remain available instead of being repeatedly opened and 
+/// closed while the app is running.
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
   final database = createAppDatabase();

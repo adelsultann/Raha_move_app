@@ -3,7 +3,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../localization/l10n/app_localizations.dart';
+import '../theme/app_theme.dart';
 import 'catalog_bootstrap_providers.dart';
+import 'widgets/animated_splash_illustration.dart';
 
 /// Gates app startup until the local catalog is bootstrapped. It shows a
 /// localized loading state and, on failure, a localized retry action, while the
@@ -29,7 +31,11 @@ class CatalogBootstrapGate extends ConsumerWidget {
   );
 
   Widget _gateApp(Widget body) => MaterialApp(
+    debugShowCheckedModeBanner: false,
     onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+    theme: AppTheme.forLocale(
+      WidgetsBinding.instance.platformDispatcher.locale,
+    ),
     home: Scaffold(body: body),
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: const [
@@ -47,14 +53,65 @@ class _BootstrapLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 16),
-          Text(strings.catalogBootstrapLoading),
-        ],
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: '${strings.appTitle}. ${strings.catalogBootstrapLoading}',
+      child: ExcludeSemantics(
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final illustrationHeight = (constraints.maxHeight * 0.54).clamp(
+                240.0,
+                430.0,
+              );
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 24,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: illustrationHeight,
+                        child: const AnimatedSplashIllustration(),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        strings.appTitle,
+                        textAlign: TextAlign.center,
+                        style: textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        strings.catalogBootstrapLoading,
+                        textAlign: TextAlign.center,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: 96,
+                        child: LinearProgressIndicator(
+                          key: const Key('catalog_bootstrap_progress'),
+                          minHeight: 3,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

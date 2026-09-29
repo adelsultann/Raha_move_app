@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
-import 'package:raha_move/app/theme/app_theme.dart';
 import 'package:raha_move/features/explore/application/explore_providers.dart';
 import 'package:raha_move/features/explore/domain/explore_models.dart';
 import 'package:raha_move/features/explore/presentation/explore_screen.dart';
@@ -18,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
     final routines = ref.watch(
       exploreRoutinesProvider(filters: const ExploreFilters()),
     );
@@ -36,8 +36,8 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Text(
                     s.navigationHome.toUpperCase(),
-                    style: const TextStyle(
-                      color: AppColors.primary,
+                    style: TextStyle(
+                      color: colors.primary,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
@@ -45,16 +45,12 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   Text(
                     s.homeHeadline,
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      height: 1.15,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),
                   Text(
                     s.homeSubtitle,
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: TextStyle(color: colors.onSurfaceVariant),
                   ),
                   const SizedBox(height: 20),
                   FilledButton.icon(
@@ -67,9 +63,9 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     Card(
                       child: ListTile(
-                        leading: const Icon(
+                        leading: Icon(
                           Icons.play_circle_outline,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                         title: Text(s.homeResume),
                         subtitle: Text(resume.name ?? s.navigationHome),
@@ -131,7 +127,7 @@ class HomeScreen extends ConsumerWidget {
                   return SizedBox(
                     width: 112,
                     child: Material(
-                      color: AppColors.surface,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(22),
                       child: InkWell(
                         key: Key('home_area_$area'),
@@ -211,10 +207,7 @@ class _Heading extends StatelessWidget {
         Expanded(
           child: Semantics(
             header: true,
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
-            ),
+            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
           ),
         ),
         ?action,
@@ -230,11 +223,12 @@ class _RoutineTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
     final width = math.min(294.0, MediaQuery.sizeOf(context).width - 64);
     return SizedBox(
       width: width,
       child: Material(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(28),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -249,10 +243,10 @@ class _RoutineTile extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule_rounded,
                       size: 15,
-                      color: AppColors.primary,
+                      color: colors.primary,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -260,8 +254,8 @@ class _RoutineTile extends StatelessWidget {
                         s.recommendationDurationMinutes(
                           (card.durationSeconds / 60).ceil(),
                         ),
-                        style: const TextStyle(
-                          color: AppColors.primary,
+                        style: TextStyle(
+                          color: colors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -273,11 +267,7 @@ class _RoutineTile extends StatelessWidget {
                   card.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    height: 1.15,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 Expanded(
                   child: Center(
@@ -299,8 +289,8 @@ class _RoutineTile extends StatelessWidget {
                               top: i.isOdd ? 30 : 8,
                               child: Container(
                                 padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.surface,
+                                decoration: BoxDecoration(
+                                  color: colors.surface,
                                   shape: BoxShape.circle,
                                 ),
                                 child: ExerciseArtwork(
@@ -320,15 +310,15 @@ class _RoutineTile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         s.recommendationMovementsCount(card.movementCount),
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_rounded,
-                      color: AppColors.primary,
+                      color: colors.primary,
                       size: 20,
                     ),
                   ],
@@ -357,7 +347,7 @@ class ExerciseArtwork extends StatelessWidget {
     child: Container(
       width: size,
       height: size,
-      color: const Color(0xFF24374A),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       padding: const EdgeInsets.all(5),
       child: Image.asset(
         image ?? areaAsset(area),
@@ -377,49 +367,52 @@ class ExerciseTile extends StatelessWidget {
   const ExerciseTile({super.key, required this.exercise});
   final HomeExercise exercise;
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 182,
-    child: Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(24),
-      child: InkWell(
-        key: Key('exercise_${exercise.id}'),
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return SizedBox(
+      width: 182,
+      child: Material(
+        color: colors.surface,
         borderRadius: BorderRadius.circular(24),
-        onTap: () => openExercise(context, exercise),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: ExerciseArtwork(
-                  area: exercise.area,
-                  image: exercise.image,
+        child: InkWell(
+          key: Key('exercise_${exercise.id}'),
+          borderRadius: BorderRadius.circular(24),
+          onTap: () => openExercise(context, exercise),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: ExerciseArtwork(
+                    area: exercise.area,
+                    image: exercise.image,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Text(
-                  exercise.name,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: Text(
+                    exercise.name,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              Text(
-                AppLocalizations.of(context)
-                    .recommendationSeconds(exercise.seconds),
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
+                Text(
+                  AppLocalizations.of(context)
+                      .recommendationSeconds(exercise.seconds),
+                  style: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 void openExercise(BuildContext context, HomeExercise exercise) =>

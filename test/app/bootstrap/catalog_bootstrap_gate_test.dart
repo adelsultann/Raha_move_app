@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/native.dart';
@@ -14,6 +15,74 @@ import 'package:raha_move/features/exercise_library/data/content_release_source.
 import '../../features/exercise_library/data/release_fixture.dart';
 
 void main() {
+  testWidgets('shows the localized splash while the catalog loads', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(360, 640));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final database = AppDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final pendingRelease = Completer<String>();
+    final container = _container(
+      database,
+      loadString: (_) => pendingRelease.future,
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const CatalogBootstrapGate(child: _Child()),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.byKey(const Key('splash_breathing_arc')), findsOneWidget);
+    expect(find.byKey(const Key('catalog_bootstrap_progress')), findsOneWidget);
+    expect(find.text('Raha Move'), findsOneWidget);
+    expect(find.text('Preparing your movement catalog…'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('renders the splash in Arabic RTL at compact 200% scale', (
+    tester,
+  ) async {
+    tester.binding.platformDispatcher.localesTestValue = const [Locale('ar')];
+    tester.binding.platformDispatcher.textScaleFactorTestValue = 2;
+    await tester.binding.setSurfaceSize(const Size(360, 640));
+    addTearDown(() {
+      tester.binding.platformDispatcher.clearLocalesTestValue();
+      tester.binding.platformDispatcher.clearTextScaleFactorTestValue();
+      return tester.binding.setSurfaceSize(null);
+    });
+
+    final database = AppDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final pendingRelease = Completer<String>();
+    final container = _container(
+      database,
+      loadString: (_) => pendingRelease.future,
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const CatalogBootstrapGate(child: _Child()),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text('راحة موف'), findsOneWidget);
+    expect(find.text('نحضّر قائمة الحركات الخاصة بك…'), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.text('راحة موف'))),
+      TextDirection.rtl,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('renders the child once the catalog is ready', (tester) async {
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);

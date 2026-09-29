@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/localization/l10n/app_localizations.dart';
+import '../../../app/theme/app_theme.dart';
 import '../application/profile_providers.dart';
 import '../data/rpc_account_deletion_action.dart';
 
@@ -73,10 +74,14 @@ class AccountDeletionRecoveryGate extends ConsumerWidget {
   }
 
   Widget _app(WidgetBuilder bodyBuilder) => MaterialApp(
+    debugShowCheckedModeBanner: false,
     // Recovery runs before the persisted profile may safely be read. Use the
     // device locale so its privacy message remains understandable in either
     // supported language without restoring deleted user state.
     locale: WidgetsBinding.instance.platformDispatcher.locale,
+    theme: AppTheme.forLocale(
+      WidgetsBinding.instance.platformDispatcher.locale,
+    ),
     home: Scaffold(body: Builder(builder: bodyBuilder)),
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: const [
