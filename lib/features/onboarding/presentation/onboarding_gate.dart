@@ -5,7 +5,6 @@ import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 
 import '../application/locale_controller.dart';
 import '../application/onboarding_controller.dart';
-import '../../preferences/presentation/preferences_screen.dart';
 import 'language_selection_screen.dart';
 import 'onboarding_screen.dart';
 
@@ -62,6 +61,10 @@ class OnboardingGate extends ConsumerWidget {
 }
 
 /// Orchestrates language selection followed by the onboarding pages.
+///
+/// Preference collection is intentionally deferred until after the MVP. The
+/// underlying preference models remain available to features that use their
+/// defaults, but the setup screen is not part of the onboarding journey.
 class _OnboardingFlow extends ConsumerStatefulWidget {
   const _OnboardingFlow();
 
@@ -80,18 +83,14 @@ class _OnboardingFlowState extends ConsumerState<_OnboardingFlow> {
             setState(() => _stage = _OnboardingStage.intro),
       ),
       _OnboardingStage.intro => OnboardingScreen(
-        onFinish: () => setState(() => _stage = _OnboardingStage.preferences),
-      ),
-      _OnboardingStage.preferences => PreferencesScreen(
-        onBack: () => setState(() => _stage = _OnboardingStage.intro),
-        onComplete: () =>
+        onFinish: () =>
             ref.read(onboardingControllerProvider.notifier).complete(),
       ),
     };
   }
 }
 
-enum _OnboardingStage { language, intro, preferences }
+enum _OnboardingStage { language, intro }
 
 class _OnboardingLoading extends StatelessWidget {
   const _OnboardingLoading();
