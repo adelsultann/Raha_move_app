@@ -27,8 +27,10 @@ feedback remain in scope.
 
 The deferred implementations and data structures remain in the repository.
 Compile-time feature switches remove their routes and user-interface entry
-points from the default build. A forward database migration stops new server
-reward awards without deleting historical records or tables.
+points from the default build. Forward database migrations stop new server
+reward awards, reject check-in and recommendation synchronization, and remove
+legacy direct writes to dormant preference-related tables without deleting
+historical records or shared schema.
 
 Re-enabling a deferred feature requires product review, updated acceptance
 criteria, client switches, and—when gamification is restored—a new forward
