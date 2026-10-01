@@ -8,7 +8,7 @@ If this file is unavailable, incomplete, or conflicts with the assigned task, st
 
 ## Product Context
 
-Raha Move is a calm, beginner-friendly, Arabic-first mobility application for people who want a short routine suited to how their body feels and the time they have available. The MVP must choose an appropriate routine, explain why it was chosen, guide the user through it, and encourage a comfortable, consistent habit.
+Raha Move is a calm, beginner-friendly, Arabic-first mobility application for people who want approachable short movement routines. The simplified MVP must let users browse an appropriate routine, guide them through it, and collect calm post-routine feedback. Preference collection, personalized recommendations, and gamification are deferred under `docs/decisions/mvp-scope-simplification.md`.
 
 The product must feel warm, reassuring, credible, and non-clinical. It must never imply a diagnosis, promise medical outcomes, reward pain tolerance, or use guilt-based motivation.
 
@@ -30,9 +30,9 @@ When documents disagree, do not silently choose one. Identify the conflict, its 
 
 - Arabic RTL and English LTR are equal first-class experiences.
 - All user-facing application text must be localized; IDs, analytics names, and media identities remain language-neutral.
-- The MVP recommendation engine runs entirely on-device against the local Drift content cache. It must be deterministic, explainable, and versioned.
+- When recommendations are enabled after the simplified MVP, the engine runs entirely on-device against the local Drift content cache. It must be deterministic, explainable, and versioned.
 - Content identity belongs to Raha Move. Provider IDs and filenames are provenance fields, never permanent exercise IDs.
-- Recommendation, progress, and routine playback must work from locally cached or bundled content when offline.
+- Direct routine browsing and playback must work from locally cached or bundled content when offline. Deferred recommendation and gamification features must retain their offline guarantees when re-enabled.
 - Only active, credited playback time counts toward routine completion. Do not award progress, points, streaks, or achievements more than once.
 - Treat `less_comfortable`, sharp pain, and discomfort with calm safety-approved language; avoid medical advice.
 - Gamification rewards safe consistency and participation, never extreme range of motion, pain tolerance, or competition.

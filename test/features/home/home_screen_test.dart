@@ -105,7 +105,7 @@ void main() {
           home: RepaintBoundary(
             key: const Key('preview'),
             child: Scaffold(
-              body: const HomeScreen(),
+              body: const HomeScreen(recommendationsEnabled: false),
               bottomNavigationBar: RahaNavigationBar(
                 currentIndex: 0,
                 onDestinationSelected: (_) {},
@@ -137,6 +137,8 @@ void main() {
           scrollable: find.byType(Scrollable).first,
         );
         expect(find.byKey(const Key('home_routines')), findsOneWidget);
+        expect(find.byKey(const Key('browse_routines')), findsOneWidget);
+        expect(find.byKey(const Key('start_check_in')), findsNothing);
         expect(tester.takeException(), isNull);
         if (locale.languageCode == 'en' &&
             scale == 1 &&

@@ -21,12 +21,14 @@ class ProfileScreen extends ConsumerWidget {
     required this.onPrivacy,
     required this.onTerms,
     this.onReminders,
+    this.showPersonalizationSettings = true,
   });
   final VoidCallback onSavedRoutines;
   final VoidCallback onHelp;
   final VoidCallback onPrivacy;
   final VoidCallback onTerms;
   final VoidCallback? onReminders;
+  final bool showPersonalizationSettings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,11 +52,17 @@ class ProfileScreen extends ConsumerWidget {
               _GuestAccountPrompt(
                 onCreateAccount: () => const SignUpRoute().push(context),
               ),
-            _Heading(strings.profilePreferences),
+            _Heading(
+              showPersonalizationSettings
+                  ? strings.profilePreferences
+                  : strings.profileSettings,
+            ),
             _LanguageTile(settings: value),
-            _ExperienceTile(settings: value),
-            _GoalTile(settings: value),
-            _PositionsTile(settings: value),
+            if (showPersonalizationSettings) ...[
+              _ExperienceTile(settings: value),
+              _GoalTile(settings: value),
+              _PositionsTile(settings: value),
+            ],
             _SwitchTile(
               key: const Key('profile_sound'),
               label: strings.profileSound,
@@ -86,13 +94,14 @@ class ProfileScreen extends ConsumerWidget {
                 value.copyWith(wifiOnlyDownloads: enabled),
               ),
             ),
-            ListTile(
-              key: const Key('profile_reminder_interest'),
-              leading: const Icon(Icons.notifications_outlined),
-              title: Text(strings.profileReminderInterest),
-              subtitle: Text(strings.profileReminderInterestHint),
-              onTap: onReminders,
-            ),
+            if (showPersonalizationSettings)
+              ListTile(
+                key: const Key('profile_reminder_interest'),
+                leading: const Icon(Icons.notifications_outlined),
+                title: Text(strings.profileReminderInterest),
+                subtitle: Text(strings.profileReminderInterestHint),
+                onTap: onReminders,
+              ),
             _Heading(strings.profilePrivacy),
             _SwitchTile(
               key: const Key('profile_analytics'),

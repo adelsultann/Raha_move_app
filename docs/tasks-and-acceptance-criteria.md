@@ -1,5 +1,11 @@
 # Raha Move Tasks and Acceptance Criteria
 
+> **MVP scope override:** The accepted
+> [MVP scope simplification](decisions/mvp-scope-simplification.md) defers
+> RAHA-032, RAHA-040–043, the gamification portions of RAHA-063, and
+> RAHA-070–072. Where the older acceptance criteria below conflict with that
+> decision, the decision governs the first MVP release.
+
 ## Purpose
 
 This document converts the Raha Move product, design, architecture, database, and asset specifications into an implementation-ready MVP backlog. It is the shared delivery contract for product, design, engineering, content, and quality assurance.

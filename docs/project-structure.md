@@ -1,5 +1,10 @@
 # Raha Move Project Structure
 
+> **Current MVP decision:** Preference collection, personalized
+> recommendations, and gamification are retained as dormant feature modules but
+> excluded from the default build. See
+> [MVP scope simplification](decisions/mvp-scope-simplification.md).
+
 Related documents:
 
 - [product-brief.md](product-brief.md) covers the product vision, audience, content, gamification, and roadmap.

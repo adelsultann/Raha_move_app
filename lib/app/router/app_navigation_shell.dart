@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../config/mvp_features.dart';
 import '../localization/l10n/app_localizations.dart';
 
-/// Keeps the four primary destinations available while preserving each
+/// Keeps the enabled primary destinations available while preserving each
 /// branch's state. Focused flows, including the routine player, are routed
 /// outside this shell.
 class AppNavigationShell extends StatelessWidget {
@@ -56,11 +57,12 @@ class RahaNavigationBar extends StatelessWidget {
           selectedIcon: const Icon(Icons.bookmarks),
           label: strings.navigationLibrary,
         ),
-        NavigationDestination(
-          icon: const Icon(Icons.insights_outlined),
-          selectedIcon: const Icon(Icons.insights),
-          label: strings.navigationProgress,
-        ),
+        if (MvpFeatures.gamification)
+          NavigationDestination(
+            icon: const Icon(Icons.insights_outlined),
+            selectedIcon: const Icon(Icons.insights),
+            label: strings.navigationProgress,
+          ),
         NavigationDestination(
           icon: const Icon(Icons.person_outline),
           selectedIcon: const Icon(Icons.person),

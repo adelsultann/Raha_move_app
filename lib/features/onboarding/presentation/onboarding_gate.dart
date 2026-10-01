@@ -3,10 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 
+import '../../../app/config/mvp_features.dart';
 import '../../../app/theme/app_theme.dart';
 
 import '../application/locale_controller.dart';
 import '../application/onboarding_controller.dart';
+import '../../preferences/presentation/preferences_screen.dart';
 import 'language_selection_screen.dart';
 import 'onboarding_screen.dart';
 
@@ -66,9 +68,8 @@ class OnboardingGate extends ConsumerWidget {
 
 /// Orchestrates language selection followed by the onboarding pages.
 ///
-/// Preference collection is intentionally deferred until after the MVP. The
-/// underlying preference models remain available to features that use their
-/// defaults, but the setup screen is not part of the onboarding journey.
+/// Preference collection is deferred from the default MVP build. Its screen
+/// and persistence remain available for a later opt-in build.
 class _OnboardingFlow extends ConsumerStatefulWidget {
   const _OnboardingFlow();
 
@@ -87,14 +88,24 @@ class _OnboardingFlowState extends ConsumerState<_OnboardingFlow> {
             setState(() => _stage = _OnboardingStage.intro),
       ),
       _OnboardingStage.intro => OnboardingScreen(
-        onFinish: () =>
+        onFinish: () {
+          if (MvpFeatures.preferences) {
+            setState(() => _stage = _OnboardingStage.preferences);
+          } else {
+            ref.read(onboardingControllerProvider.notifier).complete();
+          }
+        },
+      ),
+      _OnboardingStage.preferences => PreferencesScreen(
+        onBack: () => setState(() => _stage = _OnboardingStage.intro),
+        onComplete: () =>
             ref.read(onboardingControllerProvider.notifier).complete(),
       ),
     };
   }
 }
 
-enum _OnboardingStage { language, intro }
+enum _OnboardingStage { language, intro, preferences }
 
 class _OnboardingLoading extends StatelessWidget {
   const _OnboardingLoading();

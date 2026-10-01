@@ -603,6 +603,35 @@ void main() {
     expect(feedback.saves, isEmpty);
   });
 
+  testWidgets('simplified MVP omits gamification after skipped feedback', (
+    tester,
+  ) async {
+    final ticker = FakePlaybackTicker();
+    final feedback = FakeRoutineFeedbackRepository();
+    final container = buildRoutinePlayerContainer(
+      ticker: ticker,
+      feedbackRepository: feedback,
+      planForLocale: (locale) => minutePlan(locale: locale),
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      _wrapWithRouter(
+        container,
+        const RoutinePlayerScreen(routineId: 'rt-1', showGamification: false),
+      ),
+    );
+    await _pumpUntilReady(tester);
+    await _completeRoutine(tester, ticker);
+
+    await tester.tap(find.byKey(const Key('feedback_skip')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CompletionGamificationSummary), findsNothing);
+    expect(find.byKey(const Key('feedback_done')), findsOneWidget);
+    expect(feedback.saves, isEmpty);
+  });
+
   testWidgets('save error shows retry and preserves the selected response', (
     tester,
   ) async {

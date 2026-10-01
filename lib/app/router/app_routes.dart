@@ -17,6 +17,8 @@ import 'package:raha_move/features/routine_player/presentation/routine_player_sc
 import 'package:raha_move/features/home/home_screen.dart';
 import 'package:raha_move/features/home/my_library_screen.dart';
 
+import '../config/mvp_features.dart';
+
 part 'app_routes.g.dart';
 
 @TypedGoRoute<FoundationRoute>(path: '/')
@@ -25,7 +27,9 @@ class FoundationRoute extends GoRouteData with $FoundationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const HomeScreen();
+    return const HomeScreen(
+      recommendationsEnabled: MvpFeatures.recommendations,
+    );
   }
 }
 
@@ -77,6 +81,7 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   const ProfileRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) => ProfileScreen(
+    showPersonalizationSettings: MvpFeatures.preferences,
     onSavedRoutines: () => const SavedRoutinesRoute().push(context),
     onHelp: () => const ProfileHelpRoute().push(context),
     onPrivacy: () => const ProfilePrivacyRoute().push(context),
@@ -182,6 +187,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
       recommendationId: recommendationId,
       sessionId: sessionId,
       source: source,
+      showGamification: MvpFeatures.gamification,
     );
   }
 }

@@ -965,6 +965,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePreferences => 'Preferences';
 
   @override
+  String get profileSettings => 'Settings';
+
+  @override
   String get profileLanguage => 'Language';
 
   @override
@@ -1206,6 +1209,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeRecommended => 'Recommended Exercises';
+
+  @override
+  String get homeExercises => 'Explore exercises';
+
+  @override
+  String get homeBrowseRoutines => 'Browse routines';
 
   @override
   String get homeViewAll => 'View all';

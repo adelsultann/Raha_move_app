@@ -1,5 +1,10 @@
 # Raha Move Product Brief
 
+> **Current MVP decision:** The first release follows the direct browsing scope
+> in [MVP scope simplification](decisions/mvp-scope-simplification.md).
+> Preferences, personalized recommendations, and gamification remain part of
+> the product direction but are deferred from the default MVP build.
+
 ## Product Summary
 
 Raha Move is a beginner-friendly stretching and mobility app that removes the effort of deciding which routine to follow.

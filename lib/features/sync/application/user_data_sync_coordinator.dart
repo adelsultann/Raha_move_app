@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../app/config/mvp_features.dart';
 import '../../gamification/application/gamification_providers.dart';
 
 import '../domain/user_data_sync_engine.dart';
@@ -75,20 +76,19 @@ class ActiveUserSyncCoordinator extends _$ActiveUserSyncCoordinator {
     // consent-gated delivery pass afterwards so no client-created or merely
     // provisional point estimate can produce analytics. A tracking failure is
     // isolated from sync; the missing receipt leaves it retryable next pass.
-    try {
-      await ref
-          .read(pointsAwardAnalyticsGateProvider(userId))
-          .emitPendingAwards();
-    } catch (_) {
-      // Analytics is optional and must not turn an otherwise successful sync
-      // into a user-visible failure.
+    if (MvpFeatures.gamification) {
+      try {
+        await ref
+            .read(pointsAwardAnalyticsGateProvider(userId))
+            .emitPendingAwards();
+      } catch (_) {
+        // Analytics is optional and must not turn an otherwise successful sync
+        // into a user-visible failure.
+      }
+      ref.invalidate(weeklyGoalProgressProvider);
+      ref.invalidate(streakProgressProvider);
+      ref.invalidate(achievementProgressProvider);
     }
-    // Authoritative projections have been committed by the engine. Refresh the
-    // completion view in place so a delayed offline confirmation can add its
-    // newly-earned badge without requiring navigation or a manual retry.
-    ref.invalidate(weeklyGoalProgressProvider);
-    ref.invalidate(streakProgressProvider);
-    ref.invalidate(achievementProgressProvider);
     state = SyncCoordinatorState(
       phase: result.hasFailures
           ? SyncCoordinatorPhase.failed

@@ -951,6 +951,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePreferences => 'التفضيلات';
 
   @override
+  String get profileSettings => 'الإعدادات';
+
+  @override
   String get profileLanguage => 'اللغة';
 
   @override
@@ -1190,6 +1193,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeRecommended => 'تمارين مقترحة';
+
+  @override
+  String get homeExercises => 'استكشف التمارين';
+
+  @override
+  String get homeBrowseRoutines => 'تصفح الروتينات';
 
   @override
   String get homeViewAll => 'عرض الكل';

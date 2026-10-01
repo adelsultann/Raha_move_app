@@ -24,7 +24,7 @@ void main() {
     );
   }
 
-  testWidgets('shows the four localized English destinations', (tester) async {
+  testWidgets('shows the simplified MVP English destinations', (tester) async {
     await pumpNavigationBar(
       tester,
       locale: const Locale('en'),
@@ -33,7 +33,7 @@ void main() {
 
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('My Library'), findsOneWidget);
-    expect(find.text('Progress'), findsOneWidget);
+    expect(find.text('Progress'), findsNothing);
     expect(find.text('Profile'), findsOneWidget);
     expect(find.byIcon(Icons.home), findsOneWidget);
   });
@@ -51,7 +51,7 @@ void main() {
     );
     expect(find.text('الرئيسية'), findsOneWidget);
     expect(find.text('مكتبتي'), findsOneWidget);
-    expect(find.text('تقدّمك'), findsOneWidget);
+    expect(find.text('تقدّمك'), findsNothing);
     expect(find.text('حسابي'), findsOneWidget);
   });
 
@@ -63,9 +63,9 @@ void main() {
       onDestinationSelected: (index) => selectedIndex = index,
     );
 
-    await tester.tap(find.text('Progress'));
+    await tester.tap(find.text('Profile'));
 
     expect(selectedIndex, 2);
-    expect(find.bySemanticsLabel(RegExp('Progress')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Profile')), findsOneWidget);
   });
 }

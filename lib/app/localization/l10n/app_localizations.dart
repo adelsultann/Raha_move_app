@@ -1760,6 +1760,12 @@ abstract class AppLocalizations {
   /// **'Preferences'**
   String get profilePreferences;
 
+  /// No description provided for @profileSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get profileSettings;
+
   /// No description provided for @profileLanguage.
   ///
   /// In en, this message translates to:
@@ -2197,6 +2203,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recommended Exercises'**
   String get homeRecommended;
+
+  /// No description provided for @homeExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore exercises'**
+  String get homeExercises;
+
+  /// No description provided for @homeBrowseRoutines.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse routines'**
+  String get homeBrowseRoutines;
 
   /// No description provided for @homeViewAll.
   ///

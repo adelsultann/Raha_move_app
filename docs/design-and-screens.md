@@ -1,5 +1,10 @@
 # Raha Move Design and Screens
 
+> **Current MVP decision:** Use the direct browse-to-player journey documented
+> in [MVP scope simplification](decisions/mvp-scope-simplification.md).
+> Preference setup, check-in/recommendation screens, reward summaries, and the
+> Progress destination below describe deferred designs.
+
 Related visual foundations:
 
 - [design-system.md](design-system.md) defines the approved Calm Movement palette and Thmanyah typography direction.

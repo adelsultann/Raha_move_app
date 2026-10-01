@@ -12,7 +12,9 @@ import 'package:raha_move/features/today/application/today_providers.dart';
 import 'home_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.recommendationsEnabled = true});
+
+  final bool recommendationsEnabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,10 +56,24 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
                   FilledButton.icon(
-                    key: const Key('start_check_in'),
-                    onPressed: () => const CheckInRoute().push(context),
-                    icon: const Icon(Icons.bolt_rounded),
-                    label: Text(s.checkInStartTitle),
+                    key: Key(
+                      recommendationsEnabled
+                          ? 'start_check_in'
+                          : 'browse_routines',
+                    ),
+                    onPressed: recommendationsEnabled
+                        ? () => const CheckInRoute().push(context)
+                        : () => _browse(context),
+                    icon: Icon(
+                      recommendationsEnabled
+                          ? Icons.bolt_rounded
+                          : Icons.search_rounded,
+                    ),
+                    label: Text(
+                      recommendationsEnabled
+                          ? s.checkInStartTitle
+                          : s.homeBrowseRoutines,
+                    ),
                   ),
                   if (resume != null) ...[
                     const SizedBox(height: 12),
@@ -157,7 +173,9 @@ class HomeScreen extends ConsumerWidget {
                 },
               ),
             ),
-            _Heading(s.homeRecommended),
+            _Heading(
+              recommendationsEnabled ? s.homeRecommended : s.homeExercises,
+            ),
             catalog.when(
               loading: () => const _LoadingRow(),
               error: (_, _) =>

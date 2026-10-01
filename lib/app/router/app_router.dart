@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../config/mvp_features.dart';
 import 'app_routes.dart';
 import 'app_navigation_shell.dart';
 
@@ -11,18 +12,19 @@ final GoRouter appRouter = GoRouter(
       branches: [
         StatefulShellBranch(routes: [$foundationRoute]),
         StatefulShellBranch(routes: [$savedRoutinesRoute]),
-        StatefulShellBranch(routes: [$progressRoute]),
+        if (MvpFeatures.gamification)
+          StatefulShellBranch(routes: [$progressRoute]),
         StatefulShellBranch(routes: [$profileRoute]),
       ],
     ),
-    $checkInRoute,
+    if (MvpFeatures.recommendations) $checkInRoute,
     $reminderSettingsRoute,
     $profileHelpRoute,
     $profilePrivacyRoute,
     $profileTermsRoute,
     $exploreRoutineDetailsRoute,
     $exploreRoute,
-    $recommendationRoute,
+    if (MvpFeatures.recommendations) $recommendationRoute,
     $routinePlayerRoute,
     $signInRoute,
     $signUpRoute,

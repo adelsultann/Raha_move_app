@@ -18,6 +18,22 @@ import 'package:raha_move/features/profile/presentation/profile_screen.dart';
 import 'package:raha_move/features/profile/presentation/account_deletion_recovery_gate.dart';
 
 void main() {
+  testWidgets('simplified MVP hides personalization and goal controls', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(const Locale('en'), showPersonalizationSettings: false),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.byKey(const Key('profile_language')), findsOneWidget);
+    expect(find.byKey(const Key('profile_movement_experience')), findsNothing);
+    expect(find.byKey(const Key('profile_weekly_goal')), findsNothing);
+    expect(find.byKey(const Key('profile_positions')), findsNothing);
+    expect(find.byKey(const Key('profile_reminder_interest')), findsNothing);
+  });
+
   testWidgets('shows every Profile control in Arabic RTL on compact 200%', (
     tester,
   ) async {
@@ -284,6 +300,7 @@ Widget _app(
   AccountDeletionAction? deletion,
   bool failing = false,
   AuthStatus authStatus = AuthStatus.anonymous,
+  bool showPersonalizationSettings = true,
 }) => ProviderScope(
   overrides: [
     profileControllerProvider.overrideWith(
@@ -310,6 +327,7 @@ Widget _app(
       child: child!,
     ),
     home: ProfileScreen(
+      showPersonalizationSettings: showPersonalizationSettings,
       onSavedRoutines: () {},
       onHelp: () {},
       onPrivacy: () {},

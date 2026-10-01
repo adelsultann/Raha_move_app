@@ -2,7 +2,6 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
-import 'package:raha_move/core/analytics/analytics_catalog.dart';
 import 'package:raha_move/core/analytics/analytics_service_impls.dart';
 import 'package:raha_move/core/database/app_database.dart';
 import 'package:raha_move/core/telemetry/telemetry_providers.dart';
@@ -153,7 +152,7 @@ void main() {
   });
 
   test(
-    'refreshes the achievement projection after delayed synchronization',
+    'does not refresh deferred achievement UI after synchronization',
     () async {
       final gateway = FakeSyncRpcGateway(currentUserId: 'user-1');
       var reads = 0;
@@ -167,7 +166,7 @@ void main() {
       await c.read(activeUserSyncCoordinatorProvider.notifier).synchronizeNow();
       await c.read(achievementProgressProvider.future);
 
-      expect(reads, 2);
+      expect(reads, 1);
     },
   );
 
@@ -193,7 +192,7 @@ void main() {
   });
 
   test(
-    'emits a consented event only after sync stores a points projection',
+    'stores legacy point projections without emitting gamification analytics',
     () async {
       final analytics = InMemoryAnalyticsService(enabled: true);
       transport = FakeSyncTransport(
@@ -217,15 +216,11 @@ void main() {
 
       await c.read(activeUserSyncCoordinatorProvider.notifier).synchronizeNow();
 
-      expect(analytics.recordedEvents, hasLength(1));
-      expect(
-        analytics.recordedEvents.single.name,
-        AnalyticsEventName.pointsAwarded,
-      );
-      expect(
-        analytics.recordedEvents.single.properties.keys,
-        unorderedEquals(['rule_version', 'point_amount', 'source_type']),
-      );
+      expect(analytics.recordedEvents, isEmpty);
+      final projection = await (db.select(
+        db.localProgressProjections,
+      )..where((row) => row.projectionType.equals('points'))).getSingle();
+      expect(projection.payloadJson, contains('server-ledger-id'));
     },
   );
 }

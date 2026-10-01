@@ -27,12 +27,14 @@ class RoutinePlayerScreen extends ConsumerStatefulWidget {
     this.recommendationId,
     this.sessionId,
     this.source,
+    this.showGamification = true,
   });
 
   final String routineId;
   final String? recommendationId;
   final String? sessionId;
   final String? source;
+  final bool showGamification;
 
   @override
   ConsumerState<RoutinePlayerScreen> createState() =>
@@ -105,17 +107,25 @@ class _RoutinePlayerScreenState extends ConsumerState<RoutinePlayerScreen>
         },
       ),
       saveError: () => _SaveErrorState(onRetry: () => _controller?.retrySave()),
-      ready: (session) =>
-          _PlayerContent(session: session, controller: _controller!),
+      ready: (session) => _PlayerContent(
+        session: session,
+        controller: _controller!,
+        showGamification: widget.showGamification,
+      ),
     );
   }
 }
 
 class _PlayerContent extends ConsumerWidget {
-  const _PlayerContent({required this.session, required this.controller});
+  const _PlayerContent({
+    required this.session,
+    required this.controller,
+    required this.showGamification,
+  });
 
   final RoutinePlaybackSession session;
   final RoutinePlayerController controller;
+  final bool showGamification;
 
   Future<void> _handleClose(BuildContext context) async {
     if (session.isTerminal) {
@@ -144,6 +154,7 @@ class _PlayerContent extends ConsumerWidget {
       return _CompletedState(
         session: session,
         onDone: () => _handleClose(context),
+        showGamification: showGamification,
       );
     }
     if (session.isAbandoned) {
@@ -441,10 +452,15 @@ class _TopBar extends StatelessWidget {
 }
 
 class _CompletedState extends ConsumerStatefulWidget {
-  const _CompletedState({required this.session, required this.onDone});
+  const _CompletedState({
+    required this.session,
+    required this.onDone,
+    required this.showGamification,
+  });
 
   final RoutinePlaybackSession session;
   final VoidCallback onDone;
+  final bool showGamification;
 
   @override
   ConsumerState<_CompletedState> createState() => _CompletedStateState();
@@ -504,6 +520,7 @@ class _CompletedStateState extends ConsumerState<_CompletedState> {
                 _CompletionProgress(
                   sessionId: widget.session.sessionId,
                   onDone: widget.onDone,
+                  showGamification: widget.showGamification,
                 )
               else
                 _FeedbackBody(
@@ -513,6 +530,7 @@ class _CompletedStateState extends ConsumerState<_CompletedState> {
                   onSkip: () => setState(() => _feedbackSkipped = true),
                   onDone: widget.onDone,
                   sessionId: widget.session.sessionId,
+                  showGamification: widget.showGamification,
                 ),
             ],
           ),
@@ -532,6 +550,7 @@ class _FeedbackBody extends StatelessWidget {
     required this.onSkip,
     required this.onDone,
     required this.sessionId,
+    required this.showGamification,
   });
 
   final RoutineFeedbackState state;
@@ -540,6 +559,7 @@ class _FeedbackBody extends StatelessWidget {
   final VoidCallback onSkip;
   final VoidCallback onDone;
   final String sessionId;
+  final bool showGamification;
 
   @override
   Widget build(BuildContext context) {
@@ -564,6 +584,7 @@ class _FeedbackBody extends StatelessWidget {
         rating: rating,
         sessionId: sessionId,
         onDone: onDone,
+        showGamification: showGamification,
       ),
       RoutineFeedbackError() => _FeedbackSaveError(
         onRetry: onRetry,
@@ -662,11 +683,13 @@ class _FeedbackAcknowledged extends StatelessWidget {
     required this.rating,
     required this.sessionId,
     required this.onDone,
+    required this.showGamification,
   });
 
   final FeedbackRating rating;
   final String sessionId;
   final VoidCallback onDone;
+  final bool showGamification;
 
   @override
   Widget build(BuildContext context) {
@@ -703,7 +726,7 @@ class _FeedbackAcknowledged extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        if (!lessComfortable)
+        if (!lessComfortable && showGamification)
           CompletionGamificationSummary(sessionId: sessionId),
         const SizedBox(height: 24),
         SizedBox(
@@ -728,10 +751,15 @@ class _FeedbackAcknowledged extends StatelessWidget {
 /// Shown when feedback is optional so completion progress remains visible
 /// without treating the skipped feedback path as celebratory.
 class _CompletionProgress extends StatelessWidget {
-  const _CompletionProgress({required this.sessionId, required this.onDone});
+  const _CompletionProgress({
+    required this.sessionId,
+    required this.onDone,
+    required this.showGamification,
+  });
 
   final String sessionId;
   final VoidCallback onDone;
+  final bool showGamification;
 
   @override
   Widget build(BuildContext context) {
@@ -739,8 +767,10 @@ class _CompletionProgress extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CompletionGamificationSummary(sessionId: sessionId),
-        const SizedBox(height: 24),
+        if (showGamification) ...[
+          CompletionGamificationSummary(sessionId: sessionId),
+          const SizedBox(height: 24),
+        ],
         FilledButton(
           key: const Key('feedback_done'),
           style: FilledButton.styleFrom(
