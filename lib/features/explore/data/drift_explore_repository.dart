@@ -79,8 +79,12 @@ final class DriftExploreRepository implements ExploreRepository {
   ) async {
     final presentation = await _presentations.load(routineId, locale);
     if (presentation == null) return null;
+    final taxonomy = await _taxonomyKeys(routineId);
     return ExploreRoutineDetails(
       presentation: presentation,
+      bodyAreas: taxonomy
+          .where((key) => _kindByKey[key] == 'body_area')
+          .toSet(),
       eligibility: await _eligibility(routineId),
       equipmentLabels: {
         for (final key in presentation.equipment)

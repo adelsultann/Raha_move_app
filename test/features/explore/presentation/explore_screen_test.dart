@@ -44,6 +44,52 @@ void main() {
     }
   });
 
+  testWidgets(
+    'all exercises remain readable and Start stays reachable while scrolling',
+    (tester) async {
+      for (final locale in const [Locale('en'), Locale('ar')]) {
+        final source = _allowedDetails(locale);
+        final details = source.copyWith(
+          bodyAreas: {'shoulders'},
+          presentation: source.presentation.copyWith(
+            movements: List.generate(
+              8,
+              (index) => MovementPreviewEntry(
+                name: locale.languageCode == 'ar'
+                    ? 'حركة هادئة للكتفين مع التنفس ببطء ${index + 1}'
+                    : 'Gentle shoulder movement with slow breathing ${index + 1}',
+                durationSeconds: 30 + index * 5,
+              ),
+            ),
+          ),
+        );
+        await _pumpDetails(tester, locale, details);
+        await tester.pumpAndSettle();
+        final start = find.byKey(const Key('explore_start'));
+        expect(start.hitTestable(), findsOneWidget);
+        final position = tester.getTopLeft(start);
+        final artwork = tester.widget<Image>(
+          find.byKey(const Key('explore_details_artwork')),
+        );
+        expect((artwork.image as AssetImage).assetName, contains('SHOULDERS'));
+        for (var index = 0; index < 8; index++) {
+          final row = find.byKey(Key('explore_movement_$index'));
+          await tester.scrollUntilVisible(
+            row,
+            160,
+            scrollable: find.descendant(
+              of: find.byType(ListView),
+              matching: find.byType(Scrollable),
+            ),
+          );
+          expect(row, findsOneWidget);
+          expect(start.hitTestable(), findsOneWidget);
+          expect(tester.getTopLeft(start), position);
+          expect(tester.takeException(), isNull);
+        }
+      }
+    },
+  );
   testWidgets('details metadata and blocked start are accessible at 200%', (
     tester,
   ) async {
@@ -52,6 +98,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('explore_details_name')), findsOneWidget);
+      expect(find.byKey(const Key('explore_details_artwork')), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('explore_details_equipment')),
+        200,
+        scrollable: find.descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        ),
+      );
       expect(
         find.byKey(const Key('explore_details_equipment')),
         findsOneWidget,
@@ -80,7 +135,7 @@ void main() {
         ),
         locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
       );
-      await tester.scrollUntilVisible(start, 200);
+      await tester.ensureVisible(start);
       expect(tester.takeException(), isNull);
     }
   });
@@ -95,7 +150,14 @@ void main() {
       );
       await tester.pumpAndSettle();
       final save = find.byKey(const Key('explore_details_save'));
-      await tester.scrollUntilVisible(save, 200);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        ),
+      );
       await tester.tap(save);
       await tester.pumpAndSettle();
       expect(find.text('Remove from saved'), findsOneWidget);
@@ -132,7 +194,14 @@ void main() {
       );
       await tester.pumpAndSettle();
       final save = find.byKey(const Key('explore_details_save'));
-      await tester.scrollUntilVisible(save, 200);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        ),
+      );
       await tester.tap(save);
       await tester.pump();
       expect(repository.saveCalls, 1);
@@ -175,6 +244,10 @@ Future<void> _pumpExplore(
   Locale locale,
   ExploreRepository repository,
 ) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(360, 640);
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
   await tester.binding.setSurfaceSize(const Size(360, 640));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
@@ -198,6 +271,10 @@ Future<void> _pumpDetails(
   ExploreRoutineDetails details, {
   SavedRoutinesRepository savedRepository = const _SavedRepository(),
 }) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(360, 640);
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
   await tester.binding.setSurfaceSize(const Size(360, 640));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
@@ -218,19 +295,16 @@ Future<void> _pumpDetails(
   );
 }
 
-Widget _app(Locale locale, Widget home) => MediaQuery(
-  data: MediaQueryData(textScaler: TextScaler.linear(2)),
-  child: MaterialApp(
-    locale: locale,
-    supportedLocales: AppLocalizations.supportedLocales,
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    theme: AppTheme.forLocale(locale),
-    builder: (context, child) => MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(2)),
-      child: child!,
-    ),
-    home: home,
+Widget _app(Locale locale, Widget home) => MaterialApp(
+  locale: locale,
+  supportedLocales: AppLocalizations.supportedLocales,
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  theme: AppTheme.forLocale(locale),
+  builder: (context, child) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(2)),
+    child: child!,
   ),
+  home: home,
 );
 
 ExploreRoutineDetails _details(Locale locale) {

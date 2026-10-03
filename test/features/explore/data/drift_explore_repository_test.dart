@@ -74,6 +74,7 @@ void main() {
       final details = await repository.details('routine_ok', 'ar');
       expect(details!.presentation.name, 'استراحة الكتفين');
       expect(details.eligibility, isA<RoutineStartAllowed>());
+      expect(details.bodyAreas, {'shoulders'});
 
       await (database.update(database.localRoutines)
             ..where((row) => row.id.equals('routine_ok')))

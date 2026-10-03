@@ -1622,6 +1622,7 @@ class _$RoutineStartBlockedCopyWithImpl<$Res>
 mixin _$ExploreRoutineDetails {
   RoutinePresentation get presentation;
   RoutineStartEligibility get eligibility;
+  Set<String> get bodyAreas;
   Map<String, String> get equipmentLabels;
 
   /// Create a copy of ExploreRoutineDetails
@@ -1643,6 +1644,7 @@ mixin _$ExploreRoutineDetails {
                 other.presentation == presentation) &&
             (identical(other.eligibility, eligibility) ||
                 other.eligibility == eligibility) &&
+            const DeepCollectionEquality().equals(other.bodyAreas, bodyAreas) &&
             const DeepCollectionEquality().equals(
               other.equipmentLabels,
               equipmentLabels,
@@ -1654,12 +1656,13 @@ mixin _$ExploreRoutineDetails {
     runtimeType,
     presentation,
     eligibility,
+    const DeepCollectionEquality().hash(bodyAreas),
     const DeepCollectionEquality().hash(equipmentLabels),
   );
 
   @override
   String toString() {
-    return 'ExploreRoutineDetails(presentation: $presentation, eligibility: $eligibility, equipmentLabels: $equipmentLabels)';
+    return 'ExploreRoutineDetails(presentation: $presentation, eligibility: $eligibility, bodyAreas: $bodyAreas, equipmentLabels: $equipmentLabels)';
   }
 }
 
@@ -1673,6 +1676,7 @@ abstract mixin class $ExploreRoutineDetailsCopyWith<$Res> {
   $Res call({
     RoutinePresentation presentation,
     RoutineStartEligibility eligibility,
+    Set<String> bodyAreas,
     Map<String, String> equipmentLabels,
   });
 
@@ -1695,6 +1699,7 @@ class _$ExploreRoutineDetailsCopyWithImpl<$Res>
   $Res call({
     Object? presentation = null,
     Object? eligibility = null,
+    Object? bodyAreas = null,
     Object? equipmentLabels = null,
   }) {
     return _then(
@@ -1707,6 +1712,10 @@ class _$ExploreRoutineDetailsCopyWithImpl<$Res>
             ? _self.eligibility
             : eligibility // ignore: cast_nullable_to_non_nullable
                   as RoutineStartEligibility,
+        bodyAreas: null == bodyAreas
+            ? _self.bodyAreas
+            : bodyAreas // ignore: cast_nullable_to_non_nullable
+                  as Set<String>,
         equipmentLabels: null == equipmentLabels
             ? _self.equipmentLabels
             : equipmentLabels // ignore: cast_nullable_to_non_nullable
@@ -1832,6 +1841,7 @@ extension ExploreRoutineDetailsPatterns on ExploreRoutineDetails {
     TResult Function(
       RoutinePresentation presentation,
       RoutineStartEligibility eligibility,
+      Set<String> bodyAreas,
       Map<String, String> equipmentLabels,
     )?
     $default, {
@@ -1843,6 +1853,7 @@ extension ExploreRoutineDetailsPatterns on ExploreRoutineDetails {
         return $default(
           _that.presentation,
           _that.eligibility,
+          _that.bodyAreas,
           _that.equipmentLabels,
         );
       case _:
@@ -1868,6 +1879,7 @@ extension ExploreRoutineDetailsPatterns on ExploreRoutineDetails {
     TResult Function(
       RoutinePresentation presentation,
       RoutineStartEligibility eligibility,
+      Set<String> bodyAreas,
       Map<String, String> equipmentLabels,
     )
     $default,
@@ -1878,6 +1890,7 @@ extension ExploreRoutineDetailsPatterns on ExploreRoutineDetails {
         return $default(
           _that.presentation,
           _that.eligibility,
+          _that.bodyAreas,
           _that.equipmentLabels,
         );
       case _:
@@ -1902,6 +1915,7 @@ extension ExploreRoutineDetailsPatterns on ExploreRoutineDetails {
     TResult? Function(
       RoutinePresentation presentation,
       RoutineStartEligibility eligibility,
+      Set<String> bodyAreas,
       Map<String, String> equipmentLabels,
     )?
     $default,
@@ -1912,6 +1926,7 @@ extension ExploreRoutineDetailsPatterns on ExploreRoutineDetails {
         return $default(
           _that.presentation,
           _that.eligibility,
+          _that.bodyAreas,
           _that.equipmentLabels,
         );
       case _:
@@ -1926,13 +1941,24 @@ class _ExploreRoutineDetails implements ExploreRoutineDetails {
   const _ExploreRoutineDetails({
     required this.presentation,
     required this.eligibility,
+    Set<String> bodyAreas = const <String>{},
     Map<String, String> equipmentLabels = const <String, String>{},
-  }) : _equipmentLabels = equipmentLabels;
+  }) : _bodyAreas = bodyAreas,
+       _equipmentLabels = equipmentLabels;
 
   @override
   final RoutinePresentation presentation;
   @override
   final RoutineStartEligibility eligibility;
+  final Set<String> _bodyAreas;
+  @override
+  @JsonKey()
+  Set<String> get bodyAreas {
+    if (_bodyAreas is EqualUnmodifiableSetView) return _bodyAreas;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableSetView(_bodyAreas);
+  }
+
   final Map<String, String> _equipmentLabels;
   @override
   @JsonKey()
@@ -1963,6 +1989,10 @@ class _ExploreRoutineDetails implements ExploreRoutineDetails {
             (identical(other.eligibility, eligibility) ||
                 other.eligibility == eligibility) &&
             const DeepCollectionEquality().equals(
+              other._bodyAreas,
+              _bodyAreas,
+            ) &&
+            const DeepCollectionEquality().equals(
               other._equipmentLabels,
               _equipmentLabels,
             ));
@@ -1973,12 +2003,13 @@ class _ExploreRoutineDetails implements ExploreRoutineDetails {
     runtimeType,
     presentation,
     eligibility,
+    const DeepCollectionEquality().hash(_bodyAreas),
     const DeepCollectionEquality().hash(_equipmentLabels),
   );
 
   @override
   String toString() {
-    return 'ExploreRoutineDetails(presentation: $presentation, eligibility: $eligibility, equipmentLabels: $equipmentLabels)';
+    return 'ExploreRoutineDetails(presentation: $presentation, eligibility: $eligibility, bodyAreas: $bodyAreas, equipmentLabels: $equipmentLabels)';
   }
 }
 
@@ -1994,6 +2025,7 @@ abstract mixin class _$ExploreRoutineDetailsCopyWith<$Res>
   $Res call({
     RoutinePresentation presentation,
     RoutineStartEligibility eligibility,
+    Set<String> bodyAreas,
     Map<String, String> equipmentLabels,
   });
 
@@ -2018,6 +2050,7 @@ class __$ExploreRoutineDetailsCopyWithImpl<$Res>
   $Res call({
     Object? presentation = null,
     Object? eligibility = null,
+    Object? bodyAreas = null,
     Object? equipmentLabels = null,
   }) {
     return _then(
@@ -2030,6 +2063,10 @@ class __$ExploreRoutineDetailsCopyWithImpl<$Res>
             ? _self.eligibility
             : eligibility // ignore: cast_nullable_to_non_nullable
                   as RoutineStartEligibility,
+        bodyAreas: null == bodyAreas
+            ? _self._bodyAreas
+            : bodyAreas // ignore: cast_nullable_to_non_nullable
+                  as Set<String>,
         equipmentLabels: null == equipmentLabels
             ? _self._equipmentLabels
             : equipmentLabels // ignore: cast_nullable_to_non_nullable

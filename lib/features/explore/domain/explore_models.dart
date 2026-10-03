@@ -62,6 +62,7 @@ abstract class ExploreRoutineDetails with _$ExploreRoutineDetails {
   const factory ExploreRoutineDetails({
     required RoutinePresentation presentation,
     required RoutineStartEligibility eligibility,
+    @Default(<String>{}) Set<String> bodyAreas,
     @Default(<String, String>{}) Map<String, String> equipmentLabels,
   }) = _ExploreRoutineDetails;
 }

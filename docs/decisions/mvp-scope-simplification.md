@@ -52,3 +52,13 @@ movement count; tapping a card opens its details. Saved routines remain directly
 accessible. Loading, empty, and retry states and Arabic/English layouts remain
 required. This supersedes the older category/filter acceptance criteria in
 RAHA-061; repository filtering capabilities remain available for future work.
+
+## Routine details layout — 2026-10-04
+
+RAHA-061 now opens with bundled body-area artwork, the localized routine name,
+and duration. Multi-area and unclassified routines use full-body artwork.
+The summary, difficulty, position, and equipment follow, then the complete
+ordered exercise list with each movement's duration. Save remains secondary;
+Start stays in a bottom action area while the list scrolls. Existing eligibility
+checks still disable unavailable routines. Artwork is illustrative, available
+offline, and does not require downloading or exposing provider media.
