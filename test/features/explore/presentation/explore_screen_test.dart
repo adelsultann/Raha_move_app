@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
+import 'package:raha_move/app/theme/app_theme.dart';
 import 'package:raha_move/features/exercise_library/domain/content_models.dart';
 import 'package:raha_move/features/explore/application/explore_providers.dart';
 import 'package:raha_move/features/explore/domain/explore_models.dart';
@@ -17,7 +18,7 @@ import 'package:raha_move/features/saved_routines/domain/saved_routines_reposito
 import 'package:raha_move/features/sync/application/sync_providers.dart';
 
 void main() {
-  testWidgets('populated Explore and filter sheet remain usable at 200%', (
+  testWidgets('unfiltered Explore remains usable in both locales at 200%', (
     tester,
   ) async {
     for (final locale in const [Locale('en'), Locale('ar')]) {
@@ -32,20 +33,13 @@ void main() {
       );
       final cardSemantics = tester.getSemantics(card).getSemanticsData();
       expect(cardSemantics.hasAction(SemanticsAction.tap), isTrue);
-      expect(
-        tester.getSemantics(find.byKey(const Key('explore_duration_filter'))),
-        isNotNull,
+      expect(find.byType(FilterChip), findsNothing);
+      expect(find.byType(ChoiceChip), findsNothing);
+      expect(find.byKey(const Key('explore_saved_routines')), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('explore_card_duration')),
+        150,
       );
-
-      await tester.tap(find.byKey(const Key('explore_duration_filter')));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('explore_filter_apply')), findsOneWidget);
-      expect(
-        tester.getSemantics(find.byKey(const Key('explore_filter_apply'))),
-        isNotNull,
-      );
-      await tester.tap(find.byKey(const Key('explore_filter_apply')));
-      await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     }
   });
@@ -155,19 +149,24 @@ void main() {
     },
   );
 
-  testWidgets('category retry replaces the error with cached category data', (
+  testWidgets('routine retry recovers and empty state has no filter actions', (
     tester,
   ) async {
-    final repository = _RecoveringCategoriesRepository();
-    await _pumpExplore(tester, const Locale('en'), repository);
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('explore_categories_retry')), findsOneWidget);
-
-    await tester.tap(find.byKey(const Key('explore_categories_retry')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('explore_category_desk')), findsOneWidget);
-    expect(repository.categoryReads, 2);
-    expect(tester.takeException(), isNull);
+    for (final locale in const [Locale('en'), Locale('ar')]) {
+      final repository = _RecoveringRoutinesRepository();
+      await _pumpExplore(tester, locale, repository);
+      await tester.pumpAndSettle();
+      final retry = find.byKey(const Key('explore_retry'));
+      expect(retry, findsOneWidget);
+      await tester.ensureVisible(retry);
+      await tester.tap(retry);
+      await tester.pumpAndSettle();
+      expect(repository.reads, 2);
+      expect(find.byKey(const Key('explore_retry')), findsNothing);
+      expect(find.byKey(const Key('explore_saved_routines')), findsOneWidget);
+      expect(find.byType(FilterChip), findsNothing);
+      expect(tester.takeException(), isNull);
+    }
   });
 }
 
@@ -188,7 +187,7 @@ Future<void> _pumpExplore(
           const _SavedRepository(),
         ),
       ],
-      child: _app(locale, const ExploreScreen()),
+      child: _app(locale, const ExploreScreen(initialBodyArea: 'neck')),
     ),
   );
 }
@@ -225,6 +224,11 @@ Widget _app(Locale locale, Widget home) => MediaQuery(
     locale: locale,
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: AppLocalizations.localizationsDelegates,
+    theme: AppTheme.forLocale(locale),
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(2)),
+      child: child!,
+    ),
     home: home,
   ),
 );
@@ -301,13 +305,19 @@ class _PopulatedRepository extends _EmptyExploreRepository {
   ];
 }
 
-class _RecoveringCategoriesRepository extends _EmptyExploreRepository {
-  int categoryReads = 0;
+class _RecoveringRoutinesRepository extends _EmptyExploreRepository {
+  int reads = 0;
   @override
-  Future<List<ExploreCategory>> categories(String locale) async {
-    categoryReads++;
-    if (categoryReads == 1) throw StateError('cache unavailable');
-    return const [ExploreCategory(key: 'desk', label: 'Desk')];
+  Future<List<ExploreRoutineCard>> browse({
+    required String locale,
+    String? context,
+    required ExploreFilters filters,
+  }) async {
+    expect(context, isNull);
+    expect(filters.isEmpty, isTrue);
+    reads++;
+    if (reads == 1) throw StateError('cache unavailable');
+    return const [];
   }
 }
 

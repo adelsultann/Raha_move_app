@@ -7,98 +7,79 @@ import 'package:raha_move/features/exercise_library/domain/content_models.dart';
 import '../application/explore_providers.dart';
 import '../domain/explore_models.dart';
 
-class ExploreScreen extends ConsumerStatefulWidget {
+class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key, this.initialBodyArea});
+
+  /// Retained for existing Home links; MVP browsing always shows all routines.
   final String? initialBodyArea;
 
   @override
-  ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
-}
-
-class _ExploreScreenState extends ConsumerState<ExploreScreen> {
-  late ExploreFilters _filters = ExploreFilters(
-    bodyAreas: {if (widget.initialBodyArea != null) widget.initialBodyArea!},
-  );
-  String? _context;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final strings = AppLocalizations.of(context);
-    final routines = ref.watch(
-      exploreRoutinesProvider(context: _context, filters: _filters),
-    );
-    final categories = ref.watch(exploreCategoriesProvider);
+    final provider = exploreRoutinesProvider(filters: const ExploreFilters());
+    final routines = ref.watch(provider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(strings.exploreTitle),
-        actions: [
-          IconButton(
-            key: const Key('explore_saved_routines'),
-            tooltip: strings.savedRoutinesOpen,
-            icon: const Icon(Icons.bookmark_outline),
-            onPressed: () => const SavedRoutinesRoute().push(context),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(strings.exploreTitle)),
       body: SafeArea(
-        child: Column(
-          children: [
-            categories.when(
-              loading: () => const SizedBox(height: 48),
-              error: (_, _) => _CategoryError(
-                onRetry: () => ref.invalidate(exploreCategoriesProvider),
-              ),
-              data: (items) => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-                child: Row(
-                  children: [
-                    ChoiceChip(
-                      key: const Key('explore_category_all'),
-                      label: Text(strings.exploreAllCategories),
-                      selected: _context == null,
-                      onSelected: (_) => setState(() => _context = null),
-                    ),
-                    for (final item in items) ...[
-                      const SizedBox(width: 8),
-                      ChoiceChip(
-                        key: Key('explore_category_${item.key}'),
-                        label: Text(item.label),
-                        selected: _context == item.key,
-                        onSelected: (_) => setState(() => _context = item.key),
-                      ),
-                    ],
-                  ],
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: routines.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, _) => _ExploreStatus(
+                icon: Icons.cloud_off_outlined,
+                title: strings.exploreError,
+                action: FilledButton.icon(
+                  key: const Key('explore_retry'),
+                  onPressed: () => ref.invalidate(provider),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(strings.retry),
                 ),
               ),
-            ),
-            _FilterBar(
-              filters: _filters,
-              onChanged: (filters) => setState(() => _filters = filters),
-            ),
-            Expanded(
-              child: routines.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, _) => _ExploreError(
-                  onRetry: () => ref.invalidate(
-                    exploreRoutinesProvider(
-                      context: _context,
-                      filters: _filters,
+              data: (items) => CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            strings.exploreIntro,
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          OutlinedButton.icon(
+                            key: const Key('explore_saved_routines'),
+                            onPressed: () =>
+                                const SavedRoutinesRoute().push(context),
+                            icon: const Icon(Icons.bookmark_outline),
+                            label: Text(strings.savedRoutinesOpen),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                data: (items) => items.isEmpty
-                    ? _ExploreEmpty(
-                        hasFilters: !_filters.isEmpty || _context != null,
-                        onClear: () => setState(() {
-                          _context = null;
-                          _filters = const ExploreFilters();
-                        }),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  if (items.isEmpty)
+                    SliverToBoxAdapter(
+                      child: _ExploreStatus(
+                        icon: Icons.self_improvement_outlined,
+                        title: strings.exploreEmptyTitle,
+                        body: strings.exploreEmptyBody,
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      sliver: SliverList.separated(
                         itemCount: items.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(height: 16),
                         itemBuilder: (context, index) => _RoutineCard(
                           card: items[index],
                           onTap: () => ExploreRoutineDetailsRoute(
@@ -106,278 +87,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                           ).push(context),
                         ),
                       ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FilterBar extends StatelessWidget {
-  const _FilterBar({required this.filters, required this.onChanged});
-  final ExploreFilters filters;
-  final ValueChanged<ExploreFilters> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
-      child: Row(
-        children: [
-          _MultiFilter<int>(
-            key: const Key('explore_duration_filter'),
-            label: strings.exploreDuration,
-            values: const [3, 5, 10, 15],
-            selected: filters.durationsMinutes,
-            itemLabel: strings.exploreMinutes,
-            onChanged: (value) =>
-                onChanged(filters.copyWith(durationsMinutes: value)),
-          ),
-          _MultiFilter<String>(
-            key: const Key('explore_body_area_filter'),
-            label: strings.exploreBodyArea,
-            values: const [
-              'neck',
-              'shoulders',
-              'upper_back',
-              'lower_back',
-              'hips',
-              'knees',
-              'full_body',
-            ],
-            selected: filters.bodyAreas,
-            itemLabel: (value) => _bodyLabel(strings, value),
-            onChanged: (value) => onChanged(filters.copyWith(bodyAreas: value)),
-          ),
-          _MultiFilter<String>(
-            key: const Key('explore_position_filter'),
-            label: strings.explorePosition,
-            values: const ['seated', 'standing', 'floor'],
-            selected: filters.positions,
-            itemLabel: (value) => _positionLabel(strings, value),
-            onChanged: (value) => onChanged(filters.copyWith(positions: value)),
-          ),
-          _MultiFilter<DifficultyLevel>(
-            key: const Key('explore_difficulty_filter'),
-            label: strings.exploreDifficulty,
-            values: DifficultyLevel.values,
-            selected: filters.difficulties,
-            itemLabel: (value) => _difficultyLabel(strings, value),
-            onChanged: (value) =>
-                onChanged(filters.copyWith(difficulties: value)),
-          ),
-          _MultiFilter<String>(
-            key: const Key('explore_equipment_filter'),
-            label: strings.exploreEquipment,
-            values: const ['body_weight'],
-            selected: filters.equipment,
-            itemLabel: (_) => strings.recommendationNoEquipment,
-            onChanged: (value) => onChanged(filters.copyWith(equipment: value)),
-          ),
-          if (!filters.isEmpty)
-            TextButton(
-              key: const Key('explore_clear_filters'),
-              onPressed: () => onChanged(const ExploreFilters()),
-              child: Text(strings.exploreClear),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MultiFilter<T> extends StatelessWidget {
-  const _MultiFilter({
-    super.key,
-    required this.label,
-    required this.values,
-    required this.selected,
-    required this.itemLabel,
-    required this.onChanged,
-  });
-  final String label;
-  final List<T> values;
-  final Set<T> selected;
-  final String Function(T) itemLabel;
-  final ValueChanged<Set<T>> onChanged;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.only(end: 8),
-    child: FilterChip(
-      label: Text(selected.isEmpty ? label : '$label (${selected.length})'),
-      selected: selected.isNotEmpty,
-      onSelected: (_) async {
-        final result = await showModalBottomSheet<Set<T>>(
-          context: context,
-          isScrollControlled: true,
-          builder: (context) => SafeArea(
-            child: FractionallySizedBox(
-              heightFactor: .9,
-              child: _FilterSheet(
-                values: values,
-                selected: selected,
-                itemLabel: itemLabel,
-              ),
-            ),
-          ),
-        );
-        if (result != null) onChanged(result);
-      },
-    ),
-  );
-}
-
-class _FilterSheet<T> extends StatefulWidget {
-  const _FilterSheet({
-    required this.values,
-    required this.selected,
-    required this.itemLabel,
-  });
-  final List<T> values;
-  final Set<T> selected;
-  final String Function(T) itemLabel;
-  @override
-  State<_FilterSheet<T>> createState() => _FilterSheetState<T>();
-}
-
-class _FilterSheetState<T> extends State<_FilterSheet<T>> {
-  late Set<T> selected = {...widget.selected};
-  @override
-  Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                for (final value in widget.values)
-                  CheckboxListTile(
-                    value: selected.contains(value),
-                    title: Text(widget.itemLabel(value)),
-                    onChanged: (checked) => setState(
-                      () => checked == true
-                          ? selected.add(value)
-                          : selected.remove(value),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          FilledButton(
-            key: const Key('explore_filter_apply'),
-            onPressed: () => Navigator.pop(context, selected),
-            child: Text(strings.exploreApply),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RoutineCard extends StatelessWidget {
-  const _RoutineCard({required this.card, required this.onTap});
-  final ExploreRoutineCard card;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Semantics(
-      button: true,
-      label: card.name,
-      child: Card(
-        child: InkWell(
-          key: Key('explore_routine_${card.routineId}'),
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(card.name, style: theme.textTheme.titleLarge),
-                const SizedBox(height: 6),
-                Text(
-                  card.summary,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    Text(
-                      strings.recommendationDurationMinutes(
-                        (card.durationSeconds / 60).ceil(),
-                      ),
-                      key: const Key('explore_card_duration'),
-                    ),
-                    Text(_difficultyLabel(strings, card.difficulty)),
-                    Text(
-                      strings.recommendationMovementsCount(card.movementCount),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ExploreEmpty extends StatelessWidget {
-  const _ExploreEmpty({required this.hasFilters, required this.onClear});
-  final bool hasFilters;
-  final VoidCallback onClear;
-  @override
-  Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.explore_off_outlined, size: 48),
-                  const SizedBox(height: 16),
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      hasFilters
-                          ? strings.exploreEmptyFilteredTitle
-                          : strings.exploreEmptyTitle,
-                      key: const Key('explore_empty_title'),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    hasFilters
-                        ? strings.exploreEmptyFilteredBody
-                        : strings.exploreEmptyBody,
-                    textAlign: TextAlign.center,
-                  ),
-                  if (hasFilters)
-                    TextButton(
-                      key: const Key('explore_empty_clear'),
-                      onPressed: onClear,
-                      child: Text(strings.exploreClear),
                     ),
                 ],
               ),
@@ -389,63 +98,143 @@ class _ExploreEmpty extends StatelessWidget {
   }
 }
 
-class _ExploreError extends StatelessWidget {
-  const _ExploreError({required this.onRetry});
-  final VoidCallback onRetry;
-  @override
-  Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(strings.exploreError),
-          FilledButton(onPressed: onRetry, child: Text(strings.retry)),
-        ],
-      ),
-    );
-  }
-}
-
-class _CategoryError extends StatelessWidget {
-  const _CategoryError({required this.onRetry});
-  final VoidCallback onRetry;
+class _RoutineCard extends StatelessWidget {
+  const _RoutineCard({required this.card, required this.onTap});
+  final ExploreRoutineCard card;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-      child: Row(
-        children: [
-          const Icon(Icons.error_outline),
-          const SizedBox(width: 8),
-          Expanded(child: Text(strings.exploreCategoriesError)),
-          TextButton(
-            key: const Key('explore_categories_retry'),
-            onPressed: onRetry,
-            child: Text(strings.retry),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Semantics(
+      button: true,
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          key: Key('explore_routine_${card.routineId}'),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule_outlined,
+                      size: 20,
+                      color: colors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        strings.recommendationDurationMinutes(
+                          (card.durationSeconds / 60).ceil(),
+                        ),
+                        key: const Key('explore_card_duration'),
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: colors.primary,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(card.name, style: theme.textTheme.titleLarge),
+                const SizedBox(height: 8),
+                Text(
+                  card.summary,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
+                  children: [
+                    Text(
+                      _difficultyLabel(strings, card.difficulty),
+                      style: theme.textTheme.labelMedium,
+                    ),
+                    Text(
+                      strings.recommendationMovementsCount(card.movementCount),
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
-String _bodyLabel(AppLocalizations s, String key) => switch (key) {
-  'neck' => s.checkInAreaNeck,
-  'shoulders' => s.checkInAreaShoulders,
-  'upper_back' => s.checkInAreaUpperBack,
-  'lower_back' => s.checkInAreaLowerBack,
-  'hips' => s.checkInAreaHips,
-  'knees' => s.checkInAreaKnees,
-  _ => s.checkInAreaFullBody,
-};
-String _positionLabel(AppLocalizations s, String key) => switch (key) {
-  'seated' => s.checkInPositionSeated,
-  'standing' => s.checkInPositionStanding,
-  _ => s.checkInPositionFloor,
-};
+class _ExploreStatus extends StatelessWidget {
+  const _ExploreStatus({
+    required this.icon,
+    required this.title,
+    this.body,
+    this.action,
+  });
+  final IconData icon;
+  final String title;
+  final String? body;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: constraints.hasBoundedHeight ? constraints.maxHeight : 0,
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 48,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                if (body != null) ...[
+                  const SizedBox(height: 8),
+                  Text(body!, textAlign: TextAlign.center),
+                ],
+                if (action != null) ...[const SizedBox(height: 20), action!],
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 String _difficultyLabel(AppLocalizations s, DifficultyLevel value) =>
     switch (value) {
       DifficultyLevel.beginner => s.recommendationDifficultyBeginner,

@@ -1394,6 +1394,12 @@ abstract class AppLocalizations {
   /// **'We couldn\'t load Today right now. Please try again.'**
   String get todayUnavailable;
 
+  /// No description provided for @exploreIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a routine and move at your own pace.'**
+  String get exploreIntro;
+
   /// No description provided for @exploreTitle.
   ///
   /// In en, this message translates to:

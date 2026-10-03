@@ -751,6 +751,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'We couldn\'t load Today right now. Please try again.';
 
   @override
+  String get exploreIntro => 'Choose a routine and move at your own pace.';
+
+  @override
   String get exploreTitle => 'Explore routines';
 
   @override

@@ -743,6 +743,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّر تحميل صفحة اليوم الآن. يرجى المحاولة مجددًا.';
 
   @override
+  String get exploreIntro => 'اختر روتينًا وتحرك بالوتيرة التي تناسبك.';
+
+  @override
   String get exploreTitle => 'استكشف الروتينات';
 
   @override

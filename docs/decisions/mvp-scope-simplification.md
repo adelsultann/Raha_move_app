@@ -42,3 +42,13 @@ This reduces onboarding friction and narrows the first release to the smallest
 complete value loop: find a safe routine, play it, and record feedback. It also
 allows personalization and motivation mechanics to be validated with user
 evidence before they become part of the core experience.
+
+## Explore simplification — 2026-10-04
+
+At the product owner's request, RAHA-061's MVP browsing experience shows all
+locally available routines in one list. Category chips, filter controls, and
+filter sheets are deferred. Cards show duration, name, summary, difficulty, and
+movement count; tapping a card opens its details. Saved routines remain directly
+accessible. Loading, empty, and retry states and Arabic/English layouts remain
+required. This supersedes the older category/filter acceptance criteria in
+RAHA-061; repository filtering capabilities remain available for future work.
