@@ -10,18 +10,30 @@ part of 'catalog_bootstrap_providers.dart';
 // ignore_for_file: type=lint, type=warning
 /// Durable application database. Tests override this provider with an
 /// isolated in-memory database.
+/// Riverpod convert this into appDatabaseProvider
+/// keepAlive: true means the database should
+/// remain available instead of being repeatedly opened and
+/// closed while the app is running.
 
 @ProviderFor(appDatabase)
 final appDatabaseProvider = AppDatabaseProvider._();
 
 /// Durable application database. Tests override this provider with an
 /// isolated in-memory database.
+/// Riverpod convert this into appDatabaseProvider
+/// keepAlive: true means the database should
+/// remain available instead of being repeatedly opened and
+/// closed while the app is running.
 
 final class AppDatabaseProvider
     extends $FunctionalProvider<AppDatabase, AppDatabase, AppDatabase>
     with $Provider<AppDatabase> {
   /// Durable application database. Tests override this provider with an
   /// isolated in-memory database.
+  /// Riverpod convert this into appDatabaseProvider
+  /// keepAlive: true means the database should
+  /// remain available instead of being repeatedly opened and
+  /// closed while the app is running.
   AppDatabaseProvider._()
     : super(
         from: null,

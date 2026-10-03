@@ -183,7 +183,11 @@ class _PlayerContent extends ConsumerWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: demonstration.build(context, playing: isPlaying),
+                  child: demonstration.build(
+                    context,
+                    deliveryReference: step.mediaDeliveryReference,
+                    playing: isPlaying,
+                  ),
                 ),
               ),
               Padding(

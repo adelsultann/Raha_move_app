@@ -10,7 +10,17 @@ void main() {
   });
 
   test('blocks the committed fixture package for beta and production', () {
-    expect(blockedFixturePathsForEnvironment('beta'), hasLength(2));
-    expect(blockedFixturePathsForEnvironment('production'), hasLength(2));
+    final beta = blockedFixturePathsForEnvironment('beta');
+    final production = blockedFixturePathsForEnvironment('production');
+
+    expect(beta, hasLength(12));
+    expect(production, beta);
+    expect(
+      beta,
+      contains(
+        'assets/starter_content/media/videos/free50/'
+        'raha_ex_000101_free50_fixture_v1_1080.mp4',
+      ),
+    );
   });
 }

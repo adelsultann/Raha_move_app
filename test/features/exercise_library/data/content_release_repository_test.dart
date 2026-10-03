@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/core/database/app_database.dart';
@@ -297,7 +298,7 @@ void main() {
     final starter = BundledStarterContent(loadString: (path) async => raw);
     final envelope = await starter.load();
 
-    expect(envelope.releaseId, '0');
+    expect(envelope.releaseId, '1');
     expect(
       envelope.manifest.mediaAssets.every(
         (m) => m.status == 'published' && m.checksumSha256?.length == 64,
@@ -312,17 +313,35 @@ void main() {
         'asset:assets/starter_content/media/videos/shoulder.mp4',
       ]),
     );
+    for (final asset in envelope.manifest.mediaAssets) {
+      final path = asset.deliveryReference.substring('asset:'.length);
+      final file = File(path);
+      expect(file.existsSync(), isTrue, reason: path);
+      expect(
+        sha256.convert(file.readAsBytesSync()).toString(),
+        asset.checksumSha256,
+        reason: path,
+      );
+    }
     await repository.applyRelease(envelope, appVersion: '1.0.0');
 
-    expect(await repository.currentReleaseId(), '0');
+    expect(await repository.currentReleaseId(), '1');
     final routines = await LocalContentRepository(database)
         .watchPublishedRoutines()
         .first;
-    expect(routines.single.id, 'raha_rt_000001');
+    expect(
+      routines.map((routine) => routine.id),
+      containsAll(['raha_rt_000001', 'raha_rt_000002']),
+    );
     expect(
       await database.select(database.localExerciseTranslations).get(),
-      hasLength(4),
+      hasLength(24),
     );
+    final fullBodySteps = await (database.select(
+      database.localRoutineSteps,
+    )..where((step) => step.routineId.equals('raha_rt_000002'))).get();
+    expect(fullBodySteps, hasLength(10));
+    expect(fullBodySteps.every((step) => step.durationSeconds == 30), isTrue);
 
     // Approved internal starter media is persisted as published only after its
     // manifest checksum has been verified. The release-media guard blocks its

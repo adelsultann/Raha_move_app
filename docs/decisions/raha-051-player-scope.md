@@ -2,9 +2,8 @@
 
 **Decision owner:** Adel (product-planner)
 **Decision date:** 2026-08-31
-**Status:** Approved for MVP implementation. The video-renderer binding remains a
-fast-follow once real, playable media is delivered (RAHA-052 media readiness and
-RAHA-082 production media).
+**Status:** Approved for MVP implementation. Bundled MP4/GIF fixture playback is
+implemented for internal development; production media remains gated by RAHA-082.
 
 ## User outcome
 
@@ -49,22 +48,20 @@ skip, go back, and finish — without pressure, ads, streaks, or unrelated navig
 
 ## Decisions
 
-### 1. Demonstration rendering (placeholder now, video later)
+### 1. Demonstration rendering
 
-The player's demonstration area is behind a Raha-owned interface
-(`RoutineDemonstration`) that supports `play`/`pause`/`stop` and loops while
-playing. RAHA-051 ships a looping, testable placeholder demonstration (a calm,
-repeating animation of the current movement) because no playable media is
-deliverable yet: the bundled starter catalog's media assets are `status: pending`
-with no checksum, the Free50 fixture is a non-committed dev/test artifact, and the
-production mobility library is purchased later (RAHA-082/RAHA-084).
+The player's demonstration area remains behind the Raha-owned
+`RoutineDemonstration` interface. Bundled MP4 assets use the official Flutter
+`video_player` implementation, GIF assets use Flutter image playback, and both
+loop while the routine is active and pause with the routine. Opaque remote media
+references retain the calm placeholder until the verified cache path is exposed
+to the renderer.
 
-The real `video_player`-backed renderer is a drop-in behind the same interface and
-is deferred until playable media is delivered. This follows the project rule that
-plugin-dependent playback sits behind Raha Move interfaces with fakes in tests.
+The bundled Free50 videos are development fixtures only. The release-media guard
+blocks them from beta and production builds under the RAHA-026 fixture decision.
 
-**Review trigger:** bind the demonstration to delivered MP4 files when real
-playable media becomes available; re-run the player golden/visual checks then.
+**Review trigger:** replace the fixtures with licensed production media, connect
+verified remote cache paths, and re-run player visual and device checks.
 
 ### 2. Keep-awake via `wakelock_plus` behind an interface
 
@@ -112,7 +109,5 @@ each action. Its step-state rules mirror RAHA-001:
 
 ## Non-blocking risks
 
-- The looping demonstration is a placeholder until real playable media is delivered;
-  the acceptance criterion "loops the current demonstration" is met through the
-  looping placeholder behind the media interface, and the video renderer is a
-  tracked fast-follow.
+- Opaque remote media still uses the placeholder until the verified local cache
+  path is available to the renderer.

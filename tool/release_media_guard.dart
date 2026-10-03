@@ -4,13 +4,25 @@ const _fixturePaths = <String>[
   'assets/starter_content/media/videos/neck.gif',
   'assets/starter_content/media/videos/shoulder.mp4',
 ];
+const _fixtureDirectories = <String>[
+  'assets/starter_content/media/videos/free50',
+];
 
 /// Returns fixture paths that must not be present in a distributable build.
 /// Internal development and test builds are intentionally permitted to include
 /// the approved RAHA-081 fixture package.
 List<String> blockedFixturePathsForEnvironment(String environment) {
   if (environment != 'beta' && environment != 'production') return const [];
-  return [for (final path in _fixturePaths) if (File(path).existsSync()) path];
+  final blocked = [
+    for (final path in _fixturePaths)
+      if (File(path).existsSync()) path,
+    for (final directoryPath in _fixtureDirectories)
+      if (Directory(directoryPath).existsSync())
+        for (final entity in Directory(directoryPath).listSync(recursive: true))
+          if (entity is File)
+            entity.path.replaceAll(Platform.pathSeparator, '/'),
+  ]..sort();
+  return blocked;
 }
 
 void main(List<String> arguments) {
@@ -19,9 +31,13 @@ void main(List<String> arguments) {
       .map((argument) => argument.substring('--environment='.length))
       .singleOrNull;
   if (environment == null ||
-      !const {'test', 'development', 'staging', 'beta', 'production'}.contains(
-        environment,
-      )) {
+      !const {
+        'test',
+        'development',
+        'staging',
+        'beta',
+        'production',
+      }.contains(environment)) {
     stderr.writeln(
       'Usage: dart run tool/release_media_guard.dart '
       '--environment=<test|development|staging|beta|production>',

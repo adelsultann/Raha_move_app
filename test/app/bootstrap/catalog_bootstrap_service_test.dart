@@ -95,6 +95,31 @@ void main() {
     expect(result.currentReleaseId, '1');
   });
 
+  test('applies a newer bundled snapshot after an app update', () async {
+    await service(const _FakeSource(null)).run();
+    final newerManifest = minimalValidManifest(
+      releaseId: '1',
+      releaseVersion: 'starter-2',
+    );
+    final wire = jsonEncode({
+      'manifest_checksum': canonicalManifestChecksum(
+        CanonicalJson.encodeBytes(newerManifest),
+      ),
+      'manifest': newerManifest,
+    });
+    final updated = CatalogBootstrapService(
+      repository: repository,
+      starterContent: BundledStarterContent(loadString: (_) async => wire),
+      source: const _FakeSource(null),
+      appVersion: '1.0.0',
+    );
+
+    final result = await updated.run();
+
+    expect(result.source, CatalogBootstrapSource.bundled);
+    expect(result.currentReleaseId, '1');
+  });
+
   test(
     'reports a recoverable error when the bundled asset is corrupt',
     () async {

@@ -1,11 +1,11 @@
 {
-  "manifest_checksum": "bc5ddadd1b579fdc7d3a5e4fd80ca01202e5c76aa65d19dccecf9d1181564f78",
+  "manifest_checksum": "8530c954d87eddf6bd098d1699e9ca489adcdd65d23af99d1893271a0d999219",
   "manifest": {
     "contract_version": "raha-content-release-v1",
     "release": {
-      "id": "0",
-      "version": "starter-1",
-      "published_at": "2026-08-29T00:00:00Z",
+      "id": "1",
+      "version": "starter-2",
+      "published_at": "2026-10-01T00:00:00Z",
       "minimum_app_version": "1.0.0"
     },
     "exercises": [
@@ -26,6 +26,96 @@
         "difficulty": "beginner",
         "safety_approved": true,
         "updated_at": "2026-08-29T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000101",
+        "public_id": "raha_ex_000101",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000102",
+        "public_id": "raha_ex_000102",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000103",
+        "public_id": "raha_ex_000103",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000104",
+        "public_id": "raha_ex_000104",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000105",
+        "public_id": "raha_ex_000105",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000106",
+        "public_id": "raha_ex_000106",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000107",
+        "public_id": "raha_ex_000107",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000108",
+        "public_id": "raha_ex_000108",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000109",
+        "public_id": "raha_ex_000109",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "01000000-0000-0000-0000-000000000110",
+        "public_id": "raha_ex_000110",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "updated_at": "2026-10-01T00:00:00Z"
       }
     ],
     "exercise_translations": [
@@ -56,6 +146,146 @@
         "name": "دوائر الكتفين أثناء الجلوس",
         "description": "حركة كتفين متحكم بها أثناء الجلوس.",
         "short_cue": "أبقِ كتفيك مسترخيين."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "locale": "en",
+        "name": "Shoulder blade elevation and depression",
+        "description": "A controlled standing movement for the shoulder blades.",
+        "short_cue": "Move slowly and keep your neck relaxed."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "locale": "ar",
+        "name": "رفع وخفض لوحي الكتف",
+        "description": "حركة وقوف متحكم بها للوحَي الكتف.",
+        "short_cue": "تحرّك ببطء وحافظ على استرخاء الرقبة."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "locale": "en",
+        "name": "Cross-body shoulder stretch",
+        "description": "A gentle standing stretch across the back of the shoulder.",
+        "short_cue": "Keep the shoulder down and use a comfortable range."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "locale": "ar",
+        "name": "تمدد الكتف عبر الجسم",
+        "description": "تمدد لطيف أثناء الوقوف للجزء الخلفي من الكتف.",
+        "short_cue": "أبقِ الكتف منخفضاً وتحرك ضمن مدى مريح."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "locale": "en",
+        "name": "Standing reach and back rotation",
+        "description": "A standing reach with a controlled upper-back rotation.",
+        "short_cue": "Rotate gently without forcing the movement."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "locale": "ar",
+        "name": "مدّ الذراع ودوران الظهر أثناء الوقوف",
+        "description": "مدّ للذراع مع دوران متحكم به لأعلى الظهر أثناء الوقوف.",
+        "short_cue": "أدر جسمك بلطف من دون إجبار الحركة."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "locale": "en",
+        "name": "Standing side stretch",
+        "description": "A gentle standing side bend for whole-body mobility.",
+        "short_cue": "Reach upward before bending to the side."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "locale": "ar",
+        "name": "تمدد جانبي أثناء الوقوف",
+        "description": "انحناء جانبي لطيف أثناء الوقوف لدعم حركة الجسم.",
+        "short_cue": "مدّ جسمك للأعلى قبل الانحناء جانباً."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "locale": "en",
+        "name": "Hip circles",
+        "description": "Controlled standing circles for gentle hip mobility.",
+        "short_cue": "Keep the circles smooth and comfortable."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "locale": "ar",
+        "name": "دوائر الورك",
+        "description": "دوائر متحكم بها أثناء الوقوف لدعم حركة الورك بلطف.",
+        "short_cue": "اجعل الدوائر انسيابية ومريحة."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "locale": "en",
+        "name": "Standing pelvic tilt",
+        "description": "A small standing pelvic movement for lower-body awareness.",
+        "short_cue": "Use a small range and keep breathing normally."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "locale": "ar",
+        "name": "إمالة الحوض أثناء الوقوف",
+        "description": "حركة صغيرة للحوض أثناء الوقوف لتعزيز الوعي بالحركة.",
+        "short_cue": "استخدم مدى صغيراً واستمر في التنفس بشكل طبيعي."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "locale": "en",
+        "name": "Standing hamstring and back stretch",
+        "description": "A supported standing stretch for the back and legs.",
+        "short_cue": "Soften your knees and stop before discomfort."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "locale": "ar",
+        "name": "تمدد أوتار الركبة والظهر أثناء الوقوف",
+        "description": "تمدد مدعوم أثناء الوقوف للظهر والساقين.",
+        "short_cue": "أرخِ ركبتيك وتوقف قبل الشعور بعدم الارتياح."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "locale": "en",
+        "name": "Kneeling hip flexor stretch",
+        "description": "A gentle kneeling stretch for the front of the hip.",
+        "short_cue": "Keep your torso tall and move forward gently."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "locale": "ar",
+        "name": "تمدد مثنيات الورك من وضع الركوع",
+        "description": "تمدد لطيف من وضع الركوع لمقدمة الورك.",
+        "short_cue": "حافظ على استقامة الجذع وتحرك للأمام بلطف."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "locale": "en",
+        "name": "Seated cat-cow stretch",
+        "description": "A seated spinal movement that alternates rounding and opening.",
+        "short_cue": "Match the movement to an easy breath."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "locale": "ar",
+        "name": "تمدد القطة والبقرة أثناء الجلوس",
+        "description": "حركة للعمود الفقري أثناء الجلوس بالتناوب بين التقوس والانفتاح.",
+        "short_cue": "نسّق الحركة مع تنفس مريح."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "locale": "en",
+        "name": "Supine windshield wipers",
+        "description": "A relaxed side-to-side knee movement while lying down.",
+        "short_cue": "Let the knees move only as far as feels comfortable."
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "locale": "ar",
+        "name": "مسّاحات الركبتين أثناء الاستلقاء",
+        "description": "حركة مريحة للركبتين من جانب إلى آخر أثناء الاستلقاء.",
+        "short_cue": "حرّك ركبتيك فقط ضمن المدى المريح."
       }
     ],
     "media_assets": [
@@ -86,6 +316,146 @@
         "checksum_sha256": "836a90c8a97978080e712b9e9323f4dcca6da8fc890d5d0ad06280bc349c3054",
         "is_preferred": true,
         "updated_at": "2026-08-29T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000101",
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000101_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 1811,
+        "checksum_sha256": "0e146ee8d59fbd30dbf335f2f21172d6e39906576139167d6ba1ede0180908c9",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000102",
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000102_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 5480,
+        "checksum_sha256": "cc6a9c8d00264497cb69bc5ba80f904e47a9ccd5aab23baae6a4cf9a878a510f",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000103",
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000103_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 4667,
+        "checksum_sha256": "c10a58cb151f5a5ff78e0ccbd30395ecfbbf6cd6aa66822b6b665284ea3c84f1",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000104",
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000104_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 4342,
+        "checksum_sha256": "c210d9eca171243063705b5a8e3e28cdcfe034069a4b1ca760ac22bcd358fdfe",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000105",
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000105_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 11772,
+        "checksum_sha256": "59339ad55ac4e037e4f1987b86c1ee84e8f237a3397fb62c5161a555b953f9b6",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000106",
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000106_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 9079,
+        "checksum_sha256": "2012b9ffe5c5c63beae65025686889bc962d38a6e8b33d15c3864df3dbe462d3",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000107",
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000107_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 11076,
+        "checksum_sha256": "ff3cddd7db8c512294e8d0e96ce5e053dce4a52a14d706fa7de5ff24cca0f0a7",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000108",
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000108_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 3274,
+        "checksum_sha256": "4984907e62eaeca167c41585fa583fdd720fbaece057883c6261f7069a17730e",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000109",
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000109_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 2809,
+        "checksum_sha256": "33e06e288881e7d74663bfbd269523077b25e89426a1ed759173100d999be7a0",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
+      },
+      {
+        "id": "02000000-0000-0000-0000-000000000110",
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "delivery_reference": "asset:assets/starter_content/media/videos/free50/raha_ex_000110_free50_fixture_v1_1080.mp4",
+        "status": "published",
+        "media_type": "video",
+        "mime_type": "video/mp4",
+        "width": 1080,
+        "height": 1080,
+        "duration_ms": 4342,
+        "checksum_sha256": "f8530ebad427d89fd8b2f368522a67c83a4749add1aa1fa319adc7a0f880464f",
+        "is_preferred": true,
+        "updated_at": "2026-10-01T00:00:00Z"
       }
     ],
     "routines": [
@@ -99,6 +469,17 @@
         "estimated_duration_seconds": 60,
         "version": 1,
         "updated_at": "2026-08-29T00:00:00Z"
+      },
+      {
+        "id": "03000000-0000-0000-0000-000000000002",
+        "public_id": "raha_rt_000002",
+        "status": "published",
+        "access_tier": "free",
+        "difficulty": "beginner",
+        "safety_approved": true,
+        "estimated_duration_seconds": 300,
+        "version": 1,
+        "updated_at": "2026-10-01T00:00:00Z"
       }
     ],
     "routine_translations": [
@@ -113,6 +494,18 @@
         "locale": "ar",
         "name": "استراحة للرقبة والكتفين أثناء الجلوس",
         "summary": "روتين حركة قصير أثناء الجلوس."
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "locale": "en",
+        "name": "Five-minute full-body reset",
+        "summary": "A calm standing-to-floor mobility flow for the whole body."
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "locale": "ar",
+        "name": "استراحة لخمس دقائق لكامل الجسم",
+        "summary": "تسلسل حركي هادئ لكامل الجسم يبدأ بالوقوف وينتهي على الأرض."
       }
     ],
     "routine_steps": [
@@ -133,113 +526,816 @@
         "duration_seconds": 30,
         "rest_after_seconds": 0,
         "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000101",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "position": 1,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000102",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "position": 2,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000103",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "position": 3,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000104",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "position": 4,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000105",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "position": 5,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000106",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "position": 6,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000107",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "position": 7,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000108",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "position": 8,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000109",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "position": 9,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "id": "04000000-0000-0000-0000-000000000110",
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "position": 10,
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
       }
     ],
     "body_areas": [
-      { "id": "41000000-0000-0000-0000-000000000001", "key": "neck", "sort_order": 1, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000002", "key": "shoulders", "sort_order": 2, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000003", "key": "upper_back", "sort_order": 3, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000004", "key": "lower_back", "sort_order": 4, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000005", "key": "hips", "sort_order": 5, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000006", "key": "knees", "sort_order": 6, "active": true },
-      { "id": "41000000-0000-0000-0000-000000000007", "key": "full_body", "sort_order": 7, "active": true }
+      {
+        "id": "41000000-0000-0000-0000-000000000001",
+        "key": "neck",
+        "sort_order": 1,
+        "active": true
+      },
+      {
+        "id": "41000000-0000-0000-0000-000000000002",
+        "key": "shoulders",
+        "sort_order": 2,
+        "active": true
+      },
+      {
+        "id": "41000000-0000-0000-0000-000000000003",
+        "key": "upper_back",
+        "sort_order": 3,
+        "active": true
+      },
+      {
+        "id": "41000000-0000-0000-0000-000000000004",
+        "key": "lower_back",
+        "sort_order": 4,
+        "active": true
+      },
+      {
+        "id": "41000000-0000-0000-0000-000000000005",
+        "key": "hips",
+        "sort_order": 5,
+        "active": true
+      },
+      {
+        "id": "41000000-0000-0000-0000-000000000006",
+        "key": "knees",
+        "sort_order": 6,
+        "active": true
+      },
+      {
+        "id": "41000000-0000-0000-0000-000000000007",
+        "key": "full_body",
+        "sort_order": 7,
+        "active": true
+      }
     ],
     "body_area_translations": [
-      { "body_area_id": "41000000-0000-0000-0000-000000000001", "locale": "en", "name": "Neck" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000001", "locale": "ar", "name": "الرقبة" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "en", "name": "Shoulders" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000002", "locale": "ar", "name": "الكتفان" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000003", "locale": "en", "name": "Upper back" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000003", "locale": "ar", "name": "أعلى الظهر" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000004", "locale": "en", "name": "Lower back" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000004", "locale": "ar", "name": "أسفل الظهر" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000005", "locale": "en", "name": "Hips" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000005", "locale": "ar", "name": "الوركان" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000006", "locale": "en", "name": "Knees" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000006", "locale": "ar", "name": "الركبتان" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000007", "locale": "en", "name": "Full body" },
-      { "body_area_id": "41000000-0000-0000-0000-000000000007", "locale": "ar", "name": "الجسم كاملاً" }
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Neck"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "الرقبة"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "locale": "en",
+        "name": "Shoulders"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "locale": "ar",
+        "name": "الكتفان"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "locale": "en",
+        "name": "Upper back"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "locale": "ar",
+        "name": "أعلى الظهر"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "locale": "en",
+        "name": "Lower back"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "locale": "ar",
+        "name": "أسفل الظهر"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "locale": "en",
+        "name": "Hips"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "locale": "ar",
+        "name": "الوركان"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000006",
+        "locale": "en",
+        "name": "Knees"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000006",
+        "locale": "ar",
+        "name": "الركبتان"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000007",
+        "locale": "en",
+        "name": "Full body"
+      },
+      {
+        "body_area_id": "41000000-0000-0000-0000-000000000007",
+        "locale": "ar",
+        "name": "الجسم كاملاً"
+      }
     ],
     "goals": [
-      { "id": "42000000-0000-0000-0000-000000000001", "key": "ease_stiffness", "sort_order": 1, "active": true },
-      { "id": "42000000-0000-0000-0000-000000000002", "key": "move_more_freely", "sort_order": 2, "active": true },
-      { "id": "42000000-0000-0000-0000-000000000003", "key": "feel_energized", "sort_order": 3, "active": true },
-      { "id": "42000000-0000-0000-0000-000000000004", "key": "relax", "sort_order": 4, "active": true },
-      { "id": "42000000-0000-0000-0000-000000000005", "key": "desk_break", "sort_order": 5, "active": true }
+      {
+        "id": "42000000-0000-0000-0000-000000000001",
+        "key": "ease_stiffness",
+        "sort_order": 1,
+        "active": true
+      },
+      {
+        "id": "42000000-0000-0000-0000-000000000002",
+        "key": "move_more_freely",
+        "sort_order": 2,
+        "active": true
+      },
+      {
+        "id": "42000000-0000-0000-0000-000000000003",
+        "key": "feel_energized",
+        "sort_order": 3,
+        "active": true
+      },
+      {
+        "id": "42000000-0000-0000-0000-000000000004",
+        "key": "relax",
+        "sort_order": 4,
+        "active": true
+      },
+      {
+        "id": "42000000-0000-0000-0000-000000000005",
+        "key": "desk_break",
+        "sort_order": 5,
+        "active": true
+      }
     ],
     "goal_translations": [
-      { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "en", "name": "Ease stiffness" },
-      { "goal_id": "42000000-0000-0000-0000-000000000001", "locale": "ar", "name": "تخفيف التيبس" },
-      { "goal_id": "42000000-0000-0000-0000-000000000002", "locale": "en", "name": "Move more freely" },
-      { "goal_id": "42000000-0000-0000-0000-000000000002", "locale": "ar", "name": "تحرّك بحرية أكبر" },
-      { "goal_id": "42000000-0000-0000-0000-000000000003", "locale": "en", "name": "Feel energized" },
-      { "goal_id": "42000000-0000-0000-0000-000000000003", "locale": "ar", "name": "الشعور بالنشاط" },
-      { "goal_id": "42000000-0000-0000-0000-000000000004", "locale": "en", "name": "Relax" },
-      { "goal_id": "42000000-0000-0000-0000-000000000004", "locale": "ar", "name": "الاسترخاء" },
-      { "goal_id": "42000000-0000-0000-0000-000000000005", "locale": "en", "name": "Take a desk break" },
-      { "goal_id": "42000000-0000-0000-0000-000000000005", "locale": "ar", "name": "استراحة من المكتب" }
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Ease stiffness"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "تخفيف التيبس"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000002",
+        "locale": "en",
+        "name": "Move more freely"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000002",
+        "locale": "ar",
+        "name": "تحرّك بحرية أكبر"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000003",
+        "locale": "en",
+        "name": "Feel energized"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000003",
+        "locale": "ar",
+        "name": "الشعور بالنشاط"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000004",
+        "locale": "en",
+        "name": "Relax"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000004",
+        "locale": "ar",
+        "name": "الاسترخاء"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000005",
+        "locale": "en",
+        "name": "Take a desk break"
+      },
+      {
+        "goal_id": "42000000-0000-0000-0000-000000000005",
+        "locale": "ar",
+        "name": "استراحة من المكتب"
+      }
     ],
     "movement_positions": [
-      { "id": "43000000-0000-0000-0000-000000000001", "key": "seated", "sort_order": 1, "active": true },
-      { "id": "43000000-0000-0000-0000-000000000002", "key": "standing", "sort_order": 2, "active": true },
-      { "id": "43000000-0000-0000-0000-000000000003", "key": "floor", "sort_order": 3, "active": true }
+      {
+        "id": "43000000-0000-0000-0000-000000000001",
+        "key": "seated",
+        "sort_order": 1,
+        "active": true
+      },
+      {
+        "id": "43000000-0000-0000-0000-000000000002",
+        "key": "standing",
+        "sort_order": 2,
+        "active": true
+      },
+      {
+        "id": "43000000-0000-0000-0000-000000000003",
+        "key": "floor",
+        "sort_order": 3,
+        "active": true
+      }
     ],
     "movement_position_translations": [
-      { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "en", "name": "Seated" },
-      { "position_id": "43000000-0000-0000-0000-000000000001", "locale": "ar", "name": "جلوس" },
-      { "position_id": "43000000-0000-0000-0000-000000000002", "locale": "en", "name": "Standing" },
-      { "position_id": "43000000-0000-0000-0000-000000000002", "locale": "ar", "name": "وقوف" },
-      { "position_id": "43000000-0000-0000-0000-000000000003", "locale": "en", "name": "Floor" },
-      { "position_id": "43000000-0000-0000-0000-000000000003", "locale": "ar", "name": "على الأرض" }
+      {
+        "position_id": "43000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Seated"
+      },
+      {
+        "position_id": "43000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "جلوس"
+      },
+      {
+        "position_id": "43000000-0000-0000-0000-000000000002",
+        "locale": "en",
+        "name": "Standing"
+      },
+      {
+        "position_id": "43000000-0000-0000-0000-000000000002",
+        "locale": "ar",
+        "name": "وقوف"
+      },
+      {
+        "position_id": "43000000-0000-0000-0000-000000000003",
+        "locale": "en",
+        "name": "Floor"
+      },
+      {
+        "position_id": "43000000-0000-0000-0000-000000000003",
+        "locale": "ar",
+        "name": "على الأرض"
+      }
     ],
     "equipment": [
-      { "id": "44000000-0000-0000-0000-000000000001", "key": "body_weight", "sort_order": 1, "active": true }
+      {
+        "id": "44000000-0000-0000-0000-000000000001",
+        "key": "body_weight",
+        "sort_order": 1,
+        "active": true
+      }
     ],
     "equipment_translations": [
-      { "equipment_id": "44000000-0000-0000-0000-000000000001", "locale": "en", "name": "Body weight" },
-      { "equipment_id": "44000000-0000-0000-0000-000000000001", "locale": "ar", "name": "وزن الجسم" }
+      {
+        "equipment_id": "44000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Body weight"
+      },
+      {
+        "equipment_id": "44000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "وزن الجسم"
+      }
     ],
     "routine_contexts": [
-      { "id": "45000000-0000-0000-0000-000000000001", "key": "everyday_mobility", "sort_order": 1, "active": true }
+      {
+        "id": "45000000-0000-0000-0000-000000000001",
+        "key": "everyday_mobility",
+        "sort_order": 1,
+        "active": true
+      }
     ],
     "routine_context_translations": [
-      { "context_id": "45000000-0000-0000-0000-000000000001", "locale": "en", "name": "Everyday mobility" },
-      { "context_id": "45000000-0000-0000-0000-000000000001", "locale": "ar", "name": "حركة يومية" }
+      {
+        "context_id": "45000000-0000-0000-0000-000000000001",
+        "locale": "en",
+        "name": "Everyday mobility"
+      },
+      {
+        "context_id": "45000000-0000-0000-0000-000000000001",
+        "locale": "ar",
+        "name": "حركة يومية"
+      }
     ],
     "tags": [],
     "tag_translations": [],
     "exercise_body_areas": [
-      { "exercise_id": "01000000-0000-0000-0000-000000000001", "body_area_id": "41000000-0000-0000-0000-000000000001", "relevance_weight": 1.0 },
-      { "exercise_id": "01000000-0000-0000-0000-000000000002", "body_area_id": "41000000-0000-0000-0000-000000000002", "relevance_weight": 1.0 }
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "body_area_id": "41000000-0000-0000-0000-000000000001",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "body_area_id": "41000000-0000-0000-0000-000000000007",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "relevance_weight": 1.0
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "relevance_weight": 1.0
+      }
     ],
     "exercise_positions": [
-      { "exercise_id": "01000000-0000-0000-0000-000000000001", "position_id": "43000000-0000-0000-0000-000000000001" },
-      { "exercise_id": "01000000-0000-0000-0000-000000000002", "position_id": "43000000-0000-0000-0000-000000000001" }
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "position_id": "43000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "position_id": "43000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "position_id": "43000000-0000-0000-0000-000000000003"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "position_id": "43000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "position_id": "43000000-0000-0000-0000-000000000003"
+      }
     ],
     "exercise_equipment": [
-      { "exercise_id": "01000000-0000-0000-0000-000000000001", "equipment_id": "44000000-0000-0000-0000-000000000001" },
-      { "exercise_id": "01000000-0000-0000-0000-000000000002", "equipment_id": "44000000-0000-0000-0000-000000000001" }
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      }
     ],
     "exercise_goals": [
-      { "exercise_id": "01000000-0000-0000-0000-000000000001", "goal_id": "42000000-0000-0000-0000-000000000001" },
-      { "exercise_id": "01000000-0000-0000-0000-000000000002", "goal_id": "42000000-0000-0000-0000-000000000001" }
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000001",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000002",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000101",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000102",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000103",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000104",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000105",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000106",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000107",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000108",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000109",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "goal_id": "42000000-0000-0000-0000-000000000001"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "goal_id": "42000000-0000-0000-0000-000000000002"
+      },
+      {
+        "exercise_id": "01000000-0000-0000-0000-000000000110",
+        "goal_id": "42000000-0000-0000-0000-000000000004"
+      }
     ],
     "exercise_tags": [],
     "routine_body_areas": [
-      { "routine_id": "03000000-0000-0000-0000-000000000001", "body_area_id": "41000000-0000-0000-0000-000000000001", "relevance_weight": 1.0 },
-      { "routine_id": "03000000-0000-0000-0000-000000000001", "body_area_id": "41000000-0000-0000-0000-000000000002", "relevance_weight": 1.0 }
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "body_area_id": "41000000-0000-0000-0000-000000000001",
+        "relevance_weight": 1.0
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "relevance_weight": 1.0
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "body_area_id": "41000000-0000-0000-0000-000000000002",
+        "relevance_weight": 0.8
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "body_area_id": "41000000-0000-0000-0000-000000000003",
+        "relevance_weight": 0.8
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "body_area_id": "41000000-0000-0000-0000-000000000004",
+        "relevance_weight": 0.8
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "body_area_id": "41000000-0000-0000-0000-000000000005",
+        "relevance_weight": 0.8
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "body_area_id": "41000000-0000-0000-0000-000000000007",
+        "relevance_weight": 1.0
+      }
     ],
     "routine_goals": [
-      { "routine_id": "03000000-0000-0000-0000-000000000001", "goal_id": "42000000-0000-0000-0000-000000000001", "relevance_weight": 1.0 }
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "goal_id": "42000000-0000-0000-0000-000000000001",
+        "relevance_weight": 1.0
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "goal_id": "42000000-0000-0000-0000-000000000001",
+        "relevance_weight": 1.0
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "goal_id": "42000000-0000-0000-0000-000000000002",
+        "relevance_weight": 1.0
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "goal_id": "42000000-0000-0000-0000-000000000004",
+        "relevance_weight": 1.0
+      }
     ],
     "routine_positions": [
-      { "routine_id": "03000000-0000-0000-0000-000000000001", "position_id": "43000000-0000-0000-0000-000000000001" }
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "position_id": "43000000-0000-0000-0000-000000000001"
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "position_id": "43000000-0000-0000-0000-000000000001"
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "position_id": "43000000-0000-0000-0000-000000000002"
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "position_id": "43000000-0000-0000-0000-000000000003"
+      }
     ],
     "routine_context_memberships": [
-      { "routine_id": "03000000-0000-0000-0000-000000000001", "context_id": "45000000-0000-0000-0000-000000000001" }
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "context_id": "45000000-0000-0000-0000-000000000001"
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "context_id": "45000000-0000-0000-0000-000000000001"
+      }
     ],
     "routine_equipment": [
-      { "routine_id": "03000000-0000-0000-0000-000000000001", "equipment_id": "44000000-0000-0000-0000-000000000001" }
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000001",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      },
+      {
+        "routine_id": "03000000-0000-0000-0000-000000000002",
+        "equipment_id": "44000000-0000-0000-0000-000000000001"
+      }
     ],
     "tombstones": []
   }

@@ -144,6 +144,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
             exerciseId: step.exerciseId,
             name: step.name,
             shortCue: step.shortCue,
+            mediaDeliveryReference: step.media.deliveryReference,
             durationSeconds: step.durationSeconds,
             state: StepPlaybackState.pending,
             creditedSeconds: 0,
@@ -711,6 +712,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
       exerciseId: step.exerciseId,
       name: planStep?.name ?? '',
       shortCue: planStep?.shortCue,
+      mediaDeliveryReference: planStep?.media.deliveryReference,
       durationSeconds: step.targetDurationSeconds,
       state: isActive
           ? StepPlaybackState.pending

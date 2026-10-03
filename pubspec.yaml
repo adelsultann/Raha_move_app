@@ -51,6 +51,7 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   flutter_timezone: ^5.0.1
   wakelock_plus: 1.5.2
+  video_player: 2.14.0
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +93,7 @@ flutter:
     - logo.png
     - assets/starter_content/manifests/
     - assets/starter_content/media/videos/
+    - assets/starter_content/media/videos/free50/
 
   fonts:
     - family: Manrope

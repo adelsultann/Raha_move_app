@@ -48,10 +48,13 @@ final class CatalogBootstrapService {
     var source = CatalogBootstrapSource.existing;
     String? errorCode;
 
-    // 1. Bundled starter first so a fresh install works offline.
+    // 1. Bundled starter first so a fresh install works offline. A newer
+    // bundled snapshot is also applied after an app update; an older bundled
+    // snapshot never replaces a catalog already advanced by server sync.
     try {
-      if (!await _repository.hasCurrentRelease()) {
-        final starter = await _starterContent.load();
+      final starter = await _starterContent.load();
+      final currentId = await _repository.currentReleaseId();
+      if (currentId == null || _isNewerRelease(starter.releaseId, currentId)) {
         await _repository.applyRelease(starter, appVersion: _appVersion);
         source = CatalogBootstrapSource.bundled;
       }
@@ -86,5 +89,11 @@ final class CatalogBootstrapService {
       source: source,
       errorCode: errorCode,
     );
+  }
+
+  static bool _isNewerRelease(String candidateId, String currentId) {
+    final candidate = BigInt.tryParse(candidateId);
+    final current = BigInt.tryParse(currentId);
+    return candidate != null && current != null && candidate > current;
   }
 }

@@ -39,6 +39,7 @@ abstract class RoutineStepPlayback with _$RoutineStepPlayback {
     required String exerciseId,
     required String name,
     String? shortCue,
+    String? mediaDeliveryReference,
     required int durationSeconds,
     required StepPlaybackState state,
     required int creditedSeconds,

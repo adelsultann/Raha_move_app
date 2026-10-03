@@ -30,6 +30,7 @@ AppDatabase appDatabase(Ref ref) {
 /// Opens the application-owned Drift database for an isolated startup task.
 /// Callers must close the returned database when their preflight is complete.
 AppDatabase createAppDatabase() => AppDatabase(
+  //LazyDatabase means the database is not physically opened until something needs it.
   LazyDatabase(() async {
     final support = await getApplicationSupportDirectory();
     final file = File(

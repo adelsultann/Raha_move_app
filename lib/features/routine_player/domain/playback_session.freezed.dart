@@ -18,6 +18,7 @@ mixin _$RoutineStepPlayback {
   String get exerciseId;
   String get name;
   String? get shortCue;
+  String? get mediaDeliveryReference;
   int get durationSeconds;
   StepPlaybackState get state;
   int get creditedSeconds;
@@ -44,6 +45,8 @@ mixin _$RoutineStepPlayback {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.shortCue, shortCue) ||
                 other.shortCue == shortCue) &&
+            (identical(other.mediaDeliveryReference, mediaDeliveryReference) ||
+                other.mediaDeliveryReference == mediaDeliveryReference) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds) &&
             (identical(other.state, state) || other.state == state) &&
@@ -60,6 +63,7 @@ mixin _$RoutineStepPlayback {
     exerciseId,
     name,
     shortCue,
+    mediaDeliveryReference,
     durationSeconds,
     state,
     creditedSeconds,
@@ -68,7 +72,7 @@ mixin _$RoutineStepPlayback {
 
   @override
   String toString() {
-    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
+    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, mediaDeliveryReference: $mediaDeliveryReference, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
   }
 }
 
@@ -84,6 +88,7 @@ abstract mixin class $RoutineStepPlaybackCopyWith<$Res> {
     String exerciseId,
     String name,
     String? shortCue,
+    String? mediaDeliveryReference,
     int durationSeconds,
     StepPlaybackState state,
     int creditedSeconds,
@@ -108,6 +113,7 @@ class _$RoutineStepPlaybackCopyWithImpl<$Res>
     Object? exerciseId = null,
     Object? name = null,
     Object? shortCue = freezed,
+    Object? mediaDeliveryReference = freezed,
     Object? durationSeconds = null,
     Object? state = null,
     Object? creditedSeconds = null,
@@ -130,6 +136,10 @@ class _$RoutineStepPlaybackCopyWithImpl<$Res>
         shortCue: freezed == shortCue
             ? _self.shortCue
             : shortCue // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        mediaDeliveryReference: freezed == mediaDeliveryReference
+            ? _self.mediaDeliveryReference
+            : mediaDeliveryReference // ignore: cast_nullable_to_non_nullable
                   as String?,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
@@ -250,6 +260,7 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
       String exerciseId,
       String name,
       String? shortCue,
+      String? mediaDeliveryReference,
       int durationSeconds,
       StepPlaybackState state,
       int creditedSeconds,
@@ -266,6 +277,7 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.mediaDeliveryReference,
           _that.durationSeconds,
           _that.state,
           _that.creditedSeconds,
@@ -296,6 +308,7 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
       String exerciseId,
       String name,
       String? shortCue,
+      String? mediaDeliveryReference,
       int durationSeconds,
       StepPlaybackState state,
       int creditedSeconds,
@@ -311,6 +324,7 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.mediaDeliveryReference,
           _that.durationSeconds,
           _that.state,
           _that.creditedSeconds,
@@ -340,6 +354,7 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
       String exerciseId,
       String name,
       String? shortCue,
+      String? mediaDeliveryReference,
       int durationSeconds,
       StepPlaybackState state,
       int creditedSeconds,
@@ -355,6 +370,7 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.mediaDeliveryReference,
           _that.durationSeconds,
           _that.state,
           _that.creditedSeconds,
@@ -374,6 +390,7 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
     required this.exerciseId,
     required this.name,
     this.shortCue,
+    this.mediaDeliveryReference,
     required this.durationSeconds,
     required this.state,
     required this.creditedSeconds,
@@ -388,6 +405,8 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
   final String name;
   @override
   final String? shortCue;
+  @override
+  final String? mediaDeliveryReference;
   @override
   final int durationSeconds;
   @override
@@ -419,6 +438,8 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.shortCue, shortCue) ||
                 other.shortCue == shortCue) &&
+            (identical(other.mediaDeliveryReference, mediaDeliveryReference) ||
+                other.mediaDeliveryReference == mediaDeliveryReference) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds) &&
             (identical(other.state, state) || other.state == state) &&
@@ -435,6 +456,7 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
     exerciseId,
     name,
     shortCue,
+    mediaDeliveryReference,
     durationSeconds,
     state,
     creditedSeconds,
@@ -443,7 +465,7 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
 
   @override
   String toString() {
-    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
+    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, mediaDeliveryReference: $mediaDeliveryReference, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
   }
 }
 
@@ -461,6 +483,7 @@ abstract mixin class _$RoutineStepPlaybackCopyWith<$Res>
     String exerciseId,
     String name,
     String? shortCue,
+    String? mediaDeliveryReference,
     int durationSeconds,
     StepPlaybackState state,
     int creditedSeconds,
@@ -485,6 +508,7 @@ class __$RoutineStepPlaybackCopyWithImpl<$Res>
     Object? exerciseId = null,
     Object? name = null,
     Object? shortCue = freezed,
+    Object? mediaDeliveryReference = freezed,
     Object? durationSeconds = null,
     Object? state = null,
     Object? creditedSeconds = null,
@@ -507,6 +531,10 @@ class __$RoutineStepPlaybackCopyWithImpl<$Res>
         shortCue: freezed == shortCue
             ? _self.shortCue
             : shortCue // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        mediaDeliveryReference: freezed == mediaDeliveryReference
+            ? _self.mediaDeliveryReference
+            : mediaDeliveryReference // ignore: cast_nullable_to_non_nullable
                   as String?,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
