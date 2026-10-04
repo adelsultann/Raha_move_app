@@ -27,6 +27,7 @@ class RoutinePlayerScreen extends ConsumerStatefulWidget {
     this.recommendationId,
     this.sessionId,
     this.source,
+    this.durations,
     this.showGamification = true,
   });
 
@@ -34,6 +35,7 @@ class RoutinePlayerScreen extends ConsumerStatefulWidget {
   final String? recommendationId;
   final String? sessionId;
   final String? source;
+  final String? durations;
   final bool showGamification;
 
   @override
@@ -48,6 +50,7 @@ class _RoutinePlayerScreenState extends ConsumerState<RoutinePlayerScreen>
     recommendationId: widget.recommendationId,
     sessionId: widget.sessionId,
     source: widget.source,
+    durations: widget.durations,
   );
 
   RoutinePlayerController? _controller;

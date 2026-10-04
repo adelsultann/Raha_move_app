@@ -1241,4 +1241,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get playerPrepareHint => 'اتخذ وضعية مريحة واتبع العرض التوضيحي.';
+
+  @override
+  String get routineDecreaseTime => 'تقليل الوقت ١٥ ثانية';
+
+  @override
+  String get routineIncreaseTime => 'زيادة الوقت ١٥ ثانية';
 }

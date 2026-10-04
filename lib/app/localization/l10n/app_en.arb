@@ -475,5 +475,7 @@
   "playerGetReady": "Get ready",
   "playerStartNow": "Start now",
   "playerHowTo": "How to perform",
-  "playerPrepareHint": "Find a comfortable position and follow the demonstration."
+  "playerPrepareHint": "Find a comfortable position and follow the demonstration.",
+  "routineDecreaseTime": "Decrease time by 15 seconds",
+  "routineIncreaseTime": "Increase time by 15 seconds"
 }

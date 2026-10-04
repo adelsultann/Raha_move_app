@@ -475,5 +475,7 @@
   "playerGetReady": "استعد للحركة",
   "playerStartNow": "ابدأ الآن",
   "playerHowTo": "طريقة أداء التمرين",
-  "playerPrepareHint": "اتخذ وضعية مريحة واتبع العرض التوضيحي."
+  "playerPrepareHint": "اتخذ وضعية مريحة واتبع العرض التوضيحي.",
+  "routineDecreaseTime": "تقليل الوقت ١٥ ثانية",
+  "routineIncreaseTime": "زيادة الوقت ١٥ ثانية"
 }

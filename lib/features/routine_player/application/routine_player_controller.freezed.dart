@@ -18,6 +18,7 @@ mixin _$RoutinePlayerArgs {
   String? get recommendationId;
   String? get sessionId;
   String? get source;
+  String? get durations;
 
   /// Create a copy of RoutinePlayerArgs
   /// with the given fields replaced by the non-null parameter values.
@@ -40,16 +41,24 @@ mixin _$RoutinePlayerArgs {
                 other.recommendationId == recommendationId) &&
             (identical(other.sessionId, sessionId) ||
                 other.sessionId == sessionId) &&
-            (identical(other.source, source) || other.source == source));
+            (identical(other.source, source) || other.source == source) &&
+            (identical(other.durations, durations) ||
+                other.durations == durations));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, routineId, recommendationId, sessionId, source);
+  int get hashCode => Object.hash(
+    runtimeType,
+    routineId,
+    recommendationId,
+    sessionId,
+    source,
+    durations,
+  );
 
   @override
   String toString() {
-    return 'RoutinePlayerArgs(routineId: $routineId, recommendationId: $recommendationId, sessionId: $sessionId, source: $source)';
+    return 'RoutinePlayerArgs(routineId: $routineId, recommendationId: $recommendationId, sessionId: $sessionId, source: $source, durations: $durations)';
   }
 }
 
@@ -65,6 +74,7 @@ abstract mixin class $RoutinePlayerArgsCopyWith<$Res> {
     String? recommendationId,
     String? sessionId,
     String? source,
+    String? durations,
   });
 }
 
@@ -85,6 +95,7 @@ class _$RoutinePlayerArgsCopyWithImpl<$Res>
     Object? recommendationId = freezed,
     Object? sessionId = freezed,
     Object? source = freezed,
+    Object? durations = freezed,
   }) {
     return _then(
       RoutinePlayerArgs(
@@ -103,6 +114,10 @@ class _$RoutinePlayerArgsCopyWithImpl<$Res>
         source: freezed == source
             ? _self.source
             : source // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        durations: freezed == durations
+            ? _self.durations
+            : durations // ignore: cast_nullable_to_non_nullable
                   as String?,
       ),
     );
@@ -207,6 +222,7 @@ extension RoutinePlayerArgsPatterns on RoutinePlayerArgs {
       String? recommendationId,
       String? sessionId,
       String? source,
+      String? durations,
     )?
     $default, {
     required TResult orElse(),
@@ -219,6 +235,7 @@ extension RoutinePlayerArgsPatterns on RoutinePlayerArgs {
           _that.recommendationId,
           _that.sessionId,
           _that.source,
+          _that.durations,
         );
       case _:
         return orElse();
@@ -245,6 +262,7 @@ extension RoutinePlayerArgsPatterns on RoutinePlayerArgs {
       String? recommendationId,
       String? sessionId,
       String? source,
+      String? durations,
     )
     $default,
   ) {
@@ -256,6 +274,7 @@ extension RoutinePlayerArgsPatterns on RoutinePlayerArgs {
           _that.recommendationId,
           _that.sessionId,
           _that.source,
+          _that.durations,
         );
       case _:
         throw StateError('Unexpected subclass');
@@ -281,6 +300,7 @@ extension RoutinePlayerArgsPatterns on RoutinePlayerArgs {
       String? recommendationId,
       String? sessionId,
       String? source,
+      String? durations,
     )?
     $default,
   ) {
@@ -292,6 +312,7 @@ extension RoutinePlayerArgsPatterns on RoutinePlayerArgs {
           _that.recommendationId,
           _that.sessionId,
           _that.source,
+          _that.durations,
         );
       case _:
         return null;
@@ -307,6 +328,7 @@ class _RoutinePlayerArgs implements RoutinePlayerArgs {
     this.recommendationId,
     this.sessionId,
     this.source,
+    this.durations,
   });
 
   @override
@@ -317,6 +339,8 @@ class _RoutinePlayerArgs implements RoutinePlayerArgs {
   final String? sessionId;
   @override
   final String? source;
+  @override
+  final String? durations;
 
   /// Create a copy of RoutinePlayerArgs
   /// with the given fields replaced by the non-null parameter values.
@@ -337,16 +361,24 @@ class _RoutinePlayerArgs implements RoutinePlayerArgs {
                 other.recommendationId == recommendationId) &&
             (identical(other.sessionId, sessionId) ||
                 other.sessionId == sessionId) &&
-            (identical(other.source, source) || other.source == source));
+            (identical(other.source, source) || other.source == source) &&
+            (identical(other.durations, durations) ||
+                other.durations == durations));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, routineId, recommendationId, sessionId, source);
+  int get hashCode => Object.hash(
+    runtimeType,
+    routineId,
+    recommendationId,
+    sessionId,
+    source,
+    durations,
+  );
 
   @override
   String toString() {
-    return 'RoutinePlayerArgs(routineId: $routineId, recommendationId: $recommendationId, sessionId: $sessionId, source: $source)';
+    return 'RoutinePlayerArgs(routineId: $routineId, recommendationId: $recommendationId, sessionId: $sessionId, source: $source, durations: $durations)';
   }
 }
 
@@ -364,6 +396,7 @@ abstract mixin class _$RoutinePlayerArgsCopyWith<$Res>
     String? recommendationId,
     String? sessionId,
     String? source,
+    String? durations,
   });
 }
 
@@ -384,6 +417,7 @@ class __$RoutinePlayerArgsCopyWithImpl<$Res>
     Object? recommendationId = freezed,
     Object? sessionId = freezed,
     Object? source = freezed,
+    Object? durations = freezed,
   }) {
     return _then(
       _RoutinePlayerArgs(
@@ -402,6 +436,10 @@ class __$RoutinePlayerArgsCopyWithImpl<$Res>
         source: freezed == source
             ? _self.source
             : source // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        durations: freezed == durations
+            ? _self.durations
+            : durations // ignore: cast_nullable_to_non_nullable
                   as String?,
       ),
     );

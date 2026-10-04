@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -30,6 +31,7 @@ abstract class RoutinePlayerArgs with _$RoutinePlayerArgs {
     String? recommendationId,
     String? sessionId,
     String? source,
+    String? durations,
   }) = _RoutinePlayerArgs;
 }
 
@@ -126,6 +128,19 @@ class RoutinePlayerController extends _$RoutinePlayerController {
   }
 
   void _startSession(RoutinePlayerArgs args, RoutinePlaybackPlan plan) {
+    final durations = <String, int>{};
+    try {
+      final decoded = jsonDecode(args.durations ?? '{}');
+      if (decoded is Map<String, dynamic>) {
+        for (final entry in decoded.entries) {
+          if (entry.value is int && entry.value >= 15 && entry.value <= 3600) {
+            durations[entry.key] = entry.value as int;
+          }
+        }
+      }
+    } on FormatException {
+      // Invalid deep-link customization falls back to the catalog durations.
+    }
     _sessionSource = args.source == 'explore' ? 'explore' : 'recommendation';
     final now = _clock().toUtc();
     _sessionStartedAt = now;
@@ -148,7 +163,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
             description: step.description,
             instructions: step.instructions,
             mediaDeliveryReference: step.media.deliveryReference,
-            durationSeconds: step.durationSeconds,
+            durationSeconds: durations[step.stepId] ?? step.durationSeconds,
             state: StepPlaybackState.pending,
             creditedSeconds: 0,
             skipRequested: false,

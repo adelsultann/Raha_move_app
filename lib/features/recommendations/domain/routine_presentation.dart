@@ -9,6 +9,8 @@ part 'routine_presentation.freezed.dart';
 abstract class MovementPreviewEntry with _$MovementPreviewEntry {
   const factory MovementPreviewEntry({
     required String name,
+    String? stepId,
+    String? thumbnailAsset,
     required int durationSeconds,
   }) = _MovementPreviewEntry;
 }

@@ -67,6 +67,10 @@ class $AssetsCategoriesIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// Directory path: assets/images/exercise_thumbnails
+  $AssetsImagesExerciseThumbnailsGen get exerciseThumbnails =>
+      const $AssetsImagesExerciseThumbnailsGen();
+
   /// File path: assets/images/splash_breathing_arc.png
   AssetGenImage get splashBreathingArc =>
       const AssetGenImage('assets/images/splash_breathing_arc.png');
@@ -84,6 +88,84 @@ class $AssetsStarterContentGen {
 
   /// Directory path: assets/starter_content/media
   $AssetsStarterContentMediaGen get media => const $AssetsStarterContentMediaGen();
+}
+
+class $AssetsImagesExerciseThumbnailsGen {
+  const $AssetsImagesExerciseThumbnailsGen();
+
+  /// File path: assets/images/exercise_thumbnails/neck.jpg
+  AssetGenImage get neck =>
+      const AssetGenImage('assets/images/exercise_thumbnails/neck.jpg');
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000101_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000101Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000101_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000102_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000102Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000102_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000103_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000103Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000103_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000104_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000104Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000104_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000105_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000105Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000105_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000106_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000106Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000106_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000107_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000107Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000107_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000108_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000108Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000108_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000109_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000109Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000109_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/raha_ex_000110_free50_fixture_v1_1080.jpg
+  AssetGenImage get rahaEx000110Free50FixtureV11080 => const AssetGenImage(
+    'assets/images/exercise_thumbnails/raha_ex_000110_free50_fixture_v1_1080.jpg',
+  );
+
+  /// File path: assets/images/exercise_thumbnails/shoulder.jpg
+  AssetGenImage get shoulder =>
+      const AssetGenImage('assets/images/exercise_thumbnails/shoulder.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+    neck,
+    rahaEx000101Free50FixtureV11080,
+    rahaEx000102Free50FixtureV11080,
+    rahaEx000103Free50FixtureV11080,
+    rahaEx000104Free50FixtureV11080,
+    rahaEx000105Free50FixtureV11080,
+    rahaEx000106Free50FixtureV11080,
+    rahaEx000107Free50FixtureV11080,
+    rahaEx000108Free50FixtureV11080,
+    rahaEx000109Free50FixtureV11080,
+    rahaEx000110Free50FixtureV11080,
+    shoulder,
+  ];
 }
 
 class $AssetsStarterContentManifestsGen {

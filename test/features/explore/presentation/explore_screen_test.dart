@@ -18,6 +18,55 @@ import 'package:raha_move/features/saved_routines/domain/saved_routines_reposito
 import 'package:raha_move/features/sync/application/sync_providers.dart';
 
 void main() {
+  testWidgets(
+    'each exercise time changes independently with a 15 second minimum',
+    (tester) async {
+      final source = _allowedDetails(const Locale('en'));
+      final details = source.copyWith(
+        presentation: source.presentation.copyWith(
+          movements: const [
+            MovementPreviewEntry(
+              stepId: 'a',
+              name: 'First',
+              durationSeconds: 30,
+            ),
+            MovementPreviewEntry(
+              stepId: 'b',
+              name: 'Second',
+              durationSeconds: 30,
+            ),
+          ],
+        ),
+      );
+      await _pumpDetails(tester, const Locale('en'), details);
+      await tester.pumpAndSettle();
+      final increase = find.byKey(const Key('exercise_increase_0'));
+      await tester.ensureVisible(increase);
+      await tester.tap(increase);
+      await tester.pump();
+      expect(
+        tester.widget<Text>(find.byKey(const Key('exercise_duration_0'))).data,
+        '0:45',
+      );
+      final decrease = find.byKey(const Key('exercise_decrease_0'));
+      await tester.tap(decrease);
+      await tester.pump();
+      await tester.tap(decrease);
+      await tester.pump();
+      expect(
+        tester.widget<Text>(find.byKey(const Key('exercise_duration_0'))).data,
+        '0:15',
+      );
+      expect(tester.widget<IconButton>(decrease).onPressed, isNull);
+      await tester.ensureVisible(find.byKey(const Key('exercise_duration_1')));
+      expect(
+        tester.widget<Text>(find.byKey(const Key('exercise_duration_1'))).data,
+        '0:30',
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('unfiltered Explore remains usable in both locales at 200%', (
     tester,
   ) async {
@@ -68,10 +117,7 @@ void main() {
         final start = find.byKey(const Key('explore_start'));
         expect(start.hitTestable(), findsOneWidget);
         final position = tester.getTopLeft(start);
-        final artwork = tester.widget<Image>(
-          find.byKey(const Key('explore_details_artwork')),
-        );
-        expect((artwork.image as AssetImage).assetName, contains('SHOULDERS'));
+        expect(find.byKey(const Key('explore_details_artwork')), findsNothing);
         for (var index = 0; index < 8; index++) {
           final row = find.byKey(Key('explore_movement_$index'));
           await tester.scrollUntilVisible(
@@ -90,7 +136,7 @@ void main() {
       }
     },
   );
-  testWidgets('details metadata and blocked start are accessible at 200%', (
+  testWidgets('simplified details and blocked start are accessible at 200%', (
     tester,
   ) async {
     for (final locale in const [Locale('en'), Locale('ar')]) {
@@ -98,19 +144,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('explore_details_name')), findsOneWidget);
-      expect(find.byKey(const Key('explore_details_artwork')), findsOneWidget);
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('explore_details_equipment')),
-        200,
-        scrollable: find.descendant(
-          of: find.byType(ListView),
-          matching: find.byType(Scrollable),
-        ),
-      );
-      expect(
-        find.byKey(const Key('explore_details_equipment')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('explore_details_artwork')), findsNothing);
+      expect(find.byKey(const Key('explore_details_equipment')), findsNothing);
       expect(find.byKey(const Key('explore_start_blocked')), findsOneWidget);
       expect(find.byKey(const Key('explore_details_save')), findsNothing);
       final start = find.byKey(const Key('explore_start'));
@@ -121,13 +156,6 @@ void main() {
             .getSemanticsData()
             .hasAction(SemanticsAction.tap),
         isFalse,
-      );
-      expect(
-        tester
-            .getSemantics(find.byKey(const Key('explore_details_equipment')))
-            .getSemanticsData()
-            .label,
-        contains(locale.languageCode == 'ar' ? 'بدون أدوات' : 'No equipment'),
       );
       expect(
         Directionality.of(

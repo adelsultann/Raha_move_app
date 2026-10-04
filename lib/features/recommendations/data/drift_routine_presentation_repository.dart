@@ -54,6 +54,28 @@ final class DriftRoutinePresentationRepository {
       nameByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] = t.name;
     }
 
+    final media =
+        await (_database.select(_database.localMediaAssets)..where(
+              (m) =>
+                  m.exerciseId.isIn(exerciseIds) & m.status.equals('published'),
+            ))
+            .get();
+    final thumbnails = <String, String>{};
+    for (final asset in media) {
+      final reference = asset.deliveryReference;
+      if (!reference.startsWith('asset:')) continue;
+      final path = reference.substring(6);
+      if (path.endsWith('.mp4') || path.endsWith('.gif')) {
+        final name = path.split('/').last.split('.').first;
+        thumbnails.putIfAbsent(
+          asset.exerciseId,
+          () => 'assets/images/exercise_thumbnails/$name.jpg',
+        );
+      } else if (asset.mimeType.startsWith('image/')) {
+        thumbnails[asset.exerciseId] = path;
+      }
+    }
+
     final assignments = await (_database.select(
       _database.localRoutineTaxonomies,
     )..where((r) => r.routineId.equals(routineId))).get();
@@ -72,6 +94,8 @@ final class DriftRoutinePresentationRepository {
       movements: [
         for (final step in steps)
           MovementPreviewEntry(
+            stepId: step.id,
+            thumbnailAsset: thumbnails[step.exerciseId],
             name: _pick(nameByExercise[step.exerciseId] ?? const {}, locale),
             durationSeconds: step.durationSeconds,
           ),

@@ -2299,6 +2299,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Find a comfortable position and follow the demonstration.'**
   String get playerPrepareHint;
+
+  /// No description provided for @routineDecreaseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease time by 15 seconds'**
+  String get routineDecreaseTime;
+
+  /// No description provided for @routineIncreaseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase time by 15 seconds'**
+  String get routineIncreaseTime;
 }
 
 class _AppLocalizationsDelegate

@@ -169,6 +169,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
     @TypedQueryParameter(name: 'recommendationId') this.recommendationId,
     @TypedQueryParameter(name: 'sessionId') this.sessionId,
     @TypedQueryParameter(name: 'source') this.source,
+    this.durations,
   });
 
   final String routineId;
@@ -179,6 +180,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
   /// [sessionId] starts a new session.
   final String? sessionId;
   final String? source;
+  final String? durations;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -187,6 +189,7 @@ class RoutinePlayerRoute extends GoRouteData with $RoutinePlayerRoute {
       recommendationId: recommendationId,
       sessionId: sessionId,
       source: source,
+      durations: durations,
       showGamification: MvpFeatures.gamification,
     );
   }

@@ -15,6 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MovementPreviewEntry {
   String get name;
+  String? get stepId;
+  String? get thumbnailAsset;
   int get durationSeconds;
 
   /// Create a copy of MovementPreviewEntry
@@ -33,16 +35,20 @@ mixin _$MovementPreviewEntry {
         (other.runtimeType == runtimeType &&
             other is MovementPreviewEntry &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.stepId, stepId) || other.stepId == stepId) &&
+            (identical(other.thumbnailAsset, thumbnailAsset) ||
+                other.thumbnailAsset == thumbnailAsset) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, durationSeconds);
+  int get hashCode =>
+      Object.hash(runtimeType, name, stepId, thumbnailAsset, durationSeconds);
 
   @override
   String toString() {
-    return 'MovementPreviewEntry(name: $name, durationSeconds: $durationSeconds)';
+    return 'MovementPreviewEntry(name: $name, stepId: $stepId, thumbnailAsset: $thumbnailAsset, durationSeconds: $durationSeconds)';
   }
 }
 
@@ -53,7 +59,12 @@ abstract mixin class $MovementPreviewEntryCopyWith<$Res> {
     $Res Function(MovementPreviewEntry) _then,
   ) = _$MovementPreviewEntryCopyWithImpl;
   @useResult
-  $Res call({String name, int durationSeconds});
+  $Res call({
+    String name,
+    String? stepId,
+    String? thumbnailAsset,
+    int durationSeconds,
+  });
 }
 
 /// @nodoc
@@ -68,13 +79,26 @@ class _$MovementPreviewEntryCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? name = null, Object? durationSeconds = null}) {
+  $Res call({
+    Object? name = null,
+    Object? stepId = freezed,
+    Object? thumbnailAsset = freezed,
+    Object? durationSeconds = null,
+  }) {
     return _then(
       MovementPreviewEntry(
         name: null == name
             ? _self.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
+        stepId: freezed == stepId
+            ? _self.stepId
+            : stepId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        thumbnailAsset: freezed == thumbnailAsset
+            ? _self.thumbnailAsset
+            : thumbnailAsset // ignore: cast_nullable_to_non_nullable
+                  as String?,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
             : durationSeconds // ignore: cast_nullable_to_non_nullable
@@ -177,13 +201,24 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String name, int durationSeconds)? $default, {
+    TResult Function(
+      String name,
+      String? stepId,
+      String? thumbnailAsset,
+      int durationSeconds,
+    )?
+    $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _MovementPreviewEntry() when $default != null:
-        return $default(_that.name, _that.durationSeconds);
+        return $default(
+          _that.name,
+          _that.stepId,
+          _that.thumbnailAsset,
+          _that.durationSeconds,
+        );
       case _:
         return orElse();
     }
@@ -204,12 +239,23 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String name, int durationSeconds) $default,
+    TResult Function(
+      String name,
+      String? stepId,
+      String? thumbnailAsset,
+      int durationSeconds,
+    )
+    $default,
   ) {
     final _that = this;
     switch (_that) {
       case _MovementPreviewEntry():
-        return $default(_that.name, _that.durationSeconds);
+        return $default(
+          _that.name,
+          _that.stepId,
+          _that.thumbnailAsset,
+          _that.durationSeconds,
+        );
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -229,12 +275,23 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String name, int durationSeconds)? $default,
+    TResult? Function(
+      String name,
+      String? stepId,
+      String? thumbnailAsset,
+      int durationSeconds,
+    )?
+    $default,
   ) {
     final _that = this;
     switch (_that) {
       case _MovementPreviewEntry() when $default != null:
-        return $default(_that.name, _that.durationSeconds);
+        return $default(
+          _that.name,
+          _that.stepId,
+          _that.thumbnailAsset,
+          _that.durationSeconds,
+        );
       case _:
         return null;
     }
@@ -246,11 +303,17 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
 class _MovementPreviewEntry implements MovementPreviewEntry {
   const _MovementPreviewEntry({
     required this.name,
+    this.stepId,
+    this.thumbnailAsset,
     required this.durationSeconds,
   });
 
   @override
   final String name;
+  @override
+  final String? stepId;
+  @override
+  final String? thumbnailAsset;
   @override
   final int durationSeconds;
 
@@ -271,16 +334,20 @@ class _MovementPreviewEntry implements MovementPreviewEntry {
         (other.runtimeType == runtimeType &&
             other is _MovementPreviewEntry &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.stepId, stepId) || other.stepId == stepId) &&
+            (identical(other.thumbnailAsset, thumbnailAsset) ||
+                other.thumbnailAsset == thumbnailAsset) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, durationSeconds);
+  int get hashCode =>
+      Object.hash(runtimeType, name, stepId, thumbnailAsset, durationSeconds);
 
   @override
   String toString() {
-    return 'MovementPreviewEntry(name: $name, durationSeconds: $durationSeconds)';
+    return 'MovementPreviewEntry(name: $name, stepId: $stepId, thumbnailAsset: $thumbnailAsset, durationSeconds: $durationSeconds)';
   }
 }
 
@@ -293,7 +360,12 @@ abstract mixin class _$MovementPreviewEntryCopyWith<$Res>
   ) = __$MovementPreviewEntryCopyWithImpl;
   @override
   @useResult
-  $Res call({String name, int durationSeconds});
+  $Res call({
+    String name,
+    String? stepId,
+    String? thumbnailAsset,
+    int durationSeconds,
+  });
 }
 
 /// @nodoc
@@ -308,13 +380,26 @@ class __$MovementPreviewEntryCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $Res call({Object? name = null, Object? durationSeconds = null}) {
+  $Res call({
+    Object? name = null,
+    Object? stepId = freezed,
+    Object? thumbnailAsset = freezed,
+    Object? durationSeconds = null,
+  }) {
     return _then(
       _MovementPreviewEntry(
         name: null == name
             ? _self.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
+        stepId: freezed == stepId
+            ? _self.stepId
+            : stepId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        thumbnailAsset: freezed == thumbnailAsset
+            ? _self.thumbnailAsset
+            : thumbnailAsset // ignore: cast_nullable_to_non_nullable
+                  as String?,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
             : durationSeconds // ignore: cast_nullable_to_non_nullable

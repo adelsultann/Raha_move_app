@@ -1260,4 +1260,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get playerPrepareHint =>
       'Find a comfortable position and follow the demonstration.';
+
+  @override
+  String get routineDecreaseTime => 'Decrease time by 15 seconds';
+
+  @override
+  String get routineIncreaseTime => 'Increase time by 15 seconds';
 }

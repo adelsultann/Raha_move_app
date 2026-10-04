@@ -11,6 +11,29 @@ import '../support/routine_player_test_harness.dart';
 
 void main() {
   test(
+    'custom step durations control playback without changing other steps',
+    () async {
+      final ticker = FakePlaybackTicker();
+      final container = buildRoutinePlayerContainer(ticker: ticker);
+      addTearDown(container.dispose);
+      const args = RoutinePlayerArgs(
+        routineId: 'rt-1',
+        durations: '{"step-1":15,"step-2":-1}',
+      );
+      await pumpReady(container, args);
+      expect(readySession(container, args).steps[0].durationSeconds, 15);
+      expect(readySession(container, args).steps[1].durationSeconds, 5);
+      for (var i = 0; i < 14; i++) {
+        ticker.fireTick();
+      }
+      expect(readySession(container, args).currentStepIndex, 0);
+      ticker.fireTick();
+      expect(readySession(container, args).currentStepIndex, 1);
+      expect(readySession(container, args).totalCreditedSeconds, 15);
+    },
+  );
+
+  test(
     'preparation counts 3-2-1 without credit and freezes in background',
     () async {
       final ticker = FakePlaybackTicker();

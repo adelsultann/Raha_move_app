@@ -92,6 +92,7 @@ flutter:
     - assets/categories_icons/
     - assets/fonts/
     - assets/images/
+    - assets/images/exercise_thumbnails/
     - logo.png
     - assets/starter_content/manifests/
     - assets/starter_content/media/videos/
