@@ -1772,6 +1772,42 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get profileSettings;
 
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profileAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get profileAppearance;
+
+  /// No description provided for @profileAppearanceDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get profileAppearanceDark;
+
+  /// No description provided for @profileAppearanceNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get profileAppearanceNight;
+
+  /// No description provided for @profileHealthSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & safety'**
+  String get profileHealthSafety;
+
+  /// No description provided for @profileLogIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in'**
+  String get profileLogIn;
+
   /// No description provided for @profileLanguage.
   ///
   /// In en, this message translates to:
@@ -1970,30 +2006,6 @@ abstract class AppLocalizations {
   /// **'Privacy controls'**
   String get profilePrivacy;
 
-  /// No description provided for @profileAnalytics.
-  ///
-  /// In en, this message translates to:
-  /// **'Product analytics'**
-  String get profileAnalytics;
-
-  /// No description provided for @profileAnalyticsHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Optional. Helps us understand which app features are useful.'**
-  String get profileAnalyticsHint;
-
-  /// No description provided for @profileCrashReporting.
-  ///
-  /// In en, this message translates to:
-  /// **'Crash reporting'**
-  String get profileCrashReporting;
-
-  /// No description provided for @profileCrashReportingHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Optional. Helps us identify technical problems.'**
-  String get profileCrashReportingHint;
-
   /// No description provided for @profileAccessibility.
   ///
   /// In en, this message translates to:
@@ -2018,6 +2030,12 @@ abstract class AppLocalizations {
   /// **'Help'**
   String get profileHelp;
 
+  /// No description provided for @profileHelpComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Help will be available here soon.'**
+  String get profileHelpComingSoon;
+
   /// No description provided for @profileHelpBody.
   ///
   /// In en, this message translates to:
@@ -2027,7 +2045,7 @@ abstract class AppLocalizations {
   /// No description provided for @profilePrivacyPolicy.
   ///
   /// In en, this message translates to:
-  /// **'Privacy'**
+  /// **'Privacy policy'**
   String get profilePrivacyPolicy;
 
   /// No description provided for @profileTerms.

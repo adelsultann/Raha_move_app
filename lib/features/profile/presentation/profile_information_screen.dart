@@ -11,7 +11,7 @@ class ProfileInformationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
     final (title, body) = switch (page) {
-      ProfileInformationPage.help => (s.profileHelp, s.profileHelpBody),
+      ProfileInformationPage.help => (s.profileHelp, s.profileHelpComingSoon),
       ProfileInformationPage.privacy => (
         s.profilePrivacyPolicy,
         s.profileLegalPending,

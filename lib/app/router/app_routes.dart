@@ -81,11 +81,9 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   const ProfileRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) => ProfileScreen(
-    showPersonalizationSettings: MvpFeatures.preferences,
     onSavedRoutines: () => const SavedRoutinesRoute().push(context),
     onHelp: () => const ProfileHelpRoute().push(context),
     onPrivacy: () => const ProfilePrivacyRoute().push(context),
-    onTerms: () => const ProfileTermsRoute().push(context),
     onReminders: () => const ReminderSettingsRoute().push(context),
   );
 }

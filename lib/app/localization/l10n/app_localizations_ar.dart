@@ -957,6 +957,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileSettings => 'الإعدادات';
 
   @override
+  String get profileNotifications => 'الإشعارات';
+
+  @override
+  String get profileAppearance => 'المظهر';
+
+  @override
+  String get profileAppearanceDark => 'داكن';
+
+  @override
+  String get profileAppearanceNight => 'ليلي';
+
+  @override
+  String get profileHealthSafety => 'الصحة والسلامة';
+
+  @override
+  String get profileLogIn => 'تسجيل الدخول';
+
+  @override
   String get profileLanguage => 'اللغة';
 
   @override
@@ -1065,20 +1083,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePrivacy => 'عناصر تحكم الخصوصية';
 
   @override
-  String get profileAnalytics => 'تحليلات المنتج';
-
-  @override
-  String get profileAnalyticsHint =>
-      'اختياري. يساعدنا على معرفة الميزات المفيدة.';
-
-  @override
-  String get profileCrashReporting => 'تقارير الأعطال';
-
-  @override
-  String get profileCrashReportingHint =>
-      'اختياري. يساعدنا على اكتشاف المشكلات التقنية.';
-
-  @override
   String get profileAccessibility => 'إمكانية الوصول';
 
   @override
@@ -1091,11 +1095,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileHelp => 'المساعدة';
 
   @override
+  String get profileHelpComingSoon => 'ستتوفر المساعدة هنا قريبًا.';
+
+  @override
   String get profileHelpBody =>
       'يوفر راحة موف روتينات حركة قصيرة ومريحة. تحرّك ضمن نطاق مريح وتوقّف إذا شعرت بألم حاد.';
 
   @override
-  String get profilePrivacyPolicy => 'الخصوصية';
+  String get profilePrivacyPolicy => 'سياسة الخصوصية';
 
   @override
   String get profileTerms => 'الشروط';

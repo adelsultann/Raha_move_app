@@ -8,6 +8,7 @@ import '../features/reminders/presentation/reminder_lifecycle_reconciler.dart';
 import 'localization/l10n/app_localizations.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
+import 'theme/appearance_controller.dart';
 
 /// The main application `MaterialApp`. The active [Locale] is driven by
 /// [LocaleController] so a language choice applies its directionality and
@@ -18,13 +19,17 @@ class RahaMoveApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeControllerProvider).value;
+    final appearance =
+        ref.watch(appearanceControllerProvider).value ?? AppAppearance.dark;
     // Starts local Profile restoration so independent telemetry consents are
     // reapplied before optional feature telemetry is used.
     ref.watch(profileControllerProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      theme: AppTheme.forLocale(locale),
+      theme: AppTheme.forLocale(locale, appearance: appearance),
+      themeAnimationDuration: const Duration(milliseconds: 300),
+      themeAnimationCurve: Curves.easeInOutCubic,
       routerConfig: appRouter,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/app/theme/app_theme.dart';
 import 'package:raha_move/app/theme/app_typography.dart';
+import 'package:raha_move/app/theme/appearance_controller.dart';
 
 void main() {
   test('primary text and controls meet WCAG AA contrast targets', () {
@@ -34,6 +35,20 @@ void main() {
     expect(scheme.surface, const Color(0xFF11192C));
     expect(scheme.surfaceContainerLow, const Color(0xFF080F20));
     expect(scheme.onSurface, const Color(0xFFF5F7FC));
+  });
+
+  test('night appearance keeps readable contrast and darkens surfaces', () {
+    final dark = AppTheme.forLocale(const Locale('en'));
+    final night = AppTheme.forLocale(
+      const Locale('en'),
+      appearance: AppAppearance.night,
+    );
+    expect(night.scaffoldBackgroundColor, isNot(dark.scaffoldBackgroundColor));
+    expect(night.colorScheme.surface, isNot(dark.colorScheme.surface));
+    expect(
+      _contrastRatio(night.colorScheme.onSurface, night.colorScheme.surface),
+      greaterThanOrEqualTo(4.5),
+    );
   });
 
   test('selects the centralized font family for each locale', () {

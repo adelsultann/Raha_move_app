@@ -16,22 +16,23 @@ import 'package:raha_move/features/profile/domain/account_deletion_action.dart';
 import 'package:raha_move/features/profile/domain/profile_settings.dart';
 import 'package:raha_move/features/profile/presentation/profile_screen.dart';
 import 'package:raha_move/features/profile/presentation/account_deletion_recovery_gate.dart';
+import 'package:raha_move/app/theme/appearance_controller.dart';
 
 void main() {
-  testWidgets('simplified MVP hides personalization and goal controls', (
+  testWidgets('profile shows requested account and settings sections', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      _app(const Locale('en'), showPersonalizationSettings: false),
-    );
+    await tester.pumpWidget(_app(const Locale('en')));
     await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.byKey(const Key('profile_language')), findsOneWidget);
+    expect(find.byKey(const Key('profile_log_in')), findsOneWidget);
+    expect(find.byKey(const Key('profile_create_account')), findsOneWidget);
     expect(find.byKey(const Key('profile_movement_experience')), findsNothing);
     expect(find.byKey(const Key('profile_weekly_goal')), findsNothing);
     expect(find.byKey(const Key('profile_positions')), findsNothing);
-    expect(find.byKey(const Key('profile_reminder_interest')), findsNothing);
+    expect(find.byKey(const Key('profile_analytics')), findsNothing);
+    expect(find.byKey(const Key('profile_crash_reporting')), findsNothing);
   });
 
   testWidgets('shows every Profile control in Arabic RTL on compact 200%', (
@@ -41,12 +42,11 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(_app(const Locale('ar')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('profile_language')), findsOneWidget);
     await tester.scrollUntilVisible(
-      find.byKey(const Key('profile_delete_account')),
+      find.byKey(const Key('profile_language')),
       300,
     );
-    expect(find.byKey(const Key('profile_delete_account')), findsOneWidget);
+    expect(find.byKey(const Key('profile_language')), findsOneWidget);
     expect(
       tester
           .widget<Directionality>(find.byType(Directionality).first)
@@ -74,28 +74,18 @@ void main() {
           .textDirection,
       TextDirection.ltr,
     );
-    await tester.scrollUntilVisible(
-      find.byKey(const Key('profile_delete_account')),
-      300,
-    );
+    expect(find.byKey(const Key('profile_appearance')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('shows the create-account prompt to a guest in Arabic RTL', (
+  testWidgets('shows log in and create account to a guest in Arabic RTL', (
     tester,
   ) async {
     await tester.pumpWidget(_app(const Locale('ar')));
     await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const Key('profile_create_account_prompt')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const Key('profile_log_in')), findsOneWidget);
     expect(find.byKey(const Key('profile_create_account')), findsOneWidget);
-    expect(
-      find.text('أنشئ حسابًا مجانيًا لحفظ تقدّمك ومتابعته.'),
-      findsOneWidget,
-    );
     expect(
       tester
           .widget<Directionality>(find.byType(Directionality).first)
@@ -112,10 +102,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('profile_create_account_prompt')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('profile_log_in')), findsNothing);
       expect(find.byKey(const Key('profile_create_account')), findsNothing);
     },
   );
@@ -145,24 +132,16 @@ void main() {
     },
   );
 
-  testWidgets('failed setting save is visible and retryable', (tester) async {
-    _FailingProfile.failures = 1;
-    await tester.pumpWidget(
-      _app(
-        const Locale('en'),
-        failing: true,
-        authStatus: AuthStatus.authenticated,
-      ),
+  testWidgets('notifications opens the reminders entry', (tester) async {
+    await tester.pumpWidget(_app(const Locale('en')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('profile_notifications')),
+      200,
     );
+    await tester.tap(find.byKey(const Key('profile_notifications')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('profile_sound')).last);
-    await tester.pump();
-    expect(find.byKey(const Key('profile_save_retry')), findsOneWidget);
-    tester
-        .widget<SnackBarAction>(find.byKey(const Key('profile_save_retry')))
-        .onPressed();
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('profile_save_retry')), findsNothing);
+    expect(find.byKey(const Key('profile_reminders')), findsOneWidget);
   });
 
   testWidgets('pending deletion cleanup shows localized retry control', (
@@ -251,7 +230,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Profile'), findsOneWidget);
-      expect(find.text('3 days per week'), findsOneWidget);
       expect(
         tester
             .widget<Directionality>(find.byType(Directionality).first)
@@ -259,14 +237,17 @@ void main() {
         TextDirection.ltr,
       );
 
-      await tester.tap(find.byType(DropdownButton<AppLanguage>));
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('profile_language')),
+        200,
+      );
+      await tester.tap(find.byKey(const Key('profile_language')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('العربية').last);
+      await tester.tap(find.byKey(const Key('profile_language_ar')));
       await tester.pumpAndSettle();
 
-      expect(find.text('حسابي'), findsOneWidget);
-      expect(find.text('3 أيام في الأسبوع'), findsOneWidget);
-      expect(find.byKey(const Key('profile_language')), findsOneWidget);
+      expect(find.text('اللغة'), findsOneWidget);
+      expect(_EditableProfile.lastSaved?.language, AppLanguage.ar);
       expect(
         tester
             .widget<Directionality>(find.byType(Directionality).first)
@@ -276,38 +257,38 @@ void main() {
     },
   );
 
-  testWidgets('selecting movement experience updates the Profile controller', (
-    tester,
-  ) async {
-    _EditableProfile.lastSaved = null;
-    await tester.pumpWidget(_languageApp());
+  testWidgets('appearance page offers dark and night choices', (tester) async {
+    await tester.pumpWidget(_app(const Locale('en')));
     await tester.pumpAndSettle();
-
-    await tester.tap(find.byKey(const Key('profile_movement_experience')));
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const Key('profile_movement_experience_intermediate')),
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('profile_appearance')),
+      200,
     );
+    await tester.tap(find.byKey(const Key('profile_appearance')));
     await tester.pumpAndSettle();
-
-    expect(find.text('Some experience'), findsOneWidget);
-    expect(_EditableProfile.lastSaved?.experienceLevel.code, 'intermediate');
+    expect(find.byKey(const Key('profile_appearance_dark')), findsOneWidget);
+    expect(find.byKey(const Key('profile_appearance_night')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('profile_appearance_night')));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<RadioGroup<AppAppearance>>(
+        find.byType(RadioGroup<AppAppearance>),
+      ).groupValue,
+      AppAppearance.night,
+    );
   });
 }
 
 Widget _app(
   Locale locale, {
   AccountDeletionAction? deletion,
-  bool failing = false,
   AuthStatus authStatus = AuthStatus.anonymous,
-  bool showPersonalizationSettings = true,
 }) => ProviderScope(
   overrides: [
-    profileControllerProvider.overrideWith(
-      failing ? _FailingProfile.new : _Profile.new,
-    ),
+    profileControllerProvider.overrideWith(_Profile.new),
     authControllerProvider.overrideWith(() => _Auth(status: authStatus)),
     localeControllerProvider.overrideWith(_Locale.new),
+    appearanceControllerProvider.overrideWith(_TestAppearance.new),
     accountDeletionActionProvider.overrideWithValue(
       deletion ?? const UnavailableAccountDeletionAction(),
     ),
@@ -327,11 +308,9 @@ Widget _app(
       child: child!,
     ),
     home: ProfileScreen(
-      showPersonalizationSettings: showPersonalizationSettings,
       onSavedRoutines: () {},
       onHelp: () {},
       onPrivacy: () {},
-      onTerms: () {},
     ),
   ),
 );
@@ -341,6 +320,7 @@ Widget _languageApp() => ProviderScope(
     profileControllerProvider.overrideWith(_EditableProfile.new),
     authControllerProvider.overrideWith(_Auth.new),
     localeControllerProvider.overrideWith(_ImmediateLocale.new),
+    appearanceControllerProvider.overrideWith(_TestAppearance.new),
   ],
   child: Consumer(
     builder: (context, ref, _) => MaterialApp(
@@ -356,7 +336,6 @@ Widget _languageApp() => ProviderScope(
         onSavedRoutines: () {},
         onHelp: () {},
         onPrivacy: () {},
-        onTerms: () {},
       ),
     ),
   ),
@@ -378,14 +357,6 @@ class _Profile extends ProfileController {
   Future<ProfileSettings> build() async => value;
   @override
   Future<void> saveSettings(ProfileSettings settings) async {}
-}
-
-final class _FailingProfile extends _Profile {
-  static var failures = 1;
-  @override
-  Future<void> saveSettings(ProfileSettings settings) async {
-    if (failures-- > 0) throw StateError('offline');
-  }
 }
 
 final class _Auth extends AuthController {
@@ -425,6 +396,16 @@ final class _ImmediateLocale extends LocaleController {
   @override
   Future<void> selectLanguage(AppLanguage language) async {
     state = AsyncData(Locale(language.code));
+  }
+}
+
+final class _TestAppearance extends AppearanceController {
+  @override
+  Future<AppAppearance> build() async => AppAppearance.dark;
+
+  @override
+  Future<void> select(AppAppearance appearance) async {
+    state = AsyncData(appearance);
   }
 }
 

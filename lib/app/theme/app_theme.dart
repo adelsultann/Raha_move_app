@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 import 'app_typography.dart';
+import 'appearance_controller.dart';
 
 abstract final class AppTheme {
   static const _scheme = ColorScheme.dark(
@@ -22,8 +23,21 @@ abstract final class AppTheme {
     onError: AppColors.navy,
   );
 
-  /// Builds the one supported app theme with locale-aware typography.
-  static ThemeData forLocale(Locale? locale) {
+  /// Builds the selected dark palette with locale-aware typography.
+  static ThemeData forLocale(
+    Locale? locale, {
+    AppAppearance appearance = AppAppearance.dark,
+  }) {
+    final night = appearance == AppAppearance.night;
+    final background = night ? const Color(0xFF030711) : AppColors.navy;
+    final surface = night ? const Color(0xFF0B1220) : AppColors.navySurface;
+    final raised = night ? const Color(0xFF141E2D) : AppColors.navyRaised;
+    final scheme = _scheme.copyWith(
+      surface: surface,
+      surfaceContainerLow: background,
+      surfaceContainer: surface,
+      surfaceContainerHigh: raised,
+    );
     final fontFamily = AppTypography.fontFamilyFor(locale);
     final fallback = AppTypography.fallbackFor(locale);
     final textTheme = AppTypography.textTheme.apply(
@@ -36,20 +50,20 @@ abstract final class AppTheme {
 
     return ThemeData(
       brightness: Brightness.dark,
-      colorScheme: _scheme,
-      scaffoldBackgroundColor: AppColors.navy,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: background,
       fontFamily: fontFamily,
       fontFamilyFallback: fallback,
       textTheme: textTheme,
       primaryTextTheme: textTheme,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.navy,
+      appBarTheme: AppBarTheme(
+        backgroundColor: background,
         foregroundColor: AppColors.textPrimary,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
       cardTheme: CardThemeData(
-        color: AppColors.navySurface,
+        color: surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -108,7 +122,7 @@ abstract final class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.navySurface,
+        backgroundColor: surface,
         indicatorColor: AppColors.mintDeep,
         elevation: 0,
         iconTheme: WidgetStateProperty.resolveWith(
@@ -126,13 +140,13 @@ abstract final class AppTheme {
           ),
         ),
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.navySurface,
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
-        modalBackgroundColor: AppColors.navySurface,
+        modalBackgroundColor: surface,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.navySurface,
+        backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),

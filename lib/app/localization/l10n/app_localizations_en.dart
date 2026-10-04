@@ -971,6 +971,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSettings => 'Settings';
 
   @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profileAppearance => 'Appearance';
+
+  @override
+  String get profileAppearanceDark => 'Dark';
+
+  @override
+  String get profileAppearanceNight => 'Night';
+
+  @override
+  String get profileHealthSafety => 'Health & safety';
+
+  @override
+  String get profileLogIn => 'Log in';
+
+  @override
   String get profileLanguage => 'Language';
 
   @override
@@ -1079,20 +1097,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePrivacy => 'Privacy controls';
 
   @override
-  String get profileAnalytics => 'Product analytics';
-
-  @override
-  String get profileAnalyticsHint =>
-      'Optional. Helps us understand which app features are useful.';
-
-  @override
-  String get profileCrashReporting => 'Crash reporting';
-
-  @override
-  String get profileCrashReportingHint =>
-      'Optional. Helps us identify technical problems.';
-
-  @override
   String get profileAccessibility => 'Accessibility';
 
   @override
@@ -1106,11 +1110,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileHelp => 'Help';
 
   @override
+  String get profileHelpComingSoon => 'Help will be available here soon.';
+
+  @override
   String get profileHelpBody =>
       'Raha Move offers short, comfortable movement routines. Move within a comfortable range and stop if you feel sharp pain.';
 
   @override
-  String get profilePrivacyPolicy => 'Privacy';
+  String get profilePrivacyPolicy => 'Privacy policy';
 
   @override
   String get profileTerms => 'Terms';
