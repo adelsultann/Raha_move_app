@@ -6,6 +6,23 @@ import 'package:raha_move/core/utilities/semantic_version.dart';
 import 'release_fixture.dart';
 
 void main() {
+  test('rejects malformed instruction lists', () {
+    for (final invalid in [
+      42,
+      [''],
+      ['   '],
+      ['Valid', 2],
+    ]) {
+      final manifest = deepCopy(minimalValidManifest());
+      (manifest['exercise_translations'] as List).first['instructions'] =
+          invalid;
+      expect(
+        () => ContentReleaseManifest.fromJson(manifest),
+        throwsA(isA<ContentReleaseException>()),
+      );
+    }
+  });
+
   group('SemanticVersion', () {
     test('parses and compares MAJOR.MINOR.PATCH', () {
       expect(
@@ -116,7 +133,7 @@ void main() {
     });
 
     test('rejects a mismatched checksum', () {
-      final manifest = minimalValidManifest();
+      final manifest = deepCopy(minimalValidManifest());
       expect(
         () => envelopeFor(manifest, overrideChecksum: '0' * 64),
         throwsA(

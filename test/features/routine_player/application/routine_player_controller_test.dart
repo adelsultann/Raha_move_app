@@ -10,6 +10,56 @@ import 'package:raha_move/features/routine_player/domain/routine_session_reposit
 import '../support/routine_player_test_harness.dart';
 
 void main() {
+  test(
+    'preparation counts 3-2-1 without credit and freezes in background',
+    () async {
+      final ticker = FakePlaybackTicker();
+      final container = buildRoutinePlayerContainer(ticker: ticker);
+      addTearDown(container.dispose);
+      const args = RoutinePlayerArgs(routineId: 'rt-1');
+      final controller = await pumpReady(
+        container,
+        args,
+        skipPreparation: false,
+      );
+      expect(readySession(container, args).preparationSeconds, 3);
+      ticker.fireTick();
+      expect(readySession(container, args).preparationSeconds, 2);
+      expect(readySession(container, args).totalCreditedSeconds, 0);
+      controller.pauseForBackground();
+      ticker.fireTick();
+      expect(readySession(container, args).preparationSeconds, 2);
+      controller.resume();
+      ticker.fireTick();
+      ticker.fireTick();
+      expect(readySession(container, args).preparationSeconds, 0);
+      expect(readySession(container, args).totalCreditedSeconds, 0);
+      ticker.fireTick();
+      expect(readySession(container, args).totalCreditedSeconds, 1);
+    },
+  );
+
+  test(
+    'automatic and previous exercise changes emit feedback once each',
+    () async {
+      final ticker = FakePlaybackTicker();
+      final feedback = FakeTransitionFeedback();
+      final container = buildRoutinePlayerContainer(
+        ticker: ticker,
+        feedback: feedback,
+      );
+      addTearDown(container.dispose);
+      const args = RoutinePlayerArgs(routineId: 'rt-1');
+      final controller = await pumpReady(container, args);
+      ticker.fireTick();
+      ticker.fireTick();
+      ticker.fireTick();
+      expect(feedback.transitionCalls, 1);
+      controller.previous();
+      expect(feedback.transitionCalls, 2);
+    },
+  );
+
   group('terminalStateFor', () {
     test('full credited time is completed when not skipped', () {
       expect(
@@ -698,15 +748,20 @@ void main() {
 /// returns the ready controller notifier (new-start mode).
 Future<RoutinePlayerController> pumpReady(
   ProviderContainer container,
-  RoutinePlayerArgs args,
-) async {
+  RoutinePlayerArgs args, {
+  bool skipPreparation = true,
+}) async {
   container.listen(routinePlayerControllerProvider(args), (_, _) {});
   await container.read(routinePlaybackPlanProvider(args.routineId).future);
   await container.read(resumableRoutineSessionProvider.future);
   await pumpEventQueue();
   final state = container.read(routinePlayerControllerProvider(args));
   expect(state, isA<RoutinePlayerReady>());
-  return container.read(routinePlayerControllerProvider(args).notifier);
+  final controller = container.read(
+    routinePlayerControllerProvider(args).notifier,
+  );
+  if (skipPreparation) controller.startNow();
+  return controller;
 }
 
 /// Keeps the controller subscribed and resolves the plan + session-by-id for
@@ -721,5 +776,8 @@ Future<RoutinePlayerController> pumpReadyRestored(
   await pumpEventQueue();
   final state = container.read(routinePlayerControllerProvider(args));
   expect(state, isA<RoutinePlayerReady>());
-  return container.read(routinePlayerControllerProvider(args).notifier);
+  final controller = container.read(
+    routinePlayerControllerProvider(args).notifier,
+  );
+  return controller;
 }

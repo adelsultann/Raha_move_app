@@ -203,6 +203,12 @@ Provider purchase documents and private notes must not be exposed through the mo
 
 Fallback order is the requested locale, then the configured content fallback (`en` initially). Publishing validation should require both Arabic and English for MVP content.
 
+Bundled content releases and the local Drift cache now support optional ordered
+instructions for each locale. The cloud `exercise_translations` schema above does
+not yet include that field. Before publishing guidance through server releases,
+add a forward cloud migration and update release serialization and validation;
+do not infer server support from the bundled authoring workflow.
+
 ### `provider_exercises`
 
 Maps provider records to stable Raha exercises and preserves import provenance.

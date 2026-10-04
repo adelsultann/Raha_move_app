@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:raha_move/core/database/app_database.dart';
 import 'package:raha_move/features/recommendations/data/drift_routine_media_resolver.dart';
@@ -63,8 +65,16 @@ final class DriftRoutinePlaybackLoader implements RoutinePlaybackLoader {
           )..where((r) => r.exerciseId.isIn(exerciseIds))).get();
     final nameByExercise = <String, Map<String, String>>{};
     final cueByExercise = <String, Map<String, String>>{};
+    final descriptionByExercise = <String, Map<String, String>>{};
+    final instructionsByExercise = <String, Map<String, String>>{};
     for (final t in exerciseTranslations) {
       nameByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] = t.name;
+      if (t.description != null) {
+        descriptionByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] =
+            t.description!;
+      }
+      instructionsByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] =
+          t.instructionsJson;
       final cue = t.shortCue;
       if (cue != null) {
         cueByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] = cue;
@@ -95,6 +105,16 @@ final class DriftRoutinePlaybackLoader implements RoutinePlaybackLoader {
               cueByExercise[steps[i].exerciseId] ?? const {},
               locale,
             ),
+            description: _pickNullable(
+              descriptionByExercise[steps[i].exerciseId] ?? const {},
+              locale,
+            ),
+            instructions: _decodeInstructions(
+              _pickNullable(
+                instructionsByExercise[steps[i].exerciseId] ?? const {},
+                locale,
+              ),
+            ),
             durationSeconds: steps[i].durationSeconds,
             media: resolution.media[i],
           ),
@@ -107,6 +127,20 @@ final class DriftRoutinePlaybackLoader implements RoutinePlaybackLoader {
       _database.localRoutineTranslations,
     )..where((r) => r.routineId.equals(routineId))).get();
     return {for (final t in translations) t.locale: t.name};
+  }
+
+  static List<String> _decodeInstructions(String? value) {
+    if (value == null) return const [];
+    try {
+      return (jsonDecode(value) as List)
+          .whereType<String>()
+          .where((s) => s.trim().isNotEmpty)
+          .toList();
+    } on FormatException {
+      return const [];
+    } on TypeError {
+      return const [];
+    }
   }
 
   static String _pick(Map<String, String> byLocale, String locale) {

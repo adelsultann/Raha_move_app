@@ -140,6 +140,7 @@ class LocalExerciseTranslations extends Table {
   TextColumn get name => text()();
   TextColumn get description => text().nullable()();
   TextColumn get shortCue => text().nullable()();
+  TextColumn get instructionsJson => text().withDefault(const Constant('[]'))();
 
   @override
   Set<Column<Object>> get primaryKey => {exerciseId, locale};
@@ -668,7 +669,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -686,6 +687,22 @@ class AppDatabase extends _$AppDatabase {
       if (from < 11) await _migrateToV11(m);
       if (from < 12) await _migrateToV12(m);
       if (from < 13) await m.createTable(localSavedExercises);
+      if (from < 14) {
+        // Earlier upgrades may create this table from the current definition.
+        final columns = await customSelect(
+          'PRAGMA table_info(local_exercise_translations)',
+        ).get();
+        if (columns.isEmpty) {
+          await m.createTable(localExerciseTranslations);
+        } else if (!columns.any(
+          (row) => row.read<String>('name') == 'instructions_json',
+        )) {
+          await m.addColumn(
+            localExerciseTranslations,
+            localExerciseTranslations.instructionsJson,
+          );
+        }
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

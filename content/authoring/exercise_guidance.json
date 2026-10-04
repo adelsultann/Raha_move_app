@@ -1,0 +1,170 @@
+{
+  "raha_ex_000001": {
+    "en": {
+      "name": "Seated neck release",
+      "description": "A gentle seated neck stretch.",
+      "short_cue": "Move within a comfortable range.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "تحرير الرقبة أثناء الجلوس",
+      "description": "تمدد لطيف للرقبة أثناء الجلوس.",
+      "short_cue": "تحرك ضمن مدى مريح.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000002": {
+    "en": {
+      "name": "Seated shoulder rolls",
+      "description": "A controlled seated shoulder movement.",
+      "short_cue": "Keep your shoulders relaxed.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "دوائر الكتفين أثناء الجلوس",
+      "description": "حركة كتفين متحكم بها أثناء الجلوس.",
+      "short_cue": "أبقِ كتفيك مسترخيين.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000101": {
+    "en": {
+      "name": "Shoulder blade elevation and depression",
+      "description": "A controlled standing movement for the shoulder blades.",
+      "short_cue": "Move slowly and keep your neck relaxed.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "نبمنسبن",
+      "description": "حركة وقوف متحكم بها للوحَي الكتف.",
+      "short_cue": "تحرّك ببطء وحافظ على استرخاء الرقبة.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000102": {
+    "en": {
+      "name": "Cross-body shoulder stretch",
+      "description": "A gentle standing stretch across the back of the shoulder.",
+      "short_cue": "Keep the shoulder down and use a comfortable range.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "تمدد الكتف عبر الجسم",
+      "description": "تمدد لطيف أثناء الوقوف للجزء الخلفي من الكتف.",
+      "short_cue": "أبقِ الكتف منخفضاً وتحرك ضمن مدى مريح.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000103": {
+    "en": {
+      "name": "Standing reach and back rotation",
+      "description": "A standing reach with a controlled upper-back rotation.",
+      "short_cue": "Rotate gently without forcing the movement.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "مدّ الذراع ودوران الظهر أثناء الوقوف",
+      "description": "مدّ للذراع مع دوران متحكم به لأعلى الظهر أثناء الوقوف.",
+      "short_cue": "أدر جسمك بلطف من دون إجبار الحركة.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000104": {
+    "en": {
+      "name": "Standing side stretch",
+      "description": "A gentle standing side bend for whole-body mobility.",
+      "short_cue": "Reach upward before bending to the side.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "تمدد جانبي أثناء الوقوف",
+      "description": "انحناء جانبي لطيف أثناء الوقوف لدعم حركة الجسم.",
+      "short_cue": "مدّ جسمك للأعلى قبل الانحناء جانباً.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000105": {
+    "en": {
+      "name": "Hip circles",
+      "description": "Controlled standing circles for gentle hip mobility.",
+      "short_cue": "Keep the circles smooth and comfortable.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "دوائر الورك",
+      "description": "دوائر متحكم بها أثناء الوقوف لدعم حركة الورك بلطف.",
+      "short_cue": "اجعل الدوائر انسيابية ومريحة.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000106": {
+    "en": {
+      "name": "Standing pelvic tilt",
+      "description": "A small standing pelvic movement for lower-body awareness.",
+      "short_cue": "Use a small range and keep breathing normally.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "إمالة الحوض أثناء الوقوف",
+      "description": "حركة صغيرة للحوض أثناء الوقوف لتعزيز الوعي بالحركة.",
+      "short_cue": "استخدم مدى صغيراً واستمر في التنفس بشكل طبيعي.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000107": {
+    "en": {
+      "name": "Standing hamstring and back stretch",
+      "description": "A supported standing stretch for the back and legs.",
+      "short_cue": "Soften your knees and stop before discomfort.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "تمدد أوتار الركبة والظهر أثناء الوقوف",
+      "description": "تمدد مدعوم أثناء الوقوف للظهر والساقين.",
+      "short_cue": "أرخِ ركبتيك وتوقف قبل الشعور بعدم الارتياح.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000108": {
+    "en": {
+      "name": "Kneeling hip flexor stretch",
+      "description": "A gentle kneeling stretch for the front of the hip.",
+      "short_cue": "Keep your torso tall and move forward gently.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "تمدد مثنيات الورك من وضع الركوع",
+      "description": "تمدد لطيف من وضع الركوع لمقدمة الورك.",
+      "short_cue": "حافظ على استقامة الجذع وتحرك للأمام بلطف.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000109": {
+    "en": {
+      "name": "Seated cat-cow stretch",
+      "description": "A seated spinal movement that alternates rounding and opening.",
+      "short_cue": "Match the movement to an easy breath.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "تمدد القطة والبقرة أثناء الجلوس",
+      "description": "حركة للعمود الفقري أثناء الجلوس بالتناوب بين التقوس والانفتاح.",
+      "short_cue": "نسّق الحركة مع تنفس مريح.",
+      "instructions": []
+    }
+  },
+  "raha_ex_000110": {
+    "en": {
+      "name": "Supine windshield wipers",
+      "description": "A relaxed side-to-side knee movement while lying down.",
+      "short_cue": "Let the knees move only as far as feels comfortable.",
+      "instructions": []
+    },
+    "ar": {
+      "name": "مسّاحات الركبتين أثناء الاستلقاء",
+      "description": "حركة مريحة للركبتين من جانب إلى آخر أثناء الاستلقاء.",
+      "short_cue": "حرّك ركبتيك فقط ضمن المدى المريح.",
+      "instructions": []
+    }
+  }
+}

@@ -256,7 +256,7 @@ final class TransitionFeedbackProvider
 }
 
 String _$transitionFeedbackHash() =>
-    r'1260a73cb08f40ca579793132cbd78ae96c67b5d';
+    r'7c5b6826892e2194255a52c730fcee3638e4fb65';
 
 /// A fresh one-second ticker per controller instance. Stopped on dispose.
 

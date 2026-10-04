@@ -1,0 +1,110 @@
+{
+  "raha_rt_000001": {
+    "en": {
+      "name": "Seated neck and shoulders reset",
+      "summary": "A short seated mobility routine."
+    },
+    "ar": {
+      "name": "استراحة للرقبة والكتفين أثناء الجلوس",
+      "summary": "روتين حركة قصير أثناء الجلوس."
+    },
+    "steps": [
+      {
+        "step_id": "raha_rs_000001",
+        "exercise_id": "raha_ex_000001",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000002",
+        "exercise_id": "raha_ex_000002",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      }
+    ]
+  },
+  "raha_rt_000002": {
+    "en": {
+      "name": "Five-minute full-body reset",
+      "summary": "A calm standing-to-floor mobility flow for the whole body."
+    },
+    "ar": {
+      "name": "استراحة لخمس دقائق لكامل الجسم",
+      "summary": "تسلسل حركي هادئ لكامل الجسم يبدأ بالوقوف وينتهي على الأرض."
+    },
+    "steps": [
+      {
+        "step_id": "raha_rs_000101",
+        "exercise_id": "raha_ex_000101",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000102",
+        "exercise_id": "raha_ex_000102",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000103",
+        "exercise_id": "raha_ex_000103",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000104",
+        "exercise_id": "raha_ex_000104",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000105",
+        "exercise_id": "raha_ex_000105",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000106",
+        "exercise_id": "raha_ex_000106",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000107",
+        "exercise_id": "raha_ex_000107",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000108",
+        "exercise_id": "raha_ex_000108",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000109",
+        "exercise_id": "raha_ex_000109",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      },
+      {
+        "step_id": "raha_rs_000110",
+        "exercise_id": "raha_ex_000110",
+        "duration_seconds": 30,
+        "rest_after_seconds": 0,
+        "is_optional": false
+      }
+    ]
+  }
+}

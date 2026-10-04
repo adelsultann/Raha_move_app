@@ -102,6 +102,10 @@ Raha_move_app/
 │           └── videos/
 │
 ├── content/
+│   ├── authoring/
+│   │   ├── README.md
+  │   │   ├── exercise_guidance.json
+  │   │   └── routine_guidance.json
 │   ├── schemas/
 │   │   ├── exercise_manifest.schema.json
 │   │   └── media_manifest.schema.json
@@ -480,3 +484,59 @@ For the first internal prototype:
    an explicitly approved starter subset under `assets/starter_content`.
 
 This approach allows Raha Move to test the experience without making GymVisual filenames or classifications part of the permanent application architecture.
+
+## Routine player guidance
+
+Keep each exercise's demonstration and written instructions linked by the stable
+Raha exercise ID. Routine steps reference that exercise; they do not duplicate
+provider filenames or translated instructions.
+
+Author `content.instructions.en` and `content.instructions.ar` as ordered arrays
+of short strings, one action per item. Keep `description` as the brief overview
+and `shortCue` as a supporting reminder. Review both translations with the
+movement before publishing. Do not derive instructions from a provider filename.
+
+The app's normalized content-release format carries `instructions` on each
+`exercise_translations` row, alongside `description` and `short_cue`:
+
+```json
+{
+  "exercise_id": "<server exercise UUID mapped to a stable Raha ID>",
+  "locale": "en",
+  "name": "<reviewed exercise name>",
+  "description": "<brief overview>",
+  "short_cue": "<supporting reminder>",
+  "instructions": ["<starting position>", "<movement action>", "<return or repeat>"]
+}
+```
+
+The importer must preserve array order. Empty or non-string items are rejected.
+Omitting the array remains compatible with existing releases: the player shows
+the description and full cue, without inventing movement steps. Instructions are
+cached locally, restored with the exercise, and displayed as numbered items
+under the compact demonstration. Update authoring sources and regenerate the
+release; do not hand-edit generated starter manifests.
+
+For the bundled starter catalog, `content/authoring/exercise_guidance.json` is
+the single authoring source for every exercise's English and Arabic name,
+description, short cue, and ordered instructions. Entries use stable Raha
+exercise IDs, independent of media provider. The starter builder validates both
+locales, maps the Raha IDs to manifest exercise IDs, and generates the
+`exercise_translations` rows. Empty instruction arrays retain the description
+and cue without inventing numbered movement steps. See
+`content/authoring/README.md` for the editing and regeneration workflow.
+
+For bundled routines, `content/authoring/routine_guidance.json` holds the
+English and Arabic name and summary plus ordered steps linked by stable Raha
+exercise IDs. The builder resolves those IDs to the catalog's internal IDs and
+generates `routine_translations` and `routine_steps` for the offline database.
+Keep `routine_translations` in the generated manifest; it is required by the
+content-release contract. Exercise instructions belong in
+`exercise_guidance.json`, so the same movement guidance can be reused by more
+than one routine.
+
+A new routine starts with three seconds of preparation, excluded from credited
+exercise time. Pause/background freezes preparation; Start now skips it. A
+locally bundled, Raha-owned chime at `assets/audio/exercise_transition.wav`
+announces exercise changes and respects the user's sound preference. It is
+independent of provider media and available offline.

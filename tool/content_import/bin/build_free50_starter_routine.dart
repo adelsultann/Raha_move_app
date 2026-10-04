@@ -5,6 +5,8 @@ import 'package:raha_move/features/exercise_library/data/canonical_json.dart';
 import 'package:raha_move/features/exercise_library/data/content_release_source.dart';
 
 const _manifestPath = 'assets/starter_content/manifests/starter_catalog.json';
+const _guidancePath = 'content/authoring/exercise_guidance.json';
+const _routineGuidancePath = 'content/authoring/routine_guidance.json';
 const _publishedAt = '2026-10-01T00:00:00Z';
 const _routineId = '03000000-0000-0000-0000-000000000002';
 
@@ -29,12 +31,6 @@ const _relaxId = '42000000-0000-0000-0000-000000000004';
 final _exercises = <_ExerciseFixture>[
   const _ExerciseFixture(
     number: 101,
-    nameEn: 'Shoulder blade elevation and depression',
-    nameAr: 'رفع وخفض لوحي الكتف',
-    descriptionEn: 'A controlled standing movement for the shoulder blades.',
-    descriptionAr: 'حركة وقوف متحكم بها للوحَي الكتف.',
-    cueEn: 'Move slowly and keep your neck relaxed.',
-    cueAr: 'تحرّك ببطء وحافظ على استرخاء الرقبة.',
     areas: ['shoulders', 'upper_back'],
     position: 'standing',
     durationMs: 1811,
@@ -43,12 +39,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 102,
-    nameEn: 'Cross-body shoulder stretch',
-    nameAr: 'تمدد الكتف عبر الجسم',
-    descriptionEn: 'A gentle standing stretch across the back of the shoulder.',
-    descriptionAr: 'تمدد لطيف أثناء الوقوف للجزء الخلفي من الكتف.',
-    cueEn: 'Keep the shoulder down and use a comfortable range.',
-    cueAr: 'أبقِ الكتف منخفضاً وتحرك ضمن مدى مريح.',
     areas: ['shoulders'],
     position: 'standing',
     durationMs: 5480,
@@ -57,12 +47,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 103,
-    nameEn: 'Standing reach and back rotation',
-    nameAr: 'مدّ الذراع ودوران الظهر أثناء الوقوف',
-    descriptionEn: 'A standing reach with a controlled upper-back rotation.',
-    descriptionAr: 'مدّ للذراع مع دوران متحكم به لأعلى الظهر أثناء الوقوف.',
-    cueEn: 'Rotate gently without forcing the movement.',
-    cueAr: 'أدر جسمك بلطف من دون إجبار الحركة.',
     areas: ['upper_back', 'shoulders'],
     position: 'standing',
     durationMs: 4667,
@@ -71,12 +55,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 104,
-    nameEn: 'Standing side stretch',
-    nameAr: 'تمدد جانبي أثناء الوقوف',
-    descriptionEn: 'A gentle standing side bend for whole-body mobility.',
-    descriptionAr: 'انحناء جانبي لطيف أثناء الوقوف لدعم حركة الجسم.',
-    cueEn: 'Reach upward before bending to the side.',
-    cueAr: 'مدّ جسمك للأعلى قبل الانحناء جانباً.',
     areas: ['upper_back', 'full_body'],
     position: 'standing',
     durationMs: 4342,
@@ -85,12 +63,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 105,
-    nameEn: 'Hip circles',
-    nameAr: 'دوائر الورك',
-    descriptionEn: 'Controlled standing circles for gentle hip mobility.',
-    descriptionAr: 'دوائر متحكم بها أثناء الوقوف لدعم حركة الورك بلطف.',
-    cueEn: 'Keep the circles smooth and comfortable.',
-    cueAr: 'اجعل الدوائر انسيابية ومريحة.',
     areas: ['hips'],
     position: 'standing',
     durationMs: 11772,
@@ -99,12 +71,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 106,
-    nameEn: 'Standing pelvic tilt',
-    nameAr: 'إمالة الحوض أثناء الوقوف',
-    descriptionEn: 'A small standing pelvic movement for lower-body awareness.',
-    descriptionAr: 'حركة صغيرة للحوض أثناء الوقوف لتعزيز الوعي بالحركة.',
-    cueEn: 'Use a small range and keep breathing normally.',
-    cueAr: 'استخدم مدى صغيراً واستمر في التنفس بشكل طبيعي.',
     areas: ['hips', 'lower_back'],
     position: 'standing',
     durationMs: 9079,
@@ -113,12 +79,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 107,
-    nameEn: 'Standing hamstring and back stretch',
-    nameAr: 'تمدد أوتار الركبة والظهر أثناء الوقوف',
-    descriptionEn: 'A supported standing stretch for the back and legs.',
-    descriptionAr: 'تمدد مدعوم أثناء الوقوف للظهر والساقين.',
-    cueEn: 'Soften your knees and stop before discomfort.',
-    cueAr: 'أرخِ ركبتيك وتوقف قبل الشعور بعدم الارتياح.',
     areas: ['lower_back', 'hips'],
     position: 'standing',
     durationMs: 11076,
@@ -127,12 +87,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 108,
-    nameEn: 'Kneeling hip flexor stretch',
-    nameAr: 'تمدد مثنيات الورك من وضع الركوع',
-    descriptionEn: 'A gentle kneeling stretch for the front of the hip.',
-    descriptionAr: 'تمدد لطيف من وضع الركوع لمقدمة الورك.',
-    cueEn: 'Keep your torso tall and move forward gently.',
-    cueAr: 'حافظ على استقامة الجذع وتحرك للأمام بلطف.',
     areas: ['hips'],
     position: 'floor',
     durationMs: 3274,
@@ -141,14 +95,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 109,
-    nameEn: 'Seated cat-cow stretch',
-    nameAr: 'تمدد القطة والبقرة أثناء الجلوس',
-    descriptionEn:
-        'A seated spinal movement that alternates rounding and opening.',
-    descriptionAr:
-        'حركة للعمود الفقري أثناء الجلوس بالتناوب بين التقوس والانفتاح.',
-    cueEn: 'Match the movement to an easy breath.',
-    cueAr: 'نسّق الحركة مع تنفس مريح.',
     areas: ['upper_back', 'lower_back'],
     position: 'seated',
     durationMs: 2809,
@@ -157,12 +103,6 @@ final _exercises = <_ExerciseFixture>[
   ),
   const _ExerciseFixture(
     number: 110,
-    nameEn: 'Supine windshield wipers',
-    nameAr: 'مسّاحات الركبتين أثناء الاستلقاء',
-    descriptionEn: 'A relaxed side-to-side knee movement while lying down.',
-    descriptionAr: 'حركة مريحة للركبتين من جانب إلى آخر أثناء الاستلقاء.',
-    cueEn: 'Let the knees move only as far as feels comfortable.',
-    cueAr: 'حرّك ركبتيك فقط ضمن المدى المريح.',
     areas: ['hips', 'lower_back'],
     position: 'floor',
     durationMs: 4342,
@@ -171,28 +111,45 @@ final _exercises = <_ExerciseFixture>[
   ),
 ];
 
-void main() {
-  final file = File(_manifestPath);
+void main(List<String> arguments) {
+  final manifestPath = _pathArgument(arguments, '--manifest=', _manifestPath);
+  final guidancePath = _pathArgument(arguments, '--guidance=', _guidancePath);
+  final routineGuidancePath = _pathArgument(
+    arguments,
+    '--routine-guidance=',
+    _routineGuidancePath,
+  );
+  final guidance = _loadGuidance(guidancePath);
+  final routineGuidance = _loadRoutineGuidance(routineGuidancePath);
+  final file = File(manifestPath);
   final envelope = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
   final manifest = envelope['manifest'] as Map<String, dynamic>;
-
-  manifest['release'] = {
-    'id': '1',
-    'version': 'starter-2',
-    'published_at': _publishedAt,
-    'minimum_app_version': '1.0.0',
-  };
 
   _replace(manifest, 'exercises', _exerciseIds, [
     for (final exercise in _exercises) exercise.exercise,
   ]);
-  _replaceByForeignKey(
-    manifest,
-    'exercise_translations',
-    'exercise_id',
-    _exerciseIds,
-    [for (final exercise in _exercises) ...exercise.translations],
-  );
+  final exerciseIdsByPublicId = {
+    for (final exercise
+        in (manifest['exercises'] as List).cast<Map<String, dynamic>>())
+      exercise['public_id'] as String: exercise['id'] as String,
+  };
+  if (guidance.keys
+          .toSet()
+          .difference(exerciseIdsByPublicId.keys.toSet())
+          .isNotEmpty ||
+      exerciseIdsByPublicId.keys
+          .toSet()
+          .difference(guidance.keys.toSet())
+          .isNotEmpty) {
+    throw FormatException(
+      'Guidance must cover every exercise in the starter catalog.',
+    );
+  }
+  manifest['exercise_translations'] = [
+    for (final exercise in exerciseIdsByPublicId.entries)
+      for (final locale in const ['en', 'ar'])
+        guidance[exercise.key]![locale]!.toManifestRow(exercise.value, locale),
+  ];
   _replaceByForeignKey(manifest, 'media_assets', 'exercise_id', _exerciseIds, [
     for (final exercise in _exercises) exercise.media,
   ]);
@@ -226,12 +183,66 @@ void main() {
   );
 
   _replace(manifest, 'routines', {_routineId}, [_routine]);
-  _replaceByForeignKey(manifest, 'routine_translations', 'routine_id', {
-    _routineId,
-  }, _routineTranslations);
-  _replaceByForeignKey(manifest, 'routine_steps', 'routine_id', {
-    _routineId,
-  }, _routineSteps);
+  final routines = (manifest['routines'] as List).cast<Map<String, dynamic>>();
+  final routineIdsByPublicId = {
+    for (final routine in routines)
+      routine['public_id'] as String: routine['id'] as String,
+  };
+  if (routineGuidance.keys
+          .toSet()
+          .difference(routineIdsByPublicId.keys.toSet())
+          .isNotEmpty ||
+      routineIdsByPublicId.keys
+          .toSet()
+          .difference(routineGuidance.keys.toSet())
+          .isNotEmpty) {
+    throw const FormatException(
+      'Routine guidance must cover every routine in the starter catalog.',
+    );
+  }
+  final stepIds = <String>{};
+  for (final routine in routineGuidance.values) {
+    for (final step in routine.steps) {
+      if (!stepIds.add(step.stepId)) {
+        throw FormatException('Duplicate routine step ID: ${step.stepId}.');
+      }
+    }
+  }
+  manifest['routine_translations'] = [
+    for (final routine in routineIdsByPublicId.entries)
+      for (final locale in const ['en', 'ar'])
+        routineGuidance[routine.key]!.translations[locale]!.toManifestRow(
+          routine.value,
+          locale,
+        ),
+  ];
+  manifest['routine_steps'] = [
+    for (final routine in routineIdsByPublicId.entries)
+      for (
+        var index = 0;
+        index < routineGuidance[routine.key]!.steps.length;
+        index++
+      )
+        routineGuidance[routine.key]!.steps[index].toManifestRow(
+          routineId: routine.value,
+          exerciseId:
+              exerciseIdsByPublicId[routineGuidance[routine.key]!
+                  .steps[index]
+                  .exerciseId] ??
+              (throw FormatException(
+                'Unknown exercise in ${routine.key}: '
+                '${routineGuidance[routine.key]!.steps[index].exerciseId}.',
+              )),
+          position: index + 1,
+        ),
+  ];
+  for (final routine in routines) {
+    final steps = routineGuidance[routine['public_id']]!.steps;
+    routine['estimated_duration_seconds'] = steps.fold<int>(
+      0,
+      (sum, step) => sum + step.durationSeconds + step.restAfterSeconds,
+    );
+  }
   _replaceByForeignKey(manifest, 'routine_body_areas', 'routine_id', {
     _routineId,
   }, _routineBodyAreas);
@@ -256,12 +267,268 @@ void main() {
     [_assignment('routine_id', _routineId, 'equipment_id', _equipmentId)],
   );
 
-  envelope['manifest_checksum'] = canonicalManifestChecksum(
-    CanonicalJson.encodeBytes(manifest),
-  );
+  final previousChecksum = envelope['manifest_checksum'] as String;
+  var checksum = canonicalManifestChecksum(CanonicalJson.encodeBytes(manifest));
+  if (checksum != previousChecksum) {
+    // Bootstrap only applies a bundled release newer than the local one.
+    final release = manifest['release'] as Map<String, dynamic>;
+    final nextId = int.parse(release['id'] as String) + 1;
+    release['id'] = '$nextId';
+    release['version'] = 'starter-${nextId + 1}';
+    release['published_at'] = DateTime.now().toUtc().toIso8601String();
+    checksum = canonicalManifestChecksum(CanonicalJson.encodeBytes(manifest));
+  }
+  envelope['manifest_checksum'] = checksum;
   file.writeAsStringSync(
     '${const JsonEncoder.withIndent('  ').convert(envelope)}\n',
   );
+}
+
+String _pathArgument(List<String> arguments, String prefix, String fallback) {
+  final matches = arguments.where((argument) => argument.startsWith(prefix));
+  if (matches.length > 1 ||
+      arguments.any(
+        (argument) =>
+            !argument.startsWith('--manifest=') &&
+            !argument.startsWith('--guidance=') &&
+            !argument.startsWith('--routine-guidance='),
+      )) {
+    throw ArgumentError(
+      'Expected --manifest=PATH, --guidance=PATH, and --routine-guidance=PATH.',
+    );
+  }
+  return matches.isEmpty ? fallback : matches.single.substring(prefix.length);
+}
+
+Map<String, _RoutineGuidance> _loadRoutineGuidance(String path) {
+  final decoded = jsonDecode(File(path).readAsStringSync());
+  if (decoded is! Map<String, dynamic>) {
+    throw const FormatException(
+      'Routine guidance must be keyed by Raha routine ID.',
+    );
+  }
+  return {
+    for (final entry in decoded.entries)
+      entry.key: _RoutineGuidance.fromJson(entry.key, entry.value),
+  };
+}
+
+final class _RoutineGuidance {
+  const _RoutineGuidance(this.translations, this.steps);
+
+  final Map<String, _LocalizedRoutine> translations;
+  final List<_RoutineStep> steps;
+
+  factory _RoutineGuidance.fromJson(String publicId, Object? value) {
+    if (!RegExp(r'^raha_rt_\d{6}$').hasMatch(publicId) ||
+        value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({'en', 'ar', 'steps'}).isNotEmpty ||
+        !value.containsKey('en') ||
+        !value.containsKey('ar') ||
+        value['steps'] is! List) {
+      throw FormatException(
+        'Invalid bilingual routine guidance for $publicId.',
+      );
+    }
+    final rawSteps = value['steps'] as List;
+    if (rawSteps.isEmpty || rawSteps.length > 100) {
+      throw FormatException('Routine $publicId needs 1–100 steps.');
+    }
+    return _RoutineGuidance(
+      {
+        for (final locale in const ['en', 'ar'])
+          locale: _LocalizedRoutine.fromJson(publicId, locale, value[locale]),
+      },
+      [
+        for (final rawStep in rawSteps)
+          _RoutineStep.fromJson(publicId, rawStep),
+      ],
+    );
+  }
+}
+
+final class _LocalizedRoutine {
+  const _LocalizedRoutine(this.name, this.summary);
+
+  final String name;
+  final String summary;
+
+  factory _LocalizedRoutine.fromJson(
+    String publicId,
+    String locale,
+    Object? value,
+  ) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({'name', 'summary'}).isNotEmpty ||
+        value['name'] is! String ||
+        (value['name'] as String).trim().isEmpty ||
+        value['summary'] is! String ||
+        (value['summary'] as String).trim().isEmpty) {
+      throw FormatException('Invalid $locale routine text for $publicId.');
+    }
+    return _LocalizedRoutine(
+      (value['name'] as String).trim(),
+      (value['summary'] as String).trim(),
+    );
+  }
+
+  Map<String, dynamic> toManifestRow(String routineId, String locale) => {
+    'routine_id': routineId,
+    'locale': locale,
+    'name': name,
+    'summary': summary,
+  };
+}
+
+final class _RoutineStep {
+  const _RoutineStep(
+    this.stepId,
+    this.exerciseId,
+    this.durationSeconds,
+    this.restAfterSeconds,
+    this.isOptional,
+  );
+
+  final String stepId;
+  final String exerciseId;
+  final int durationSeconds;
+  final int restAfterSeconds;
+  final bool isOptional;
+
+  factory _RoutineStep.fromJson(String publicId, Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'step_id',
+          'exercise_id',
+          'duration_seconds',
+          'rest_after_seconds',
+          'is_optional',
+        }).isNotEmpty ||
+        value['step_id'] is! String ||
+        !RegExp(r'^raha_rs_\d{6}$').hasMatch(value['step_id'] as String) ||
+        value['exercise_id'] is! String ||
+        !RegExp(r'^raha_ex_\d{6}$').hasMatch(value['exercise_id'] as String) ||
+        value['duration_seconds'] is! int ||
+        (value['duration_seconds'] as int) <= 0 ||
+        value['rest_after_seconds'] is! int ||
+        (value['rest_after_seconds'] as int) < 0 ||
+        value['is_optional'] is! bool) {
+      throw FormatException('Invalid step in routine $publicId.');
+    }
+    return _RoutineStep(
+      value['step_id'] as String,
+      value['exercise_id'] as String,
+      value['duration_seconds'] as int,
+      value['rest_after_seconds'] as int,
+      value['is_optional'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toManifestRow({
+    required String routineId,
+    required String exerciseId,
+    required int position,
+  }) => {
+    'id': '04000000-0000-0000-0000-${stepId.substring(8).padLeft(12, '0')}',
+    'routine_id': routineId,
+    'exercise_id': exerciseId,
+    'position': position,
+    'duration_seconds': durationSeconds,
+    'rest_after_seconds': restAfterSeconds,
+    'is_optional': isOptional,
+  };
+}
+
+Map<String, Map<String, _LocalizedGuidance>> _loadGuidance(String path) {
+  final decoded = jsonDecode(File(path).readAsStringSync());
+  if (decoded is! Map<String, dynamic>) {
+    throw const FormatException('Guidance must be keyed by Raha exercise ID.');
+  }
+  return {
+    for (final entry in decoded.entries)
+      entry.key: _parseTranslations(entry.key, entry.value),
+  };
+}
+
+Map<String, _LocalizedGuidance> _parseTranslations(
+  String exerciseId,
+  Object? value,
+) {
+  if (!RegExp(r'^raha_ex_\d{6}$').hasMatch(exerciseId) ||
+      value is! Map<String, dynamic> ||
+      value.keys.toSet().difference({'en', 'ar'}).isNotEmpty ||
+      !value.containsKey('en') ||
+      !value.containsKey('ar')) {
+    throw FormatException('Invalid bilingual guidance for $exerciseId.');
+  }
+  final translations = {
+    for (final locale in const ['en', 'ar'])
+      locale: _LocalizedGuidance.fromJson(exerciseId, locale, value[locale]),
+  };
+  if (translations['en']!.instructions.length !=
+      translations['ar']!.instructions.length) {
+    throw FormatException('Instruction step counts differ for $exerciseId.');
+  }
+  return translations;
+}
+
+final class _LocalizedGuidance {
+  const _LocalizedGuidance(
+    this.name,
+    this.description,
+    this.shortCue,
+    this.instructions,
+  );
+
+  final String name;
+  final String description;
+  final String shortCue;
+  final List<String> instructions;
+
+  factory _LocalizedGuidance.fromJson(
+    String exerciseId,
+    String locale,
+    Object? value,
+  ) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'name',
+          'description',
+          'short_cue',
+          'instructions',
+        }).isNotEmpty ||
+        !value.containsKey('instructions')) {
+      throw FormatException('Invalid $locale guidance for $exerciseId.');
+    }
+    String textField(String key) {
+      final field = value[key];
+      if (field is! String || field.trim().isEmpty) {
+        throw FormatException('Invalid $locale $key for $exerciseId.');
+      }
+      return field.trim();
+    }
+
+    final steps = value['instructions'];
+    if (steps is! List ||
+        steps.any((step) => step is! String || step.trim().isEmpty)) {
+      throw FormatException('Invalid $locale instructions for $exerciseId.');
+    }
+    return _LocalizedGuidance(
+      textField('name'),
+      textField('description'),
+      textField('short_cue'),
+      [for (final step in steps) (step as String).trim()],
+    );
+  }
+
+  Map<String, dynamic> toManifestRow(String exerciseId, String locale) => {
+    'exercise_id': exerciseId,
+    'locale': locale,
+    'name': name,
+    'description': description,
+    'short_cue': shortCue,
+    if (instructions.isNotEmpty) 'instructions': instructions,
+  };
 }
 
 Set<String> get _exerciseIds => {
@@ -314,35 +581,6 @@ Map<String, dynamic> get _routine => {
   'updated_at': _publishedAt,
 };
 
-List<Map<String, dynamic>> get _routineTranslations => [
-  {
-    'routine_id': _routineId,
-    'locale': 'en',
-    'name': 'Five-minute full-body reset',
-    'summary': 'A calm standing-to-floor mobility flow for the whole body.',
-  },
-  {
-    'routine_id': _routineId,
-    'locale': 'ar',
-    'name': 'استراحة لخمس دقائق لكامل الجسم',
-    'summary': 'تسلسل حركي هادئ لكامل الجسم يبدأ بالوقوف وينتهي على الأرض.',
-  },
-];
-
-List<Map<String, dynamic>> get _routineSteps => [
-  for (var index = 0; index < _exercises.length; index++)
-    {
-      'id':
-          '04000000-0000-0000-0000-${(101 + index).toString().padLeft(12, '0')}',
-      'routine_id': _routineId,
-      'exercise_id': _exercises[index].id,
-      'position': index + 1,
-      'duration_seconds': 30,
-      'rest_after_seconds': 0,
-      'is_optional': false,
-    },
-];
-
 List<Map<String, dynamic>> get _routineBodyAreas => [
   for (final entry in _bodyAreas.entries)
     {
@@ -365,12 +603,6 @@ List<Map<String, dynamic>> get _routinePositions => [
 final class _ExerciseFixture {
   const _ExerciseFixture({
     required this.number,
-    required this.nameEn,
-    required this.nameAr,
-    required this.descriptionEn,
-    required this.descriptionAr,
-    required this.cueEn,
-    required this.cueAr,
     required this.areas,
     required this.position,
     required this.durationMs,
@@ -378,12 +610,6 @@ final class _ExerciseFixture {
   });
 
   final int number;
-  final String nameEn;
-  final String nameAr;
-  final String descriptionEn;
-  final String descriptionAr;
-  final String cueEn;
-  final String cueAr;
   final List<String> areas;
   final String position;
   final int durationMs;
@@ -406,23 +632,6 @@ final class _ExerciseFixture {
     'safety_approved': true,
     'updated_at': _publishedAt,
   };
-
-  List<Map<String, dynamic>> get translations => [
-    {
-      'exercise_id': id,
-      'locale': 'en',
-      'name': nameEn,
-      'description': descriptionEn,
-      'short_cue': cueEn,
-    },
-    {
-      'exercise_id': id,
-      'locale': 'ar',
-      'name': nameAr,
-      'description': descriptionAr,
-      'short_cue': cueAr,
-    },
-  ];
 
   Map<String, dynamic> get media => {
     'id': mediaId,

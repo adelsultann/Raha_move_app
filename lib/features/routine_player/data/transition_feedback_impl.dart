@@ -1,46 +1,58 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:raha_move/core/database/app_database.dart';
 
 import '../domain/playback_support.dart';
 
-/// [TransitionFeedback] using Flutter's built-in [SystemSound] (click) and
-/// [HapticFeedback] (light impact). It is gated by the active user's
-/// `sound_enabled`/`vibration_enabled` preferences (defaulting to true when the
-/// preference row is absent) and, because both primitives honor the OS
-/// mute/haptics settings, the OS settings are respected automatically.
+/// App-owned, offline chime and haptics, gated by the active user's preferences.
 final class DefaultTransitionFeedback implements TransitionFeedback {
   DefaultTransitionFeedback(this._database, {required this.activeUserId});
 
   final AppDatabase _database;
-
-  /// Resolves the active local user id lazily so feedback is a no-op while the
-  /// identity is still initializing.
   final String? Function() activeUserId;
+  final AudioPlayer _player = AudioPlayer();
+  bool _disposed = false;
+
+  Future<void> dispose() async {
+    _disposed = true;
+    await _player.dispose();
+  }
 
   @override
   void onStepTransition() {
     final userId = activeUserId();
-    if (userId == null) return;
-    unawaited(_playFor(userId));
+    if (userId != null && !_disposed) unawaited(_playFor(userId));
   }
 
   Future<void> _playFor(String userId) async {
-    final prefs = await (_database.select(
-      _database.localUserPreferences,
-    )..where((r) => r.userId.equals(userId))).getSingleOrNull();
-    final soundEnabled = prefs?.soundEnabled ?? true;
-    final vibrationEnabled = prefs?.vibrationEnabled ?? true;
     try {
-      if (soundEnabled) {
-        await SystemSound.play(SystemSoundType.click);
+      final prefs = await (_database.select(
+        _database.localUserPreferences,
+      )..where((r) => r.userId.equals(userId))).getSingleOrNull();
+      if (_disposed || activeUserId() != userId) return;
+      if (prefs?.vibrationEnabled ?? true) {
+        try {
+          await HapticFeedback.lightImpact();
+        } catch (_) {
+          /* Best effort. */
+        }
       }
-      if (vibrationEnabled) {
-        await HapticFeedback.lightImpact();
+      if (!_disposed && (prefs?.soundEnabled ?? true)) {
+        await _player.play(
+          AssetSource('audio/exercise_transition.wav'),
+          ctx: AudioContext(
+            android: const AudioContextAndroid(
+              audioFocus: AndroidAudioFocus.none,
+            ),
+            iOS: AudioContextIOS(category: AVAudioSessionCategory.ambient),
+          ),
+          volume: .55,
+        );
       }
     } catch (_) {
-      // Both primitives are best-effort; failures are intentionally ignored.
+      // A missing audio device or preference read must never stop a routine.
     }
   }
 }

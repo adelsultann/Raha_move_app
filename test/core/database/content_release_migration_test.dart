@@ -3,6 +3,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/core/database/app_database.dart';
 
 void main() {
+  test('v14 preserves existing translation text and defaults instructions to empty', () async {
+    final database = AppDatabase(
+      NativeDatabase.memory(
+        setup: (raw) {
+          raw.execute(
+            'CREATE TABLE local_media_assets (id TEXT PRIMARY KEY, exercise_id TEXT, media_type TEXT, is_preferred INTEGER, status TEXT)',
+          );
+          raw.execute(
+            'CREATE TABLE local_exercise_translations (exercise_id TEXT NOT NULL, locale TEXT NOT NULL, name TEXT NOT NULL, description TEXT, short_cue TEXT, PRIMARY KEY (exercise_id, locale))',
+          );
+          raw.execute(
+            "INSERT INTO local_exercise_translations VALUES ('ex-1', 'en', 'Movement', 'Overview', 'Cue')",
+          );
+          raw.execute('PRAGMA user_version = 13');
+        },
+      ),
+    );
+    addTearDown(database.close);
+    final translation = await database
+        .select(database.localExerciseTranslations)
+        .getSingle();
+    expect(translation.name, 'Movement');
+    expect(translation.description, 'Overview');
+    expect(translation.shortCue, 'Cue');
+    expect(translation.instructionsJson, '[]');
+  });
+
   final now = DateTime.utc(2026, 8, 29, 12);
 
   test(

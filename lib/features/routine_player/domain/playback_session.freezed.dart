@@ -18,6 +18,8 @@ mixin _$RoutineStepPlayback {
   String get exerciseId;
   String get name;
   String? get shortCue;
+  String? get description;
+  List<String> get instructions;
   String? get mediaDeliveryReference;
   int get durationSeconds;
   StepPlaybackState get state;
@@ -45,6 +47,12 @@ mixin _$RoutineStepPlayback {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.shortCue, shortCue) ||
                 other.shortCue == shortCue) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(
+              other.instructions,
+              instructions,
+            ) &&
             (identical(other.mediaDeliveryReference, mediaDeliveryReference) ||
                 other.mediaDeliveryReference == mediaDeliveryReference) &&
             (identical(other.durationSeconds, durationSeconds) ||
@@ -63,6 +71,8 @@ mixin _$RoutineStepPlayback {
     exerciseId,
     name,
     shortCue,
+    description,
+    const DeepCollectionEquality().hash(instructions),
     mediaDeliveryReference,
     durationSeconds,
     state,
@@ -72,7 +82,7 @@ mixin _$RoutineStepPlayback {
 
   @override
   String toString() {
-    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, mediaDeliveryReference: $mediaDeliveryReference, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
+    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, description: $description, instructions: $instructions, mediaDeliveryReference: $mediaDeliveryReference, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
   }
 }
 
@@ -88,6 +98,8 @@ abstract mixin class $RoutineStepPlaybackCopyWith<$Res> {
     String exerciseId,
     String name,
     String? shortCue,
+    String? description,
+    List<String> instructions,
     String? mediaDeliveryReference,
     int durationSeconds,
     StepPlaybackState state,
@@ -113,6 +125,8 @@ class _$RoutineStepPlaybackCopyWithImpl<$Res>
     Object? exerciseId = null,
     Object? name = null,
     Object? shortCue = freezed,
+    Object? description = freezed,
+    Object? instructions = null,
     Object? mediaDeliveryReference = freezed,
     Object? durationSeconds = null,
     Object? state = null,
@@ -137,6 +151,14 @@ class _$RoutineStepPlaybackCopyWithImpl<$Res>
             ? _self.shortCue
             : shortCue // ignore: cast_nullable_to_non_nullable
                   as String?,
+        description: freezed == description
+            ? _self.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        instructions: null == instructions
+            ? _self.instructions
+            : instructions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         mediaDeliveryReference: freezed == mediaDeliveryReference
             ? _self.mediaDeliveryReference
             : mediaDeliveryReference // ignore: cast_nullable_to_non_nullable
@@ -260,6 +282,8 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
       String exerciseId,
       String name,
       String? shortCue,
+      String? description,
+      List<String> instructions,
       String? mediaDeliveryReference,
       int durationSeconds,
       StepPlaybackState state,
@@ -277,6 +301,8 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.description,
+          _that.instructions,
           _that.mediaDeliveryReference,
           _that.durationSeconds,
           _that.state,
@@ -308,6 +334,8 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
       String exerciseId,
       String name,
       String? shortCue,
+      String? description,
+      List<String> instructions,
       String? mediaDeliveryReference,
       int durationSeconds,
       StepPlaybackState state,
@@ -324,6 +352,8 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.description,
+          _that.instructions,
           _that.mediaDeliveryReference,
           _that.durationSeconds,
           _that.state,
@@ -354,6 +384,8 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
       String exerciseId,
       String name,
       String? shortCue,
+      String? description,
+      List<String> instructions,
       String? mediaDeliveryReference,
       int durationSeconds,
       StepPlaybackState state,
@@ -370,6 +402,8 @@ extension RoutineStepPlaybackPatterns on RoutineStepPlayback {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.description,
+          _that.instructions,
           _that.mediaDeliveryReference,
           _that.durationSeconds,
           _that.state,
@@ -390,12 +424,14 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
     required this.exerciseId,
     required this.name,
     this.shortCue,
+    this.description,
+    List<String> instructions = const [],
     this.mediaDeliveryReference,
     required this.durationSeconds,
     required this.state,
     required this.creditedSeconds,
     required this.skipRequested,
-  });
+  }) : _instructions = instructions;
 
   @override
   final String stepId;
@@ -405,6 +441,17 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
   final String name;
   @override
   final String? shortCue;
+  @override
+  final String? description;
+  final List<String> _instructions;
+  @override
+  @JsonKey()
+  List<String> get instructions {
+    if (_instructions is EqualUnmodifiableListView) return _instructions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_instructions);
+  }
+
   @override
   final String? mediaDeliveryReference;
   @override
@@ -438,6 +485,12 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.shortCue, shortCue) ||
                 other.shortCue == shortCue) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(
+              other._instructions,
+              _instructions,
+            ) &&
             (identical(other.mediaDeliveryReference, mediaDeliveryReference) ||
                 other.mediaDeliveryReference == mediaDeliveryReference) &&
             (identical(other.durationSeconds, durationSeconds) ||
@@ -456,6 +509,8 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
     exerciseId,
     name,
     shortCue,
+    description,
+    const DeepCollectionEquality().hash(_instructions),
     mediaDeliveryReference,
     durationSeconds,
     state,
@@ -465,7 +520,7 @@ class _RoutineStepPlayback implements RoutineStepPlayback {
 
   @override
   String toString() {
-    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, mediaDeliveryReference: $mediaDeliveryReference, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
+    return 'RoutineStepPlayback(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, description: $description, instructions: $instructions, mediaDeliveryReference: $mediaDeliveryReference, durationSeconds: $durationSeconds, state: $state, creditedSeconds: $creditedSeconds, skipRequested: $skipRequested)';
   }
 }
 
@@ -483,6 +538,8 @@ abstract mixin class _$RoutineStepPlaybackCopyWith<$Res>
     String exerciseId,
     String name,
     String? shortCue,
+    String? description,
+    List<String> instructions,
     String? mediaDeliveryReference,
     int durationSeconds,
     StepPlaybackState state,
@@ -508,6 +565,8 @@ class __$RoutineStepPlaybackCopyWithImpl<$Res>
     Object? exerciseId = null,
     Object? name = null,
     Object? shortCue = freezed,
+    Object? description = freezed,
+    Object? instructions = null,
     Object? mediaDeliveryReference = freezed,
     Object? durationSeconds = null,
     Object? state = null,
@@ -532,6 +591,14 @@ class __$RoutineStepPlaybackCopyWithImpl<$Res>
             ? _self.shortCue
             : shortCue // ignore: cast_nullable_to_non_nullable
                   as String?,
+        description: freezed == description
+            ? _self.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        instructions: null == instructions
+            ? _self._instructions
+            : instructions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         mediaDeliveryReference: freezed == mediaDeliveryReference
             ? _self.mediaDeliveryReference
             : mediaDeliveryReference // ignore: cast_nullable_to_non_nullable
@@ -565,6 +632,7 @@ mixin _$RoutinePlaybackSession {
   String get routineName;
   String? get recommendationId;
   PlaybackStatus get status;
+  int get preparationSeconds;
   int get currentStepIndex;
   List<RoutineStepPlayback> get steps;
 
@@ -594,6 +662,8 @@ mixin _$RoutinePlaybackSession {
             (identical(other.recommendationId, recommendationId) ||
                 other.recommendationId == recommendationId) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.preparationSeconds, preparationSeconds) ||
+                other.preparationSeconds == preparationSeconds) &&
             (identical(other.currentStepIndex, currentStepIndex) ||
                 other.currentStepIndex == currentStepIndex) &&
             const DeepCollectionEquality().equals(other.steps, steps));
@@ -608,13 +678,14 @@ mixin _$RoutinePlaybackSession {
     routineName,
     recommendationId,
     status,
+    preparationSeconds,
     currentStepIndex,
     const DeepCollectionEquality().hash(steps),
   );
 
   @override
   String toString() {
-    return 'RoutinePlaybackSession(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, routineName: $routineName, recommendationId: $recommendationId, status: $status, currentStepIndex: $currentStepIndex, steps: $steps)';
+    return 'RoutinePlaybackSession(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, routineName: $routineName, recommendationId: $recommendationId, status: $status, preparationSeconds: $preparationSeconds, currentStepIndex: $currentStepIndex, steps: $steps)';
   }
 }
 
@@ -632,6 +703,7 @@ abstract mixin class $RoutinePlaybackSessionCopyWith<$Res> {
     String routineName,
     String? recommendationId,
     PlaybackStatus status,
+    int preparationSeconds,
     int currentStepIndex,
     List<RoutineStepPlayback> steps,
   });
@@ -656,6 +728,7 @@ class _$RoutinePlaybackSessionCopyWithImpl<$Res>
     Object? routineName = null,
     Object? recommendationId = freezed,
     Object? status = null,
+    Object? preparationSeconds = null,
     Object? currentStepIndex = null,
     Object? steps = null,
   }) {
@@ -685,6 +758,10 @@ class _$RoutinePlaybackSessionCopyWithImpl<$Res>
             ? _self.status
             : status // ignore: cast_nullable_to_non_nullable
                   as PlaybackStatus,
+        preparationSeconds: null == preparationSeconds
+            ? _self.preparationSeconds
+            : preparationSeconds // ignore: cast_nullable_to_non_nullable
+                  as int,
         currentStepIndex: null == currentStepIndex
             ? _self.currentStepIndex
             : currentStepIndex // ignore: cast_nullable_to_non_nullable
@@ -798,6 +875,7 @@ extension RoutinePlaybackSessionPatterns on RoutinePlaybackSession {
       String routineName,
       String? recommendationId,
       PlaybackStatus status,
+      int preparationSeconds,
       int currentStepIndex,
       List<RoutineStepPlayback> steps,
     )?
@@ -814,6 +892,7 @@ extension RoutinePlaybackSessionPatterns on RoutinePlaybackSession {
           _that.routineName,
           _that.recommendationId,
           _that.status,
+          _that.preparationSeconds,
           _that.currentStepIndex,
           _that.steps,
         );
@@ -844,6 +923,7 @@ extension RoutinePlaybackSessionPatterns on RoutinePlaybackSession {
       String routineName,
       String? recommendationId,
       PlaybackStatus status,
+      int preparationSeconds,
       int currentStepIndex,
       List<RoutineStepPlayback> steps,
     )
@@ -859,6 +939,7 @@ extension RoutinePlaybackSessionPatterns on RoutinePlaybackSession {
           _that.routineName,
           _that.recommendationId,
           _that.status,
+          _that.preparationSeconds,
           _that.currentStepIndex,
           _that.steps,
         );
@@ -888,6 +969,7 @@ extension RoutinePlaybackSessionPatterns on RoutinePlaybackSession {
       String routineName,
       String? recommendationId,
       PlaybackStatus status,
+      int preparationSeconds,
       int currentStepIndex,
       List<RoutineStepPlayback> steps,
     )?
@@ -903,6 +985,7 @@ extension RoutinePlaybackSessionPatterns on RoutinePlaybackSession {
           _that.routineName,
           _that.recommendationId,
           _that.status,
+          _that.preparationSeconds,
           _that.currentStepIndex,
           _that.steps,
         );
@@ -922,6 +1005,7 @@ class _RoutinePlaybackSession extends RoutinePlaybackSession {
     required this.routineName,
     this.recommendationId,
     required this.status,
+    this.preparationSeconds = 0,
     required this.currentStepIndex,
     required List<RoutineStepPlayback> steps,
   }) : _steps = steps,
@@ -939,6 +1023,9 @@ class _RoutinePlaybackSession extends RoutinePlaybackSession {
   final String? recommendationId;
   @override
   final PlaybackStatus status;
+  @override
+  @JsonKey()
+  final int preparationSeconds;
   @override
   final int currentStepIndex;
   final List<RoutineStepPlayback> _steps;
@@ -976,6 +1063,8 @@ class _RoutinePlaybackSession extends RoutinePlaybackSession {
             (identical(other.recommendationId, recommendationId) ||
                 other.recommendationId == recommendationId) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.preparationSeconds, preparationSeconds) ||
+                other.preparationSeconds == preparationSeconds) &&
             (identical(other.currentStepIndex, currentStepIndex) ||
                 other.currentStepIndex == currentStepIndex) &&
             const DeepCollectionEquality().equals(other._steps, _steps));
@@ -990,13 +1079,14 @@ class _RoutinePlaybackSession extends RoutinePlaybackSession {
     routineName,
     recommendationId,
     status,
+    preparationSeconds,
     currentStepIndex,
     const DeepCollectionEquality().hash(_steps),
   );
 
   @override
   String toString() {
-    return 'RoutinePlaybackSession(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, routineName: $routineName, recommendationId: $recommendationId, status: $status, currentStepIndex: $currentStepIndex, steps: $steps)';
+    return 'RoutinePlaybackSession(sessionId: $sessionId, routineId: $routineId, routineVersion: $routineVersion, routineName: $routineName, recommendationId: $recommendationId, status: $status, preparationSeconds: $preparationSeconds, currentStepIndex: $currentStepIndex, steps: $steps)';
   }
 }
 
@@ -1016,6 +1106,7 @@ abstract mixin class _$RoutinePlaybackSessionCopyWith<$Res>
     String routineName,
     String? recommendationId,
     PlaybackStatus status,
+    int preparationSeconds,
     int currentStepIndex,
     List<RoutineStepPlayback> steps,
   });
@@ -1040,6 +1131,7 @@ class __$RoutinePlaybackSessionCopyWithImpl<$Res>
     Object? routineName = null,
     Object? recommendationId = freezed,
     Object? status = null,
+    Object? preparationSeconds = null,
     Object? currentStepIndex = null,
     Object? steps = null,
   }) {
@@ -1069,6 +1161,10 @@ class __$RoutinePlaybackSessionCopyWithImpl<$Res>
             ? _self.status
             : status // ignore: cast_nullable_to_non_nullable
                   as PlaybackStatus,
+        preparationSeconds: null == preparationSeconds
+            ? _self.preparationSeconds
+            : preparationSeconds // ignore: cast_nullable_to_non_nullable
+                  as int,
         currentStepIndex: null == currentStepIndex
             ? _self.currentStepIndex
             : currentStepIndex // ignore: cast_nullable_to_non_nullable

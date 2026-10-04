@@ -18,10 +18,10 @@ class PlayerControls extends StatelessWidget {
 
   final bool isPlaying;
   final bool isLastStep;
-  final VoidCallback onPrevious;
+  final VoidCallback? onPrevious;
   final VoidCallback onTogglePause;
-  final VoidCallback onSkip;
-  final VoidCallback onFinish;
+  final VoidCallback? onSkip;
+  final VoidCallback? onFinish;
 
   @override
   Widget build(BuildContext context) {

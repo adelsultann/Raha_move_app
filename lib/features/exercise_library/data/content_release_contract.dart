@@ -72,6 +72,7 @@ final class ManifestExerciseTranslation {
     required this.name,
     required this.description,
     required this.shortCue,
+    this.instructions = const [],
   });
 
   final String exerciseId;
@@ -79,6 +80,7 @@ final class ManifestExerciseTranslation {
   final String name;
   final String? description;
   final String? shortCue;
+  final List<String> instructions;
 }
 
 final class ManifestMediaAsset {
@@ -469,7 +471,22 @@ ManifestExerciseTranslation _exerciseTranslationFromJson(
   name: _string(json['name'], required: true)!,
   description: _string(json['description']),
   shortCue: _string(json['short_cue']),
+  instructions: _instructions(json['instructions']),
 );
+
+List<String> _instructions(Object? value) {
+  if (value == null) return const [];
+  if (value is! List ||
+      value.any((step) => step is! String || step.trim().isEmpty)) {
+    throw const ContentReleaseException(
+      'invalid_instructions',
+      'Instructions must be a list of non-empty strings.',
+    );
+  }
+  return List<String>.unmodifiable(
+    value.cast<String>().map((step) => step.trim()),
+  );
+}
 
 ManifestMediaAsset _mediaAssetFromJson(Map<String, dynamic> json) =>
     ManifestMediaAsset(

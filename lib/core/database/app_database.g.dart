@@ -1480,6 +1480,18 @@ class $LocalExerciseTranslationsTable extends LocalExerciseTranslations
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _instructionsJsonMeta = const VerificationMeta(
+    'instructionsJson',
+  );
+  @override
+  late final GeneratedColumn<String> instructionsJson = GeneratedColumn<String>(
+    'instructions_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     exerciseId,
@@ -1487,6 +1499,7 @@ class $LocalExerciseTranslationsTable extends LocalExerciseTranslations
     name,
     description,
     shortCue,
+    instructionsJson,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1539,6 +1552,15 @@ class $LocalExerciseTranslationsTable extends LocalExerciseTranslations
         shortCue.isAcceptableOrUnknown(data['short_cue']!, _shortCueMeta),
       );
     }
+    if (data.containsKey('instructions_json')) {
+      context.handle(
+        _instructionsJsonMeta,
+        instructionsJson.isAcceptableOrUnknown(
+          data['instructions_json']!,
+          _instructionsJsonMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1571,6 +1593,10 @@ class $LocalExerciseTranslationsTable extends LocalExerciseTranslations
         DriftSqlType.string,
         data['${effectivePrefix}short_cue'],
       ),
+      instructionsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}instructions_json'],
+      )!,
     );
   }
 
@@ -1587,12 +1613,14 @@ class LocalExerciseTranslation extends DataClass
   final String name;
   final String? description;
   final String? shortCue;
+  final String instructionsJson;
   const LocalExerciseTranslation({
     required this.exerciseId,
     required this.locale,
     required this.name,
     this.description,
     this.shortCue,
+    required this.instructionsJson,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1606,6 +1634,7 @@ class LocalExerciseTranslation extends DataClass
     if (!nullToAbsent || shortCue != null) {
       map['short_cue'] = Variable<String>(shortCue);
     }
+    map['instructions_json'] = Variable<String>(instructionsJson);
     return map;
   }
 
@@ -1620,6 +1649,7 @@ class LocalExerciseTranslation extends DataClass
       shortCue: shortCue == null && nullToAbsent
           ? const Value.absent()
           : Value(shortCue),
+      instructionsJson: Value(instructionsJson),
     );
   }
 
@@ -1634,6 +1664,7 @@ class LocalExerciseTranslation extends DataClass
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       shortCue: serializer.fromJson<String?>(json['shortCue']),
+      instructionsJson: serializer.fromJson<String>(json['instructionsJson']),
     );
   }
   @override
@@ -1645,6 +1676,7 @@ class LocalExerciseTranslation extends DataClass
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'shortCue': serializer.toJson<String?>(shortCue),
+      'instructionsJson': serializer.toJson<String>(instructionsJson),
     };
   }
 
@@ -1654,12 +1686,14 @@ class LocalExerciseTranslation extends DataClass
     String? name,
     Value<String?> description = const Value.absent(),
     Value<String?> shortCue = const Value.absent(),
+    String? instructionsJson,
   }) => LocalExerciseTranslation(
     exerciseId: exerciseId ?? this.exerciseId,
     locale: locale ?? this.locale,
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
     shortCue: shortCue.present ? shortCue.value : this.shortCue,
+    instructionsJson: instructionsJson ?? this.instructionsJson,
   );
   LocalExerciseTranslation copyWithCompanion(
     LocalExerciseTranslationsCompanion data,
@@ -1674,6 +1708,9 @@ class LocalExerciseTranslation extends DataClass
           ? data.description.value
           : this.description,
       shortCue: data.shortCue.present ? data.shortCue.value : this.shortCue,
+      instructionsJson: data.instructionsJson.present
+          ? data.instructionsJson.value
+          : this.instructionsJson,
     );
   }
 
@@ -1684,14 +1721,21 @@ class LocalExerciseTranslation extends DataClass
           ..write('locale: $locale, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('shortCue: $shortCue')
+          ..write('shortCue: $shortCue, ')
+          ..write('instructionsJson: $instructionsJson')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(exerciseId, locale, name, description, shortCue);
+  int get hashCode => Object.hash(
+    exerciseId,
+    locale,
+    name,
+    description,
+    shortCue,
+    instructionsJson,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1700,7 +1744,8 @@ class LocalExerciseTranslation extends DataClass
           other.locale == this.locale &&
           other.name == this.name &&
           other.description == this.description &&
-          other.shortCue == this.shortCue);
+          other.shortCue == this.shortCue &&
+          other.instructionsJson == this.instructionsJson);
 }
 
 class LocalExerciseTranslationsCompanion
@@ -1710,6 +1755,7 @@ class LocalExerciseTranslationsCompanion
   final Value<String> name;
   final Value<String?> description;
   final Value<String?> shortCue;
+  final Value<String> instructionsJson;
   final Value<int> rowid;
   const LocalExerciseTranslationsCompanion({
     this.exerciseId = const Value.absent(),
@@ -1717,6 +1763,7 @@ class LocalExerciseTranslationsCompanion
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.shortCue = const Value.absent(),
+    this.instructionsJson = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalExerciseTranslationsCompanion.insert({
@@ -1725,6 +1772,7 @@ class LocalExerciseTranslationsCompanion
     required String name,
     this.description = const Value.absent(),
     this.shortCue = const Value.absent(),
+    this.instructionsJson = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : exerciseId = Value(exerciseId),
        locale = Value(locale),
@@ -1735,6 +1783,7 @@ class LocalExerciseTranslationsCompanion
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? shortCue,
+    Expression<String>? instructionsJson,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1743,6 +1792,7 @@ class LocalExerciseTranslationsCompanion
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (shortCue != null) 'short_cue': shortCue,
+      if (instructionsJson != null) 'instructions_json': instructionsJson,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1753,6 +1803,7 @@ class LocalExerciseTranslationsCompanion
     Value<String>? name,
     Value<String?>? description,
     Value<String?>? shortCue,
+    Value<String>? instructionsJson,
     Value<int>? rowid,
   }) {
     return LocalExerciseTranslationsCompanion(
@@ -1761,6 +1812,7 @@ class LocalExerciseTranslationsCompanion
       name: name ?? this.name,
       description: description ?? this.description,
       shortCue: shortCue ?? this.shortCue,
+      instructionsJson: instructionsJson ?? this.instructionsJson,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1783,6 +1835,9 @@ class LocalExerciseTranslationsCompanion
     if (shortCue.present) {
       map['short_cue'] = Variable<String>(shortCue.value);
     }
+    if (instructionsJson.present) {
+      map['instructions_json'] = Variable<String>(instructionsJson.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1797,6 +1852,7 @@ class LocalExerciseTranslationsCompanion
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('shortCue: $shortCue, ')
+          ..write('instructionsJson: $instructionsJson, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -18429,6 +18485,7 @@ typedef $$LocalExerciseTranslationsTableCreateCompanionBuilder =
       required String name,
       Value<String?> description,
       Value<String?> shortCue,
+      Value<String> instructionsJson,
       Value<int> rowid,
     });
 typedef $$LocalExerciseTranslationsTableUpdateCompanionBuilder =
@@ -18438,6 +18495,7 @@ typedef $$LocalExerciseTranslationsTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String?> description,
       Value<String?> shortCue,
+      Value<String> instructionsJson,
       Value<int> rowid,
     });
 
@@ -18503,6 +18561,11 @@ class $$LocalExerciseTranslationsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get instructionsJson => $composableBuilder(
+    column: $table.instructionsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LocalExercisesTableFilterComposer get exerciseId {
     final $$LocalExercisesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -18556,6 +18619,11 @@ class $$LocalExerciseTranslationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get instructionsJson => $composableBuilder(
+    column: $table.instructionsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$LocalExercisesTableOrderingComposer get exerciseId {
     final $$LocalExercisesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -18602,6 +18670,11 @@ class $$LocalExerciseTranslationsTableAnnotationComposer
 
   GeneratedColumn<String> get shortCue =>
       $composableBuilder(column: $table.shortCue, builder: (column) => column);
+
+  GeneratedColumn<String> get instructionsJson => $composableBuilder(
+    column: $table.instructionsJson,
+    builder: (column) => column,
+  );
 
   $$LocalExercisesTableAnnotationComposer get exerciseId {
     final $$LocalExercisesTableAnnotationComposer composer = $composerBuilder(
@@ -18674,6 +18747,7 @@ class $$LocalExerciseTranslationsTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String?> shortCue = const Value.absent(),
+                Value<String> instructionsJson = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalExerciseTranslationsCompanion(
                 exerciseId: exerciseId,
@@ -18681,6 +18755,7 @@ class $$LocalExerciseTranslationsTableTableManager
                 name: name,
                 description: description,
                 shortCue: shortCue,
+                instructionsJson: instructionsJson,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -18690,6 +18765,7 @@ class $$LocalExerciseTranslationsTableTableManager
                 required String name,
                 Value<String?> description = const Value.absent(),
                 Value<String?> shortCue = const Value.absent(),
+                Value<String> instructionsJson = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalExerciseTranslationsCompanion.insert(
                 exerciseId: exerciseId,
@@ -18697,6 +18773,7 @@ class $$LocalExerciseTranslationsTableTableManager
                 name: name,
                 description: description,
                 shortCue: shortCue,
+                instructionsJson: instructionsJson,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

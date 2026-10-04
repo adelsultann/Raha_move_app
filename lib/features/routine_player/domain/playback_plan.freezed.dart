@@ -433,6 +433,8 @@ mixin _$RoutineStepPlan {
   String get exerciseId;
   String get name;
   String? get shortCue;
+  String? get description;
+  List<String> get instructions;
   int get durationSeconds;
   MediaDelivery get media;
 
@@ -457,6 +459,12 @@ mixin _$RoutineStepPlan {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.shortCue, shortCue) ||
                 other.shortCue == shortCue) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(
+              other.instructions,
+              instructions,
+            ) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds) &&
             (identical(other.media, media) || other.media == media));
@@ -469,13 +477,15 @@ mixin _$RoutineStepPlan {
     exerciseId,
     name,
     shortCue,
+    description,
+    const DeepCollectionEquality().hash(instructions),
     durationSeconds,
     media,
   );
 
   @override
   String toString() {
-    return 'RoutineStepPlan(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, durationSeconds: $durationSeconds, media: $media)';
+    return 'RoutineStepPlan(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, description: $description, instructions: $instructions, durationSeconds: $durationSeconds, media: $media)';
   }
 }
 
@@ -491,6 +501,8 @@ abstract mixin class $RoutineStepPlanCopyWith<$Res> {
     String exerciseId,
     String name,
     String? shortCue,
+    String? description,
+    List<String> instructions,
     int durationSeconds,
     MediaDelivery media,
   });
@@ -513,6 +525,8 @@ class _$RoutineStepPlanCopyWithImpl<$Res>
     Object? exerciseId = null,
     Object? name = null,
     Object? shortCue = freezed,
+    Object? description = freezed,
+    Object? instructions = null,
     Object? durationSeconds = null,
     Object? media = null,
   }) {
@@ -534,6 +548,14 @@ class _$RoutineStepPlanCopyWithImpl<$Res>
             ? _self.shortCue
             : shortCue // ignore: cast_nullable_to_non_nullable
                   as String?,
+        description: freezed == description
+            ? _self.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        instructions: null == instructions
+            ? _self.instructions
+            : instructions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
             : durationSeconds // ignore: cast_nullable_to_non_nullable
@@ -645,6 +667,8 @@ extension RoutineStepPlanPatterns on RoutineStepPlan {
       String exerciseId,
       String name,
       String? shortCue,
+      String? description,
+      List<String> instructions,
       int durationSeconds,
       MediaDelivery media,
     )?
@@ -659,6 +683,8 @@ extension RoutineStepPlanPatterns on RoutineStepPlan {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.description,
+          _that.instructions,
           _that.durationSeconds,
           _that.media,
         );
@@ -687,6 +713,8 @@ extension RoutineStepPlanPatterns on RoutineStepPlan {
       String exerciseId,
       String name,
       String? shortCue,
+      String? description,
+      List<String> instructions,
       int durationSeconds,
       MediaDelivery media,
     )
@@ -700,6 +728,8 @@ extension RoutineStepPlanPatterns on RoutineStepPlan {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.description,
+          _that.instructions,
           _that.durationSeconds,
           _that.media,
         );
@@ -727,6 +757,8 @@ extension RoutineStepPlanPatterns on RoutineStepPlan {
       String exerciseId,
       String name,
       String? shortCue,
+      String? description,
+      List<String> instructions,
       int durationSeconds,
       MediaDelivery media,
     )?
@@ -740,6 +772,8 @@ extension RoutineStepPlanPatterns on RoutineStepPlan {
           _that.exerciseId,
           _that.name,
           _that.shortCue,
+          _that.description,
+          _that.instructions,
           _that.durationSeconds,
           _that.media,
         );
@@ -757,9 +791,11 @@ class _RoutineStepPlan implements RoutineStepPlan {
     required this.exerciseId,
     required this.name,
     this.shortCue,
+    this.description,
+    List<String> instructions = const [],
     required this.durationSeconds,
     required this.media,
-  });
+  }) : _instructions = instructions;
 
   @override
   final String stepId;
@@ -769,6 +805,17 @@ class _RoutineStepPlan implements RoutineStepPlan {
   final String name;
   @override
   final String? shortCue;
+  @override
+  final String? description;
+  final List<String> _instructions;
+  @override
+  @JsonKey()
+  List<String> get instructions {
+    if (_instructions is EqualUnmodifiableListView) return _instructions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_instructions);
+  }
+
   @override
   final int durationSeconds;
   @override
@@ -793,6 +840,12 @@ class _RoutineStepPlan implements RoutineStepPlan {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.shortCue, shortCue) ||
                 other.shortCue == shortCue) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(
+              other._instructions,
+              _instructions,
+            ) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds) &&
             (identical(other.media, media) || other.media == media));
@@ -805,13 +858,15 @@ class _RoutineStepPlan implements RoutineStepPlan {
     exerciseId,
     name,
     shortCue,
+    description,
+    const DeepCollectionEquality().hash(_instructions),
     durationSeconds,
     media,
   );
 
   @override
   String toString() {
-    return 'RoutineStepPlan(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, durationSeconds: $durationSeconds, media: $media)';
+    return 'RoutineStepPlan(stepId: $stepId, exerciseId: $exerciseId, name: $name, shortCue: $shortCue, description: $description, instructions: $instructions, durationSeconds: $durationSeconds, media: $media)';
   }
 }
 
@@ -829,6 +884,8 @@ abstract mixin class _$RoutineStepPlanCopyWith<$Res>
     String exerciseId,
     String name,
     String? shortCue,
+    String? description,
+    List<String> instructions,
     int durationSeconds,
     MediaDelivery media,
   });
@@ -851,6 +908,8 @@ class __$RoutineStepPlanCopyWithImpl<$Res>
     Object? exerciseId = null,
     Object? name = null,
     Object? shortCue = freezed,
+    Object? description = freezed,
+    Object? instructions = null,
     Object? durationSeconds = null,
     Object? media = null,
   }) {
@@ -872,6 +931,14 @@ class __$RoutineStepPlanCopyWithImpl<$Res>
             ? _self.shortCue
             : shortCue // ignore: cast_nullable_to_non_nullable
                   as String?,
+        description: freezed == description
+            ? _self.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        instructions: null == instructions
+            ? _self._instructions
+            : instructions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
             : durationSeconds // ignore: cast_nullable_to_non_nullable

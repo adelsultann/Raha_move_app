@@ -1,3 +1,6 @@
+import 'package:raha_move/features/routine_player/data/drift_routine_playback_loader.dart';
+
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -33,6 +36,31 @@ void main() {
       ),
     );
   }
+
+  test(
+    'ordered localized instructions survive import and playback loading',
+    () async {
+      final manifest = deepCopy(minimalValidManifest());
+      final translations = manifest['exercise_translations'] as List;
+      for (final row in translations) {
+        row['instructions'] = row['locale'] == 'ar'
+            ? ['الخطوة الأولى', 'الخطوة الثانية']
+            : ['First action', 'Second action'];
+      }
+      await repository.applyRelease(envelopeFor(manifest), appVersion: '1.0.0');
+      final loader = DriftRoutinePlaybackLoader(database);
+      final english = await loader.load('raha_rt_000001', 'en');
+      final arabic = await loader.load('raha_rt_000001', 'ar');
+      expect(english.steps.single.instructions, [
+        'First action',
+        'Second action',
+      ]);
+      expect(arabic.steps.single.instructions, [
+        'الخطوة الأولى',
+        'الخطوة الثانية',
+      ]);
+    },
+  );
 
   test('applies a valid release atomically and marks it current', () async {
     await repository.applyRelease(
@@ -103,7 +131,7 @@ void main() {
   });
 
   test('rejects a release requiring a newer app version', () async {
-    final manifest = minimalValidManifest();
+    final manifest = deepCopy(minimalValidManifest());
     (manifest['release'] as Map<String, dynamic>)['minimum_app_version'] =
         '2.0.0';
     await expectThrowsWithCode(
@@ -220,7 +248,7 @@ void main() {
   });
 
   test('rejects an exercise without literal true safety approval', () async {
-    final manifest = minimalValidManifest();
+    final manifest = deepCopy(minimalValidManifest());
     (manifest['exercises'] as List).cast<Map<String, dynamic>>().single.remove(
       'safety_approved',
     );
@@ -232,7 +260,7 @@ void main() {
   });
 
   test('rejects a routine with a falsy safety approval value', () async {
-    final manifest = minimalValidManifest();
+    final manifest = deepCopy(minimalValidManifest());
     (manifest['routines'] as List)
             .cast<Map<String, dynamic>>()
             .single['safety_approved'] =
@@ -244,7 +272,7 @@ void main() {
   });
 
   test('rejects a taxonomy missing a bilingual label', () async {
-    final manifest = minimalValidManifest();
+    final manifest = deepCopy(minimalValidManifest());
     // Drop the Arabic body-area label.
     manifest['body_area_translations'] = [
       {
@@ -298,7 +326,12 @@ void main() {
     final starter = BundledStarterContent(loadString: (path) async => raw);
     final envelope = await starter.load();
 
-    expect(envelope.releaseId, '1');
+    final bundledReleaseId =
+        ((jsonDecode(raw) as Map<String, dynamic>)['manifest']
+                as Map<String, dynamic>)['release']['id']
+            as String;
+    expect(int.parse(bundledReleaseId), greaterThan(0));
+    expect(envelope.releaseId, bundledReleaseId);
     expect(
       envelope.manifest.mediaAssets.every(
         (m) => m.status == 'published' && m.checksumSha256?.length == 64,
@@ -325,7 +358,7 @@ void main() {
     }
     await repository.applyRelease(envelope, appVersion: '1.0.0');
 
-    expect(await repository.currentReleaseId(), '1');
+    expect(await repository.currentReleaseId(), bundledReleaseId);
     final routines = await LocalContentRepository(database)
         .watchPublishedRoutines()
         .first;

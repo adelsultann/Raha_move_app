@@ -264,7 +264,10 @@ Vital Animations supplies:
 - Equipment and difficulty information
 - Descriptions and instructions
 
-The provider's movement demonstrations are treated as the approved source content. Raha Move does not need to overload the exercise player with detailed written instructions when the animation already demonstrates the movement clearly.
+The provider's movement demonstrations are treated as the approved visual
+source content. Raha Move may show short, reviewed instructions beneath the
+video when they help a beginner follow the movement. Guidance is authored in
+both Arabic and English and linked to the stable Raha exercise ID.
 
 A typical player may show only:
 

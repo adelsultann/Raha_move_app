@@ -1247,4 +1247,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeResume => 'Continue your routine';
+
+  @override
+  String get playerGetReady => 'Get ready';
+
+  @override
+  String get playerStartNow => 'Start now';
+
+  @override
+  String get playerHowTo => 'How to perform';
+
+  @override
+  String get playerPrepareHint =>
+      'Find a comfortable position and follow the demonstration.';
 }

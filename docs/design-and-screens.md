@@ -345,7 +345,9 @@ Required behavior:
 
 Do not show advertisements, unrelated navigation, streak pressure, or excessive rewards during a routine.
 
-The footage demonstrates the movement, so surrounding instructions should remain minimal. A short cue can be shown only when useful.
+The footage demonstrates the movement. When reviewed movement steps help a
+beginner follow it, show a short ordered list beneath the compact video; retain
+the short cue as supporting guidance. Keep the timer and controls visible.
 
 ### 10. Completion and feedback
 

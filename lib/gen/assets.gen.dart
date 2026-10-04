@@ -11,6 +11,16 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsAudioGen {
+  const $AssetsAudioGen();
+
+  /// File path: assets/audio/exercise_transition.wav
+  String get exerciseTransition => 'assets/audio/exercise_transition.wav';
+
+  /// List of all assets
+  List<String> get values => [exerciseTransition];
+}
+
 class $AssetsCategoriesIconsGen {
   const $AssetsCategoriesIconsGen();
 
@@ -97,6 +107,10 @@ class $AssetsStarterContentMediaGen {
 class $AssetsStarterContentMediaVideosGen {
   const $AssetsStarterContentMediaVideosGen();
 
+  /// Directory path: assets/starter_content/media/videos/free50
+  $AssetsStarterContentMediaVideosFree50Gen get free50 =>
+      const $AssetsStarterContentMediaVideosFree50Gen();
+
   /// File path: assets/starter_content/media/videos/neck.gif
   AssetGenImage get neck =>
       const AssetGenImage('assets/starter_content/media/videos/neck.gif');
@@ -108,7 +122,66 @@ class $AssetsStarterContentMediaVideosGen {
   List<dynamic> get values => [neck, shoulder];
 }
 
+class $AssetsStarterContentMediaVideosFree50Gen {
+  const $AssetsStarterContentMediaVideosFree50Gen();
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000101_free50_fixture_v1_1080.mp4
+  String get rahaEx000101Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000101_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000102_free50_fixture_v1_1080.mp4
+  String get rahaEx000102Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000102_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000103_free50_fixture_v1_1080.mp4
+  String get rahaEx000103Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000103_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000104_free50_fixture_v1_1080.mp4
+  String get rahaEx000104Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000104_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000105_free50_fixture_v1_1080.mp4
+  String get rahaEx000105Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000105_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000106_free50_fixture_v1_1080.mp4
+  String get rahaEx000106Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000106_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000107_free50_fixture_v1_1080.mp4
+  String get rahaEx000107Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000107_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000108_free50_fixture_v1_1080.mp4
+  String get rahaEx000108Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000108_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000109_free50_fixture_v1_1080.mp4
+  String get rahaEx000109Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000109_free50_fixture_v1_1080.mp4';
+
+  /// File path: assets/starter_content/media/videos/free50/raha_ex_000110_free50_fixture_v1_1080.mp4
+  String get rahaEx000110Free50FixtureV11080 =>
+      'assets/starter_content/media/videos/free50/raha_ex_000110_free50_fixture_v1_1080.mp4';
+
+  /// List of all assets
+  List<String> get values => [
+    rahaEx000101Free50FixtureV11080,
+    rahaEx000102Free50FixtureV11080,
+    rahaEx000103Free50FixtureV11080,
+    rahaEx000104Free50FixtureV11080,
+    rahaEx000105Free50FixtureV11080,
+    rahaEx000106Free50FixtureV11080,
+    rahaEx000107Free50FixtureV11080,
+    rahaEx000108Free50FixtureV11080,
+    rahaEx000109Free50FixtureV11080,
+    rahaEx000110Free50FixtureV11080,
+  ];
+}
+
 abstract final class Assets {
+  static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const $AssetsCategoriesIconsGen categoriesIcons = $AssetsCategoriesIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsStarterContentGen starterContent = $AssetsStarterContentGen();

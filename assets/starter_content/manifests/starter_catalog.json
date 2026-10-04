@@ -1,11 +1,11 @@
 {
-  "manifest_checksum": "8530c954d87eddf6bd098d1699e9ca489adcdd65d23af99d1893271a0d999219",
+  "manifest_checksum": "6077f930f449bfb99156ce5686ad10671432f4065deb5f938dd11ad345f3e516",
   "manifest": {
     "contract_version": "raha-content-release-v1",
     "release": {
-      "id": "1",
-      "version": "starter-2",
-      "published_at": "2026-10-01T00:00:00Z",
+      "id": "2",
+      "version": "starter-3",
+      "published_at": "2026-10-04T12:51:28.822151Z",
       "minimum_app_version": "1.0.0"
     },
     "exercises": [
@@ -157,7 +157,7 @@
       {
         "exercise_id": "01000000-0000-0000-0000-000000000101",
         "locale": "ar",
-        "name": "رفع وخفض لوحي الكتف",
+        "name": "نبمنسبن",
         "description": "حركة وقوف متحكم بها للوحَي الكتف.",
         "short_cue": "تحرّك ببطء وحافظ على استرخاء الرقبة."
       },

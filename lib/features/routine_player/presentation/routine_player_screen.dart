@@ -133,6 +133,7 @@ class _PlayerContent extends ConsumerWidget {
       if (context.mounted) context.pop();
       return;
     }
+    controller.pause();
     final abandon = await showDialog<bool>(
       context: context,
       builder: (context) => _ExitConfirmationDialog(),
@@ -147,6 +148,7 @@ class _PlayerContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = AppLocalizations.of(context);
     final demonstration = ref.watch(routineDemonstrationProvider);
+    final preparing = session.preparationSeconds > 0;
     final isPlaying = session.status == PlaybackStatus.playing;
     final isPaused = session.status == PlaybackStatus.paused;
 
@@ -180,13 +182,152 @@ class _PlayerContent extends ConsumerWidget {
                 total: session.steps.length,
                 onClose: () => _handleClose(context),
               ),
+              LinearProgressIndicator(
+                value:
+                    session.totalCreditedSeconds / session.totalDurationSeconds,
+                minHeight: 3,
+              ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: demonstration.build(
-                    context,
-                    deliveryReference: step.mediaDeliveryReference,
-                    playing: isPlaying,
+                child: SingleChildScrollView(
+                  key: ValueKey('guidance_${step.stepId}'),
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        step.name,
+                        key: const Key('player_movement_name'),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: ColoredBox(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerLow,
+                          child: SizedBox(
+                            key: const Key('player_video'),
+                            height: (MediaQuery.sizeOf(context).height * .28)
+                                .clamp(140.0, 260.0),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                demonstration.build(
+                                  context,
+                                  deliveryReference:
+                                      step.mediaDeliveryReference,
+                                  playing: isPlaying && !preparing,
+                                ),
+                                if (preparing)
+                                  ColoredBox(
+                                    color: Theme.of(context).colorScheme.surface
+                                        .withValues(alpha: .94),
+                                    child: Center(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              strings.playerGetReady,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium,
+                                            ),
+                                            Semantics(
+                                              liveRegion: true,
+                                              child: Text(
+                                                '${session.preparationSeconds}',
+                                                key: const Key(
+                                                  'player_countdown',
+                                                ),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displayLarge
+                                                    ?.copyWith(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (preparing) ...[
+                        Text(
+                          strings.playerPrepareHint,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      if (step.description?.isNotEmpty == true) ...[
+                        Text(
+                          step.description!,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      Text(
+                        strings.playerHowTo,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      if (step.instructions.isEmpty)
+                        Text(
+                          step.shortCue?.isNotEmpty == true
+                              ? step.shortCue!
+                              : strings.playerDefaultCue,
+                        )
+                      else ...[
+                        for (var i = 0; i < step.instructions.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                  radius: 14,
+                                  child: Text(
+                                    '${i + 1}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    step.instructions[i],
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (step.shortCue?.isNotEmpty == true)
+                          Text(
+                            step.shortCue!,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                          ),
+                      ],
+                    ],
                   ),
                 ),
               ),
@@ -195,31 +336,11 @@ class _PlayerContent extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Semantics(
-                      header: true,
-                      child: Text(
-                        step.name,
-                        key: const Key('player_movement_name'),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall,
+                    if (preparing)
+                      TextButton(
+                        onPressed: controller.startNow,
+                        child: Text(strings.playerStartNow),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      step.shortCue?.isNotEmpty == true
-                          ? step.shortCue!
-                          : strings.playerDefaultCue,
-                      textAlign: TextAlign.center,
-                      // Cues are optional supporting guidance. Keep this row
-                      // compact so the essential movement name and controls
-                      // remain visible at large text scales.
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
                     ExcludeSemantics(
                       child: Text(
                         _formatTimer(remaining),
@@ -282,10 +403,10 @@ class _PlayerContent extends ConsumerWidget {
                     PlayerControls(
                       isPlaying: isPlaying,
                       isLastStep: session.isLastStep,
-                      onPrevious: controller.previous,
+                      onPrevious: preparing ? null : controller.previous,
                       onTogglePause: controller.togglePause,
-                      onSkip: controller.skip,
-                      onFinish: controller.next,
+                      onSkip: preparing ? null : controller.skip,
+                      onFinish: preparing ? null : controller.next,
                     ),
                   ],
                 ),

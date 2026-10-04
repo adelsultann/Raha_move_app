@@ -471,5 +471,9 @@
   "exerciseSave": "حفظ التمرين",
   "exerciseUnsave": "إزالة من المكتبة",
   "exerciseOpenRoutine": "عرض الروتين",
-  "homeResume": "أكمل روتينك"
+  "homeResume": "أكمل روتينك",
+  "playerGetReady": "استعد للحركة",
+  "playerStartNow": "ابدأ الآن",
+  "playerHowTo": "طريقة أداء التمرين",
+  "playerPrepareHint": "اتخذ وضعية مريحة واتبع العرض التوضيحي."
 }

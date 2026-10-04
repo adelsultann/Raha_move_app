@@ -39,6 +39,8 @@ abstract class RoutineStepPlayback with _$RoutineStepPlayback {
     required String exerciseId,
     required String name,
     String? shortCue,
+    String? description,
+    @Default([]) List<String> instructions,
     String? mediaDeliveryReference,
     required int durationSeconds,
     required StepPlaybackState state,
@@ -60,6 +62,7 @@ abstract class RoutinePlaybackSession with _$RoutinePlaybackSession {
     required String routineName,
     String? recommendationId,
     required PlaybackStatus status,
+    @Default(0) int preparationSeconds,
     required int currentStepIndex,
     required List<RoutineStepPlayback> steps,
   }) = _RoutinePlaybackSession;

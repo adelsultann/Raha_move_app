@@ -46,10 +46,14 @@ ScreenWakeLock screenWakeLock(Ref ref) => const WakelockScreenWakeLock();
 /// Transition sound/vibration boundary, gated by the active user's preferences.
 /// Tests override this with a recording fake.
 @riverpod
-TransitionFeedback transitionFeedback(Ref ref) => DefaultTransitionFeedback(
-  ref.watch(appDatabaseProvider),
-  activeUserId: () => ref.read(authControllerProvider).value?.activeUserId,
-);
+TransitionFeedback transitionFeedback(Ref ref) {
+  final feedback = DefaultTransitionFeedback(
+    ref.watch(appDatabaseProvider),
+    activeUserId: () => ref.read(authControllerProvider).value?.activeUserId,
+  );
+  ref.onDispose(feedback.dispose);
+  return feedback;
+}
 
 /// A fresh one-second ticker per controller instance. Stopped on dispose.
 @riverpod

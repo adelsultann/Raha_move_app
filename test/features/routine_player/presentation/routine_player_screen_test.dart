@@ -14,6 +14,71 @@ import 'package:raha_move/features/routine_player/presentation/routine_player_sc
 import '../support/routine_player_test_harness.dart';
 
 void main() {
+  testWidgets('preparation appears before playback and Start now skips it', (
+    tester,
+  ) async {
+    final ticker = FakePlaybackTicker();
+    final container = buildRoutinePlayerContainer(ticker: ticker);
+    addTearDown(container.dispose);
+    await tester.pumpWidget(
+      _wrap(container, const RoutinePlayerScreen(routineId: 'rt-1')),
+    );
+    for (
+      var i = 0;
+      i < 20 && find.byKey(const Key('player_countdown')).evaluate().isEmpty;
+      i++
+    ) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(find.text('Get ready'), findsOneWidget);
+    expect(find.text('3'), findsOneWidget);
+    ticker.fireTick();
+    await tester.pump();
+    expect(find.text('2'), findsOneWidget);
+    expect(find.text('0:03'), findsOneWidget);
+    await tester.tap(find.text('Start now'));
+    await tester.pump();
+    expect(find.byKey(const Key('player_countdown')), findsNothing);
+    ticker.fireTick();
+    await tester.pump();
+    expect(find.text('0:02'), findsOneWidget);
+  });
+
+  testWidgets('ordered instructions sit below a compact video and can scroll', (
+    tester,
+  ) async {
+    final plan = twoStepPlan();
+    final container = buildRoutinePlayerContainer(
+      planForLocale: (locale) => plan.copyWith(
+        steps: [
+          plan.steps.first.copyWith(
+            instructions: [
+              'Set your starting position.',
+              'Follow the demonstrated movement.',
+              'Return slowly.',
+            ],
+          ),
+          plan.steps.last,
+        ],
+      ),
+    );
+    addTearDown(container.dispose);
+    await tester.pumpWidget(
+      _wrap(container, const RoutinePlayerScreen(routineId: 'rt-1')),
+    );
+    await _pumpUntilReady(tester);
+    expect(
+      tester.getSize(find.byKey(const Key('player_video'))).height,
+      lessThanOrEqualTo(260),
+    );
+    final instruction = find.text('Follow the demonstrated movement.');
+    await tester.ensureVisible(instruction);
+    expect(instruction, findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('3'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('renders movement name, position, and timer (English LTR)', (
     tester,
   ) async {
@@ -813,7 +878,15 @@ Future<void> _pumpUntilReady(WidgetTester tester) async {
   final ready = find.byKey(const Key('player_movement_name'));
   for (var i = 0; i < 20; i++) {
     await tester.pump(const Duration(milliseconds: 50));
-    if (ready.evaluate().isNotEmpty) return;
+    if (ready.evaluate().isNotEmpty) {
+      final start = find.text('Start now');
+      final startAr = find.text('ابدأ الآن');
+      if (start.evaluate().isNotEmpty) await tester.tap(start);
+      if (startAr.evaluate().isNotEmpty) await tester.tap(startAr);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      return;
+    }
   }
 }
 

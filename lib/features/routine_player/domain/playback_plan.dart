@@ -32,6 +32,8 @@ abstract class RoutineStepPlan with _$RoutineStepPlan {
     required String exerciseId,
     required String name,
     String? shortCue,
+    String? description,
+    @Default([]) List<String> instructions,
     required int durationSeconds,
     required MediaDelivery media,
   }) = _RoutineStepPlan;

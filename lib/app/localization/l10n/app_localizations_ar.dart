@@ -1229,4 +1229,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeResume => 'أكمل روتينك';
+
+  @override
+  String get playerGetReady => 'استعد للحركة';
+
+  @override
+  String get playerStartNow => 'ابدأ الآن';
+
+  @override
+  String get playerHowTo => 'طريقة أداء التمرين';
+
+  @override
+  String get playerPrepareHint => 'اتخذ وضعية مريحة واتبع العرض التوضيحي.';
 }

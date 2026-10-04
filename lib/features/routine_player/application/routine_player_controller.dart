@@ -137,6 +137,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
       recommendationId: args.recommendationId,
       status: PlaybackStatus.playing,
       currentStepIndex: 0,
+      preparationSeconds: 3,
       steps: [
         for (final step in plan.steps)
           RoutineStepPlayback(
@@ -144,6 +145,8 @@ class RoutinePlayerController extends _$RoutinePlayerController {
             exerciseId: step.exerciseId,
             name: step.name,
             shortCue: step.shortCue,
+            description: step.description,
+            instructions: step.instructions,
             mediaDeliveryReference: step.media.deliveryReference,
             durationSeconds: step.durationSeconds,
             state: StepPlaybackState.pending,
@@ -171,6 +174,20 @@ class RoutinePlayerController extends _$RoutinePlayerController {
   // ---------------------------------------------------------------------------
   // User actions
   // ---------------------------------------------------------------------------
+
+  /// Skips preparation without crediting it as exercise time.
+  void startNow() {
+    final session = _session;
+    if (session == null ||
+        session.isTerminal ||
+        session.preparationSeconds == 0) {
+      return;
+    }
+    _setSession(
+      session.copyWith(preparationSeconds: 0, status: PlaybackStatus.playing),
+    );
+    if (session.status != PlaybackStatus.playing) _resumePlayback();
+  }
 
   void togglePause() {
     final session = _session;
@@ -281,6 +298,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
       status: PlaybackStatus.playing,
     );
     _setSession(updated);
+    _feedback.onStepTransition();
     _resumePlayback();
     unawaited(_guardedPersist(updated, terminal: false));
   }
@@ -372,6 +390,13 @@ class RoutinePlayerController extends _$RoutinePlayerController {
   void _onTick() {
     final session = _session;
     if (session == null || session.status != PlaybackStatus.playing) return;
+
+    if (session.preparationSeconds > 0) {
+      _setSession(
+        session.copyWith(preparationSeconds: session.preparationSeconds - 1),
+      );
+      return;
+    }
 
     final index = session.currentStepIndex;
     final current = session.steps[index];
@@ -712,6 +737,8 @@ class RoutinePlayerController extends _$RoutinePlayerController {
       exerciseId: step.exerciseId,
       name: planStep?.name ?? '',
       shortCue: planStep?.shortCue,
+      description: planStep?.description,
+      instructions: planStep?.instructions ?? const [],
       mediaDeliveryReference: planStep?.media.deliveryReference,
       durationSeconds: step.targetDurationSeconds,
       state: isActive

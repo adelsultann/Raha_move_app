@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:raha_move/core/database/app_database.dart';
 
@@ -468,6 +470,7 @@ final class ContentReleaseRepository {
             name: translation.name,
             description: Value(translation.description),
             shortCue: Value(translation.shortCue),
+            instructionsJson: Value(jsonEncode(translation.instructions)),
           ),
         );
       }

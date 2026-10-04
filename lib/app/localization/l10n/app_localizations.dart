@@ -2275,6 +2275,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue your routine'**
   String get homeResume;
+
+  /// No description provided for @playerGetReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ready'**
+  String get playerGetReady;
+
+  /// No description provided for @playerStartNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Start now'**
+  String get playerStartNow;
+
+  /// No description provided for @playerHowTo.
+  ///
+  /// In en, this message translates to:
+  /// **'How to perform'**
+  String get playerHowTo;
+
+  /// No description provided for @playerPrepareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a comfortable position and follow the demonstration.'**
+  String get playerPrepareHint;
 }
 
 class _AppLocalizationsDelegate
