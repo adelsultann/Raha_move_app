@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
+import 'package:raha_move/app/theme/app_colors.dart' show AppColors;
 import 'package:raha_move/core/assets/app_asset_catalog.dart';
 import 'package:raha_move/features/recommendations/domain/routine_presentation.dart';
 import 'package:raha_move/features/saved_routines/application/saved_routine_controller.dart';
@@ -98,7 +99,9 @@ class _DetailsContent extends StatelessWidget {
                 ),
                 key: const Key('explore_details_duration'),
                 textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 20),
               Text(
@@ -162,6 +165,10 @@ class _MovementRow extends StatelessWidget {
               ? () => onChange!((seconds - 15).clamp(15, 3600))
               : null,
           icon: const Icon(Icons.remove, size: 18),
+           style: IconButton.styleFrom(
+            
+            backgroundColor: theme.colorScheme.primary,
+          ),
         ),
         SizedBox(
           width: 56,
@@ -170,7 +177,9 @@ class _MovementRow extends StatelessWidget {
             key: Key('exercise_duration_$index'),
             textDirection: TextDirection.ltr,
             textAlign: TextAlign.center,
-            style: theme.textTheme.titleSmall,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         IconButton.filledTonal(
@@ -180,6 +189,10 @@ class _MovementRow extends StatelessWidget {
               ? () => onChange!((seconds + 15).clamp(15, 3600))
               : null,
           icon: const Icon(Icons.add, size: 18),
+          style: IconButton.styleFrom(
+            
+            backgroundColor: theme.colorScheme.primary,
+          ),
         ),
       ],
     );
