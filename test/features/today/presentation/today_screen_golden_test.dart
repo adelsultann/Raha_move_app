@@ -116,7 +116,7 @@ void _resumeNothing(String routineId, String sessionId) {}
 void _repeatNothing(String routineId) {}
 
 ThemeData _goldenTheme() {
-  final theme = AppTheme.light();
+  final theme = AppTheme.forLocale(null);
   return theme.copyWith(
     textTheme: _withGoldenFonts(theme.textTheme),
     primaryTextTheme: _withGoldenFonts(theme.primaryTextTheme),

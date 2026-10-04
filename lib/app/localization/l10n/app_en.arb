@@ -389,6 +389,7 @@
   "profileSettings": "Settings",
   "profileNotifications": "Notifications",
   "profileAppearance": "Appearance",
+  "profileAppearanceLight": "Light",
   "profileAppearanceDark": "Dark",
   "profileAppearanceNight": "Night",
   "profileHealthSafety": "Health & safety",

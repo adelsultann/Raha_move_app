@@ -963,6 +963,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileAppearance => 'المظهر';
 
   @override
+  String get profileAppearanceLight => 'فاتح';
+
+  @override
   String get profileAppearanceDark => 'داكن';
 
   @override

@@ -257,7 +257,9 @@ void main() {
     },
   );
 
-  testWidgets('appearance page offers dark and night choices', (tester) async {
+  testWidgets('appearance page offers light, dark and night choices', (
+    tester,
+  ) async {
     await tester.pumpWidget(_app(const Locale('en')));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
@@ -267,13 +269,16 @@ void main() {
     await tester.tap(find.byKey(const Key('profile_appearance')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('profile_appearance_dark')), findsOneWidget);
+    expect(find.byKey(const Key('profile_appearance_light')), findsOneWidget);
     expect(find.byKey(const Key('profile_appearance_night')), findsOneWidget);
     await tester.tap(find.byKey(const Key('profile_appearance_night')));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<RadioGroup<AppAppearance>>(
-        find.byType(RadioGroup<AppAppearance>),
-      ).groupValue,
+      tester
+          .widget<RadioGroup<AppAppearance>>(
+            find.byType(RadioGroup<AppAppearance>),
+          )
+          .groupValue,
       AppAppearance.night,
     );
   });

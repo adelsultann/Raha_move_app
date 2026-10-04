@@ -34,7 +34,7 @@ final class AppearanceControllerProvider
 }
 
 String _$appearanceControllerHash() =>
-    r'de53660a7e61d57ea49c7c6b9e9fe4789e56d6f0';
+    r'1eec447c67126f764a6fdbb13106ed7bc601a7f3';
 
 abstract class _$AppearanceController extends $AsyncNotifier<AppAppearance> {
   FutureOr<AppAppearance> build();

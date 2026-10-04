@@ -24,5 +24,14 @@ void main() {
       await second.read(appearanceControllerProvider.future),
       AppAppearance.night,
     );
+    await second
+        .read(appearanceControllerProvider.notifier)
+        .select(AppAppearance.light);
+    final third = ProviderContainer();
+    addTearDown(third.dispose);
+    expect(
+      await third.read(appearanceControllerProvider.future),
+      AppAppearance.light,
+    );
   });
 }

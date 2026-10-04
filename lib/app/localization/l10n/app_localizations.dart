@@ -1784,6 +1784,12 @@ abstract class AppLocalizations {
   /// **'Appearance'**
   String get profileAppearance;
 
+  /// No description provided for @profileAppearanceLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get profileAppearanceLight;
+
   /// No description provided for @profileAppearanceDark.
   ///
   /// In en, this message translates to:

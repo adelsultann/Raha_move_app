@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'appearance_controller.g.dart';
 
-enum AppAppearance { dark, night }
+enum AppAppearance { light, dark, night }
 
 @Riverpod(keepAlive: true)
 class AppearanceController extends _$AppearanceController {
@@ -13,9 +13,10 @@ class AppearanceController extends _$AppearanceController {
   @override
   Future<AppAppearance> build() async {
     final saved = await _storage.read(key: _key);
-    return saved == AppAppearance.night.name
-        ? AppAppearance.night
-        : AppAppearance.dark;
+    return AppAppearance.values.firstWhere(
+      (appearance) => appearance.name == saved,
+      orElse: () => AppAppearance.dark,
+    );
   }
 
   Future<void> select(AppAppearance appearance) async {

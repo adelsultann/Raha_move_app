@@ -93,7 +93,7 @@ void main() {
           savedExerciseIdsProvider.overrideWith((ref) => Stream.value({})),
         ],
         child: MaterialApp(
-          theme: AppTheme.light(),
+          theme: AppTheme.forLocale(null),
           locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

@@ -5,51 +5,30 @@ import 'app_typography.dart';
 import 'appearance_controller.dart';
 
 abstract final class AppTheme {
-  static const _scheme = ColorScheme.dark(
-    primary: AppColors.mint,
-    onPrimary: AppColors.navy,
-    primaryContainer: AppColors.mintDeep,
-    onPrimaryContainer: AppColors.mintBright,
-    surface: AppColors.navySurface,
-    onSurface: AppColors.textPrimary,
-    onSurfaceVariant: AppColors.textSecondary,
-    surfaceContainerLow: AppColors.navy,
-    surfaceContainer: AppColors.navySurface,
-    surfaceContainerHigh: AppColors.navyRaised,
-    surfaceContainerHighest: AppColors.navyArtwork,
-    outline: AppColors.outline,
-    outlineVariant: AppColors.outlineSubtle,
-    error: AppColors.error,
-    onError: AppColors.navy,
-  );
-
-  /// Builds the selected dark palette with locale-aware typography.
+  /// Builds the selected palette with locale-aware typography.
   static ThemeData forLocale(
     Locale? locale, {
     AppAppearance appearance = AppAppearance.dark,
   }) {
-    final night = appearance == AppAppearance.night;
-    final background = night ? const Color(0xFF030711) : AppColors.navy;
-    final surface = night ? const Color(0xFF0B1220) : AppColors.navySurface;
-    final raised = night ? const Color(0xFF141E2D) : AppColors.navyRaised;
-    final scheme = _scheme.copyWith(
-      surface: surface,
-      surfaceContainerLow: background,
-      surfaceContainer: surface,
-      surfaceContainerHigh: raised,
-    );
+    final scheme = switch (appearance) {
+      AppAppearance.light => AppColors.lightScheme,
+      AppAppearance.dark => AppColors.darkScheme,
+      AppAppearance.night => AppColors.nightScheme,
+    };
+    final background = scheme.surfaceContainerLow;
+    final surface = scheme.surface;
     final fontFamily = AppTypography.fontFamilyFor(locale);
     final fallback = AppTypography.fallbackFor(locale);
     final textTheme = AppTypography.textTheme.apply(
-      bodyColor: AppColors.textPrimary,
-      displayColor: AppColors.textPrimary,
+      bodyColor: scheme.onSurface,
+      displayColor: scheme.onSurface,
     );
     final rounded16 = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     );
 
     return ThemeData(
-      brightness: Brightness.dark,
+      brightness: scheme.brightness,
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
       fontFamily: fontFamily,
@@ -58,7 +37,7 @@ abstract final class AppTheme {
       primaryTextTheme: textTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: background,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: scheme.onSurface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
@@ -70,10 +49,10 @@ abstract final class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.mint,
-          foregroundColor: AppColors.navy,
-          disabledBackgroundColor: AppColors.outlineSubtle,
-          disabledForegroundColor: AppColors.textSecondary,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          disabledBackgroundColor: scheme.outlineVariant,
+          disabledForegroundColor: scheme.onSurfaceVariant,
           minimumSize: const Size(48, 56),
           shape: rounded16,
           textStyle: AppTypography.textTheme.labelLarge,
@@ -81,8 +60,8 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.mint,
-          foregroundColor: AppColors.navy,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           minimumSize: const Size(48, 56),
           shape: rounded16,
           elevation: 0,
@@ -91,52 +70,52 @@ abstract final class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.mintBright,
+          foregroundColor: scheme.onPrimaryContainer,
           minimumSize: const Size(48, 48),
-          side: const BorderSide(color: AppColors.outline),
+          side: BorderSide(color: scheme.outline),
           shape: rounded16,
           textStyle: AppTypography.textTheme.labelLarge,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.mintBright,
+          foregroundColor: scheme.onPrimaryContainer,
           minimumSize: const Size(48, 48),
           textStyle: AppTypography.textTheme.labelLarge,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.navySurface,
+        fillColor: surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.outline),
+          borderSide: BorderSide(color: scheme.outline),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.outline),
+          borderSide: BorderSide(color: scheme.outline),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.mint, width: 2),
+          borderSide: BorderSide(color: scheme.primary, width: 2),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
-        indicatorColor: AppColors.mintDeep,
+        indicatorColor: scheme.primaryContainer,
         elevation: 0,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.mint
-                : AppColors.textSecondary,
+                ? scheme.primary
+                : scheme.onSurfaceVariant,
           ),
         ),
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => AppTypography.textTheme.labelMedium?.copyWith(
             color: states.contains(WidgetState.selected)
-                ? AppColors.mint
-                : AppColors.textSecondary,
+                ? scheme.primary
+                : scheme.onSurfaceVariant,
           ),
         ),
       ),
@@ -150,20 +129,20 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
-      snackBarTheme: const SnackBarThemeData(
-        backgroundColor: AppColors.navyRaised,
-        contentTextStyle: TextStyle(color: AppColors.textPrimary),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: scheme.surfaceContainerHigh,
+        contentTextStyle: TextStyle(color: scheme.onSurface),
       ),
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: AppColors.mint,
-        linearTrackColor: AppColors.outlineSubtle,
-        circularTrackColor: AppColors.outlineSubtle,
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: scheme.primary,
+        linearTrackColor: scheme.outlineVariant,
+        circularTrackColor: scheme.outlineVariant,
       ),
-      dividerTheme: const DividerThemeData(color: AppColors.outlineSubtle),
+      dividerTheme: DividerThemeData(color: scheme.outlineVariant),
       useMaterial3: true,
     );
   }
 
-  /// Kept for existing tests and consumers; the app uses a dark visual scheme.
-  static ThemeData light({Locale? locale}) => forLocale(locale);
+  static ThemeData light({Locale? locale}) =>
+      forLocale(locale, appearance: AppAppearance.light);
 }

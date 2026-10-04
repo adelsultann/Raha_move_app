@@ -977,6 +977,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileAppearance => 'Appearance';
 
   @override
+  String get profileAppearanceLight => 'Light';
+
+  @override
   String get profileAppearanceDark => 'Dark';
 
   @override

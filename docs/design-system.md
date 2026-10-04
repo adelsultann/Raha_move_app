@@ -232,7 +232,12 @@ lib/app/theme/
 
 Widgets use `Theme.of(context).colorScheme` and `textTheme` roles. `app_colors.dart` remains private to theme construction so future palette adjustments stay centralized.
 
-The current product theme is the approved dark navy and mint scheme. A separate light theme is not defined.
+The product offers Light, Dark, and Night appearances. All three use the same
+semantic color roles and localized typography. Light uses a warm off-white
+background, white surfaces, dark teal text, and a deeper green primary action.
+Dark retains the approved navy and mint palette; Night uses darker navy surfaces.
+The palette definitions live in `app_colors.dart`, and `app_theme.dart` applies
+the selected palette to controls and surfaces.
 
 ## Related Documentation
 

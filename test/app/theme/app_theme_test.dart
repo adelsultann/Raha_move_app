@@ -7,26 +7,33 @@ import 'package:raha_move/app/theme/app_typography.dart';
 import 'package:raha_move/app/theme/appearance_controller.dart';
 
 void main() {
-  test('primary text and controls meet WCAG AA contrast targets', () {
-    final scheme = AppTheme.light().colorScheme;
-
-    expect(
-      _contrastRatio(scheme.onPrimary, scheme.primary),
-      greaterThanOrEqualTo(4.5),
-    );
-    expect(
-      _contrastRatio(scheme.onSurface, scheme.surface),
-      greaterThanOrEqualTo(4.5),
-    );
-    expect(
-      _contrastRatio(scheme.onSurfaceVariant, scheme.surface),
-      greaterThanOrEqualTo(4.5),
-    );
-    expect(
-      _contrastRatio(scheme.onError, scheme.error),
-      greaterThanOrEqualTo(4.5),
-    );
-  });
+  test(
+    'primary text and controls meet WCAG AA contrast in each appearance',
+    () {
+      for (final appearance in AppAppearance.values) {
+        final scheme = AppTheme.forLocale(
+          const Locale('en'),
+          appearance: appearance,
+        ).colorScheme;
+        expect(
+          _contrastRatio(scheme.onPrimary, scheme.primary),
+          greaterThanOrEqualTo(4.5),
+        );
+        expect(
+          _contrastRatio(scheme.onSurface, scheme.surface),
+          greaterThanOrEqualTo(4.5),
+        );
+        expect(
+          _contrastRatio(scheme.onSurfaceVariant, scheme.surface),
+          greaterThanOrEqualTo(4.5),
+        );
+        expect(
+          _contrastRatio(scheme.onError, scheme.error),
+          greaterThanOrEqualTo(4.5),
+        );
+      }
+    },
+  );
 
   test('uses the approved navy and mint palette for semantic roles', () {
     final scheme = AppTheme.forLocale(const Locale('en')).colorScheme;
@@ -50,6 +57,20 @@ void main() {
       greaterThanOrEqualTo(4.5),
     );
   });
+
+  test(
+    'light appearance uses light surfaces and centralized control colors',
+    () {
+      final theme = AppTheme.light(locale: const Locale('ar'));
+      final scheme = theme.colorScheme;
+      expect(theme.brightness, Brightness.light);
+      expect(theme.scaffoldBackgroundColor, scheme.surfaceContainerLow);
+      expect(theme.cardTheme.color, scheme.surface);
+      expect(theme.appBarTheme.foregroundColor, scheme.onSurface);
+      expect(theme.navigationBarTheme.backgroundColor, scheme.surface);
+      expect(theme.textTheme.bodyMedium?.color, scheme.onSurface);
+    },
+  );
 
   test('selects the centralized font family for each locale', () {
     final english = AppTheme.forLocale(const Locale('en'));

@@ -74,11 +74,11 @@ class ProfileAppearanceScreen extends ConsumerWidget {
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     child: RadioListTile<AppAppearance>(
                       key: Key('profile_appearance_${appearance.name}'),
-                      title: Text(
-                        appearance == AppAppearance.dark
-                            ? s.profileAppearanceDark
-                            : s.profileAppearanceNight,
-                      ),
+                      title: Text(switch (appearance) {
+                        AppAppearance.light => s.profileAppearanceLight,
+                        AppAppearance.dark => s.profileAppearanceDark,
+                        AppAppearance.night => s.profileAppearanceNight,
+                      }),
                       value: appearance,
                     ),
                   ),
