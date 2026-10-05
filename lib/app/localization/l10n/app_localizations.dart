@@ -2335,6 +2335,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Increase time by 15 seconds'**
   String get routineIncreaseTime;
+
+  /// No description provided for @exercisePreviewOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview {name}'**
+  String exercisePreviewOpen(Object name);
+
+  /// No description provided for @exercisePreviewInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get exercisePreviewInstructions;
+
+  /// No description provided for @exercisePreviewNoInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions are not available for this exercise yet.'**
+  String get exercisePreviewNoInstructions;
+
+  /// No description provided for @exercisePreviewVideoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This demonstration is not available right now.'**
+  String get exercisePreviewVideoUnavailable;
 }
 
 class _AppLocalizationsDelegate

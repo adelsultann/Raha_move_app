@@ -1276,4 +1276,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get routineIncreaseTime => 'Increase time by 15 seconds';
+
+  @override
+  String exercisePreviewOpen(Object name) {
+    return 'Preview $name';
+  }
+
+  @override
+  String get exercisePreviewInstructions => 'Instructions';
+
+  @override
+  String get exercisePreviewNoInstructions =>
+      'Instructions are not available for this exercise yet.';
+
+  @override
+  String get exercisePreviewVideoUnavailable =>
+      'This demonstration is not available right now.';
 }

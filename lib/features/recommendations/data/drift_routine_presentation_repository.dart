@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:raha_move/core/database/app_database.dart';
 import 'package:raha_move/features/exercise_library/domain/content_models.dart';
@@ -50,9 +52,25 @@ final class DriftRoutinePresentationRepository {
       _database.localExerciseTranslations,
     )..where((r) => r.exerciseId.isIn(exerciseIds))).get();
     final nameByExercise = <String, Map<String, String>>{};
+    final guidanceByExercise =
+        <String, Map<String, LocalExerciseTranslation>>{};
     for (final t in exerciseTranslations) {
       nameByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] = t.name;
+      guidanceByExercise.putIfAbsent(t.exerciseId, () => {})[t.locale] = t;
     }
+
+    final approvedExercises =
+        await (_database.select(_database.localExercises)..where(
+              (e) =>
+                  e.id.isIn(exerciseIds) &
+                  e.status.equals('published') &
+                  e.safetyApproved.equals(true) &
+                  e.accessTier.equals('free'),
+            ))
+            .get();
+    final previewableIds = routine.accessTier == 'free'
+        ? approvedExercises.map((e) => e.id).toSet()
+        : <String>{};
 
     final media =
         await (_database.select(_database.localMediaAssets)..where(
@@ -61,10 +79,21 @@ final class DriftRoutinePresentationRepository {
             ))
             .get();
     final thumbnails = <String, String>{};
+    final videos = <String, LocalMediaAsset>{};
     for (final asset in media) {
       final reference = asset.deliveryReference;
       if (!reference.startsWith('asset:')) continue;
       final path = reference.substring(6);
+      if (path.startsWith('assets/starter_content/') &&
+          path.endsWith('.mp4') &&
+          asset.mediaType == 'video' &&
+          asset.checksumSha256.isNotEmpty &&
+          previewableIds.contains(asset.exerciseId)) {
+        final previous = videos[asset.exerciseId];
+        if (previous == null || (!previous.isPreferred && asset.isPreferred)) {
+          videos[asset.exerciseId] = asset;
+        }
+      }
       if (path.endsWith('.mp4') || path.endsWith('.gif')) {
         final name = path.split('/').last.split('.').first;
         thumbnails.putIfAbsent(
@@ -96,6 +125,21 @@ final class DriftRoutinePresentationRepository {
           MovementPreviewEntry(
             stepId: step.id,
             thumbnailAsset: thumbnails[step.exerciseId],
+            videoAsset: videos[step.exerciseId]?.deliveryReference.substring(6),
+            description: previewableIds.contains(step.exerciseId)
+                ? _guidance(
+                    guidanceByExercise[step.exerciseId],
+                    locale,
+                  )?.description
+                : null,
+            instructions: previewableIds.contains(step.exerciseId)
+                ? _instructions(
+                    _guidance(
+                      guidanceByExercise[step.exerciseId],
+                      locale,
+                    )?.instructionsJson,
+                  )
+                : const [],
             name: _pick(nameByExercise[step.exerciseId] ?? const {}, locale),
             durationSeconds: step.durationSeconds,
           ),
@@ -111,6 +155,26 @@ final class DriftRoutinePresentationRepository {
     final value = byLocale[locale] ?? byLocale['en'];
     if (value != null) return value;
     return byLocale.isEmpty ? '' : byLocale.values.first;
+  }
+
+  static LocalExerciseTranslation? _guidance(
+    Map<String, LocalExerciseTranslation>? translations,
+    String locale,
+  ) => translations?[locale] ?? translations?['en'];
+
+  static List<String> _instructions(String? json) {
+    if (json == null) return const [];
+    try {
+      final decoded = jsonDecode(json);
+      if (decoded is! List) return const [];
+      return decoded
+          .whereType<String>()
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+    } on FormatException {
+      return const [];
+    }
   }
 
   static Set<String> _keysOfKind(

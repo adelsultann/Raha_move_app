@@ -481,5 +481,9 @@
   "playerHowTo": "طريقة أداء التمرين",
   "playerPrepareHint": "اتخذ وضعية مريحة واتبع العرض التوضيحي.",
   "routineDecreaseTime": "تقليل الوقت ١٥ ثانية",
-  "routineIncreaseTime": "زيادة الوقت ١٥ ثانية"
+  "routineIncreaseTime": "زيادة الوقت ١٥ ثانية",
+  "exercisePreviewOpen": "عرض {name}",
+  "exercisePreviewInstructions": "التعليمات",
+  "exercisePreviewNoInstructions": "تعليمات هذا التمرين غير متاحة حاليًا.",
+  "exercisePreviewVideoUnavailable": "عرض هذا التمرين غير متاح حاليًا."
 }

@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/core/database/app_database.dart';
@@ -86,6 +86,111 @@ void main() {
       );
     },
   );
+
+  test(
+    'preview includes localized instruction steps and approved bundled video',
+    () async {
+      await (database.update(
+        database.localMediaAssets,
+      )..where((r) => r.id.equals('media'))).write(
+        const LocalMediaAssetsCompanion(
+          deliveryReference: Value(
+            'asset:assets/starter_content/media/videos/shoulders.mp4',
+          ),
+        ),
+      );
+      await (database.update(database.localExerciseTranslations)..where(
+            (r) => r.exerciseId.equals('exercise') & r.locale.equals('en'),
+          ))
+          .write(
+            const LocalExerciseTranslationsCompanion(
+              description: Value('A gentle movement.'),
+              instructionsJson: Value('["Start comfortably.", "Move slowly."]'),
+            ),
+          );
+      await (database.update(database.localExerciseTranslations)..where(
+            (r) => r.exerciseId.equals('exercise') & r.locale.equals('ar'),
+          ))
+          .write(
+            const LocalExerciseTranslationsCompanion(
+              instructionsJson: Value('["خطوة أولى", "خطوة ثانية"]'),
+            ),
+          );
+      final english = (await repository.details(
+        'routine_ok',
+        'en',
+      ))!.presentation.movements.single;
+      expect(
+        english.videoAsset,
+        'assets/starter_content/media/videos/shoulders.mp4',
+      );
+      expect(english.description, 'A gentle movement.');
+      expect(english.instructions, ['Start comfortably.', 'Move slowly.']);
+      final arabic = (await repository.details(
+        'routine_ok',
+        'ar',
+      ))!.presentation.movements.single;
+      expect(arabic.instructions, ['خطوة أولى', 'خطوة ثانية']);
+      final fallback = (await repository.details(
+        'routine_ok',
+        'fr',
+      ))!.presentation.movements.single;
+      expect(fallback.instructions, english.instructions);
+    },
+  );
+
+  test('preview never exposes unauthorized or unsafe exercise media', () async {
+    await (database.update(
+      database.localMediaAssets,
+    )..where((r) => r.id.equals('media'))).write(
+      const LocalMediaAssetsCompanion(
+        deliveryReference: Value(
+          'asset:assets/starter_content/media/videos/shoulders.mp4',
+        ),
+      ),
+    );
+    await (database.update(database.localExercises)
+          ..where((r) => r.id.equals('exercise')))
+        .write(const LocalExercisesCompanion(safetyApproved: Value(false)));
+    expect(
+      (await repository.details(
+        'routine_ok',
+        'en',
+      ))!.presentation.movements.single.videoAsset,
+      isNull,
+    );
+    await (database.update(database.localExercises)
+          ..where((r) => r.id.equals('exercise')))
+        .write(const LocalExercisesCompanion(safetyApproved: Value(true)));
+    await (database.update(database.localRoutines)
+          ..where((r) => r.id.equals('routine_ok')))
+        .write(const LocalRoutinesCompanion(accessTier: Value('premium')));
+    expect(
+      (await repository.details(
+        'routine_ok',
+        'en',
+      ))!.presentation.movements.single.videoAsset,
+      isNull,
+    );
+  });
+
+  test('malformed instruction JSON falls back to an empty step list', () async {
+    for (final json in ['broken JSON', '{}', '["", 12, "Valid step"]']) {
+      await (database.update(
+        database.localExerciseTranslations,
+      )..where((r) => r.locale.equals('en'))).write(
+        LocalExerciseTranslationsCompanion(instructionsJson: Value(json)),
+      );
+      final movement = (await repository.details(
+        'routine_ok',
+        'en',
+      ))!.presentation.movements.single;
+      expect(
+        movement.instructions,
+        json.startsWith('[') ? ['Valid step'] : isEmpty,
+      );
+    }
+  });
 }
 
 Future<void> _seed(AppDatabase db) async {

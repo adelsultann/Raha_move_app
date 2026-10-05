@@ -26,8 +26,16 @@ void main() {
     expect(presentation.summary, 'A short seated mobility routine.');
     expect(presentation.movementCount, 2);
     expect(presentation.movements, const [
-      MovementPreviewEntry(name: 'Seated neck release', durationSeconds: 150),
-      MovementPreviewEntry(name: 'Seated shoulder rolls', durationSeconds: 150),
+      MovementPreviewEntry(
+        stepId: 'step_000001',
+        name: 'Seated neck release',
+        durationSeconds: 150,
+      ),
+      MovementPreviewEntry(
+        stepId: 'step_000002',
+        name: 'Seated shoulder rolls',
+        durationSeconds: 150,
+      ),
     ]);
     expect(presentation.difficulty, DifficultyLevel.beginner);
     expect(presentation.estimatedDurationSeconds, 300);

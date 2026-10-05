@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raha_move/features/recommendations/domain/routine_presentation.dart';
 
 import 'movement_duration_controls.dart';
+import 'exercise_preview_thumbnail.dart';
 
 class RoutineMovementRow extends StatelessWidget {
   const RoutineMovementRow({
@@ -34,25 +35,10 @@ class RoutineMovementRow extends StatelessWidget {
               MediaQuery.textScalerOf(context).scale(14) > 20;
           return Row(
             children: [
-              ClipOval(
-                child: ColoredBox(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  child: Image.asset(
-                    movement.thumbnailAsset ?? fallback,
-                    key: Key('exercise_thumbnail_$index'),
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                    excludeFromSemantics: true,
-                    errorBuilder: (_, _, _) => Image.asset(
-                      fallback,
-                      width: 64,
-                      height: 64,
-                      fit: BoxFit.contain,
-                      excludeFromSemantics: true,
-                    ),
-                  ),
-                ),
+              ExercisePreviewThumbnail(
+                index: index,
+                movement: movement,
+                fallback: fallback,
               ),
               const SizedBox(width: 16),
               Expanded(

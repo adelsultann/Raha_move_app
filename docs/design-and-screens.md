@@ -426,6 +426,16 @@ The details page may include:
 
 Benefit descriptions should not guarantee medical outcomes.
 
+Tapping an exercise thumbnail opens an animated, rounded bottom sheet with its
+approved bundled demonstration, localized exercise name and description, and
+ordered instruction steps connected by a vertical timeline. The sheet can be
+expanded, scrolled, dragged down to dismiss, or closed with its close button.
+Previewing never starts a routine session. Video loops silently, offers a
+pause/play control, pauses in the background, and is disposed on dismissal.
+Missing video or instructions show localized fallback text; failed video can
+be retried. Instruction content comes from the exercise's authored locale data.
+
+
 ### 14. Progress screen
 
 The Progress screen should emphasize encouraging evidence rather than performance pressure.

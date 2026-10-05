@@ -17,6 +17,11 @@ mixin _$MovementPreviewEntry {
   String get name;
   String? get stepId;
   String? get thumbnailAsset;
+
+  /// Approved bundled demonstration, available without starting a session.
+  String? get videoAsset;
+  String? get description;
+  List<String> get instructions;
   int get durationSeconds;
 
   /// Create a copy of MovementPreviewEntry
@@ -38,17 +43,33 @@ mixin _$MovementPreviewEntry {
             (identical(other.stepId, stepId) || other.stepId == stepId) &&
             (identical(other.thumbnailAsset, thumbnailAsset) ||
                 other.thumbnailAsset == thumbnailAsset) &&
+            (identical(other.videoAsset, videoAsset) ||
+                other.videoAsset == videoAsset) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(
+              other.instructions,
+              instructions,
+            ) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, stepId, thumbnailAsset, durationSeconds);
+  int get hashCode => Object.hash(
+    runtimeType,
+    name,
+    stepId,
+    thumbnailAsset,
+    videoAsset,
+    description,
+    const DeepCollectionEquality().hash(instructions),
+    durationSeconds,
+  );
 
   @override
   String toString() {
-    return 'MovementPreviewEntry(name: $name, stepId: $stepId, thumbnailAsset: $thumbnailAsset, durationSeconds: $durationSeconds)';
+    return 'MovementPreviewEntry(name: $name, stepId: $stepId, thumbnailAsset: $thumbnailAsset, videoAsset: $videoAsset, description: $description, instructions: $instructions, durationSeconds: $durationSeconds)';
   }
 }
 
@@ -63,6 +84,9 @@ abstract mixin class $MovementPreviewEntryCopyWith<$Res> {
     String name,
     String? stepId,
     String? thumbnailAsset,
+    String? videoAsset,
+    String? description,
+    List<String> instructions,
     int durationSeconds,
   });
 }
@@ -83,6 +107,9 @@ class _$MovementPreviewEntryCopyWithImpl<$Res>
     Object? name = null,
     Object? stepId = freezed,
     Object? thumbnailAsset = freezed,
+    Object? videoAsset = freezed,
+    Object? description = freezed,
+    Object? instructions = null,
     Object? durationSeconds = null,
   }) {
     return _then(
@@ -99,6 +126,18 @@ class _$MovementPreviewEntryCopyWithImpl<$Res>
             ? _self.thumbnailAsset
             : thumbnailAsset // ignore: cast_nullable_to_non_nullable
                   as String?,
+        videoAsset: freezed == videoAsset
+            ? _self.videoAsset
+            : videoAsset // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        description: freezed == description
+            ? _self.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        instructions: null == instructions
+            ? _self.instructions
+            : instructions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
             : durationSeconds // ignore: cast_nullable_to_non_nullable
@@ -205,6 +244,9 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
       String name,
       String? stepId,
       String? thumbnailAsset,
+      String? videoAsset,
+      String? description,
+      List<String> instructions,
       int durationSeconds,
     )?
     $default, {
@@ -217,6 +259,9 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
           _that.name,
           _that.stepId,
           _that.thumbnailAsset,
+          _that.videoAsset,
+          _that.description,
+          _that.instructions,
           _that.durationSeconds,
         );
       case _:
@@ -243,6 +288,9 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
       String name,
       String? stepId,
       String? thumbnailAsset,
+      String? videoAsset,
+      String? description,
+      List<String> instructions,
       int durationSeconds,
     )
     $default,
@@ -254,6 +302,9 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
           _that.name,
           _that.stepId,
           _that.thumbnailAsset,
+          _that.videoAsset,
+          _that.description,
+          _that.instructions,
           _that.durationSeconds,
         );
       case _:
@@ -279,6 +330,9 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
       String name,
       String? stepId,
       String? thumbnailAsset,
+      String? videoAsset,
+      String? description,
+      List<String> instructions,
       int durationSeconds,
     )?
     $default,
@@ -290,6 +344,9 @@ extension MovementPreviewEntryPatterns on MovementPreviewEntry {
           _that.name,
           _that.stepId,
           _that.thumbnailAsset,
+          _that.videoAsset,
+          _that.description,
+          _that.instructions,
           _that.durationSeconds,
         );
       case _:
@@ -305,8 +362,11 @@ class _MovementPreviewEntry implements MovementPreviewEntry {
     required this.name,
     this.stepId,
     this.thumbnailAsset,
+    this.videoAsset,
+    this.description,
+    List<String> instructions = const <String>[],
     required this.durationSeconds,
-  });
+  }) : _instructions = instructions;
 
   @override
   final String name;
@@ -314,6 +374,21 @@ class _MovementPreviewEntry implements MovementPreviewEntry {
   final String? stepId;
   @override
   final String? thumbnailAsset;
+
+  /// Approved bundled demonstration, available without starting a session.
+  @override
+  final String? videoAsset;
+  @override
+  final String? description;
+  final List<String> _instructions;
+  @override
+  @JsonKey()
+  List<String> get instructions {
+    if (_instructions is EqualUnmodifiableListView) return _instructions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_instructions);
+  }
+
   @override
   final int durationSeconds;
 
@@ -337,17 +412,33 @@ class _MovementPreviewEntry implements MovementPreviewEntry {
             (identical(other.stepId, stepId) || other.stepId == stepId) &&
             (identical(other.thumbnailAsset, thumbnailAsset) ||
                 other.thumbnailAsset == thumbnailAsset) &&
+            (identical(other.videoAsset, videoAsset) ||
+                other.videoAsset == videoAsset) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(
+              other._instructions,
+              _instructions,
+            ) &&
             (identical(other.durationSeconds, durationSeconds) ||
                 other.durationSeconds == durationSeconds));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, stepId, thumbnailAsset, durationSeconds);
+  int get hashCode => Object.hash(
+    runtimeType,
+    name,
+    stepId,
+    thumbnailAsset,
+    videoAsset,
+    description,
+    const DeepCollectionEquality().hash(_instructions),
+    durationSeconds,
+  );
 
   @override
   String toString() {
-    return 'MovementPreviewEntry(name: $name, stepId: $stepId, thumbnailAsset: $thumbnailAsset, durationSeconds: $durationSeconds)';
+    return 'MovementPreviewEntry(name: $name, stepId: $stepId, thumbnailAsset: $thumbnailAsset, videoAsset: $videoAsset, description: $description, instructions: $instructions, durationSeconds: $durationSeconds)';
   }
 }
 
@@ -364,6 +455,9 @@ abstract mixin class _$MovementPreviewEntryCopyWith<$Res>
     String name,
     String? stepId,
     String? thumbnailAsset,
+    String? videoAsset,
+    String? description,
+    List<String> instructions,
     int durationSeconds,
   });
 }
@@ -384,6 +478,9 @@ class __$MovementPreviewEntryCopyWithImpl<$Res>
     Object? name = null,
     Object? stepId = freezed,
     Object? thumbnailAsset = freezed,
+    Object? videoAsset = freezed,
+    Object? description = freezed,
+    Object? instructions = null,
     Object? durationSeconds = null,
   }) {
     return _then(
@@ -400,6 +497,18 @@ class __$MovementPreviewEntryCopyWithImpl<$Res>
             ? _self.thumbnailAsset
             : thumbnailAsset // ignore: cast_nullable_to_non_nullable
                   as String?,
+        videoAsset: freezed == videoAsset
+            ? _self.videoAsset
+            : videoAsset // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        description: freezed == description
+            ? _self.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        instructions: null == instructions
+            ? _self._instructions
+            : instructions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         durationSeconds: null == durationSeconds
             ? _self.durationSeconds
             : durationSeconds // ignore: cast_nullable_to_non_nullable

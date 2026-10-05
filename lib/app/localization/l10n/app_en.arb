@@ -481,5 +481,9 @@
   "playerHowTo": "How to perform",
   "playerPrepareHint": "Find a comfortable position and follow the demonstration.",
   "routineDecreaseTime": "Decrease time by 15 seconds",
-  "routineIncreaseTime": "Increase time by 15 seconds"
+  "routineIncreaseTime": "Increase time by 15 seconds",
+  "exercisePreviewOpen": "Preview {name}",
+  "exercisePreviewInstructions": "Instructions",
+  "exercisePreviewNoInstructions": "Instructions are not available for this exercise yet.",
+  "exercisePreviewVideoUnavailable": "This demonstration is not available right now."
 }

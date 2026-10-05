@@ -11,6 +11,11 @@ abstract class MovementPreviewEntry with _$MovementPreviewEntry {
     required String name,
     String? stepId,
     String? thumbnailAsset,
+
+    /// Approved bundled demonstration, available without starting a session.
+    String? videoAsset,
+    String? description,
+    @Default(<String>[]) List<String> instructions,
     required int durationSeconds,
   }) = _MovementPreviewEntry;
 }

@@ -1257,4 +1257,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get routineIncreaseTime => 'زيادة الوقت ١٥ ثانية';
+
+  @override
+  String exercisePreviewOpen(Object name) {
+    return 'عرض $name';
+  }
+
+  @override
+  String get exercisePreviewInstructions => 'التعليمات';
+
+  @override
+  String get exercisePreviewNoInstructions =>
+      'تعليمات هذا التمرين غير متاحة حاليًا.';
+
+  @override
+  String get exercisePreviewVideoUnavailable =>
+      'عرض هذا التمرين غير متاح حاليًا.';
 }
