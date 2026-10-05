@@ -11,6 +11,36 @@ import '../support/routine_player_test_harness.dart';
 
 void main() {
   test(
+    'start emits one chime during preparation without replay on resume',
+    () async {
+      final ticker = FakePlaybackTicker();
+      final feedback = FakeTransitionFeedback();
+      final container = buildRoutinePlayerContainer(
+        ticker: ticker,
+        feedback: feedback,
+      );
+      addTearDown(container.dispose);
+      const args = RoutinePlayerArgs(routineId: 'rt-1');
+      final controller = await pumpReady(
+        container,
+        args,
+        skipPreparation: false,
+      );
+      expect(feedback.transitionCalls, 1);
+      expect(readySession(container, args).preparationSeconds, 3);
+      for (var i = 0; i < 3; i++) {
+        ticker.fireTick();
+      }
+      expect(readySession(container, args).totalCreditedSeconds, 0);
+      expect(feedback.transitionCalls, 1);
+      controller.pause();
+      controller.resume();
+      controller.startNow();
+      expect(feedback.transitionCalls, 1);
+    },
+  );
+
+  test(
     'custom step durations control playback without changing other steps',
     () async {
       final ticker = FakePlaybackTicker();
@@ -77,9 +107,9 @@ void main() {
       ticker.fireTick();
       ticker.fireTick();
       ticker.fireTick();
-      expect(feedback.transitionCalls, 1);
-      controller.previous();
       expect(feedback.transitionCalls, 2);
+      controller.previous();
+      expect(feedback.transitionCalls, 3);
     },
   );
 

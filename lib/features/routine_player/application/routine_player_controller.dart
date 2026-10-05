@@ -170,6 +170,8 @@ class RoutinePlayerController extends _$RoutinePlayerController {
           ),
       ],
     );
+    // Play the three-second chime during the uncredited preparation countdown.
+    _feedback.onStepTransition();
     _resumePlayback();
     _emitRoutineStarted();
     unawaited(_guardedPersist(_session!, terminal: false));
