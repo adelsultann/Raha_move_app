@@ -3,6 +3,8 @@ import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
 import 'package:raha_move/features/today/domain/today_repository.dart';
 
+import 'home_date_heading.dart';
+
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
@@ -24,14 +26,7 @@ class HomeHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            s.navigationHome.toUpperCase(),
-            style: TextStyle(
-              color: colors.primary,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2,
-            ),
-          ),
+          HomeDateHeading(date: DateTime.now()),
           const SizedBox(height: 12),
           Text(
             s.homeHeadline,
