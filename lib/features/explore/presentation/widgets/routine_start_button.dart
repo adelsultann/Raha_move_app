@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:raha_move/features/routine_player/application/routine_player_providers.dart';
 import 'package:raha_move/app/localization/l10n/app_localizations.dart';
 import 'package:raha_move/app/router/app_routes.dart';
 
 import '../../domain/explore_models.dart';
 
-class RoutineStartButton extends StatelessWidget {
+class RoutineStartButton extends ConsumerWidget {
   const RoutineStartButton({
     super.key,
     required this.routineId,
@@ -15,7 +17,8 @@ class RoutineStartButton extends StatelessWidget {
   final String routineId;
   final RoutineStartEligibility eligibility;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(transitionFeedbackReadyProvider);
     final strings = AppLocalizations.of(context);
     final allowed = eligibility is RoutineStartAllowed;
     final message = switch (eligibility) {

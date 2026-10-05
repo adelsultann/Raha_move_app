@@ -1,5 +1,7 @@
 import 'dart:ui' show Locale;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart' show FutureProvider;
+
 import 'package:raha_move/app/bootstrap/catalog_bootstrap_providers.dart';
 import 'package:raha_move/features/authentication/application/auth_controller.dart';
 import 'package:raha_move/features/onboarding/application/locale_controller.dart';
@@ -47,6 +49,9 @@ ScreenWakeLock screenWakeLock(Ref ref) => const WakelockScreenWakeLock();
 /// Tests override this with a recording fake.
 @riverpod
 TransitionFeedback transitionFeedback(Ref ref) {
+  // Preparation can begin on details before guest/auth initialization finishes.
+  // Recreate it when the active identity becomes available or changes.
+  ref.watch(authControllerProvider);
   final feedback = DefaultTransitionFeedback(
     ref.watch(appDatabaseProvider),
     activeUserId: () => ref.read(authControllerProvider).value?.activeUserId,
@@ -54,6 +59,18 @@ TransitionFeedback transitionFeedback(Ref ref) {
   ref.onDispose(feedback.dispose);
   return feedback;
 }
+
+/// Warms the chime while the routine details or player plan are loading.
+final transitionFeedbackReadyProvider = FutureProvider<void>((ref) async {
+  try {
+    await ref
+        .watch(transitionFeedbackProvider)
+        .prepare()
+        .timeout(const Duration(seconds: 2));
+  } catch (_) {
+    // A device without working audio must still be able to start the routine.
+  }
+});
 
 /// A fresh one-second ticker per controller instance. Stopped on dispose.
 @riverpod

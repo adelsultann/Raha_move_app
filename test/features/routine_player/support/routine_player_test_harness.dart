@@ -149,6 +149,12 @@ final class FakeScreenWakeLock implements ScreenWakeLock {
 /// Transition-feedback fake recording transition calls.
 final class FakeTransitionFeedback implements TransitionFeedback {
   int transitionCalls = 0;
+  Future<void>? preparation;
+
+  @override
+  Future<void> prepare() async {
+    await preparation;
+  }
 
   @override
   void onStepTransition() {

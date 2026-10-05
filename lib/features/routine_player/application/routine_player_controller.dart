@@ -66,6 +66,9 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     _clock = ref.read(routinePlayerClockProvider);
     _args = args;
 
+    final feedbackReady = ref.watch(transitionFeedbackReadyProvider);
+    if (feedbackReady.isLoading) return const RoutinePlayerLoading();
+
     if (args.sessionId != null) return _buildRestore(args);
     return _buildNewStart(args);
   }
@@ -423,6 +426,10 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     );
     if (newCredited == current.creditedSeconds) return;
 
+    if (current.durationSeconds - newCredited == 3) {
+      _feedback.onStepTransition();
+    }
+
     final steps = _updateStep(
       session.steps,
       index,
@@ -437,7 +444,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     _setSession(updated);
 
     if (newCredited >= current.durationSeconds) {
-      _advance();
+      _advance(playFeedback: false);
     } else {
       unawaited(_persistCursor(updated));
     }
@@ -448,7 +455,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     state = RoutinePlayerReady(session: session);
   }
 
-  void _advance() {
+  void _advance({bool playFeedback = true}) {
     final session = _session;
     if (session == null || session.isTerminal) return;
     if (session.isLastStep) {
@@ -468,7 +475,7 @@ class RoutinePlayerController extends _$RoutinePlayerController {
     );
     final updated = session.copyWith(steps: steps, currentStepIndex: newIndex);
     _setSession(updated);
-    _feedback.onStepTransition();
+    if (playFeedback) _feedback.onStepTransition();
     _preloadNext(newIndex);
     unawaited(_guardedPersist(updated, terminal: false));
   }

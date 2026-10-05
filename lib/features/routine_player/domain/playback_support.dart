@@ -10,5 +10,8 @@ abstract interface class ScreenWakeLock {
 /// the user's sound/vibration preferences. Production plays the bundled
 /// three-second transition audio and uses the platform's light haptic feedback.
 abstract interface class TransitionFeedback {
+  /// Loads audio and preferences before the visible countdown begins.
+  Future<void> prepare();
+
   void onStepTransition();
 }

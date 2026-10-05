@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raha_move/core/analytics/analytics_service_impls.dart';
@@ -10,6 +12,37 @@ import 'package:raha_move/features/routine_player/domain/routine_session_reposit
 import '../support/routine_player_test_harness.dart';
 
 void main() {
+  test(
+    'countdown waits for audio preparation, then starts with the cue',
+    () async {
+      final preparation = Completer<void>();
+      final feedback = FakeTransitionFeedback()
+        ..preparation = preparation.future;
+      final ticker = FakePlaybackTicker();
+      final container = buildRoutinePlayerContainer(
+        ticker: ticker,
+        feedback: feedback,
+      );
+      addTearDown(container.dispose);
+      const args = RoutinePlayerArgs(routineId: 'rt-1');
+      container.listen(routinePlayerControllerProvider(args), (_, _) {});
+      await container.read(routinePlaybackPlanProvider(args.routineId).future);
+      await container.read(resumableRoutineSessionProvider.future);
+      await pumpEventQueue();
+      expect(
+        container.read(routinePlayerControllerProvider(args)),
+        isA<RoutinePlayerLoading>(),
+      );
+      expect(ticker.isRunning, isFalse);
+      expect(feedback.transitionCalls, 0);
+      preparation.complete();
+      await pumpEventQueue();
+      expect(readySession(container, args).preparationSeconds, 3);
+      expect(feedback.transitionCalls, 1);
+      expect(ticker.isRunning, isTrue);
+    },
+  );
+
   test(
     'start emits one chime during preparation without replay on resume',
     () async {
@@ -107,8 +140,51 @@ void main() {
       ticker.fireTick();
       ticker.fireTick();
       ticker.fireTick();
-      expect(feedback.transitionCalls, 2);
+      expect(feedback.transitionCalls, 1);
       controller.previous();
+      expect(feedback.transitionCalls, 2);
+    },
+  );
+
+  test(
+    'chime starts with three seconds left, including the final exercise',
+    () async {
+      final ticker = FakePlaybackTicker();
+      final feedback = FakeTransitionFeedback();
+      final container = buildRoutinePlayerContainer(
+        ticker: ticker,
+        feedback: feedback,
+      );
+      addTearDown(container.dispose);
+      const args = RoutinePlayerArgs(
+        routineId: 'rt-1',
+        durations: '{"step-1":15,"step-2":15}',
+      );
+      final controller = await pumpReady(container, args);
+      expect(feedback.transitionCalls, 1);
+      for (var i = 0; i < 11; i++) {
+        ticker.fireTick();
+      }
+      expect(feedback.transitionCalls, 1);
+      ticker.fireTick();
+      expect(15 - readySession(container, args).currentStep.creditedSeconds, 3);
+      expect(feedback.transitionCalls, 2);
+      controller.pause();
+      ticker.fireTick();
+      controller.resume();
+      for (var i = 0; i < 3; i++) {
+        ticker.fireTick();
+      }
+      expect(readySession(container, args).currentStepIndex, 1);
+      expect(feedback.transitionCalls, 2);
+      for (var i = 0; i < 12; i++) {
+        ticker.fireTick();
+      }
+      expect(feedback.transitionCalls, 3);
+      for (var i = 0; i < 3; i++) {
+        ticker.fireTick();
+      }
+      expect(readySession(container, args).status, PlaybackStatus.completed);
       expect(feedback.transitionCalls, 3);
     },
   );
